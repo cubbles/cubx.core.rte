@@ -1,0 +1,13 @@
+compound-with-template {
+    display: block;
+    border: solid thin grey;
+    background-color: #f2f2f2;
+}
+
+.nopadding-right {
+    padding-right: 0 !important;
+}
+.nopadding-left {
+    padding-left: 0 !important;
+}
+

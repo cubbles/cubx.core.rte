@@ -1,0 +1,74 @@
+{
+    "name": "package-7",
+    "groupId": "org.example",
+    "version": "1.0.0",
+    "modelVersion": "8.0.0",
+    "docType": "webpackage",
+    "author": {
+        "name": "John Doe",
+        "email": "john.doe@example.org"
+    },
+    "license": "MIT",
+    "runnables": [],
+    "artifacts": {
+        "compoundComponents": [
+            {
+                "artifactId": "my-component-7",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "res1.js",
+                            "res2.css"
+                        ],
+                        "dependencies": [
+                            "this/my-component-9/main"
+                        ]
+                    }
+                ]
+            },
+            {
+                "artifactId": "my-component-8",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "res1.js",
+                            "res2.css"
+                        ],
+                        "dependencies": [
+                                    "this/my-component-10/main"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "elementaryComponents": [
+            {
+                "artifactId": "my-component-9",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "res9.js",
+                            "res9.css"
+                        ]
+                    }
+                ]
+            },
+            {
+                "artifactId": "my-component-10",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "res10.js",
+                            "res10.css"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
+

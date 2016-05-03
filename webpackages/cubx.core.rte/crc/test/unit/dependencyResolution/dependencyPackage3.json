@@ -1,0 +1,25 @@
+{
+    "artifacts": {
+        "utilities": [
+            {
+                "artifactId": "util",
+                "description": "This util demonstrates ...",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "js/pack3.js",
+                            "css/pack3.css"
+                        ],
+                        "dependencies": [
+                            "package5@1.0.0/util/main"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
+
+
+

@@ -1,0 +1,17 @@
+{
+    "artifacts": {
+        "utilities": [
+            {
+                "artifactId": "util",
+                "description": "This util demonstrates ...",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [],
+                        "dependencies": []
+                    }
+                ]
+            }
+        ]
+    }
+}

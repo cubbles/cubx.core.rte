@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>CubxPolymer API-Doc</title>
+</head>
+<body>
+<h1>CubxPolymer</h1>
+
+<p>CubxPolymer is a wrapper for the Polymer method. By the wrapper will extend the created polymer element with the <br><em>CubixxComponent-API</em>.</p>
+
+<p>Specifically, this means</p>
+<ol>
+    <li>the addition of a <em>model</em> and</li>
+    <li>methods for external interaction with the model (preferably used by the CIF) and</li>
+    <li>methods for internal interaction with the model (within the component).</li>
+</ol>
+
+<h2>Usage</h2>
+
+<h3>Access to slot variables</h3>
+
+<p>Slot variables are created in the "model" object. The "model" variable is  a polymer property. <br>
+Example slot <code>person</code>, used in an input field:</p>
+<pre><code>&lt;input type="text" name="person" value="{{model.person:change}}"/&gt;
+</code></pre>
+
+<p><i><b>Attention!:</b>If a new value by means of polymer (in HTML-Code) is set, the setting and propagation of the value will be asynchronously!
+    By usage the set&lt;slotname&gt; method directly, it will set and propagate the value synchronously.
+    Use only the " set < slot name > " method to set the value of the property in the internal code of the element.</i>
+</p>
+
+<h3>The CubxPolymer method</h3>
+<p>The usage the CubxPolymer method is similar to Polymer method. The parameter is the polymer element configuration object.</p>
+<pre><code>CubxPolymer({
+    is: 'element-name'
+    ready: function(){
+    // ...
+    }
+    });
+</code></pre>
+<h3>Custom hook methods</h3>
+
+<p>The coder can add a custom code, which is processed during the data flow.</p>
+<p>
+    After setting a new value, will the "model&lt;slotname&gt;<br>Changed" method called.
+    It's unimportant, wether the changes of the slot caused by internal logic or an user interaction or a propagation from an other component.
+</p>
+
+<h4>Example:</h4>
+<p>Outputslot <code>temperatur</code>:</p>
+<pre><code>CubxPolymer({
+    is: ...
+    ...
+    modelTemperaturChanged: function(value){
+    // value ist ein Clone des neuen SlotValues
+    //...
+    }
+    ...
+    });
+</code></pre>
+<h3>Methods on slots</h3>
+<h4>get&lt;slotname&gt; ()</h4>
+
+<p>Get the current internal value of the slot</p>
+
+<p>Example for slot (input or/and output) <code>person</code>:</p>
+<pre><code>this.getPerson() --&gt; get the value von model.person</code></pre>
+<h4>set&lt;slotname&gt;(value)</h4>
+
+<p>It sets the internal value of the slot. If the slot an outputslot is, the value will propagated afterwards.</p>
+
+<p>Example for slot <code>person</code> (input or/and output):</p>
+<pre><code>this.setPerson(value)</code></pre>
+<h4>repropagate&lt;slotname&gt;()</h4>
+
+<p>Triggered the propagation of the current internal value by the output slot.<br>
+    <em>Notice: </em> Changes of the internal value cause an automatical propagation of the slots. But this method propagates
+    the value independent of changing of the value.<br>
+    This method exists for all outputslots.
+</p>
+
+<p>Example for the slot <code>person</code>:</p>
+<pre><code>this.repropagatePerson();</code></pre>
+
+<h3>Lifecycle callback methods</h3>
+<h4>Lifecycle callback methods offered from Polymer</h4>
+<ul>
+    <li><b>created</b> - Polymer implementation of standard lifecycle callback method <code>createdCallback</code> - Called after the element is created.</li>
+    <li><b>ready</b> - extra lifecycle callback added from Polymer - It invoked, when Polymer has finished creating and initializing the element’s local DOM.</li>
+    <li><b>attached</b> - Polymer implementation of standard lifecycle callback method <code>attachedCallback</code>. Called when the element is attached to the document</li>
+    <li><b>detached</b> - Polymer implementation of standard lifecycle callback method <code>detachedCallback</code>. Called when one of attributes of the element is changed.</li>
+</ul>
+<h4>Lifecycle callback methods offered from Cubbles</h4>
+<ul>
+    <li><b>cubxReady</b> - It will be called, when
+        <ul>
+            <li>
+                all dependencies are included,
+            </li>
+            <li>all components and all connections are created and</li>
+            <li>the intialisation is done.</li>
+        </ul>
+    </li>
+
+</ul>
+<h3>Methods for adding, removing export and import of dynamic connections.</h3>
+<h4>addDynamicConnection(dynamicConnection) method</h4>
+<p>Add a new dynamic connection to the elements context and get the generated connectionId.
+    The parameter dynamicConnection is an object with the following structur:</p>
+<ul>
+    <li><b>source</b> - definition of source
+        <ul>
+            <li><b>source.runtimeId</b> - runtimeId of the source element</li>
+            <li><b>source.slot</b> - slotId </li>
+        </ul>
+    </li>
+    <li><b>destination</b> - definition of destination
+        <ul>
+            <li><b>destination.runtimeId</b> - runtimeId of the destination element.</li>
+            <li><b>destination.slot</b> - slotId </li>
+        </ul></li>
+    <li><b>copyValue</b> - optional, default value is true</li>
+    <li><b>repeatedValues</b> - optional, default value is false</li>
+    <li><b>hookFunction</b> - optional</li>
+</ul>
+<p>Source and destination must be in the same context and the method "addDynamicConnection" must be called
+    wether on source or on destination element.
+</p>
+<p>The connection will be <b>overwritten</b>, if a connection with the same connectionId exists in the context and the connection is a dynamic
+    is a dynamic connection.</p>
+<p>Example of a dynamicConnection parameter:</p>
+<pre>
+    {
+        source: {
+            runtimeId: 'com.incowia.example@1.0.0/example-compound-elem:com.incowia.example@1.0.0/first-elementary-elem.member1',
+            slot: 'message'
+        },
+        destination: {
+            runtimeId: 'com.incowia.example@1.0.0/example-compound-elem:com.incowia.example@1.0.0/second-elementary-elem.member2',
+            slot: 'testMessage'
+        }
+    }
+</pre>
+
+<h4>removeDynamicConnection(connectionId| connectionConfig) method</h4>
+<p>The parameter can be</p>
+<ul>
+    <li><b>a string</b> - It will the dynamic connection with the connectionId from the context removed.</li>
+    <li><b>a connectionConfig object</b> - It will a connectionId generated and the connection from the context removed.</li>
+</ul>
+<p>There is no connection with the connectionId, it will an error logged.
+    If the connectionId points to a static connection, will also an error logged.</p>
+
+<h4>exportDynamicConnections() method</h4>
+<p>Exports all dynamically generated connections, where the source or the destination of the connection the element self is.
+    The return value is a JSON string, which contains an array of the connection elements.</p>
+
+Example:
+<pre>
+[
+     {
+        "source": {
+            "runtimeId": "com.incowia.example@1.0.0/example-compound-elem:com.incowia.example@1.0.0/first-elementary-elem.member1",
+            "slot": "message"
+        },
+        "destination": {
+            "runtimeId": "com.incowia.example@1.0.0/example-compound-elem:com.incowia.example@1.0.0/second-elementary-elem.member2",
+            "slot": "textMessage"
+        }
+    },
+    {
+        "source": {
+            "runtimeId": "com.incowia.example@1.0.0/example-compound-elem:com.incowia.example@1.0.0/second-elementary-elem.member2",
+            "slot": "state"
+        },
+        "destination": {
+            "runtimeId": "com.incowia.example@1.0.0/example-compound-elem:com.incowia.example@1.0.0/first-elementary-elem.member1",
+            "slot": "stateMessage"
+        }
+    }
+]
+</pre>
+
+<h4>importDynamicConnections(connections) method</h4>
+<p>Imports an array of dynamic connections. The import can be an arbitrary components happen.
+    The connections parameter is a JSON string, which contains an array of the connection elements.</p>
+<p><b>For one connection:</b></p>
+<ul>
+<li>If the defined source and destination elements not in the same context are, will an error logged.</li>
+<li>The connection will be <b>overwritten</b>, if a connection with the same connectionId exists in the context, and it is
+    a dynamic connection.
+</li>
+</ul>
+<h4>generateConnectionId(connectionConfig)</h4>
+<p>Generate and returns  a connectionId based on connectionConfig.</p>
+The paramter connectionConfig must have the following structure
+<pre>
+    {
+        source: {
+            runtimeId: 'an.example@1.0.0/an-element',
+            slot: 'aSlotId'
+        },
+        destination: {
+            runtimeId: 'an.other.example@0.1.0/other-element:an.example@1.0.0/an-element.member1',
+            slot: 'otherSlotId'
+        }
+    }
+</pre>
+<h3>other Methods</h3>
+<h4>slots()</h4>
+
+<p>Get an array with all slots of the Element. One slot definition contains the following attributes:</p>
+<ul>
+    <li><b>slotId</b> (string) </li>
+    <li><b>type</b> (string) - optional, get the type of the slot if configured</li>
+    <li><b>direction</b>(string array) - the direction(s) of the slot (input or/and output)</li>
+</ul>
+
+<p>Example (return of "slots()" method)</p>
+<pre>
+[
+    {
+        slotId: 'temperatur'.
+        type: 'number',
+        direction: ['input', 'output']
+    },
+    {
+        slotId: 'message',
+        direction: ['output']
+    }
+]
+</pre>
+<h4>getRuntimeId()</h4>
+<p>Returns the value of the elements <b>runtime-id</b> attribute.</p>
+</body>
+</html>

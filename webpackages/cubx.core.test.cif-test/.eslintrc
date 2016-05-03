@@ -1,0 +1,28 @@
+{
+  // We override existing configes here.
+  // * @see http://eslint.org/docs/user-guide/configuring.html#extending-configuration-files
+  // * 'standard' means, we override configs from an npm-package named 'standard'
+  "extends": [
+    "standard"
+  ],
+  "rules": {
+    "semi": [
+      2,
+      "always"
+    ]
+  },
+  "globals": {
+    "require": true,
+    "module": true,
+    "Polymer": true,
+    "CubxPolymer": true,
+    "describe": true,
+    "it": true,
+    "before": true,
+    "beforeEach": true,
+    "after": true,
+    "afterEach": true,
+    "expect": true,
+    "sinon": true
+  }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>app</title>
+
+    <script src="http://localhost:8282/cubx.core.rte//webcomponents/webcomponents-lite.js"></script>
+
+    <!--
+        Refer to the crc-loader artifact from a Cubbles-Base.
+        Take care: All other dependencies are expected to be available within the same Base!
+
+        Want to add a 'main' -script to be executed after the dependencies have been loaded?
+        If yes, add the following attribute: data-crc-main="js/my-script.js"
+    -->
+    <script src="http://localhost:8282/cubx.core.rte/crc-loader/js/main.js" data-crcinit-loadcif="true"></script>
+
+</head>
+<body>
+<!--
+    The cubbles client-runtime-container is bound to the next element.
+    Place Cubbles-Component there as child element.
+    Note: Currently there is only one element supported. This will change in future (@see PLAT-205).
+-->
+<div cubx-core-crc>
+     <second-elementary cubx-dependency="this/second-elementary/main"></second-elementary>
+</div>
+
+</body>
+</html>

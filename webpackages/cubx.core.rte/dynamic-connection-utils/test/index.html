@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>cubypolymer Test</title>
+    <link rel="stylesheet" href="vendor/mocha/mocha.css"/>
+    <style type="text/css" media="all">
+        iframe {
+            border: none;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+<div id="mocha"></div>
+
+<script src="vendor/mocha/mocha.js"></script>
+<script src="vendor/chai/chai.js"></script>
+<script src="vendor/sinonjs/sinon.js"></script>
+
+<!-- coverage test, need start server first -->
+<!--<script src="vendor/blanket/blanket.min.js" data-cover-adapter="vendor/blanket/mocha-blanket.js" data-cover-only="js/" data-cover-never="test/"></script>-->
+<!-- decide to use tdd or bdd -->
+<script src="vendor/mocha-config.js"></script>
+<script src="mock/CRCMock.js"></script>
+<script src="mock/CIFMock.js"></script>
+<script src="https://webblebase.net/org.webcomponents.webcomponents-0.7.12-1.0/resources/vendor/webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="https://webblebase.net/org.polymer-project.polymer-1.1.2-1.0/resources/vendor/polymer/polymer.html"/>
+<script src="https://webblebase.net/com.lodash.lodash-3.10.1-1.0/resources/lodash.js"></script>
+<!-- Sources, add 'data-cover' attr if you want jscoverage -->
+<script src="../cubxPolymerMixin.js"></script>
+<script src="../cubxpolymer.js"></script>
+<script src="helpers.js"></script>
+
+
+<!-- test cases -->
+
+<script src="unit/Cubxpolymer_init_test.js"></script>
+<script src="unit/CubxPolymer_helper_test.js"></script>
+<script src="unit/CubxPolymer_input_output_test.js"></script>
+
+
+<!-- resources -->
+<script src='resource/dummy-default-value-manifest.js'></script>
+<script src='resource/dummy-get-method-manifest.js'></script>
+<script src='resource/dummy-handler-observer.js'></script>
+<script src='resource/dummy-handling-input.js'></script>
+<script src='resource/dummy-helper2.js'></script>
+<script src='resource/dummy-input-manifest.js'></script>
+<script src='resource/dummy-input-output-manifest.js'></script>
+<script src='resource/dummy-lifecycle-manifest.js'></script>
+<script src='resource/dummy-output-handling-manifest.js'></script>
+<script src='resource/dummy-output-manifest.js'></script>
+<script src='resource/dummy-repropagate-method.js'></script>
+<script src='resource/dummy-set-method-manifest.js'></script>
+<!-- run mocha -->
+<script type="text/javascript" charset="utf-8">
+        console.log('testing...');
+        mocha.checkLeaks();
+
+        if (window.mochaPhantomJS) {
+            mochaPhantomJS.run();
+        } else {
+            mocha.run();
+        }
+
+        console.log('done');
+
+</script>
+<div cubx-core-crc></div>
+</body>
+</html>
+
+

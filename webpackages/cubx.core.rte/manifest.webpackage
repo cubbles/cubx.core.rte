@@ -1,0 +1,208 @@
+{
+  "name": "rte",
+  "groupId": "cubx.core",
+  "version": "1.8.0",
+  "modelVersion": "8.3.0",
+  "docType": "webpackage",
+  "description": "",
+  "license": "MIT",
+  "homepage": "https://webblebase.net",
+  "keywords": [
+    "cubixx"
+  ],
+  "author": {
+    "name": "Hd Böhlau",
+    "email": "hans-dieter.boehlau@incowia.com"
+  },
+  "contributors": [
+    {
+      "name": "Phillipp Wagner",
+      "email": "Philipp.Wagner@incowia.com"
+    },
+    {
+      "name": "Judit Ross",
+      "email": "Judit.Ross@incowia.com"
+    }
+  ],
+  "runnables": [
+    {
+      "name": "readme",
+      "path": "/doc/readme.html",
+      "description": "read me"
+    },
+    {
+      "name": "releases",
+      "path": "/doc/releases.html",
+      "description": "release documentation"
+    }
+  ],
+  "artifacts": {
+    "utilities": [
+      {
+        "artifactId": "crc-loader",
+        "endpoints": [
+          {
+            "endpointId": "main",
+            "resources": [
+              "js/main.js"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "crc",
+        "endpoints": [
+          {
+            "endpointId": "main",
+            "resources": [
+              "js/main.js"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "cif",
+        "endpoints": [
+          {
+            "endpointId": "main",
+            "resources": [
+              "cif.html"
+            ],
+            "dependencies": [
+              "lodash-3.10.1@1.0.1/lodash/html-import",
+              "this/utilities/guid-html-import",
+              "this/dynamic-connection-utils/html-import",
+              "this/cubx-component-mixin/html-import"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "cubxpolymer",
+        "endpoints": [
+          {
+            "endpointId": "main",
+            "resources": [
+              "cubxpolymer.html"
+            ],
+            "dependencies": [
+              "lodash-3.10.1@1.0.1/lodash/html-import",
+              "polymer-1.2.3@1.0.2/polymer/main",
+              "this/cubx-component-mixin/html-import",
+              "this/dynamic-connection-utils/html-import"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "webcomponents",
+        "description": "The origin polyfill library version 0.7.18.",
+        "endpoints": [
+          {
+            "endpointId": "main",
+            "description": "The polyfills are a bundle that includes the following libraries: Custom Elements, HTML Imports,Shadow DOM, WeakMap, Mutation Observers",
+            "resources": [
+              "webcomponents.js"
+            ]
+          },
+          {
+            "endpointId": "lite",
+            "description": "The polyfills are a bundle that includes the following libraries: Custom Elements, HTML Imports,  WeakMap, Mutation Observers",
+            "resources": [
+              "webcomponents-lite.js"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "utilities",
+        "description": "Utility functions for sharing",
+        "endpoints": [
+          {
+            "endpointId": "guid",
+            "description": "GUID generator",
+            "resources": [
+              "js/guid.js"
+            ],
+            "dependencies": [ ]
+          },
+          {
+            "endpointId": "guid-html-import",
+            "description": "GUID generator, recommended for you use with webcomponents.",
+            "resources": [
+              "guid-html-import.html"
+            ],
+            "dependencies": [ ]
+          },
+          {
+            "endpointId": "dom-tree-utils",
+            "description": "Dom tree utilities.",
+            "resources": [
+              "js/domTreeUtils.js"
+            ],
+            "dependencies": [ ]
+          },
+          {
+            "endpointId": "dom-tree-utils-html-import",
+            "description": "Dom tree utilities, recommended for you use with webcomponents.",
+            "resources": [
+              "dom-tree-utils.html"
+            ],
+            "dependencies": [ ]
+          }
+        ]
+      },
+      {
+        "artifactId": "dynamic-connection-utils",
+        "description": "Utility Functions for handling with dynamic connections.",
+        "endpoints": [
+          {
+            "endpointId": "html-import",
+            "description": "This is recommended for you use with webcomponents.",
+            "resources": [
+              "dynamic-connection-utils-html-import.html"
+            ],
+            "dependencies": [
+              "this/utilities/dom-tree-utils-html-import"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "cubx-component-mixin",
+        "description": "Basic (access) methods for cubbles components",
+        "endpoints": [
+          {
+            "endpointId": "html-import",
+            "description": "This is recommended for you use with webcomponents.",
+            "resources": [
+              "html-import.html"
+            ],
+            "dependencies": [
+              "lodash-3.10.1@1.0.1/lodash/html-import"
+            ]
+          }
+        ]
+      },
+      {
+        "artifactId": "es6-promise",
+        "description": "es6-pomise library version 3.2.1",
+        "endpoints": [
+          {
+            "endpointId": "html-import",
+            "description": "This is recommended for you use with webcomponents.",
+            "resources": [
+              {
+                "dev": "html-import.html",
+                "prod": "html-import.min.html"
+              }
+            ],
+            "dependencies": [ ]
+          }
+        ]
+      }
+    ],
+    "compoundComponents": [ ],
+    "elementaryComponents": [ ]
+  }
+}

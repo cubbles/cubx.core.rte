@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>CRC Loader Tests</title>
+    <link rel="stylesheet" href="vendor/mocha/mocha.css"/>
+    <style type="text/css" media="all">
+        iframe {
+            border: none;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+<div id="mocha"></div>
+<script src="beforetest.js"></script>
+<script src="vendor/mocha/mocha.js"></script>
+<script src="vendor/chai/chai.js"></script>
+<script src="vendor/sinon/sinon.js"></script>
+
+<!-- decide to use tdd or bdd -->
+<script src="vendor/mocha-config.js"></script>
+
+
+<!-- Tests, add 'data-cover' attr if you want jscoverage -->
+<script src="testMain.js" data-cover></script>
+
+<!-- configuration for running test with mocha_phantom.js-->
+<script src="requirejs_config/mocha_phantomjs.js"></script>
+
+
+</body>
+</html>

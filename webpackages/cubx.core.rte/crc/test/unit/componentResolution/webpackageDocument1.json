@@ -1,0 +1,145 @@
+{
+    "name": "compound-A",
+    "groupId": "test",
+    "version": "1.0.0",
+    "modelVersion": "8.0.0",
+    "docType": "webpackage",
+    "author": {
+        "name": "John Doe",
+        "email": "john.doe@example.org"
+    },
+    "license": "MIT",
+    "runnables": [
+        {
+            "name": "readme",
+            "description": "read me...",
+            "path": "_doc/readme.html"
+        }
+    ],
+    "artifacts": {
+        "compoundComponents": [
+            {
+                "artifactId": "compound-A",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "res1.html"
+                        ],
+                        "dependencies": [
+                            "test.compound-B@1.0.0/compound-B/main",
+                            "test.compound-C@1.0.0/compound-C/main",
+                            "this/elementary-F/main"
+                        ]
+                    }
+                ],
+                "members": [
+                    {
+                        "componentId": "test.compound-B@1.0.0/compound-B",
+                        "memberId": "1",
+                        "displayName": "Compound Component B"
+                    },
+                    {
+                        "componentId": "test.elementary-C@1.0.0/elementary-C",
+                        "memberId": "2",
+                        "displayName": "Elementary Component C"
+                    },
+                    {
+                        "componentId": "test.elementary-C@1.0.0/elementary-C",
+                        "memberId": "3",
+                        "displayName": "Elementary Component C"
+                    },
+                    {
+                        "componentId": "this/elementary-F",
+                        "memberId": "4",
+                        "displayName": "Elementary Component F"
+                    }
+                ],
+                "connections": [
+                    {
+                        "connectionId": "1",
+                        "source": {
+                            "memberIdRef": "1",
+                            "slot": "outputB"
+                        },
+                        "destination": {
+                            "memberIdRef": "2",
+                            "slot": "inputC"
+                        }
+                    },
+                    {
+                        "connectionId": "2",
+                        "source": {
+                            "memberIdRef": "1",
+                            "slot": "outputB"
+                        },
+                        "destination": {
+                            "memberIdRef": "3",
+                            "slot": "inputC"
+                        }
+                    },
+                    {
+                        "connectionId": "3",
+                        "source": {
+                            "memberIdRef": "2",
+                            "slot": "outputC"
+                        },
+                        "destination": {
+                            "memberIdRef": "1",
+                            "slot": "inputB"
+                        }
+                    },
+                    {
+                        "connectionId": "4",
+                        "source": {
+                            "memberIdRef": "2",
+                            "slot": "outputC"
+                        },
+                        "destination": {
+                            "memberIdRef": "4",
+                            "slot": "inputField"
+                        }
+                    }
+                ],
+                "inits": [
+                    {
+                        "memberIdRef": "2",
+                        "slot": "inputC",
+                        "value": "hallo inputC"
+                    },
+                    {
+                        "memberIdRef": "1",
+                        "slot": "inputB",
+                        "value": "hallo inputB"
+                    }
+                ]
+            }
+        ],
+        "elementaryComponents": [
+            {
+                "artifactId": "elementary-F",
+                "description": "",
+                "endpoints": [
+                    {
+                        "endpointId": "main",
+                        "resources": [
+                            "component/elementary-F.html"
+                        ],
+                        "dependencies": [
+                        ]
+                    }
+                ],
+                "slots": [
+                    {
+                        "slotId": "inputField",
+                        "type": "string",
+                        "direction": [
+                            "input"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
+

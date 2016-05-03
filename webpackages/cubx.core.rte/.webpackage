@@ -1,0 +1,14 @@
+{
+    "uploadConfigs": {
+        "dev": {
+            "url": "http://boot2docker.me/core",
+            "proxy": "",
+            "debug": false
+        },
+        "release": {
+            "url": "https://cubbles.world/core",
+            "proxy": "",
+            "debug": false
+        }
+    }
+}
