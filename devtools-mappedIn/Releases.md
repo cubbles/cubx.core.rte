@@ -1,5 +1,8 @@
 # Releases
 
+## 2.5.0
+  * added grunt plugin "cubx-grunt-webpackage-chooser"
+
 ## 2.4.0
   * updated dependency: cubx-grunt-webpackage-scaffold to version ^2.4.0
 
