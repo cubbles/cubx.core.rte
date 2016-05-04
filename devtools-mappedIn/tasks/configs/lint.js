@@ -20,6 +20,10 @@ module.exports.tasks = {
         '<%= param.src %>/**/*.js',
         '!<%= param.src %>/**/vendor/**',
         '!<%= param.src %>/**/test-results/**',
+        '!<%= param.src %>/**/bower_components/**',
+        '!<%= param.src %>/**/jquery-1.11.1.min.js',
+        '!<%= param.src %>/**/text/*.js',
+        '!<%= param.src %>/webcomponents/*.js',
         '!<%= param.src %>/**/bower_components/**'
       ]
     }

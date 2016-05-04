@@ -10,6 +10,7 @@
   "dependencies": {
     "chalk": "~1.1.0",
     "cubx-grunt-webpackage-scaffold": "^2.4.0",
+    "cubx-grunt-webpackage-chooser": "git+https://pmt.incowia.de/webble/r/client/utilities/cubx-grunt-webpackage-chooser.git",
     "cubx-grunt-webpackage-upload": "^1.7.0",
     "cubx-webpackage-document-api": "^3.0.0",
     "eslint": "^2.4.0",
