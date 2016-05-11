@@ -140,8 +140,9 @@ An der manifest.webpackage generierte Komponenten werden mit Attributen, wie zum
 Jede Coumpound Komponent hat sein eigenes Context-Objekt.  Innerhalb dieses Kontextes wird die Propagierung der Slots realisiert.
 
 #### Compound Komponent HTML-Templates
+
 Ein Compound Komponent __kann__ die Integration der Member-Komponenten durch ein HTML-Template definieren.
-Ein Beispiel für eine Template für `my-compound`
+Beispiel für eine Template für `my-compound` (my-compound-template.html):
 
     <template id="my-compound">
          <div>
@@ -157,8 +158,12 @@ Ein Beispiel für eine Template für `my-compound`
           <div>
     </template>
 
-Wenn kein HTML Template für die Compound Komponent eingebunden ist, werden die Member Komponente in der Definitionsreihenfolge als direkte Kinder zugefügt.
 
+Dabei ist es wichtig, das der id Attribut des Templates den ArtifactId des Komponents referenziert. Die Member-Elemente werden als Tags eingefügt, und referenzieren jeweils in member-id-ref Attribute den in der manifest.webpackage definierte `memberId`.
+
+Damit der HTML-Template verfügbar ist, muss er als Resource in den Endpoint des Komponents eingetragen werden.
+
+Wenn kein HTML-Template für die Compound Komponente vorhanden ist, werden die Member Komponente weiterhin in der Definitionsreihenfolge als direkte Kinder eingefügt.
 
 ### Connections
 Die Connection-Informationen werden in der HTML-Cutom-Tags "cubx-connections" und "cubx-connection" beschrieben.
