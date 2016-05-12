@@ -1,5 +1,8 @@
 # Releases
 
+## 2.6.0
+  * PLAT-386: replace grunt plugin "grunt-http-server" by "cubx-grunt-http-server" which is capable of handling connecting to the remote store through proxy.
+
 ## 2.5.0
   * added grunt plugin "cubx-grunt-webpackage-chooser"
 
