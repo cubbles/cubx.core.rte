@@ -3,7 +3,7 @@
 module.exports = function (grunt) {
   return {
     tasks: {
-      'http-server': {
+      'cubx-http-server': {
         'dev': {
           // the server root directory
           root: '../<%= workspaceName %>/',
@@ -40,6 +40,9 @@ module.exports = function (grunt) {
 
           // open browser after start
           openBrowser: true
+
+          // set networkProxyUrl if you need to connect to given proxy server using a proxy
+          // networkProxyUrl: '[proto]://[host]:[port]' e.g. 'http://proxy:1234'
         }
       }
     }

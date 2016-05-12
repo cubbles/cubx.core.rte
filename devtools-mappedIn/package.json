@@ -1,7 +1,7 @@
 {
   "name": "cubbles-coder-devtools",
   "description": "This contains a suite of grunt-based tools to develop and release cubbles-webpackages.",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "private": true,
   "engines": {
     "node": ">= 0.10.0",
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "chalk": "~1.1.0",
+    "cubx-grunt-http-server": "^0.1.0",
     "cubx-grunt-webpackage-scaffold": "^2.4.0",
     "cubx-grunt-webpackage-chooser": "^0.1.0",
     "cubx-grunt-webpackage-upload": "^1.7.0",
@@ -34,7 +35,6 @@
     "grunt-file-exists": "^0.1.2",
     "grunt-gh-pages": "~0.9.1",
     "grunt-githooks": "^0.3.1",
-    "grunt-http-server": "^1.0.0",
     "grunt-jsdoc": "~0.6.7",
     "grunt-json-replace": "^0.1.2",
     "grunt-jsonlint": "~1.0.4",
