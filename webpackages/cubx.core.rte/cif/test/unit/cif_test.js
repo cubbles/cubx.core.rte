@@ -38,14 +38,14 @@ describe('CIF', function () {
       };
     });
     describe('compound component is registered', function () {
-      var _compoundComponentElements_ret;
+      var _compoundComponentElementsRet;
       beforeEach(function () {
-        _compoundComponentElements_ret = cif._compoundComponentElements;
+        _compoundComponentElementsRet = cif._compoundComponentElements;
         cif._compoundComponentElements = {};
         cif._compoundComponentElements[ compoundComponentName ] = constructor;
       });
       afterEach(function () {
-        cif._compoundComponentElements = _compoundComponentElements_ret;
+        cif._compoundComponentElements = _compoundComponentElementsRet;
       });
       it('should be a function', function () {
         var erg = cif.getCompoundComponentElementConstructor(compoundComponentName);

@@ -1,4 +1,4 @@
-/* eslint no-unused-vars: [2, { "varsIgnorePattern": "createTestConnection || include_template" }] */
+/* eslint no-unused-vars: [2, { "varsIgnorePattern": "createTestConnection" }] */
 'use strict';
 function createTestConnection (obj, staticFlag, internalFlag) {
   var con;
@@ -25,10 +25,3 @@ function createTestConnection (obj, staticFlag, internalFlag) {
   return con;
 }
 
-function include_template (url) {
-  var head = document.querySelector('head');
-  var linkTag = document.createElement('link');
-  linkTag.setAttribute('rel', 'import');
-  linkTag.setAttribute('href', url);
-  head.appendChild(linkTag);
-}

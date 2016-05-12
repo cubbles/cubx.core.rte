@@ -207,7 +207,7 @@ describe('CompoundComponent', function () {
       element = new constructor();
       container.appendChild(element);
       payloadObject = {};
-      payloadObject.payload = '{ \"foo\": 3 }';
+      payloadObject.payload = '{ "foo": 3 }';
       payloadObject.slot = 'testslot';
 
       fireModelChangeEventSpy = sinon.spy();
