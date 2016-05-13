@@ -2,6 +2,8 @@ language: node_js
 node_js: 4
 before_install:
  - npm install -g grunt-cli
+ - pwd
  - cp -p webpackages/.workspace.travis webpackages/.workspace
+ - ls -la webpackages
  - cd devtools-mappedIn
 script: npm test
