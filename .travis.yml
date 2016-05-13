@@ -3,6 +3,7 @@ node_js: 4
 before_install:
   - npm install -g grunt-cli
   - npm install -g eslint
+  - mv webpackages/.workspace.travis  webpackages/.workspace
   - cd devtools-mappedIn
 script:
  - npm test
