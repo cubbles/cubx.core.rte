@@ -65,7 +65,7 @@
     "sinon-chai": "^2.8.0"
   },
   "scripts": {
-    "test": "grunt _test --verbose"
+    "test": "grunt _test"
   },
   "repository": {
     "type": "git",
