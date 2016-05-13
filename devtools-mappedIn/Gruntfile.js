@@ -74,9 +74,9 @@ module.exports = function (grunt) {
           manifestWebpackagePath: manifestWebpackagePath,
           manifestWebpackage: manifestFileAsJSON,
           param: {
-            src: workspacePath + activeWebpackage,
-            dst: workspacePath + activeWebpackage + '@' + manifestFileAsJSON.version,
-            doc: '../docs/' + activeWebpackage
+            src: path.join(workspacePath, activeWebpackage),
+            dst: path.join(workspacePath, activeWebpackage + '@' + manifestFileAsJSON.version),
+            doc: path.join('..', 'docs', activeWebpackage)
           }
         };
         options = _.merge(options, webpackageRelatedOptions);
