@@ -893,7 +893,6 @@
       }
     }
   };
-
   /**
    * Return the node or (if Polymer exists) the Polymer wrapper of the node
    * @param {HTMLElement} node
