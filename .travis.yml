@@ -3,7 +3,5 @@ node_js: 4
 before_install:
   - npm install -g grunt-cli
   - cd devtools-mappedIn
-before_script:
-  - cd devtools-mappedIn
 script:
  - npm test
