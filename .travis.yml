@@ -6,4 +6,5 @@ before_install:
  - cp -p webpackages/.workspace.travis webpackages/.workspace
  - ls -la webpackages
  - cd devtools-mappedIn
-script: npm test
+script:
+  - npm test
