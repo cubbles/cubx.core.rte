@@ -1,10 +1,4 @@
 language: node_js
 node_js: 4
-before_install:
-  - npm install -g grunt-cli
-  - npm install -g eslint
-  - mv webpackages/.workspace.travis  webpackages/.workspace
-  - ls webpackages
-  - cd devtools-mappedIn
-script:
- - npm test
+before_install: ./travis_build.sh
+script: npm test
