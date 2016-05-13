@@ -9,10 +9,22 @@
     "email": "judit.ross@incowia.com"
   },
   "license": "MIT",
-  "keywords": [],
-  "man": [],
+  "keywords": [ ],
+  "man": [ ],
   "artifacts": {
-    "apps": [],
+    "apps": [
+      {
+        "artifactId": "cif-template-test",
+        "description": "",
+        "runnables": [
+          {
+            "name": "My Hello World App.",
+            "path": "/index.html",
+            "description": "Call this app as a simple demo."
+          }
+        ]
+      }
+    ],
     "elementaryComponents": [
       {
         "artifactId": "one-elementary",
@@ -268,7 +280,7 @@
             "resources": [
               "js/canvas.js"
             ],
-            "dependencies": []
+            "dependencies": [ ]
           },
           {
             "endpointId": "html-import",
@@ -276,7 +288,7 @@
             "resources": [
               "html-import.html"
             ],
-            "dependencies": []
+            "dependencies": [ ]
           }
         ]
       }

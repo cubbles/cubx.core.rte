@@ -64,6 +64,9 @@
     "mocha": "^2.4.5",
     "sinon-chai": "^2.8.0"
   },
+  "scripts": {
+    "test": "grunt _test"
+  },
   "repository": {
     "type": "git",
     "url": "https://pmt.incowia.de/webble/r/client/cubbles-coder-devtools.git"

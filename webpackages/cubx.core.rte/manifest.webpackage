@@ -124,7 +124,7 @@
             "resources": [
               "js/guid.js"
             ],
-            "dependencies": [ ]
+            "dependencies": []
           },
           {
             "endpointId": "guid-html-import",
@@ -132,7 +132,7 @@
             "resources": [
               "guid-html-import.html"
             ],
-            "dependencies": [ ]
+            "dependencies": []
           },
           {
             "endpointId": "dom-tree-utils",
@@ -140,7 +140,7 @@
             "resources": [
               "js/domTreeUtils.js"
             ],
-            "dependencies": [ ]
+            "dependencies": []
           },
           {
             "endpointId": "dom-tree-utils-html-import",
@@ -148,7 +148,7 @@
             "resources": [
               "dom-tree-utils.html"
             ],
-            "dependencies": [ ]
+            "dependencies": []
           }
         ]
       },
@@ -197,12 +197,12 @@
                 "prod": "html-import.min.html"
               }
             ],
-            "dependencies": [ ]
+            "dependencies": []
           }
         ]
       }
     ],
-    "compoundComponents": [ ],
-    "elementaryComponents": [ ]
+    "compoundComponents": [],
+    "elementaryComponents": []
   }
 }
