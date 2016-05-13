@@ -129,9 +129,18 @@
   /**
    * Returns a list af all crc Root Nodes that need to be provided with an own context
    * @return {array} An array of HTMLElements
+   * @deprecated
    */
   CIF.prototype.getCRCRootNodeList = function () {
     return [ window.cubx.CRC.getCRCElement() ];
+  };
+
+  /**
+   * Returns a crc Root Node that need to be provided with an own context
+   * @return {array} An array of HTMLElements
+   */
+  CIF.prototype.getCRCRootNode = function () {
+    return window.cubx.CRC.getCRCElement();
   };
 
   /**
@@ -157,6 +166,9 @@
    * @return {boolean} true if cif for that crc root is ready. False otherwise
    */
   CIF.prototype.isReady = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     var context = _.find(this._rootContextList, function (item) {
       return item.getRootElement() === node;
     }, this);
@@ -171,6 +183,9 @@
    * @return {boolean} true if all created elementaries  for that crc root are ready. False otherwise
    */
   CIF.prototype.isAllComponentsReady = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     return this._cifAllComponentsReady[ node ];
   };
 
@@ -187,21 +202,17 @@
     var self = this;
     //  Check if all components in the manifestCache has supported modelVersion
     this._checkModelVersionForAllComponents();
-    //  get nodeList and create new context for all nodes in nodeList
-    //  hold a reference to each context in the internal contexts array
-    //  in fact these contexts are all root contexts
-    var nodeList = this.getCRCRootNodeList();
-    for (var i = 0; i < nodeList.length; i++) {
-      var node = nodeList[ i ];
-      this._cifAllComponentsReady[ node ] = false;
+    //  get the crc root node node and create new context for it
 
-      if (!window.cubx.CRC.isReady()) {
-        node.addEventListener('crcReady', function () {
-          self._initForCRCRoot(node);
-        });
-      } else {
+    var node = this.getCRCRootNode();
+    this._cifAllComponentsReady[ node ] = false;
+
+    if (!window.cubx.CRC.isReady()) {
+      node.addEventListener('crcReady', function () {
         self._initForCRCRoot(node);
-      }
+      });
+    } else {
+      self._initForCRCRoot(node);
     }
   };
 
@@ -252,6 +263,9 @@
    * @private
    */
   CIF.prototype._afterCreatedElementsReady = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     this._createConnectionElements(node);
     this._initConnections();
     //  init Tags einfügen
@@ -284,6 +298,9 @@
    * @private
    */
   CIF.prototype._fireAllComponentsReady = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     if (window.cubx.CRC.getRuntimeMode() === 'dev') {
       console.log('------------------------allComponentsReady-------------');
     }
@@ -320,6 +337,9 @@
    * @private
    */
   CIF.prototype._initComposite = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     //  TODO composite fall interpretieren
     //  1.durch alle Kinder recursive iterieren - treeWalker
     //  jede Knoten prüfen, ob cubixx Element und die gefunden cubixx-Elemente  merken
@@ -343,6 +363,9 @@
    * @private
    */
   CIF.prototype._initStandalone = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     var tree;
     //  TODO   manuel in rootContext (crcRoot) erstellen
     var rootContext = this.createRootContext(node);
@@ -421,6 +444,9 @@
    * @private
    */
   CIF.prototype._determineRuntimeMode = function (crcRoot) {
+    if (!crcRoot) {
+      crcRoot = this.getCRCRootNode();
+    }
     var mode = '';
     //  TODO element in der manifestCache vorhanden ? || composit -> auch dann wenn andere html standardtags vorhanden sind.
     if (crcRoot && crcRoot.childElementCount === 1 && crcRoot.firstElementChild.tagName.indexOf('-')) {
@@ -815,7 +841,7 @@
     return Promise.all(promises);
   };
 
-	/**
+  /**
    * Import the template document and call resolve for the template id attribute equals with the parameter id, otherwise resolve with false.
    * @memberOf CIF
    * @param {HTMLLinkElement} importDoc - Link import Tag
@@ -823,7 +849,7 @@
    * @param resolve
    * @param reject
    * @private
-	 */
+   */
   CIF.prototype._resolveTemplateContent = function (importDoc, id, resolve, reject) {
     var content;
     var template;
@@ -874,7 +900,7 @@
    * @private
    */
   CIF.prototype._getNode = function (node) {
-    return window.Polymer && this._isElementaryComponent(node) ? window.Polymer.dom(node.root) : node;
+    return window.Polymer && typeof node.root === 'object' && this._isElementaryComponent(node) ? window.Polymer.dom(node.root) : node;
   };
   /**
    * Create html connection nodes for representing the connections defined in the manifest
@@ -1103,6 +1129,9 @@
    * @private
    */
   CIF.prototype._ready = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     var cifReadyEvent = null;
 
     if (node.Context) {
