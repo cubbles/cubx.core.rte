@@ -1,8 +1,8 @@
 'use strict';
 var fs = require('fs');
-
+var path = require('path');
 module.exports = function (grunt, workspacePath) {
-  var workspaceConfigFile = workspacePath + '.workspace';
+  var workspaceConfigFile = path.join(workspacePath, '.workspace');
   grunt.verbose.writeln('validate: ' + workspaceConfigFile);
   var workspaceConfigTemplate = {
     activeWebpackage: '',

@@ -34,6 +34,7 @@ module.exports = function (grunt) {
   var workspacePath = require('./lib/detect-workspace.js')(grunt, workspaceName);
   var workspaceConfigPath = path.join(workspacePath, '.workspace');
   grunt.verbose.writeln('workspacePath: ' + workspacePath);
+  grunt.verbose.writeln('workspaceConfigPath: ' + workspaceConfigPath);
   require('./lib/validate-workspace.js')(grunt, workspacePath);
 
   /**
