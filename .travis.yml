@@ -11,6 +11,6 @@ before_install:
  - sh -e /etc/init.d/xvfb start
  - sudo apt-get update
  - sudo apt-get install -y libappindicator1 fonts-liberation libstdc++6 lsb-base
- - apt-get install -y google-chrome-stable
+ - sudo apt-get install -y google-chrome-stable
 script:
   - npm test
