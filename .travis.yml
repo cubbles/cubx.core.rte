@@ -3,11 +3,6 @@ sudo: true
 node_js:
  - "4"
 before_install:
- - cat /etc/issue
- - cat /proc/version
- - uname -a
- - cat /etc/lsb-release
- - lsb_release -a
  - npm install -g grunt-cli
  - cp -p webpackages/.workspace.travis webpackages/.workspace
  - cd devtools-mappedIn
@@ -16,7 +11,6 @@ before_install:
  - sh -e /etc/init.d/xvfb start
  - sudo apt-get update
  - sudo apt-get install -y libappindicator1 fonts-liberation libstdc++6 lsb-base
- - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
- - sudo dpkg -i google-chrome*.deb
+ - apt-get install -y google-chrome-stable
 script:
   - npm test
