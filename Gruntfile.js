@@ -34,6 +34,7 @@ module.exports = function (grunt) {
   var workspacePath = require('./lib/detect-workspace.js')(grunt, workspaceName);
   var workspaceConfigPath = path.join(workspacePath, '.workspace');
   grunt.verbose.writeln('workspacePath: ' + workspacePath);
+  grunt.verbose.writeln('workspaceConfigPath: ' + workspaceConfigPath);
   require('./lib/validate-workspace.js')(grunt, workspacePath);
 
   /**
@@ -73,9 +74,9 @@ module.exports = function (grunt) {
           manifestWebpackagePath: manifestWebpackagePath,
           manifestWebpackage: manifestFileAsJSON,
           param: {
-            src: workspacePath + activeWebpackage,
-            dst: workspacePath + activeWebpackage + '@' + manifestFileAsJSON.version,
-            doc: '../docs/' + activeWebpackage
+            src: path.join(workspacePath, activeWebpackage),
+            dst: path.join(workspacePath, activeWebpackage + '@' + manifestFileAsJSON.version),
+            doc: path.join('..', 'docs', activeWebpackage)
           }
         };
         options = _.merge(options, webpackageRelatedOptions);
