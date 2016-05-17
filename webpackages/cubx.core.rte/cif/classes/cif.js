@@ -14,7 +14,7 @@
      * @type {Array}
      * @private
      */
-    this._rootContextList = [];
+    this._rootContext = null;
 
     /**
      * Holds an array of constructors for all compound component elements
@@ -85,7 +85,7 @@
      * @type {boolean}
      * @private
      */
-    this._cifAllComponentsReady = {};
+    this._cifAllComponentsReady = false;
 
     /**
      * map of elemnt waiting for create subtree
@@ -179,14 +179,10 @@
   /**
    *
    * @memberOf CIF
-   * @param {HTMLElement} node A crc root node
    * @return {boolean} true if all created elementaries  for that crc root are ready. False otherwise
    */
-  CIF.prototype.isAllComponentsReady = function (node) {
-    if (!node) {
-      node = this.getCRCRootNode();
-    }
-    return this._cifAllComponentsReady[ node ];
+  CIF.prototype.isAllComponentsReady = function () {
+    return this._cifAllComponentsReady;
   };
 
   /* ******************************************************************************************************/
@@ -199,13 +195,17 @@
    * @private
    */
   CIF.prototype._init = function () {
+    // create and set rootContext
+    var node = this.getCRCRootNode();
+
+    var rootContext = this.createRootContext(node);
+    this._rootContext = rootContext;
+    node.Context = this._rootContext;
+
     var self = this;
     //  Check if all components in the manifestCache has supported modelVersion
     this._checkModelVersionForAllComponents();
     //  get the crc root node node and create new context for it
-
-    var node = this.getCRCRootNode();
-    this._cifAllComponentsReady[ node ] = false;
 
     if (!window.cubx.CRC.isReady()) {
       node.addEventListener('crcReady', function () {
@@ -294,17 +294,18 @@
 
   /**
    * Fire the cifAllComponentsReady Event.
-   * @param {HTMLElement} node
+   * @param {HTMLNode} node A crc root-node
    * @private
    */
   CIF.prototype._fireAllComponentsReady = function (node) {
     if (!node) {
       node = this.getCRCRootNode();
     }
+
     if (window.cubx.CRC.getRuntimeMode() === 'dev') {
       console.log('------------------------allComponentsReady-------------');
     }
-    this._cifAllComponentsReady[ node ] = true;
+    this._cifAllComponentsReady = true;
     var evt = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY);
     node.dispatchEvent(evt);
   };
@@ -332,8 +333,8 @@
 
   /**
    * Initialize composite mode
+   * @param {HTMLNode} node A crc root-node
    * @memberOf CIF
-   * @param {HTMLElement} node A crc root node
    * @private
    */
   CIF.prototype._initComposite = function (node) {
@@ -359,46 +360,43 @@
 
   /**
    * @memberOf CIF
-   * @param {HTMLElement} node A crc root node
+   * @param {HTMLNode} node A crc root-node
    * @private
    */
   CIF.prototype._initStandalone = function (node) {
     if (!node) {
       node = this.getCRCRootNode();
     }
-    var tree;
-    //  TODO   manuel in rootContext (crcRoot) erstellen
-    var rootContext = this.createRootContext(node);
-    this._rootContextList.push(rootContext);
-    //  TODO   manuel an crcRoot setzen
-    node.Context = rootContext;
-
     var firstElement = node.firstElementChild;
-    var componentName = this._getTagname(firstElement);
+    this._initCubblesElementInRoot(firstElement);
+  };
+
+  CIF.prototype._initCubblesElementInRoot = function (element) {
+    var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
     var runtimeId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
-
-    if (this._isElementaryComponent(firstElement)) {
+    var tree;
+    if (this._isElementaryComponent(element)) {
       //  Dieses Attribute markiert Tags, die nicht durch CIF geschrieben werden
-      tree = firstElement;
+      tree = element;
       tree.setAttribute('runtime-id', runtimeId);
       if (!tree.isComponentReady) {
         this._componentReady[ runtimeId ] = {
           ready: false
         };
       }
-      rootContext.addComponent(tree); // add created component to contexts component list
+      this._rootContext.addComponent(tree); // add created component to contexts component list
       // set parent context if tree is a compound component (so it has a context)
       if (tree.hasOwnProperty('Context')) {
-        tree.Context.setParent(rootContext);
+        tree.Context.setParent(this._rootContext);
       }
     } else {
-      tree = this._createDOMTreeFromManifest(resolvedComponentManifest, firstElement);
+      tree = this._createDOMTreeFromManifest(resolvedComponentManifest, element);
       //  add the comonent to rootcontext BEVOR trigger CIF_COMPONENT_DOMTREE_READY event
-      rootContext.addComponent(tree); // add created component to contexts component list
+      this._rootContext.addComponent(tree); // add created component to contexts component list
       // set parent context if tree is a compound component (so it has a context)
       if (tree.hasOwnProperty('Context')) {
-        tree.Context.setParent(rootContext);
+        tree.Context.setParent(this._rootContext);
       }
     }
   };
