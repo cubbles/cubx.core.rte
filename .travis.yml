@@ -15,9 +15,6 @@ before_install:
  # - sudo apt-get install -y google-chrome-stable
  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
  - sudo dpkg -i google-chrome*.deb
-before_script:
- - pwd
- - ls -la /home/travis/build/jtrs/cubx.core.rte/webpackages/cubx.core.rte/cubxpolymer
 script:
  - grunt eslint
  - grunt karma
