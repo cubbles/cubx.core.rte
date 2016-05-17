@@ -3,6 +3,11 @@ sudo: true
 node_js:
  - "4"
 before_install:
+ - cat /etc/issue
+ - cat /proc/version
+ - uname -a
+ - cat /etc/lsb-release
+ - lsb_release -a
  - npm install -g grunt-cli
  - cp -p webpackages/.workspace.travis webpackages/.workspace
  - cd devtools-mappedIn
