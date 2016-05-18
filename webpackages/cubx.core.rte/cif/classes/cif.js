@@ -333,11 +333,11 @@
 
   /**
    * Initialize composite mode
-   * @param {HTMLNode} node A crc root-node
+   * @param {HTMLNode} rootNode A crc root-node
    * @memberOf CIF
    * @private
    */
-  CIF.prototype._initComposite = function (node) {
+  CIF.prototype._initComposite = function (rootNode) {
     if (!node) {
       node = this.getCRCRootNode();
     }
@@ -345,7 +345,25 @@
     //  1.durch alle Kinder recursive iterieren - treeWalker
     //  jede Knoten prüfen, ob cubixx Element und die gefunden cubixx-Elemente  merken
     //  für jedes cubixx element _initStandalona aufrufen (Achtung _initStandalone vorher anpassen!)
-    console.warn('composite mode not implemented yet.');
+
+    var walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_ELEMENT, null, false);
+    var node = walker.currentNode;
+    var elementList = [];
+    while (node) {
+      // Custom Tag
+      if (node.nodeType === node.ELEMENT_NODE && node.tagName.indexOf('-') > -1) {
+        var manifest = window.cubx.CRC.getCache().getComponentCacheEntry(this._getTagname(node));
+        if (typeof manifest === 'object') {
+          elementList.push(node);
+        }
+      }
+      node = walker.nextNode();
+    }
+
+    elementList.forEach(function (element) {
+      this._initCubblesElementInRoot(element);
+    }, this);
+    // console.warn('composite mode not implemented yet.');
   };
 
   /**
@@ -360,14 +378,14 @@
 
   /**
    * @memberOf CIF
-   * @param {HTMLNode} node A crc root-node
+   * @param {HTMLNode} rootNode A crc root-node
    * @private
    */
-  CIF.prototype._initStandalone = function (node) {
-    if (!node) {
-      node = this.getCRCRootNode();
+  CIF.prototype._initStandalone = function (rootNode) {
+    if (!rootNode) {
+      rootNode = this.getCRCRootNode();
     }
-    var firstElement = node.firstElementChild;
+    var firstElement = rootNode.firstElementChild;
     this._initCubblesElementInRoot(firstElement);
   };
 
@@ -407,9 +425,7 @@
    * @private
    */
   CIF.prototype._initConnections = function () {
-    _.forEach(this._rootContextList, function (context) {
-      context.initConnections();
-    });
+    this._rootContext.initConnections();
   };
 
   /**
@@ -423,9 +439,7 @@
     var cifInitStartEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_START);
     node.dispatchEvent(cifInitStartEvent);
     var me = this;
-    _.forEach(this._rootContextList, function (context) {
-      context.collectSlotInits(me);
-    });
+    this._rootContext.collectSlotInits(me);
     this._initializer.sortInitList();
     console.log('cif._initializer._initList (', this._initializer._initList.length, ')',
       this._initializer._initList);
