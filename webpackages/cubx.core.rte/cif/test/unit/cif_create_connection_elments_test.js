@@ -28,7 +28,6 @@ describe('CIF', function () {
       rootContextInitConnectionsStub = sinon.stub(rootContext, 'initConnections', function () {
         // do nothing
       });
-      cif._rootContextList = [];
     });
 
     afterEach(function () {

@@ -27,7 +27,6 @@ describe('CIF', function () {
       rootContextInitSlotsStub = sinon.stub(rootContext, 'collectSlotInits', function () {
         // do nothing
       });
-      cif._rootContextList = [];
     });
 
     afterEach(function () {
