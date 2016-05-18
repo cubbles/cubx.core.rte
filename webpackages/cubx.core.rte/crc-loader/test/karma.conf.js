@@ -18,6 +18,7 @@ module.exports = function (config) {
       'karma-mocha',
       'karma-sinon-chai',
       'karma-chrome-launcher',
+      'karma-firefox-launcher',
       'karma-coverage',
       'karma-htmlfile-reporter',
       'karma-mocha-reporter',
@@ -82,7 +83,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [ 'Chrome' ], //, 'Firefox', 'Chrome'
+    browsers: [ 'Chrome', 'Firefox' ], //, 'Firefox', 'Chrome'
     captureTimeout: 30000,
 
     // Continuous Integration mode
@@ -98,7 +99,7 @@ module.exports = function (config) {
   };
 
   if (process.env.TRAVIS) {
-    configuration.browsers = [ 'Chrome_travis_ci' ];
+    configuration.browsers = [ 'Chrome_travis_ci', 'FireFox' ];
   }
 
   config.set(configuration);
