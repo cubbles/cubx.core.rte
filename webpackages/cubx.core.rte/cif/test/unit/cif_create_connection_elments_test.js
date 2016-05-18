@@ -2,11 +2,8 @@
 
 describe('CIF', function () {
   var cif;
-  var Context;
-
   before(function () {
     cif = window.cubx.cif.cif;
-    Context = window.cubx.cif.Context;
   });
 
   describe('#CIF()', function () {
@@ -22,24 +19,13 @@ describe('CIF', function () {
   });
 
   describe('#_initConnections', function () {
-    var secondContainer;
     var rootContextInitConnectionsStub;
-    var secondRootContextInitConnectionsStub;
     var container;
     var rootContext;
-    var secondRootContext;
     beforeEach(function () {
       container = document.querySelector('[cubx-core-crc]');
       rootContext = container.Context;
-      secondContainer = document.createElement('div');
-      secondContainer.setAttribute('cubx-core-crc', null);
-      secondContainer.setAttribute('name', 'test2');
-      document.body.appendChild(secondContainer);
-      secondRootContext = new Context(secondContainer);
       rootContextInitConnectionsStub = sinon.stub(rootContext, 'initConnections', function () {
-        // do nothing
-      });
-      secondRootContextInitConnectionsStub = sinon.stub(secondRootContext, 'initConnections', function () {
         // do nothing
       });
       cif._rootContextList = [];
@@ -47,21 +33,12 @@ describe('CIF', function () {
 
     afterEach(function () {
       rootContext.initConnections.restore();
-      secondRootContext.initConnections.restore();
-      document.body.removeChild(secondContainer);
     });
 
     it('context.initConnections should be called once ', function () {
-      cif._rootContextList.push(rootContext);
+      cif._rootContext = rootContext;
       cif._initConnections();
       expect(rootContextInitConnectionsStub.calledOnce).to.be.true;
-    });
-    it('context.initConnections should be called  for each rootContext ', function () {
-      cif._rootContextList.push(rootContext);
-      cif._rootContextList.push(secondRootContext);
-      cif._initConnections();
-      expect(rootContextInitConnectionsStub.calledOnce).to.be.true;
-      expect(secondRootContextInitConnectionsStub.calledOnce).to.be.true;
     });
   });
   describe('#_createConnectionsElements', function () {

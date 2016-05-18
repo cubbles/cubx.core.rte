@@ -2,10 +2,9 @@
 
 describe('CIF', function () {
   var cif;
-  var Context;
+
   before(function () {
     cif = window.cubx.cif.cif;
-    Context = window.cubx.cif.Context;
   });
   describe('#CIF()', function () {
     it('should create a new cif object', function () {
@@ -20,23 +19,12 @@ describe('CIF', function () {
   });
   describe('#_initSlots', function () {
     var container;
-    var secondContainer;
     var rootContextInitSlotsStub;
-    var secondRootContextInitSlotsStub;
     var rootContext;
-    var secondRootContext;
     beforeEach(function () {
       container = document.querySelector('[cubx-core-crc]');
       rootContext = container.Context;
-      secondContainer = document.createElement('div');
-      secondContainer.setAttribute('cubx-core-crc', null);
-      secondContainer.setAttribute('name', 'test2');
-      document.body.appendChild(secondContainer);
-      secondRootContext = new Context(secondContainer);
       rootContextInitSlotsStub = sinon.stub(rootContext, 'collectSlotInits', function () {
-        // do nothing
-      });
-      secondRootContextInitSlotsStub = sinon.stub(secondRootContext, 'collectSlotInits', function () {
         // do nothing
       });
       cif._rootContextList = [];
@@ -44,21 +32,12 @@ describe('CIF', function () {
 
     afterEach(function () {
       rootContext.collectSlotInits.restore();
-      secondRootContext.collectSlotInits.restore();
-      document.body.removeChild(secondContainer);
     });
 
     it('context.initConnections should be called once ', function () {
-      cif._rootContextList.push(rootContext);
+      cif._rootContext = rootContext;
       cif._initSlots(container);
       expect(rootContextInitSlotsStub.calledOnce).to.be.true;
-    });
-    it('context.initConnections should be called  for each rootContext ', function () {
-      cif._rootContextList.push(rootContext);
-      cif._rootContextList.push(secondRootContext);
-      cif._initSlots(container);
-      expect(rootContextInitSlotsStub.calledOnce).to.be.true;
-      expect(secondRootContextInitSlotsStub.calledOnce).to.be.true;
     });
   });
   describe('#_createInitElements', function () {
