@@ -323,59 +323,59 @@ describe('CIF', function () {
       expect(cif._isCompoundComponentInManifest(manifestWithoutType, 'compoundComponent')).to.be.false;
     });
   });
-  describe('#_determineRuntimeMode', function () {
-    // runtimeMode = standalone just one element
-    // runtimeMode composit otherfalls
-    var container;
-    before(function () {
-      container = document.querySelector('[cubx-core-crc]');
-    });
-    describe('runtimeMode should be standalone', function () {
-      var cubixxElement;
-      beforeEach(function () {
-        cubixxElement = document.createElement('cubx-test');
-        container.appendChild(cubixxElement);
-      });
-      afterEach(function () {
-        container.removeChild(cubixxElement);
-      });
-      it('if crc container contains just one node', function () {
-        console.log('container.children.length', container.children.length);
-        expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.standalone);
-      });
-      it('if crc container contains just one element, but comments and text too', function () {
-        var comment = document.createComment('Kommentar');
-        var text = document.createTextNode('Text');
-        container.insertBefore(comment, cubixxElement);
-        container.insertBefore(text, cubixxElement);
-        expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.standalone);
-        container.removeChild(comment);
-        container.removeChild(text);
-      });
-    });
-    describe('runtimeMode should be composite', function () {
-      var cubixxElement;
-
-      beforeEach(function () {
-        cubixxElement = document.createElement('cubx-test');
-        container.appendChild(cubixxElement);
-      });
-      afterEach(function () {
-        container.removeChild(cubixxElement);
-      });
-      it('if crc container contains more than one element', function () {
-        var el = document.createElement('cubx-second-test');
-        container.appendChild(el);
-        expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.composite);
-        container.removeChild(el);
-      });
-    });
-    describe('runtimeMode should be none', function () {
-      it('if crc container contains one none custom element', function () {
-        expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.none);
-      });
-    });
-  });
+  // describe('#_determineRuntimeMode', function () {
+  //   // runtimeMode = standalone just one element
+  //   // runtimeMode composit otherfalls
+  //   var container;
+  //   before(function () {
+  //     container = document.querySelector('[cubx-core-crc]');
+  //   });
+  //   describe('runtimeMode should be standalone', function () {
+  //     var cubixxElement;
+  //     beforeEach(function () {
+  //       cubixxElement = document.createElement('cubx-test');
+  //       container.appendChild(cubixxElement);
+  //     });
+  //     afterEach(function () {
+  //       container.removeChild(cubixxElement);
+  //     });
+  //     it('if crc container contains just one node', function () {
+  //       console.log('container.children.length', container.children.length);
+  //       expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.standalone);
+  //     });
+  //     it('if crc container contains just one element, but comments and text too', function () {
+  //       var comment = document.createComment('Kommentar');
+  //       var text = document.createTextNode('Text');
+  //       container.insertBefore(comment, cubixxElement);
+  //       container.insertBefore(text, cubixxElement);
+  //       expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.standalone);
+  //       container.removeChild(comment);
+  //       container.removeChild(text);
+  //     });
+  //   });
+  //   describe('runtimeMode should be composite', function () {
+  //     var cubixxElement;
+  //
+  //     beforeEach(function () {
+  //       cubixxElement = document.createElement('cubx-test');
+  //       container.appendChild(cubixxElement);
+  //     });
+  //     afterEach(function () {
+  //       container.removeChild(cubixxElement);
+  //     });
+  //     it('if crc container contains more than one element', function () {
+  //       var el = document.createElement('cubx-second-test');
+  //       container.appendChild(el);
+  //       expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.composite);
+  //       container.removeChild(el);
+  //     });
+  //   });
+  //   describe('runtimeMode should be none', function () {
+  //     it('if crc container contains one none custom element', function () {
+  //       expect(cif._determineRuntimeMode(container)).to.equals(cif._runtimeModes.none);
+  //     });
+  //   });
+  // });
   describe('#_registerCompoundComponentElement', function () {
     it('should be register with component name "-"', function () {
       /* eslint-disable no-unused-vars*/

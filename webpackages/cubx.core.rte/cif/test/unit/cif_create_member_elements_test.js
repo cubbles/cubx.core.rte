@@ -18,7 +18,7 @@ describe('CIF', function () {
       expect(cif._initializer).to.be.instanceOf(window.cubx.cif.Initializer);
     });
   });
-  describe('#_initStandalone', function () {
+  describe('#_initComposite', function () {
     var container;
     var manifest;
     /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }]*/
@@ -91,7 +91,7 @@ describe('CIF', function () {
       crc.getResolvedComponent.restore();
     });
     it('should initialize the components', function (done) {
-      cif._initStandalone(container);
+      cif._initComposite(container);
       window.setTimeout(function () {
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -101,9 +101,9 @@ describe('CIF', function () {
       }, 500);
     });
   });
-  describe('#_initComposite', function () {
-    // do nothing at the moment
-  });
+  // describe('#_initComposite', function () {
+  //   // do nothing at the moment
+  // });
   describe('#_createDOMTreeFromManifest', function () {
     var container;
     var manifest;
@@ -173,16 +173,21 @@ describe('CIF', function () {
     });
 
     it('correct dom tree will be created with custom attributes', function (done) {
-      var id = manifest.webpackageId + '/' + manifest.artifactId;
+      var memberId = '1';
+      var componentId = manifest.webpackageId + '/' + manifest.artifactId;
+      var id = componentId + '.' + memberId;
       var elem = document.createElement(manifest.artifactId);
       elem.setAttribute('foo', 'bar');
       container.appendChild(elem);
+      elem.setAttribute('runtime-id', id);
+      elem.setAttribute('cubx-component-id', 'test.package-ciftest-a@0.1/ciftest-a');
+      elem.setAttribute('member-id', memberId);
       var domTree = cif._createDOMTreeFromManifest(manifest, elem);
       window.setTimeout(function () {
         domTree.should.have.property('tagName', manifest.artifactId.toUpperCase());
         expect(domTree.getAttribute('foo')).to.be.equal('bar');
         expect(domTree.getAttribute('cubx-component-id')).to.be.exist;
-        domTree.getAttribute('cubx-component-id').should.equals(id);
+        domTree.getAttribute('cubx-component-id').should.equals(componentId);
         expect(domTree.getAttribute('runtime-id')).to.be.exist;
         domTree.getAttribute('runtime-id').should.equals(id);
         domTree.should.have.property('_connections');

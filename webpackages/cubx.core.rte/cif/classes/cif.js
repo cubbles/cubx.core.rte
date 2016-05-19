@@ -57,16 +57,7 @@
      * @private
      */
     this._initializer = new window.cubx.cif.Initializer();
-    /**
-     * Static values for possible runtime modes
-     * @type {object}
-     * @private
-     */
-    this._runtimeModes = {
-      composite: 'composite', //  more then one tags (nested or not) or components used in crc root tag
-      standalone: 'standalone', //  only one single tag in crc root with tag name being the component name
-      none: 'none' //  no tags in crc root
-    };
+
     /**
      * Listed all allowed modelVersion.
      * @type {string[]}
@@ -222,7 +213,6 @@
    * @private
    */
   CIF.prototype._initForCRCRoot = function (node) {
-    var runtimeMode = this._determineRuntimeMode(node);
     var me = this;
     node.addEventListener(window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY, function () {
       me._afterCreatedElementsReady(node);
@@ -241,17 +231,8 @@
       }
     });
 
-    switch (runtimeMode) {
-      case this._runtimeModes.composite :
-        this._initComposite(node);
-        break;
-      case this._runtimeModes.standalone :
-        this._initStandalone(node);
-        break;
-      case this._runtimeModes.none :
-        this._ready(node);
-        return;
-    }
+    this._initComposite(node);
+
     if (_.isEmpty(this._componentReady)) {
       this._fireAllComponentsReady(node);
     }
@@ -341,11 +322,8 @@
     if (!node) {
       node = this.getCRCRootNode();
     }
-    //  TODO composite fall interpretieren
-    //  1.durch alle Kinder recursive iterieren - treeWalker
-    //  jede Knoten prüfen, ob cubixx Element und die gefunden cubixx-Elemente  merken
-    //  für jedes cubixx element _initStandalona aufrufen (Achtung _initStandalone vorher anpassen!)
-
+    // 1. iterate all over children recursive  - treeWalker - collect all cubbes components
+    // check all nodes of custom element and if the are cubbles (contained in crc/cache
     var walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_ELEMENT, null, false);
     var node = walker.currentNode;
     var elementList = [];
@@ -360,10 +338,11 @@
       node = walker.nextNode();
     }
 
+    var index = 1;
     elementList.forEach(function (element) {
-      this._initCubblesElementInRoot(element);
+      // 2. for each cubbles call _initCubblesElementInRoot
+      this._initCubblesElementInRoot(element, index++);
     }, this);
-    // console.warn('composite mode not implemented yet.');
   };
 
   /**
@@ -376,28 +355,39 @@
     return node.tagName.toLowerCase();
   };
 
-  /**
-   * @memberOf CIF
-   * @param {HTMLNode} rootNode A crc root-node
-   * @private
-   */
-  CIF.prototype._initStandalone = function (rootNode) {
-    if (!rootNode) {
-      rootNode = this.getCRCRootNode();
-    }
-    var firstElement = rootNode.firstElementChild;
-    this._initCubblesElementInRoot(firstElement);
-  };
-
-  CIF.prototype._initCubblesElementInRoot = function (element) {
+  CIF.prototype._initCubblesElementInRoot = function (element, memberIndex) {
     var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
-    var runtimeId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
+    var originMemeberId = element.getAttribute('member-id');
+    var originRuntimeId = element.getAttribute('runtime-id');
+    var originComponentId = element.getAttribute('cubx-component-id');
+    var componentId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
+    var memberId = originMemeberId || String(memberIndex);
+    var runtimeId = componentId + '.' + memberId;
     var tree;
+    this._rootContext.addComponent(element);
+    if (originRuntimeId && runtimeId !== originRuntimeId) {
+      console.log.warn('The "runtime-id" attribute was setted to a not correct value:' + originRuntimeId + ' Setting the correct value:' + runtimeId);
+      element.setAttribute('runtime-id', runtimeId);
+    }
+    if (!element.getAttribute('runtime-id')) {
+      element.setAttribute('runtime-id', runtimeId);
+    }
+
+    if (originComponentId && originComponentId !== componentId) {
+      console.log.warn('The "component-id" attribute was setted to a not correct value:' + originComponentId + ' Setting the correct value:' + componentId);
+      element.setAttribute('cubx-component-id', componentId);
+    }
+    if (!element.getAttribute('component-id')) {
+      element.setAttribute('cubx-component-id', componentId);
+    }
+    if (!originMemeberId) {
+      element.setAttribute('member-id', memberId);
+    }
     if (this._isElementaryComponent(element)) {
       //  Dieses Attribute markiert Tags, die nicht durch CIF geschrieben werden
       tree = element;
-      tree.setAttribute('runtime-id', runtimeId);
+      // tree.setAttribute('runtime-id', runtimeId);
       if (!tree.isComponentReady) {
         this._componentReady[ runtimeId ] = {
           ready: false
@@ -446,30 +436,6 @@
     this._initializer.initSlots();
     var cifInitReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_READY);
     node.dispatchEvent(cifInitReadyEvent);
-  };
-
-  /**
-   * Determine runtime mode for given crc root node
-   * @memberOf CIF
-   * @param {object} crcRoot The crcRoot node
-   * @return {string}
-   * @private
-   */
-  CIF.prototype._determineRuntimeMode = function (crcRoot) {
-    if (!crcRoot) {
-      crcRoot = this.getCRCRootNode();
-    }
-    var mode = '';
-    //  TODO element in der manifestCache vorhanden ? || composit -> auch dann wenn andere html standardtags vorhanden sind.
-    if (crcRoot && crcRoot.childElementCount === 1 && crcRoot.firstElementChild.tagName.indexOf('-')) {
-      mode = this._runtimeModes.standalone;
-    } else if (crcRoot && crcRoot.childElementCount > 1) {
-      mode = this._runtimeModes.composite;
-    } else {
-      mode = this._runtimeModes.none;
-    }
-
-    return mode;
   };
 
   /**
@@ -611,7 +577,7 @@
       throw new Error('The manifest referenz a different tag (' + manifest.artifactId +
         ') as in cubx-core-crc container found tag (' + root.tagName.toLowerCase() + ').');
     }
-    var runtimeId = manifest.webpackageId + '/' + manifest.artifactId;
+    var runtimeId = root.getAttribute('runtime-id');
     this._componentReady[ runtimeId ] = {
       ready: false,
       notReadyMembers: true
@@ -624,8 +590,7 @@
       root.attachedCallback();
     }
 
-    root.setAttribute('cubx-component-id', manifest.webpackageId + '/' + manifest.artifactId);
-    root.setAttribute('runtime-id', runtimeId);
+    // root.setAttribute('runtime-id', runtimeId);
 
     // if there are connections defined on this deeplevel append them to root node for later processing
     if (manifest.hasOwnProperty('connections')) {
@@ -642,7 +607,7 @@
       this._componentReady[ runtimeId ].notReadyMembers = true;
       this._attachMembers(root, manifest, 1);
     }
-
+    root.fireReadyEvent(runtimeId);
     return root;
   };
 
@@ -656,6 +621,7 @@
    */
   CIF.prototype._attachMembers = function (root, rootManifest, deeplevel) {
     var compId = root.getAttribute('cubx-component-id');
+    var rootRuntimeId = root.getAttribute('runtime-id');
     var artifactId = compId.substring(compId.lastIndexOf('/') + 1);
     var promise = this._findTemplate(artifactId);
     var me = this;
@@ -674,8 +640,8 @@
         } else {
           me._attachMembersFromManifest(root, rootManifest, deeplevel);
         }
-
-        me._componentReady[ root.getAttribute('runtime-id') ].notReadyMembers = false;
+        root.fireReadyEvent(rootRuntimeId);
+        me._componentReady[ rootRuntimeId ].notReadyMembers = false;
         if (!me._hasElementsWaitingForReady()) {
           me._fireAllComponentsReady(root);
         }

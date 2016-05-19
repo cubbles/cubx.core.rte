@@ -59,9 +59,9 @@
    */
   compoundComponent.attributeChangedCallback = function (attrName, oldVal, newVal) {
     //  the component not yet ready, and add attribute runtime-id
-    if (attrName === 'runtime-id' && newVal.length > 0 && !this._componentReady && this._componentAttached) {
-      this._fireReadyEvent(newVal);
-    }
+    // if (attrName === 'runtime-id' && newVal.length > 0 && !this._componentReady && this._componentAttached) {
+    //  this._fireReadyEvent(newVal);
+    // }
   };
   /**
    *  this callback is executed every time an attribute is attached to the domtree.
@@ -71,12 +71,12 @@
   compoundComponent.attachedCallback = function () {
     if (!this._componentAttached) {
       this._componentAttached = true;
-      var runtimeId = this.getAttribute('runtime-id');
+      // var runtimeId = this.getAttribute('runtime-id');
       //  runtime-id already added, but the component not ready
-      if (runtimeId && runtimeId.length > -1 && !this._componentReady) {
-        this._fireReadyEvent(runtimeId);
-        this._cifReady();
-      }
+      // if (runtimeId && runtimeId.length > -1 && !this._componentReady) {
+      //   this._fireReadyEvent(runtimeId);
+      //
+      // }
     }
   };
 
@@ -232,9 +232,6 @@
     });
     return manifest.slots;
   };
-  /* *******************************************************************/
-  /* ******************** private methods ******************************/
-  /* *******************************************************************/
 
   /**
    * Dispatch the componentReady event.
@@ -249,8 +246,8 @@
    * @param {string} runtimeId runtime id of the component
    * @private
    */
-  compoundComponent._fireReadyEvent = function (runtimeId) {
-    // console.log(this.tagName + '._fireReadyEvent ',runtimeId);
+  compoundComponent.fireReadyEvent = function (runtimeId) {
+    // console.log(this.tagName + '.fireReadyEvent ',runtimeId);
     this._componentReady = true;
     var componentReadyEvent = this.eventFactory.createEvent(window.cubx.EventFactory.types.COMPONENT_READY,
       {
@@ -258,6 +255,37 @@
       });
     // console.log('compoundComponent fireReady ', this.tagName.toLowerCase(), componentReadyEvent);
     this.dispatchEvent(componentReadyEvent);
+    this._cifReady();
+  };
+
+  /* *******************************************************************/
+  /* ******************** private methods ******************************/
+  /* *******************************************************************/
+
+  /**
+   * Set the slot model variable.
+   * @param {string} key slotId
+   * @param {*} value slot value
+   * @private
+   */
+  compoundComponent._setSlotValue = function (key, value) {
+    this.model[ key ] = value;
+  };
+
+  /**
+   * Set the model variable.
+   * @param {object} model
+   * @private
+   */
+  compoundComponent._setModel = function (model) {
+    this.model = model;
+  };
+
+  compoundComponent._outputHandlerForInternalConnections = function (slotId, value) {
+    // console.log('+++++++ call processConnections for internal connection', slotId, value);
+    //  process internal connections extra
+    var payloadObject = this._getEventFactory().createModelChangePayloadObject(slotId, value);
+    this.Context.processInternalConnections(slotId, payloadObject);
   };
 
   /**
@@ -309,30 +337,9 @@
     return exportDynamicConnections;
   };
 
-  compoundComponent._outputHandlerForInternalConnections = function (slotId, value) {
-    // console.log('+++++++ call processConnections for internal connection', slotId, value);
-    //  process internal connections extra
-    var payloadObject = this._getEventFactory().createModelChangePayloadObject(slotId, value);
-    this.Context.processInternalConnections(slotId, payloadObject);
-  };
-  /**
-   * Set the slot model variable.
-   * @param {string} key slotId
-   * @param {*} value slot value
-   * @private
-   */
-  compoundComponent._setSlotValue = function (key, value) {
-    this.model[ key ] = value;
-  };
-
-  /**
-   * Set the model variable.
-   * @param {object} model
-   * @private
-   */
-  compoundComponent._setModel = function (model) {
-    this.model = model;
-  };
+  /* *******************************************************************/
+  /* ******************** private methods ******************************/
+  /* *******************************************************************/
 
   /**
    * et the model variable,
