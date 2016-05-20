@@ -175,6 +175,8 @@ describe('CompoundComponent', function () {
     });
     after(function () {
       container.removeChild(element);
+      container.Context._children = [];
+      container.Context._component = [];
       // delete container.Context;
       window.cubx.CRC.getCache.restore();
       element.setAaa.restore();

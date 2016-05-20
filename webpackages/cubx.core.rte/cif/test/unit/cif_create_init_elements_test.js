@@ -82,6 +82,8 @@ describe('CIF', function () {
     after(function () {
       cif._createSlotInitElement.restore();
       container.removeChild(compoundEl);
+      container.Context._children = [];
+      container.Context._component = [];
     });
 
     it('Init Tags should be created under source Elements', function () {
@@ -123,6 +125,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('cubx-core-slot Tag should be created under member Element', function () {
         var inits = {
@@ -172,6 +176,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('cubx-core-slot Tag should be created', function () {
         var init = {

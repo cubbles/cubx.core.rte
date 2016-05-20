@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid */
 (function () {
   'use strict';
 
@@ -338,10 +338,9 @@
       node = walker.nextNode();
     }
 
-    var index = 1;
     elementList.forEach(function (element) {
       // 2. for each cubbles call _initCubblesElementInRoot
-      this._initCubblesElementInRoot(element, index++);
+      this._initCubblesElementInRoot(element);
     }, this);
   };
 
@@ -355,19 +354,20 @@
     return node.tagName.toLowerCase();
   };
 
-  CIF.prototype._initCubblesElementInRoot = function (element, memberIndex) {
+  CIF.prototype._initCubblesElementInRoot = function (element) {
     var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
     var originMemeberId = element.getAttribute('member-id');
+    var originId = element.getAttribute('id');
     var originRuntimeId = element.getAttribute('runtime-id');
     var originComponentId = element.getAttribute('cubx-component-id');
+    var memberId = originMemeberId || originId || guid();
     var componentId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
-    var memberId = originMemeberId || String(memberIndex);
     var runtimeId = componentId + '.' + memberId;
     var tree;
     this._rootContext.addComponent(element);
     if (originRuntimeId && runtimeId !== originRuntimeId) {
-      console.log.warn('The "runtime-id" attribute was setted to a not correct value:' + originRuntimeId + ' Setting the correct value:' + runtimeId);
+      console.warn('The "runtime-id" attribute is set to a not correct value:' + originRuntimeId + ' Setting the correct value:' + runtimeId);
       element.setAttribute('runtime-id', runtimeId);
     }
     if (!element.getAttribute('runtime-id')) {
@@ -375,15 +375,16 @@
     }
 
     if (originComponentId && originComponentId !== componentId) {
-      console.log.warn('The "component-id" attribute was setted to a not correct value:' + originComponentId + ' Setting the correct value:' + componentId);
+      console.warn('The "component-id" attribute is set to a not correct value:' + originComponentId + ' Setting the correct value:' + componentId);
       element.setAttribute('cubx-component-id', componentId);
     }
-    if (!element.getAttribute('component-id')) {
+    if (!originComponentId) {
       element.setAttribute('cubx-component-id', componentId);
     }
     if (!originMemeberId) {
       element.setAttribute('member-id', memberId);
     }
+
     if (this._isElementaryComponent(element)) {
       //  Dieses Attribute markiert Tags, die nicht durch CIF geschrieben werden
       tree = element;

@@ -51,8 +51,6 @@ describe('CIF', function () {
       var constructor = cif.getCompoundComponentElementConstructor('ciftest-a');
       compoundEl = new constructor();
       container.appendChild(compoundEl);
-      compoundEl.Context.setParent(container.Context);
-      container.Context.addComponent(compoundEl);
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-b');
       subElement1 = new constructor();
@@ -92,6 +90,8 @@ describe('CIF', function () {
     after(function () {
       cif._createConnectionElement.restore();
       container.removeChild(compoundEl);
+      container.Context._children = [];
+      container.Context._component = [];
     });
 
     it('connections Tags should be created under source Elements', function () {
@@ -121,8 +121,6 @@ describe('CIF', function () {
         var constructor = cif.getCompoundComponentElementConstructor('ciftest-a');
         compoundEl = new constructor();
         container.appendChild(compoundEl);
-        compoundEl.Context.setParent(container.Context);
-        container.Context.addComponent(compoundEl);
 
         constructor = cif.getCompoundComponentElementConstructor('ciftest-b');
         subElement1 = new constructor();
@@ -140,6 +138,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
@@ -186,6 +186,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
@@ -230,6 +232,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
@@ -279,6 +283,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
@@ -323,6 +329,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
@@ -372,6 +380,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -419,6 +429,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -465,6 +477,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -511,6 +525,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -557,6 +573,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -603,6 +621,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -651,6 +671,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -695,6 +717,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -743,6 +767,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -787,6 +813,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
@@ -835,6 +863,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under source Element', function () {
         var functionStr = 'function(value,next){ next(value);}';
@@ -880,6 +910,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var functionStr = 'function(value,next){ next(value);}';
@@ -927,6 +959,8 @@ describe('CIF', function () {
       });
       afterEach(function () {
         container.removeChild(compoundEl);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       it('connection Tag should be created under compound Element', function () {
         var functionStr = 'function(value,next){ next(value);}';

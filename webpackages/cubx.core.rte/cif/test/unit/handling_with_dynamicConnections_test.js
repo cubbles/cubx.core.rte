@@ -606,6 +606,8 @@ describe('Handling with DynamicConnections', function () {
       });
       after(function () {
         container.removeChild(parent);
+        container.Context._children = [];
+        container.Context._component = [];
       });
       beforeEach(function () {
         connectionId = elemOne.addDynamicConnection(dynamicConnection);
@@ -760,6 +762,8 @@ describe('Handling with DynamicConnections', function () {
     });
     after(function () {
       container.remove(parent);
+      container.Context._children = [];
+      container.Context._component = [];
     });
     describe('with sibling element connections from child-3 ', function () {
       var exportObj;
