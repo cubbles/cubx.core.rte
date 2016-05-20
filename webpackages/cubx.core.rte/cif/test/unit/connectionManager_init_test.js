@@ -514,7 +514,6 @@ describe('ConnectionManager', function () {
           });
 
           it('the created connection should be the right connection object', function () {
-            console.log('connection', connection);
             connection.should.have.property('source');
             connection.source.should.have.property('component', child);
             connection.source.should.have.property('memberId', '1');
@@ -572,7 +571,6 @@ describe('ConnectionManager', function () {
           });
 
           it('the created connection should be the right connection object', function () {
-            console.log('connection', connection);
             connection.should.have.property('source');
             connection.source.should.have.property('component', element);
             connection.source.should.have.property('memberId', 'self');

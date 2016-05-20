@@ -21,7 +21,7 @@ window.cubx.amd.define([], function () {
    * @memberOf CubxNamespace
    */
   CubxNamespace.prototype.resetNamespace = function (crc, message) {
-    console.log('CubxNamespace.resetNamespace(' + crc + ', ' + message + ')');
+    // console.log('CubxNamespace.resetNamespace(' + crc + ', ' + message + ')');
     window.cubx = {
       amd: window.cubx.amd,
       utils: {

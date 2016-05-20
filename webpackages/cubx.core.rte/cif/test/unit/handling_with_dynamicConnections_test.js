@@ -800,7 +800,6 @@ describe('Handling with DynamicConnections', function () {
       beforeEach(function () {
         var exportJson = child1.exportDynamicConnections();
         exportObj = JSON.parse(exportJson);
-        console.log('exportObj', JSON.stringify(exportObj));
       });
       it('should be exist', function () {
         expect(exportObj).to.be.exist;

@@ -207,7 +207,7 @@ describe('CubxPolymer (input/output)', function () {
         var spy;
         beforeEach(function () {
           var test = function (event) {
-            console.log(event.detail);
+            // console.log(event.detail);
           };
           spy = sinon.spy(test);
           component.addEventListener('cifModelChange', spy);

@@ -92,6 +92,10 @@ window.cubx.CRC.isReady = function () {
   return true;
 };
 
+window.cubx.CRC.getRuntimeMode = function () {
+  return 'dev';
+};
+
 function getCacheEntry () {
   return window.componentCacheEntry;
 }

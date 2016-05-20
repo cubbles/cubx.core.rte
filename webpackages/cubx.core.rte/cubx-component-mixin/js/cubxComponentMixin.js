@@ -214,10 +214,11 @@
       window.cubx.cif.cif.isAllComponentsReady(window.cubx.CRC.getCRCElement())) {
       var runtimeId = this.getRuntimeId();
       runtimeId = typeof runtimeId === 'undefined' ? '' : runtimeId;
-      console.log(
-        this.tagName.toLowerCase() + ' (runtimeId:' + runtimeId + ')._triggerModelChangeEvent for slot: ' +
-        slotId + '-> payload: ', modelEventPayload.payload);
-
+      if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+        console.log(
+          this.tagName.toLowerCase() + ' (runtimeId:' + runtimeId + ')._triggerModelChangeEvent for slot: ' +
+          slotId + '-> payload: ', modelEventPayload.payload);
+      }
       this.fireModelChangeEvent(modelEventPayload);
     }
   };

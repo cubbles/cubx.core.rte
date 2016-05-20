@@ -48,21 +48,7 @@
       this._generateAccessMethods();
     }
   };
-  /**
-   * this callback is executed every time an attribute is changed
-   * @param {string} attrName
-   * @param {string} oldVal
-   * @param {string} newVal
-   * @memberOf compoundComponent
-   * @method
-   * @memberOf compoundComponent
-   */
-  compoundComponent.attributeChangedCallback = function (attrName, oldVal, newVal) {
-    //  the component not yet ready, and add attribute runtime-id
-    // if (attrName === 'runtime-id' && newVal.length > 0 && !this._componentReady && this._componentAttached) {
-    //  this._fireReadyEvent(newVal);
-    // }
-  };
+
   /**
    *  this callback is executed every time an attribute is attached to the domtree.
    *  @method
@@ -71,12 +57,6 @@
   compoundComponent.attachedCallback = function () {
     if (!this._componentAttached) {
       this._componentAttached = true;
-      // var runtimeId = this.getAttribute('runtime-id');
-      //  runtime-id already added, but the component not ready
-      // if (runtimeId && runtimeId.length > -1 && !this._componentReady) {
-      //   this._fireReadyEvent(runtimeId);
-      //
-      // }
     }
   };
 

@@ -431,8 +431,9 @@
     var me = this;
     this._rootContext.collectSlotInits(me);
     this._initializer.sortInitList();
-    console.log('cif._initializer._initList (', this._initializer._initList.length, ')',
-      this._initializer._initList);
+    if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+      console.log('cif._initializer._initList (', this._initializer._initList.length, ')', this._initializer._initList);
+    }
     this._initializer.initSlots();
     var cifInitReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_READY);
     node.dispatchEvent(cifInitReadyEvent);

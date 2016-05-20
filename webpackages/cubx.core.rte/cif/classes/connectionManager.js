@@ -65,7 +65,9 @@
    * @param {object} payloadObject The payload object
    */
   ConnectionManager.prototype.processInternalConnections = function (slotName, payloadObject) {
-    console.log('processInternalConnections', this._context._rootElement, slotName, payloadObject);
+    if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+      console.log('processInternalConnections', this._context._rootElement, slotName, payloadObject);
+    }
     var internalConnections = _.filter(this._connections, function (item) {
       return item.internal;
     });
