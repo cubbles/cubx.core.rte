@@ -45,7 +45,7 @@
     this._initSlot = null;
 
     /**
-     * Holds a constructor to create a custom cubx-core-slot element
+     * Holds a constructor to create a custom cubx-core-slot-init element
      * @type {function}
      * @private
      */
@@ -338,9 +338,10 @@
       node = walker.nextNode();
     }
 
+    var memberIds = [];
     elementList.forEach(function (element) {
       // 2. for each cubbles call _initCubblesElementInRoot
-      this._initCubblesElementInRoot(element);
+      this._initCubblesElementInRoot(element, memberIds);
     }, this);
   };
 
@@ -354,7 +355,7 @@
     return node.tagName.toLowerCase();
   };
 
-  CIF.prototype._initCubblesElementInRoot = function (element) {
+  CIF.prototype._initCubblesElementInRoot = function (element, memberIds) {
     var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
     var originMemeberId = element.getAttribute('member-id');
@@ -364,10 +365,14 @@
     var memberId = originMemeberId || originId || guid();
     var componentId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
     var runtimeId = componentId + '.' + memberId;
+    if (_.includes(memberIds, memberId)) {
+      throw new Error('The member-id "' + memberId + '" is not uniq. The same memberId used before.');
+    }
+    memberIds.push(memberId);
     var tree;
     this._rootContext.addComponent(element);
     if (originRuntimeId && runtimeId !== originRuntimeId) {
-      console.warn('The "runtime-id" attribute is set to a not correct value:' + originRuntimeId + ' Setting the correct value:' + runtimeId);
+      console.warn('The "runtime-id" attribute is set to a not valid value: (' + originRuntimeId + '). It will set the correct value:' + runtimeId);
       element.setAttribute('runtime-id', runtimeId);
     }
     if (!element.getAttribute('runtime-id')) {
@@ -375,7 +380,7 @@
     }
 
     if (originComponentId && originComponentId !== componentId) {
-      console.warn('The "component-id" attribute is set to a not correct value:' + originComponentId + ' Setting the correct value:' + componentId);
+      console.warn('The "component-id" attribute is set to a not valid value (' + originComponentId + '). It will set the correct value:' + componentId);
       element.setAttribute('cubx-component-id', componentId);
     }
     if (!originComponentId) {
@@ -562,7 +567,7 @@
       this.setAttribute('deeplevel', deeplevel);
     };
 
-    this._slotInitElement = document.registerElement('cubx-core-slot', { prototype: InitSlotPrototype });
+    this._slotInitElement = document.registerElement('cubx-core-slot-init', { prototype: InitSlotPrototype });
   };
   /**
    * Returns the DOMTree on basis of manifest object representing the complete application including all it's used
@@ -1025,7 +1030,7 @@
         this._getNode(el).appendChild(cubxSlotInitEl);
       }
     }
-    // create cubx-core-slot element and add it to cubx-core-init element
+    // create cubx-core-slot-init element and add it to cubx-core-init element
 
     var cubxInitSlotEl = new this._slotInitElement();
     cubxInitSlotEl.setSlot(slotInit.slot);

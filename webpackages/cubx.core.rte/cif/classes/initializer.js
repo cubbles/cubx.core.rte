@@ -29,7 +29,7 @@
 
   /**
    * parse the elements for cubx-core-init  for the given context
-   * all subelement cubx-core-slot will readed and add to the init list
+   * all subelement cubx-core-slot-init will readed and add to the init list
    * @param {Context} context
    * @memberOf Initializer
    */
@@ -87,7 +87,7 @@
   };
 
   /**
-   * Parse the cubx-core-slot Tags and create a new SlotInit item.
+   * Parse the cubx-core-slot-init Tags and create a new SlotInit item.
    * @param {HTMLelement} component
    * @param {Context} context
    * @private
@@ -108,7 +108,7 @@
   };
 
   /**
-   * Iterate the cubx-core-slot HTMLElements, create for each an Initializer.SlotInit object and add to #_initList.
+   * Iterate the cubx-core-slo-init HTMLElements, create for each an Initializer.SlotInit object and add to #_initList.
    * @param {HTMLElement} element
    * @param {Context} context
    * @param {Array.<HTMLElement<InitSlotPrototype>>} initSlotElements

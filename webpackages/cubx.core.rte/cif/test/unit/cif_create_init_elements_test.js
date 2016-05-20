@@ -128,7 +128,7 @@ describe('CIF', function () {
         container.Context._children = [];
         container.Context._component = [];
       });
-      it('cubx-core-slot Tag should be created under member Element', function () {
+      it('cubx-core-slot-init Tag should be created under member Element', function () {
         var inits = {
           memberIdRef: '1', value: 'aaa', slot: 'testinput'
         };
@@ -140,7 +140,7 @@ describe('CIF', function () {
         member1.firstElementChild.should.have.property('tagName', 'CUBX-CORE-INIT');
         var initEl = member1.firstElementChild;
         expect(initEl.childElementCount).to.be.equals(1);
-        initEl.firstElementChild.should.have.property('tagName', 'CUBX-CORE-SLOT');
+        initEl.firstElementChild.should.have.property('tagName', 'CUBX-CORE-SLOT-INIT');
         var initSlot = initEl.firstElementChild;
         initSlot.attributes.should.be.length(3);
         initSlot.getAttribute('slot').should.be.equals(inits.slot);
@@ -189,7 +189,7 @@ describe('CIF', function () {
         compoundEl.firstElementChild.should.have.property('tagName', 'CUBX-CORE-INIT');
         var initEl = compoundEl.firstElementChild;
         expect(initEl.childElementCount).to.be.equals(1);
-        initEl.firstElementChild.should.have.property('tagName', 'CUBX-CORE-SLOT');
+        initEl.firstElementChild.should.have.property('tagName', 'CUBX-CORE-SLOT-INIT');
         var initSlot = initEl.firstElementChild;
         initSlot.attributes.should.be.length(4);
         initSlot.getAttribute('slot').should.be.equals(init.slot);

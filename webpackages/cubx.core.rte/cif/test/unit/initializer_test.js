@@ -57,7 +57,7 @@ describe('Initializer', function () {
   });
   describe('#_parseInitSlotsForElement', function () {
     function initSlot (parent, name, value) {
-      var initSlotEl = document.createElement('cubx-core-slot');
+      var initSlotEl = document.createElement('cubx-core-slot-init');
       initSlotEl.setSlot(name);
       initSlotEl.innerHTML = JSON.stringify(value);
       parent.appendChild(initSlotEl);
@@ -346,7 +346,7 @@ describe('Initializer', function () {
   });
   describe('#_addAllInitSlotEntriesToInitList', function () {
     function initSlot (name, value) {
-      var initSlotEl = document.createElement('cubx-core-slot');
+      var initSlotEl = document.createElement('cubx-core-slot-init');
       initSlotEl.setSlot(name);
       initSlotEl.innerHTML = JSON.stringify(value);
       return initSlotEl;
@@ -388,7 +388,7 @@ describe('Initializer', function () {
     var context;
     var initSlotEl;
     beforeEach(function () {
-      initSlotEl = document.createElement('cubx-core-slot');
+      initSlotEl = document.createElement('cubx-core-slot-init');
       initSlotEl.setSlot('slotA');
       initSlotEl.innerHTML = JSON.stringify('a');
       ;
@@ -511,7 +511,7 @@ describe('Initializer', function () {
       };
       var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
       var element = new constructor();
-      var initElement = document.createElement('cubx-core-slot');
+      var initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 1);
       initElement.setAttribute('slot', slotname);
       initElement.innerHTML = '"' + value + '"';
@@ -539,7 +539,7 @@ describe('Initializer', function () {
       initializer._initList = [];
       var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
       var element = new constructor();
-      var initElement = document.createElement('cubx-core-slot');
+      var initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 1);
       initElement.setAttribute('slot', 'example');
       initElement.innerHTML = '"aaa"';
@@ -548,7 +548,7 @@ describe('Initializer', function () {
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
       element = new constructor();
-      initElement = document.createElement('cubx-core-slot');
+      initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 1);
       initElement.setAttribute('slot', 'example');
       initElement.innerHTML = '"ddd"';
@@ -557,7 +557,7 @@ describe('Initializer', function () {
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test2');
       element = new constructor();
-      initElement = document.createElement('cubx-core-slot');
+      initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 2);
       initElement.setAttribute('slot', 'example');
       initElement.innerHTML = '"bbb"';
@@ -566,7 +566,7 @@ describe('Initializer', function () {
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
       element = new constructor();
-      initElement = document.createElement('cubx-core-slot');
+      initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 2);
       initElement.setAttribute('slot', 'example');
       initElement.innerHTML = '"ccc"';
@@ -593,7 +593,7 @@ describe('Initializer', function () {
       initializer._initList = [];
       var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
       var element = new constructor();
-      var initElement = document.createElement('cubx-core-slot');
+      var initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 1);
       initElement.setAttribute('slot', 'example');
       initElement.setAttribute('order', 1);
@@ -603,7 +603,7 @@ describe('Initializer', function () {
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test2');
       element = new constructor();
-      initElement = document.createElement('cubx-core-slot');
+      initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 2);
       initElement.setAttribute('slot', 'example');
       initElement.setAttribute('order', 4);
@@ -613,7 +613,7 @@ describe('Initializer', function () {
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
       element = new constructor();
-      initElement = document.createElement('cubx-core-slot');
+      initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 2);
       initElement.setAttribute('slot', 'example');
       initElement.setAttribute('order', 5);
@@ -623,7 +623,7 @@ describe('Initializer', function () {
 
       constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
       element = new constructor();
-      initElement = document.createElement('cubx-core-slot');
+      initElement = document.createElement('cubx-core-slot-init');
       initElement.setAttribute('deeplevel', 1);
       initElement.setAttribute('slot', 'example');
       initElement.setAttribute('order', 2);
@@ -667,7 +667,7 @@ describe('Initializer', function () {
         initializer._initList = [];
         var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
         var element = new constructor();
-        var initElement = document.createElement('cubx-core-slot');
+        var initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 1);
         initElement.setAttribute('deeplevel', 1);
         initElement.setAttribute('slot', 'example');
@@ -677,7 +677,7 @@ describe('Initializer', function () {
 
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test2');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 4);
         initElement.setAttribute('deeplevel', 2);
         initElement.setAttribute('slot', 'example');
@@ -687,7 +687,7 @@ describe('Initializer', function () {
 
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 5);
         initElement.setAttribute('deeplevel', 2);
         initElement.setAttribute('slot', 'example');
@@ -697,7 +697,7 @@ describe('Initializer', function () {
 
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 2);
         initElement.setAttribute('deeplevel', 1);
         initElement.setAttribute('slot', 'example');
@@ -729,7 +729,7 @@ describe('Initializer', function () {
 
         var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
         var element = new constructor();
-        var initElement = document.createElement('cubx-core-slot');
+        var initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 1);
         initElement.setAttribute('deeplevel', 1);
         initElement.setAttribute('slot', 'example');
@@ -740,7 +740,7 @@ describe('Initializer', function () {
         // 2
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test2');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 4);
         initElement.setAttribute('deeplevel', 2);
         initElement.setAttribute('slot', 'example');
@@ -751,7 +751,7 @@ describe('Initializer', function () {
         // 3
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 5);
         initElement.setAttribute('deeplevel', 2);
         initElement.setAttribute('slot', 'example');
@@ -762,7 +762,7 @@ describe('Initializer', function () {
         // 4
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 2);
         initElement.setAttribute('deeplevel', 1);
         initElement.setAttribute('slot', 'example');
@@ -773,7 +773,7 @@ describe('Initializer', function () {
         // 5
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test3');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 2);
         initElement.setAttribute('deeplevel', 1);
         initElement.setAttribute('type', 'internal');
@@ -785,7 +785,7 @@ describe('Initializer', function () {
         // 6
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 1);
         initElement.setAttribute('deeplevel', 1);
         initElement.setAttribute('slot', 'example');
@@ -797,7 +797,7 @@ describe('Initializer', function () {
         // 7
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 4);
         initElement.setAttribute('deeplevel', 2);
         initElement.setAttribute('slot', 'example');
@@ -809,7 +809,7 @@ describe('Initializer', function () {
         // 8
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-test');
         element = new constructor();
-        initElement = document.createElement('cubx-core-slot');
+        initElement = document.createElement('cubx-core-slot-init');
         initElement.setAttribute('order', 5);
         initElement.setAttribute('deeplevel', 2);
         initElement.setAttribute('slot', 'example');

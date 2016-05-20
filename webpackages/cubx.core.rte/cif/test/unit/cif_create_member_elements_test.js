@@ -112,7 +112,7 @@ describe('CIF', function () {
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('whith id, without member-id, runtime-id and component-id attributes', function () {
@@ -135,7 +135,7 @@ describe('CIF', function () {
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('whith id and member-id, without runtime-id and component-id attributes', function () {
@@ -161,7 +161,7 @@ describe('CIF', function () {
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('whitout id, member-id, runtime-id and  with existing correct component-id attribute', function () {
@@ -184,7 +184,7 @@ describe('CIF', function () {
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('whitout id, member-id, runtime-id and  with existing uncorrect component-id attribute', function () {
@@ -213,7 +213,7 @@ describe('CIF', function () {
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             spy.should.calledOnce;
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('whitout  member-id, runtime-id and  with id and existing correct runtime-id attribute', function () {
@@ -239,7 +239,7 @@ describe('CIF', function () {
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('whitout id, member-id, runtime-id and  with existing uncorrect runtime-id attribute', function () {
@@ -268,11 +268,10 @@ describe('CIF', function () {
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             spy.should.calledOnce;
             done();
-          }, 500);
+          }, 100);
         });
       });
     });
-
     describe('crcRoot contains one cubbles and other html elements', function () {
       var container;
       var manifest;
@@ -345,10 +344,11 @@ describe('CIF', function () {
         });
       });
       afterEach(function () {
-        var el = container.querySelector('ciftest-a');
-        container.removeChild(el);
-        el = container.querySelector('div');
-        container.removeChild(el);
+        var elList = container.children;
+        while (elList[ 0 ]) {
+          var el = elList[ 0 ];
+          container.removeChild(el);
+        }
         crc.getResolvedComponent.restore();
         container.Context._children = [];
         container.Context._components = [];
@@ -361,7 +361,7 @@ describe('CIF', function () {
           var ciftestB = ciftestA.firstElementChild;
           ciftestB.should.have.property('tagName', 'CIFTEST-B');
           done();
-        }, 500);
+        }, 100);
       });
     });
     describe('crcRoot contains 2 different cubbles', function () {
@@ -500,10 +500,11 @@ describe('CIF', function () {
         });
       });
       afterEach(function () {
-        var el = document.querySelector('ciftest-e');
-        container.removeChild(el);
-        el = document.querySelector('ciftest-a');
-        container.removeChild(el);
+        var elList = container.children;
+        while (elList[ 0 ]) {
+          var el = elList[ 0 ];
+          container.removeChild(el);
+        }
         crc.getResolvedComponent.restore();
         container.Context._children = [];
         container.Context._components = [];
@@ -528,7 +529,7 @@ describe('CIF', function () {
           var ciftestA2 = ciftestB2.nextElementSibling;
           ciftestA2.should.have.property('tagName', 'CIFTEST-A');
           done();
-        }, 500);
+        }, 100);
       });
     });
     describe('crcRoot contains 2 identical cubbles', function () {
@@ -604,9 +605,9 @@ describe('CIF', function () {
         });
       });
       afterEach(function () {
-        var elList = container.querySelectorAll('ciftest-a');
-        for (var i = 0; i < elList.length; i++) {
-          var el = elList[ i ];
+        var elList = container.children;
+        while (elList[ 0 ]) {
+          var el = elList[ 0 ];
           container.removeChild(el);
         }
         container.Context._children = [];
@@ -625,7 +626,200 @@ describe('CIF', function () {
           var ciftestB2 = ciftestA2.firstElementChild;
           ciftestB2.should.have.property('tagName', 'CIFTEST-B');
           done();
-        }, 500);
+        }, 100);
+      });
+    });
+    describe('crcRoot contains 3 cubbles', function () {
+      var container;
+      var manifestCiftestE;
+      var manifestCiftestA;
+      // eslint-disable-next-line no-unused-vars
+      var getResolvedComponentStub;
+      var crc;
+      var compoundEl;
+      var compoundEl2;
+      var compoundEl3;
+      beforeEach(function () {
+        crc = window.cubx.CRC;
+        container = document.querySelector('[cubx-core-crc]');
+        var constructor = cif.getCompoundComponentElementConstructor('ciftest-a');
+        compoundEl = new constructor();
+        container.appendChild(compoundEl);
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-e');
+        compoundEl2 = new constructor();
+        container.appendChild(compoundEl2);
+        compoundEl3 = new constructor();
+        container.appendChild(compoundEl3);
+        manifestCiftestE = {
+          webpackageId: 'test.package-ciftest-a@0.1/ciftest-e',
+          artifactId: 'ciftest-e',
+          artifactType: 'compoundComponent',
+          modelVersion: '8.0.0',
+          slots: [ {
+            slotId: 'testslotA'
+          } ],
+          members: [ {
+            componentId: 'test.package-ciftest-b@0.1/ciftest-b',
+            artifactType: 'elementaryComponent',
+            artifactId: 'ciftest-b',
+            memberId: 'B-Element',
+            slots: [ {
+              slotId: 'testslotB'
+            } ]
+          }, {
+            componentId: 'test.package-ciftest-c@0.1/ciftest-a',
+            artifactType: 'compoundComponent',
+            artifactId: 'ciftest-a',
+            memberId: 'A-element',
+            slots: [ {
+              slotId: 'testslotA'
+            } ],
+
+            members: [ {
+              componentId: 'test.package-ciftest-d@0.1/ciftest-d',
+              memberId: 'D-Element',
+              artifactType: 'elementaryComponent',
+              artifactId: 'ciftest-d',
+              slots: [ {
+                slotId: 'testslotD'
+              } ]
+
+            } ],
+            connections: [ {
+              connectionId: 'a-d', source: {
+                slot: 'testslotA'
+              }, destination: {
+                memberIdRef: 'D-Element', slot: 'testslotD'
+              }
+            } ]
+          } ],
+          connections: [ {
+            connectionId: 'b-a', source: {
+              memberIdRef: 'B-Element', slot: 'testslotB'
+            }, destination: {
+              memberIdRef: 'A-Element', slot: 'testslotA'
+            }
+          } ]
+        };
+        manifestCiftestA = {
+          webpackageId: 'test.package-ciftest-a@0.1/ciftest-a',
+          artifactId: 'ciftest-a',
+          artifactType: 'compoundComponent',
+          modelVersion: '8.0.0',
+          slots: [ {
+            slotId: 'testslotA'
+          } ],
+          members: [ {
+            componentId: 'test.package-ciftest-b@0.1/ciftest-b',
+            artifactType: 'elementaryComponent',
+            artifactId: 'ciftest-b',
+            memberId: 'B-Element',
+            slots: [ {
+              slotId: 'testslotB'
+            } ]
+          }, {
+            componentId: 'test.package-ciftest-c@0.1/ciftest-c',
+            artifactType: 'compoundComponent',
+            artifactId: 'ciftest-c',
+            memberId: 'C-element',
+            slots: [ {
+              slotId: 'testslotC'
+            } ],
+
+            members: [ {
+              componentId: 'test.package-ciftest-d@0.1/ciftest-d',
+              memberId: 'D-Element',
+              artifactType: 'elementaryComponent',
+              artifactId: 'ciftest-d',
+              slots: [ {
+                slotId: 'testslotD'
+              } ]
+
+            } ],
+            connections: [ {
+              connectionId: 'c-d', source: {
+                slot: 'testslotC'
+              }, destination: {
+                memberIdRef: 'D-Element', slot: 'testslotD'
+              }
+            } ]
+          } ],
+          connections: [ {
+            connectionId: 'b-c', source: {
+              memberIdRef: 'B-Element', slot: 'testslotB'
+            }, destination: {
+              memberIdRef: 'C-Element', slot: 'testslotC'
+            }
+          } ]
+        };
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+          var ergManifest;
+          switch (componentId) {
+            case 'ciftest-a' :
+              ergManifest = manifestCiftestA;
+              break;
+            case 'ciftest-e' :
+              ergManifest = manifestCiftestE;
+              break;
+            default:
+              break;
+
+          }
+          return ergManifest;
+        });
+      });
+      afterEach(function () {
+        var elems = container.children;
+        while (elems[ 0 ]) {
+          var el = elems[ 0 ];
+          container.removeChild(el);
+        }
+        crc.getResolvedComponent.restore();
+        container.Context._children = [];
+        container.Context._components = [];
+      });
+      describe('all elements without member-id', function () {
+        it('should initialize the components', function (done) {
+          cif._initComposite(container);
+          window.setTimeout(function () {
+            var ciftestA = container.firstElementChild;
+            ciftestA.should.have.property('tagName', 'CIFTEST-A');
+            ciftestA.getAttribute('member-id').should.have.exists;
+            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
+            ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
+            var ciftestB = ciftestA.firstElementChild;
+            ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            var ciftestE = ciftestA.nextElementSibling;
+            ciftestE.should.have.property('tagName', 'CIFTEST-E');
+            ciftestE.getAttribute('member-id').should.have.exists;
+            ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
+            ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
+            var ciftestB2 = ciftestE.firstElementChild;
+            ciftestB2.should.have.property('tagName', 'CIFTEST-B');
+            var ciftestA2 = ciftestB2.nextElementSibling;
+            ciftestA2.should.have.property('tagName', 'CIFTEST-A');
+            var ciftestE2 = ciftestE.nextElementSibling;
+            ciftestE2.should.have.property('tagName', 'CIFTEST-E');
+            ciftestE2.getAttribute('member-id').should.have.exists;
+            ciftestE2.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
+            ciftestE2.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE2.getAttribute('member-id'));
+
+            done();
+          }, 100);
+        });
+      });
+      describe('two elements has the same member-id', function () {
+        var memberId;
+        beforeEach(function () {
+          memberId = 'testId';
+          compoundEl.setAttribute('member-id', memberId);
+          compoundEl2.setAttribute('member-id', memberId);
+        });
+        it('should initialize the components', function () {
+          expect(function () {
+            cif._initComposite(container);
+          }).to.throw(Error, /The same memberId used before./);
+        });
       });
     });
   });
@@ -752,7 +946,7 @@ describe('CIF', function () {
         container.Context._children = [];
         container.Context._component = [];
         done();
-      }, 500);
+      }, 100);
     });
   });
   describe('#_attachMembers', function () {
@@ -811,7 +1005,7 @@ describe('CIF', function () {
           compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exists;
           compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
           done();
-        }, 500);
+        }, 100);
       });
     });
     describe('with template', function () {
@@ -923,7 +1117,7 @@ describe('CIF', function () {
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.exists;
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
             done();
-          }, 500);
+          }, 100);
         });
       });
       describe('template in first and second level', function () {
@@ -1033,7 +1227,7 @@ describe('CIF', function () {
 
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
             done();
-          }, 500);
+          }, 100);
         });
       });
     });
