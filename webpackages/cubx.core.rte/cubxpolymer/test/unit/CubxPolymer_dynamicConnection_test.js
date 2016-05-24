@@ -1,10 +1,13 @@
-/* globals getContainer,registerCompoundComponentElement,createNewElement */
+/* globals getContainer,registerCompoundComponentElement,createNewElement, HTMLImports */
 
 'use strict';
 describe('CubxPolymer (dynamicConnection', function () {
   var DynamicConnection;
-  before(function () {
+  before(function (done) {
     DynamicConnection = window.cubx.cif.DynamicConnection;
+    HTMLImports.whenReady(function () {
+      done();
+    });
   });
   describe('#addDynamicConnection', function () {
     var elem1;

@@ -1,13 +1,16 @@
-/* globals _,getContainer,createNewElement,registerCompoundComponentElement,initNewElement */
+/* globals _,getContainer,createNewElement,registerCompoundComponentElement,initNewElement, HTMLImports */
 /* eslint no-unused-vars: [2, {"varsIgnoredPattern":"initNewElement|getContainer|registerCompoundComponentElement|createNewElement|getContainer"}] */
 'use strict';
 describe('DynamicConnectionUtils', function () {
   var dynamicConnectionUtil;
   var Context;
-  before(function () {
+  before(function (done) {
     dynamicConnectionUtil = window.cubx.dynamicConnectionUtil;
     console.log('!!!DynamicConnectionUtils_test -> window.cubx.cif.cif', window.cubx.cif.cif);
     Context = window.cubx.cif.Context;
+    HTMLImports.whenReady(function () {
+      done();
+    });
   });
   describe('helper methoden', function () {
     var element;

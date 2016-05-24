@@ -1,6 +1,11 @@
-/* globals _,initNewElement,getTestComponentCacheEntry */
+/* globals _,initNewElement,getTestComponentCacheEntry, HTMLImports */
 'use strict';
 describe('CubxPolymer (init)', function () {
+  before(function (done) {
+    HTMLImports.whenReady(function () {
+      done();
+    });
+  });
   describe('CubxPolymer init', function () {
     describe('CubxPolymer create', function () {
       describe('element create with calling "CubxPolymer(prototyp)"', function () {

@@ -157,6 +157,35 @@
   /* *********************** private methods *************************/
   /* *****************************************************************/
 
+  cubxPolymerMixin._moveCubxElementChildren = function () {
+    this._moveCubxCoreConnections();
+    this._moveCubxCoreInit();
+  };
+
+  cubxPolymerMixin._moveCubxCoreConnections = function () {
+    this._moveCubxCoreElement('cubx-core-connections');
+  };
+
+  cubxPolymerMixin._moveCubxCoreInit = function () {
+    this._moveCubxCoreElement('cubx-core-init');
+  };
+
+  cubxPolymerMixin._moveCubxCoreElement = function (tagName) {
+    if (!tagName) {
+      return;
+    }
+    var elem = Polymer.dom(this).querySelector(tagName);
+    if (elem) {
+      elem = Polymer.dom(this).removeChild(elem);
+      if (Polymer.dom(this.root).children.length > 0) {
+        var firstElement = Polymer.dom(this.root).children[ 0 ];
+        Polymer.dom(this.root).insertBefore(elem, firstElement);
+      } else {
+        Polymer.dom(this.root).appendChild(elem);
+      }
+    }
+  };
+
   /**
    * Complement the component prototype with the cubbles specific methods.
    * @private
@@ -172,6 +201,8 @@
       throw new Error('Element name could not be inferred.');
     }
     this._wrapLifeCycleMethods();
+
+    // this._deleteAndSaveCubxElementChilren();
 
     if (!this.properties) {
       this.properties = {};
@@ -195,7 +226,6 @@
    * @memberOf cubxPolymerMixin
    */
   cubxPolymerMixin._wrapLifeCycleMethods = function () {
-    /* Wrapping lifecycle methods */
     if (this.hasOwnProperty('created')) {
       this.originCreated = this.created;
     }
@@ -225,6 +255,7 @@
      *
      */
     this.ready = function () {
+      this._moveCubxElementChildren();
       this._initValues();
       this._cifReady();
       if (this.originReady) {

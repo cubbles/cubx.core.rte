@@ -1,6 +1,11 @@
-/* globals initNewElement,getTestComponentCacheEntry */
+/* globals initNewElement,getTestComponentCacheEntry, HTMLImports */
 'use strict';
 describe('CubxPolymer (input/output)', function () {
+  before(function (done) {
+    HTMLImports.whenReady(function () {
+      done();
+    });
+  });
   describe('methods of slot variables exists ', function () {
     var elementName = 'dummy-set-method';
     var elementName2 = 'dummy-get-method';

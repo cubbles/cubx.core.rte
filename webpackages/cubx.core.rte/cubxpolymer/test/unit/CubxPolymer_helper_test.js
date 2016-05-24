@@ -1,6 +1,11 @@
-/* globals _,initNewElement,getTestComponentCacheEntry */
+/* globals _,initNewElement,getTestComponentCacheEntry,HTMLImports */
 'use strict';
 describe('CubxPolymer (helper)', function () {
+  before(function (done) {
+    HTMLImports.whenReady(function () {
+      done();
+    });
+  });
   describe('helper functions', function () {
     var elementName = 'dummy-helper';
     var component;

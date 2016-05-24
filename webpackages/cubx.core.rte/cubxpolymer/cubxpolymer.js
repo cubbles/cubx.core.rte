@@ -14,8 +14,12 @@
    */
   function CubxPolymer (prototype) {
     if (!prototype) {
-      prototype = {};
+      console.error('Missed prototype parameter');
     }
+    if (!prototype.is) {
+      console.error('the prototype parameter missed th "is" property');
+    }
+
     _.mixin(prototype, window.cubx.cubxPolymerMixin);
 
     prototype._initPrototypeForCubx();

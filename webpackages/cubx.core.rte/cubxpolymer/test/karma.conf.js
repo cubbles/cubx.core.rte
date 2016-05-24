@@ -17,7 +17,18 @@ module.exports = function (config) {
       'test/vendor/mocha-config.js',
       'test/mock/*.js',
       '../webcomponents/webcomponents-lite.js',
-      'https://webblebase.net/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
+      {
+        pattern: 'https://webblebase.net/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
+        included: false,
+        watched: true,
+        served: true
+      },
+      {
+        pattern: 'https://webblebase.net/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
+        included: false,
+        watched: true,
+        served: true
+      },
       '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../utilities/js/guid.js',
       '../cif/classes/dynamicConnection.js',
@@ -27,7 +38,6 @@ module.exports = function (config) {
       '../cif/classes/context.js',
       '../utilities/js/domTreeUtils.js',
       '../dynamic-connection-utils/js/dynamicConnectionUtils.js',
-      'https://webblebase.net/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
       'cubxPolymerMixin.js',
       'cubxpolymer.js',
       'test/helpers.js',
@@ -84,7 +94,8 @@ module.exports = function (config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     // browsers: ['PhantomJS'], //, 'Firefox', 'Chrome'
-    browsers: [ 'Chrome' ],
+    // browsers: [ 'Chrome' ],
+    browsers: [ 'Chrome', 'Firefox' ],
     captureTimeout: 10000,
 
     // Continuous Integration mode
@@ -100,7 +111,7 @@ module.exports = function (config) {
   };
 
   if (process.env.TRAVIS) {
-    configuration.browsers = [ 'Chrome_travis_ci' ];
+    configuration.browsers = [ 'Chrome_travis_ci', 'Firefox' ];
   }
 
   config.set(configuration);

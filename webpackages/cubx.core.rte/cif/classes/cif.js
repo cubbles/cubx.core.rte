@@ -369,7 +369,7 @@
       throw new Error('The member-id "' + memberId + '" is not uniq. The same memberId used before.');
     }
     memberIds.push(memberId);
-    var tree;
+    var current;
     this._rootContext.addComponent(element);
     if (originRuntimeId && runtimeId !== originRuntimeId) {
       console.warn('The "runtime-id" attribute is set to a not valid value: (' + originRuntimeId + '). It will set the correct value:' + runtimeId);
@@ -392,25 +392,25 @@
 
     if (this._isElementaryComponent(element)) {
       //  Dieses Attribute markiert Tags, die nicht durch CIF geschrieben werden
-      tree = element;
+      current = element;
       // tree.setAttribute('runtime-id', runtimeId);
-      if (!tree.isComponentReady) {
+      if (!current.isComponentReady) {
         this._componentReady[ runtimeId ] = {
           ready: false
         };
       }
-      this._rootContext.addComponent(tree); // add created component to contexts component list
+      this._rootContext.addComponent(current); // add created component to contexts component list
       // set parent context if tree is a compound component (so it has a context)
-      if (tree.hasOwnProperty('Context')) {
-        tree.Context.setParent(this._rootContext);
+      if (current.hasOwnProperty('Context')) {
+        current.Context.setParent(this._rootContext);
       }
     } else {
-      tree = this._createDOMTreeFromManifest(resolvedComponentManifest, element);
+      current = this._createDOMTreeFromManifest(resolvedComponentManifest, element);
       //  add the comonent to rootcontext BEVOR trigger CIF_COMPONENT_DOMTREE_READY event
-      this._rootContext.addComponent(tree); // add created component to contexts component list
+      this._rootContext.addComponent(current); // add created component to contexts component list
       // set parent context if tree is a compound component (so it has a context)
-      if (tree.hasOwnProperty('Context')) {
-        tree.Context.setParent(this._rootContext);
+      if (current.hasOwnProperty('Context')) {
+        current.Context.setParent(this._rootContext);
       }
     }
   };
@@ -539,19 +539,19 @@
     InitSlotPrototype.setSlot = function (slot) {
       this.setAttribute('slot', slot);
     };
-    InitSlotPrototype.getSlot = function (slot) {
+    InitSlotPrototype.getSlot = function () {
       return this.getAttribute('slot');
     };
     InitSlotPrototype.setMember = function (member) {
       this.setAttribute('member', member);
     };
-    InitSlotPrototype.getMember = function (member) {
+    InitSlotPrototype.getMember = function () {
       return this.getAttribute('member');
     };
     InitSlotPrototype.setOrder = function (order) {
       this.setAttribute('order', order);
     };
-    InitSlotPrototype.getOrder = function (order) {
+    InitSlotPrototype.getOrder = function () {
       return this.getAttribute('order');
     };
     InitSlotPrototype.getType = function () {

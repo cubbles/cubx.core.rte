@@ -76,3 +76,99 @@ function registerCompoundComponentElement (name) {
   var constructor = document.registerElement(name, { prototype: CompoundComponentPrototype });
   return constructor;
 }
+
+(function () {
+  var ConnectionPrototype = Object.create(HTMLElement.prototype);
+  ConnectionPrototype.setSource = function (slot) {
+    this.setAttribute('source', slot);
+  };
+  ConnectionPrototype.getSource = function () {
+    return this.getAttribute('source');
+  };
+  ConnectionPrototype.setDestination = function (slot, memberIndex) {
+    var destination = memberIndex != null ? memberIndex + ':' + slot : 'parent:' + slot;
+    this.setAttribute('destination', destination);
+  };
+  ConnectionPrototype.getDestination = function () {
+    return this.getAttribute('destination');
+  };
+  ConnectionPrototype.setType = function (type) {
+    this.setAttribute('type', type);
+  };
+  ConnectionPrototype.getType = function () {
+    return this.getAttribute('type');
+  };
+  ConnectionPrototype.setConnectionId = function (connectionId) {
+    this.setAttribute('connection-id', connectionId);
+  };
+  ConnectionPrototype.getConnectionId = function () {
+    return this.getAttribute('connection-id');
+  };
+  ConnectionPrototype.setCopyValue = function (copyValue) {
+    this.setAttribute('copy-value', copyValue);
+  };
+  ConnectionPrototype.getCopyValue = function () {
+    return this.getAttribute('copy-value');
+  };
+  ConnectionPrototype.setRepeatedValues = function (repeatedValues) {
+    this.setAttribute('repeated-values', repeatedValues);
+  };
+  ConnectionPrototype.getRepeatedValues = function () {
+    return this.getAttribute('repeated-values');
+  };
+  ConnectionPrototype.setHookFunction = function (hook) {
+    this.setAttribute('hook-function', hook);
+  };
+  ConnectionPrototype.getHookFunction = function () {
+    return this.getAttribute('hook-function');
+  };
+  window.cubx._connectionElement = document.registerElement('cubx-core-connection', { prototype: ConnectionPrototype });
+
+  var ConnectionsPrototype = Object.create(HTMLElement.prototype);
+  ConnectionsPrototype.createdCallback = function () {
+    this.style.display = 'none';
+  };
+  window.cubx._connectionsElement = document.registerElement('cubx-core-connections', { prototype: ConnectionsPrototype });
+})();
+
+(function () {
+  var InitPrototype = Object.create(HTMLElement.prototype);
+  InitPrototype.createdCallback = function () {
+    this.style.display = 'none';
+  };
+  window.cubx._initSlot = document.registerElement('cubx-core-init', { prototype: InitPrototype });
+
+  var InitSlotPrototype = Object.create(HTMLElement.prototype);
+  InitSlotPrototype.setSlot = function (slot) {
+    this.setAttribute('slot', slot);
+  };
+  InitSlotPrototype.getSlot = function () {
+    return this.getAttribute('slot');
+  };
+  InitSlotPrototype.setMember = function (member) {
+    this.setAttribute('member', member);
+  };
+  InitSlotPrototype.getMember = function () {
+    return this.getAttribute('member');
+  };
+  InitSlotPrototype.setOrder = function (order) {
+    this.setAttribute('order', order);
+  };
+  InitSlotPrototype.getOrder = function () {
+    return this.getAttribute('order');
+  };
+  InitSlotPrototype.getType = function () {
+    return this.getAttribute('type');
+  };
+  InitSlotPrototype.setType = function (type) {
+    this.setAttribute('type', type);
+  };
+  InitSlotPrototype.getDeepLevel = function () {
+    return this.getAttribute('deeplevel');
+  };
+  InitSlotPrototype.setDeepLevel = function (deeplevel) {
+    this.setAttribute('deeplevel', deeplevel);
+  };
+
+  window.cubx._slotInitElement = document.registerElement('cubx-core-slot-init', { prototype: InitSlotPrototype });
+})();

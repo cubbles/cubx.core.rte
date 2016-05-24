@@ -10,7 +10,7 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: [ 'mocha', 'sinon-chai' ],
+    frameworks: [ 'polymer', 'mocha', 'sinon-chai' ],
 
     // list of files / patterns to load in the browser
     files: [
@@ -18,6 +18,12 @@ module.exports = function (config) {
       '../cubxpolymer/test/vendor/mocha-config.js',
       '../cubxpolymer/test/mock/*.js',
       '../webcomponents/webcomponents-lite.js',
+      {
+        pattern: 'https://webblebase.net/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
+        included: false,
+        watched: true,
+        served: true
+      },
       'https://webblebase.net/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
       '../utilities/js/guid.js',
       '../utilities/js/domTreeUtils.js',
@@ -28,7 +34,7 @@ module.exports = function (config) {
       '../cif/classes/context.js',
       '../cif/classes/compoundComponent.js',
       '../cif/classes/dynamicConnection.js',
-      'https://webblebase.net/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
+
       '../cubxpolymer/cubxPolymerMixin.js',
       '../cubxpolymer/cubxpolymer.js',
       '../cubxpolymer/test/helpers.js',
