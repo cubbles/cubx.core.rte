@@ -208,7 +208,7 @@
   };
 
   /**
-   * Initialize the context of a crc container depend on runtime mode.
+   * Initialize the context of a crc container.
    * @param {HTMLElement} node root node
    * @private
    */
@@ -231,7 +231,7 @@
       }
     });
 
-    this._initComposite(node);
+    this._initCubxElements(node);
 
     if (_.isEmpty(this._componentReady)) {
       this._fireAllComponentsReady(node);
@@ -313,12 +313,12 @@
   };
 
   /**
-   * Initialize composite mode
+   * Initialize all cubx eements in crc container.
    * @param {HTMLNode} rootNode A crc root-node
    * @memberOf CIF
    * @private
    */
-  CIF.prototype._initComposite = function (rootNode) {
+  CIF.prototype._initCubxElements = function (rootNode) {
     if (!node) {
       node = this.getCRCRootNode();
     }
@@ -339,8 +339,13 @@
     }
 
     var memberIds = [];
+    var initOrder = 0;
     elementList.forEach(function (element) {
-      // 2. for each cubbles call _initCubblesElementInRoot
+      // 2. Update cubx-core-connection elements
+      this._updateCubxCoreConnections(element);
+      // 3. Update cubx-core-slot-init elements
+      initOrder = this._updateCubxCoreInit(element, initOrder);
+      // 4. for each cubbles call _initCubblesElementInRoot
       this._initCubblesElementInRoot(element, memberIds);
     }, this);
   };
@@ -355,6 +360,20 @@
     return node.tagName.toLowerCase();
   };
 
+  /**
+   * Init a root level cubbles element.
+   * The following tasks will be done:
+   * * If a memberId not exists, will generate a GUID as a memberId. It will check, of the memberIds are all uniq.
+   * * a runtimeId will be generated. An existing not valid runtimeId will overriden.
+   * * componentId will be genereted. An existing not valid componentId will overriden.
+   * * The element will be added to rootContext._components property.
+   * * If the element has a Context, the Context._parent will setted to the rootContext
+   * * If the elment is a compound component, the subtree will created.
+   * @memberOf CIF
+   * @param {HtmlElement} element
+   * @param {array} memberIds
+   * @private
+   */
   CIF.prototype._initCubblesElementInRoot = function (element, memberIds) {
     var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
@@ -411,6 +430,69 @@
       // set parent context if tree is a compound component (so it has a context)
       if (current.hasOwnProperty('Context')) {
         current.Context.setParent(this._rootContext);
+      }
+    }
+  };
+
+  /**
+   * Update the subtree from <cubx-core-init> element.
+   *  - It will remove <cubx-core-slot-init> elements with type="internal" attribute, because they are not allowed.
+   *  - It will update all <cubx-core-slot-init> children.
+   * @memberOf CIF
+   * @param {HtmlElement} element
+   * @param {number} initOrder
+   * @private
+   */
+  CIF.prototype._updateCubxCoreInit = function (element, initOrder) {
+    var cubxCoreInit = this._getNode(element).querySelector('cubx-core-init');
+    if (cubxCoreInit) {
+      var cubxCoreSlotinits = cubxCoreInit.querySelectorAll('cubx-core-slot-init');
+      var removeList = [];
+      var i;
+      for (i = 0; i < cubxCoreSlotinits.length; i++) {
+        if (cubxCoreSlotinits[ i ].getType() && cubxCoreSlotinits[ i ].getType() === 'internal') {
+          removeList.push(cubxCoreSlotinits[ i ]);
+        } else {
+          this._updateCubxCoreSlotInits(cubxCoreSlotinits[ i ], initOrder++);
+        }
+      }
+
+      for (i = removeList.length - 1; i >= 0; i--) {
+        console.error('Internal initialisation in root level per tags not allowed. The following init tag will be deleted: ', removeList[ i ]);
+        removeList[ i ].parentNode.removeChild(removeList[ i ]);
+      }
+    }
+    return initOrder;
+  };
+
+  /**
+   * Update <cubx-core-slot-init> Tags: add the order and deeplevel attribute.
+   * The deeplevel will have always the value of 0. Th order attribute will be setted to the value of the order paramemeter.
+   *
+   * @memberOf CIF
+   * @param {HtmlElement} cubxSlotInit the <cubx-core-slot-init> element
+   * @param {Number} order the init order
+   * @private
+   */
+  CIF.prototype._updateCubxCoreSlotInits = function (cubxSlotInit, order) {
+    cubxSlotInit.setOrder(order);
+    cubxSlotInit.setDeepLevel(0);
+  };
+  /**
+   * Update the subtree from <cubx-core-connections> element.
+   *  * It will remove <cubx-core-connection> elements with type="internal" attribute, because they are not allowed.
+   * @memberOf CIF
+   * @param element
+   * @private
+   */
+  CIF.prototype._updateCubxCoreConnections = function (element) {
+    var cubxCoreConnectionList = element.querySelectorAll('cubx-core-connection');
+    var i;
+    for (i = cubxCoreConnectionList.length - 1; i >= 0; i--) {
+      var con = cubxCoreConnectionList[ i ];
+      if (con.getType() && con.getType() === 'internal') {
+        console.error('Internal initialisation in root level per tags not allowed. The following connection tag will be deleted: ', con);
+        con.parentNode.removeChild(con);
       }
     }
   };
@@ -1017,33 +1099,33 @@
       console.error('_createSlotInitElement element not found root: ', root, 'slotInit', slotInit);
     }
     // get cubx-core-init tag or null
-    var cubxSlotInitEl = _.find(el.children, function (element) {
+    var cubxInitEl = _.find(el.children, function (element) {
       return element.tagName === 'cubx-core-init'.toUpperCase();
     });
 
     //  create cubx-core-init tag if there is no one yet for this node and insert it as first child
-    if (!cubxSlotInitEl) {
-      cubxSlotInitEl = new this._initSlot();
+    if (!cubxInitEl) {
+      cubxInitEl = new this._initSlot();
       if (el.childElementCount > 0) {
-        this._getNode(el).insertBefore(cubxSlotInitEl, this._getNode(el).firstElementChild);
+        this._getNode(el).insertBefore(cubxInitEl, this._getNode(el).firstElementChild);
       } else {
-        this._getNode(el).appendChild(cubxSlotInitEl);
+        this._getNode(el).appendChild(cubxInitEl);
       }
     }
     // create cubx-core-slot-init element and add it to cubx-core-init element
 
-    var cubxInitSlotEl = new this._slotInitElement();
-    cubxInitSlotEl.setSlot(slotInit.slot);
+    var cubxSlotInitEl = new this._slotInitElement();
+    cubxSlotInitEl.setSlot(slotInit.slot);
 
-    cubxInitSlotEl.innerHTML = JSON.stringify(slotInit.value);
+    cubxSlotInitEl.innerHTML = JSON.stringify(slotInit.value);
 
-    cubxInitSlotEl.setOrder(order);
-    cubxInitSlotEl.setDeepLevel(el._deeplevel);
+    cubxSlotInitEl.setOrder(order);
+    cubxSlotInitEl.setDeepLevel(el._deeplevel);
     if (!slotInit.memberIdRef) {
-      cubxInitSlotEl.setType('internal'); // mark connection as internal for this compoundComponent
+      cubxSlotInitEl.setType('internal'); // mark connection as internal for this compoundComponent
     }
 
-    cubxSlotInitEl.appendChild(cubxInitSlotEl);
+    cubxInitEl.appendChild(cubxSlotInitEl);
   };
 
   /**

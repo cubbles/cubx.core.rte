@@ -18,7 +18,7 @@ describe('CIF', function () {
       expect(cif._initializer).to.be.instanceOf(window.cubx.cif.Initializer);
     });
   });
-  describe('#_initComposite', function () {
+  describe('#_initCubxElements', function () {
     describe('crcRoot contains just one cubbles', function () {
       var container;
       var crc;
@@ -100,7 +100,7 @@ describe('CIF', function () {
         });
 
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -123,7 +123,7 @@ describe('CIF', function () {
         });
 
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -149,7 +149,7 @@ describe('CIF', function () {
         });
 
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -172,7 +172,7 @@ describe('CIF', function () {
         });
 
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -200,7 +200,7 @@ describe('CIF', function () {
           console.warn.restore();
         });
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -227,7 +227,7 @@ describe('CIF', function () {
         });
 
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -255,7 +255,7 @@ describe('CIF', function () {
           console.warn.restore();
         });
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -354,7 +354,7 @@ describe('CIF', function () {
         container.Context._components = [];
       });
       it('should initialize the components', function (done) {
-        cif._initComposite(container);
+        cif._initCubxElements(container);
         window.setTimeout(function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -510,7 +510,7 @@ describe('CIF', function () {
         container.Context._components = [];
       });
       it('should initialize the components', function (done) {
-        cif._initComposite(container);
+        cif._initCubxElements(container);
         window.setTimeout(function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -615,7 +615,7 @@ describe('CIF', function () {
         crc.getResolvedComponent.restore();
       });
       it('should initialize the components', function (done) {
-        cif._initComposite(container);
+        cif._initCubxElements(container);
         window.setTimeout(function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -780,7 +780,7 @@ describe('CIF', function () {
       });
       describe('all elements without member-id', function () {
         it('should initialize the components', function (done) {
-          cif._initComposite(container);
+          cif._initCubxElements(container);
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
@@ -817,7 +817,7 @@ describe('CIF', function () {
         });
         it('should initialize the components', function () {
           expect(function () {
-            cif._initComposite(container);
+            cif._initCubxElements(container);
           }).to.throw(Error, /The same memberId used before./);
         });
       });

@@ -208,7 +208,17 @@
      * @private
      * @memberOf SlotInit
      */
-    this._value = JSON.parse(initSlotElement.innerHTML);
+
+    this._value;
+    try {
+      this._value = JSON.parse(initSlotElement.innerHTML);
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        console.error('One of <cubx-core-slot-init> element contains a not valid JSON:', initSlotElement, ' This belongs to the following cubbles:', element);
+      } else {
+        console.error(err);
+      }
+    }
 
     /**
      * @type {number}
