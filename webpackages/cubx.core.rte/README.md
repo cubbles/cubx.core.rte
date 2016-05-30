@@ -92,24 +92,80 @@ oder Definition in der selben Webpackage
 ## CIF
 (Component Integration Framework)
 
-* Der Framework erstellt den HTML/Javascript Code für die Cubbles-Komponenten.
-* Der Framework integriert Komponenten über sog. 'Connections'.
+* Der Framework erstellt den HTML/Javascript Code für die Cubbles-Komponenten. Dabei werden alle in manifest.webpackage definierte members,
+Connections und Initialisierungen initialisiert bzw. durchgefürht. Bei Compound-Komponenten wird der Subtree generiert.
+* Es können gemischt Cubbles-Komponenten und anderen HTML-Tags vorhanden sein.
+* Cubbles Komponenten können in der Dom-Hierarchie in tiefern Ebenen vorhanden sein.
+* Cubbles Komponenten (slots) können mit Hilfe der Cubbles-HTML-API verbunden werden
+* Cubbles Komponenten (slots) können mit Hilfe der Cubbles-HTML-API initialisiert werden.
 
-## Standalone Fall
 
-Der Standalone FAll ist folgender Weise definiert:
-    * In der CRC-Root-Element (markiert mit attribute cubx-core-crc) gibt es genau ein HTML-Tag, und diese Tag ist ein Cubbles-Komponent.
+### Cubbles-HTML-API
+#### Connection zw. Cubbles definiern
 
-In Standalone Fall wird entweder ein Elementary-Komponent behandelt, oder der Dom-Baum eines Compound-Komponents erstellt.
-Dabei werden die Connections als HTML-Tags erzeugt.
+So sieht der Connectiondefinition aus:
 
-## Composite Fall
-Der Composit Fall ist folgender Weise definiert:
-    * In der CRC-Root-Element gibt es mehrere HTML Tags.
-    * Es können gemischt Cubbles-Komponenten und anderen HTML-Tags vorhanden sein.
-    * Cubbles Komponenten können in der Dom-Hierarchie in tiefern Ebenen vorhanden sein.
+    <cubx-core-connections>
+      <cubx-core-connection source="message", destination="myMemeber2:textInput" connectionId="connection1"></cubx-core-connection>
+      <cubx-core-connection source="switchOn", destination="myMemeber3:switch" connectionId="connection2"></cubx-core-connection>
+    </cubx-core-connections>
 
-*TODO: noch nicht realisiert!!*
+  * alle Connections werden im Content des Source-Elements definiert. Der Cubbles-Element hat `<cubx-core-connections>` Tag als Kind.
+  Die einzelne `<cubx-core-slot-init` Tags sind direkte Kinder von `<cubx-core-connections>`. (Die HTML-Elemente für Connections werden generell und nur im Content des Source-Elements definiert.)
+  * Eine einzelne Connection wird mit der Tag `<cubx-core-slot-init` und die Attribute `source`, `destination`, und `connection-id` definiert.
+      * `connection-id: eindeutige Identifikator des Connections innerhalb eines Contexts
+      * ``source`: source slot
+      * `destination`: id des Ziel-Komponents, und mit ":" getrennt der Ziel-Slot
+  * Die Ausführungsreihenfolge der Connections während der Laufziet ist identisch mit der Definitionsreihenfolge
+
+Beispiel:
+
+    <my-first-cubbles id="first">
+      <cubx-core-connections>
+            <cubx-core-connection source="message", destination="second:textInput" connectionId="connection1"></cubx-core-connection>
+      </cubx-core-connections>
+    </my-first-cubbles>
+    ...
+    <my-second-cubbles id="second"></my-second-cubbles>
+
+#### Initialisierung der Slots definieren
+
+So sieht die Initialisierungsdefinition aus:
+
+    <cubx-core-init>
+      <cubx-core-slot-init slot="message">"HalloWorld!"</cubx-core-slot-init>
+      <cubx-core-slot-init slot="count">5</cubx-core-slot-init>
+      <cubx-core-slot-init slot="on">true</cubx-core-slot-init>
+      <cubx-core-slot-init slot="config">{ "label": "Name", "value" : "Max Musternamm"}</cubx-core-slot-init>
+    </cubx-core-init>
+
+* Die Initialisierung wird im Content des Elements definiert: der Cubbles-Element hat `<cubx-core-init>` als Kindelement.
+* Die einzelne Slot-Initialisierungsdefinitionen erfolgen durch `<cubx-core-slot-init>` Tags.  (Kinder von `<cubx-core-init>`.)
+      * Der Attribute `slot` definiert, welcher Slot initialisiert wird,
+      * Text-Content des Element definiert den zu initialisierende Value als JSON.
+ * Die Ausführungsreihenfolge der Initialisierung  ist identisch mit der Definitionsreihenfolge im Dom-Baum.
+
+Beispiel:
+
+        <my-first-cubbles id="first">
+         <cubx-core-init>
+              <cubx-core-slot-init slot="message">"HalloWorld!"</cubx-core-slot-init>
+         </cubx-core-init>
+         <cubx-core-connections>
+               <cubx-core-connection source="message", destination="second:textInput" connectionId="connection1"></cubx-core-connection>
+         </cubx-core-connections>
+        </my-first-cubbles>
+        ...
+        <my-second-cubbles id="second">
+         <cubx-core-init>
+                      <cubx-core-slot-init slot="config">{
+                        "data": {
+                          "title": "Greeting"
+                        }</cubx-core-slot-init>
+                 </cubx-core-init>
+         </my-second-cubbles>
+
+#### Slots-Werte eines Cubbles initialisieren
 
 ## HTML Repräsentation der Komponenten
 
