@@ -524,6 +524,9 @@
    * @private
    */
   CIF.prototype._initSlots = function (node) {
+    if (!node) {
+      node = this.getCRCRootNode();
+    }
     var cifInitStartEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_START);
     node.dispatchEvent(cifInitStartEvent);
     var me = this;
