@@ -7,5 +7,4 @@
   if (!window.cubx.cif) {
     window.cubx.cif = {};
   }
-  console.log('!!!test setup -> window.cubx.cif', window.cubx.cif);
 })();

@@ -29,6 +29,7 @@ module.exports = function (config) {
       'classes/cif.js',
       'classes/dynamicConnection.js',
       'test/helper.js',
+      'test/beforeTest.js',
       'test/resources/*',
       'test/**/*_test.js'
     ],
@@ -82,6 +83,7 @@ module.exports = function (config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: [ 'Chrome', 'Firefox' ], //, 'Firefox', 'Chrome'
+    // use just Chrome for debugging in Webstorm
     // browsers: [ 'Chrome' ],
     captureTimeout: 6000,
 

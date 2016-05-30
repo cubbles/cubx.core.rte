@@ -95,7 +95,9 @@ module.exports = function (config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     // browsers: ['PhantomJS'], //, 'Firefox', 'Chrome'
     // browsers: [ 'Chrome' ],
-    browsers: [ 'Chrome', 'Firefox' ],
+    // browsers: [ 'Chrome', 'Firefox' ],
+    // use just Chrome for debugging in Webstorm
+    browsers: [ 'Chrome' ],
     captureTimeout: 10000,
 
     // Continuous Integration mode

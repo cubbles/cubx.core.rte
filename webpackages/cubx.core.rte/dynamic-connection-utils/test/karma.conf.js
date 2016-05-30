@@ -34,7 +34,6 @@ module.exports = function (config) {
       '../cif/classes/context.js',
       '../cif/classes/compoundComponent.js',
       '../cif/classes/dynamicConnection.js',
-
       '../cubxpolymer/cubxPolymerMixin.js',
       '../cubxpolymer/cubxpolymer.js',
       '../cubxpolymer/test/helpers.js',
@@ -88,8 +87,8 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    // browsers: ['PhantomJS'], //, 'Firefox', 'Chrome'
-    browsers: [ 'Chrome' ],
+    browsers: ['PhantomJS'], //, 'Firefox', 'Chrome'
+    // browsers: [ 'Chrome' ],
     captureTimeout: 10000,
 
     // Continuous Integration mode

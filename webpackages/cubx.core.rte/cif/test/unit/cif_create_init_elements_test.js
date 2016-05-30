@@ -21,9 +21,12 @@ describe('CIF', function () {
     var container;
     var rootContextInitSlotsStub;
     var rootContext;
+    var originRootContext;
     beforeEach(function () {
       container = document.querySelector('[cubx-core-crc]');
-      rootContext = container.Context;
+      originRootContext = container.Context;
+      rootContext = window.cubx.cif.cif.createRootContext(container);
+      window.cubx.cif.cif._rootContext = rootContext;
       rootContextInitSlotsStub = sinon.stub(rootContext, 'collectSlotInits', function () {
         // do nothing
       });
@@ -31,11 +34,12 @@ describe('CIF', function () {
 
     afterEach(function () {
       rootContext.collectSlotInits.restore();
+      window.cubx.cif.cif._rootContext = originRootContext;
     });
 
     it('context.initConnections should be called once ', function () {
-      cif._rootContext = rootContext;
       cif._initSlots(container);
+
       expect(rootContextInitSlotsStub.calledOnce).to.be.true;
     });
   });
@@ -83,7 +87,7 @@ describe('CIF', function () {
       cif._createSlotInitElement.restore();
       container.removeChild(compoundEl);
       container.Context._children = [];
-      container.Context._component = [];
+      container.Context._components = [];
     });
 
     it('Init Tags should be created under source Elements', function () {
@@ -126,7 +130,7 @@ describe('CIF', function () {
       afterEach(function () {
         container.removeChild(compoundEl);
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
       });
       it('cubx-core-slot-init Tag should be created under member Element', function () {
         var inits = {
@@ -177,7 +181,7 @@ describe('CIF', function () {
       afterEach(function () {
         container.removeChild(compoundEl);
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
       });
       it('cubx-core-slot Tag should be created', function () {
         var init = {

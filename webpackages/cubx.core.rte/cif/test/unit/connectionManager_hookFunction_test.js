@@ -263,7 +263,7 @@ describe('ConnectionManager', function () {
       after(function () {
         container.removeChild(parent);
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
         window.cubx.CRC.getCache().getComponentCacheEntry.restore();
       });
       describe('Call hoookFunction for connection 1', function () {
@@ -719,7 +719,7 @@ describe('ConnectionManager', function () {
       after(function () {
         container.removeChild(parent);
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
         window.cubx.CRC.getCache().getComponentCacheEntry.restore();
       });
       describe('Call hoookFunction for connection 1', function () {

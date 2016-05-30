@@ -16,6 +16,8 @@ function getContainer () {
     var containerEl = document.createElement('div');
     containerEl.setAttribute('cubx-core-crc', undefined);
     document.body.appendChild(containerEl);
+    window.cubx.cif.cif._rootContext = new window.cubx.cif.Context(containerEl);
+    containerEl.Context = window.cubx.cif.cif._rootContext;
     crcContainer = containerEl;
   }
   return crcContainer;

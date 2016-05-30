@@ -1,9 +1,5 @@
 'use strict';
-before(function () {
-  var container = document.querySelector('[cubx-core-crc]');
-  var rootContext = new window.cubx.cif.Context(container);
-  container.Context = rootContext;
-});
+
 describe('CIF', function () {
   var cif;
   var Context;

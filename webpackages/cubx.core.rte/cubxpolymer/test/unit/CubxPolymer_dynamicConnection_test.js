@@ -18,7 +18,7 @@ describe('CubxPolymer (dynamicConnection', function () {
     var elem2RuntimeId;
     before(function () {
       var container = getContainer();
-      container.Context = new window.cubx.cif.Context(container);
+      // container.Context = new window.cubx.cif.Context(container);
       var constructor = registerCompoundComponentElement('compound-element-add1');
       compElem = new constructor();
       compRuntimeId = 'com.incowia.dynamic-connection-test@1.2.0-SNAPSHOT/comp-elem-add1';
@@ -378,7 +378,7 @@ describe('CubxPolymer (dynamicConnection', function () {
     var elem2RuntimeId;
     before(function () {
       var container = getContainer();
-      container.Context = new window.cubx.cif.Context(container);
+      // container.Context = new window.cubx.cif.Context(container);
       var constructor = registerCompoundComponentElement('compound-element-remove1');
       compElem = new constructor();
       compRuntimeId = 'com.incowia.dynamic-connection-test@1.2.0-SNAPSHOT/comp-elem-remove1';
@@ -563,7 +563,7 @@ describe('CubxPolymer (dynamicConnection', function () {
 
     before(function () {
       var container = getContainer();
-      container.Context = new window.cubx.cif.Context(container);
+      // container.Context = new window.cubx.cif.Context(container);
       var constructor = registerCompoundComponentElement('compound-element-export1');
       compElem = new constructor();
       compRuntimeId = 'com.incowia.dynamic-connection-test@1.2.0-SNAPSHOT/comp-elem-export1';

@@ -92,13 +92,9 @@ describe('CIF', function () {
         container.removeChild(el);
         crc.getResolvedComponent.restore();
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
       });
       describe('whitout id, member-id, runtime-id and component-id attributes', function () {
-        beforeEach(function () {
-
-        });
-
         it('should initialize the components', function (done) {
           cif._initCubxElements(container);
           window.setTimeout(function () {
@@ -823,7 +819,6 @@ describe('CIF', function () {
       });
     });
   });
-
   describe('#_createDOMTreeFromManifest', function () {
     var container;
     var manifest;
@@ -944,7 +939,7 @@ describe('CIF', function () {
           .equals(manifest.members[ 1 ].members[ 0 ].memberId);
         container.removeChild(elem);
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
         done();
       }, 100);
     });
@@ -993,7 +988,7 @@ describe('CIF', function () {
       after(function () {
         container.removeChild(compoundEl);
         container.Context._children = [];
-        container.Context._component = [];
+        container.Context._components = [];
       });
       it('members should be attached to dom.', function (done) {
         cif._attachMembers(compoundEl, rootManifest);
@@ -1018,8 +1013,8 @@ describe('CIF', function () {
       describe('template in first level', function () {
         before(function () {
           container = document.querySelector('[cubx-core-crc]');
-          var parentContext = new Context(container);
-          container.Context = parentContext;
+          var parentContext = container.Context;
+
           var constructor = cif.getCompoundComponentElementConstructor('ciftest-template-a');
           compoundEl = new constructor();
           var context = new Context(compoundEl, parentContext);
@@ -1101,7 +1096,7 @@ describe('CIF', function () {
           container.removeChild(compoundEl);
           window.cubx.CRC.getCache().getComponentCacheEntry.restore();
           container.Context._children = [];
-          container.Context._component = [];
+          container.Context._components = [];
         });
         it('members should be attached as part of a template to dom.', function (done) {
           cif._attachMembers(compoundEl, rootManifest);
@@ -1123,8 +1118,8 @@ describe('CIF', function () {
       describe('template in first and second level', function () {
         before(function () {
           container = document.querySelector('[cubx-core-crc]');
-          var parentContext = new Context(container);
-          container.Context = parentContext;
+          var parentContext = container.Context;
+          // container.Context = parentContext;
           var constructor = cif.getCompoundComponentElementConstructor('ciftest-template-a-2');
           compoundEl = new constructor();
           var context = new Context(compoundEl, parentContext);
@@ -1206,7 +1201,7 @@ describe('CIF', function () {
           container.removeChild(compoundEl);
           window.cubx.CRC.getCache().getComponentCacheEntry.restore();
           container.Context._children = [];
-          container.Context._component = [];
+          container.Context._components = [];
         });
         it('members should be attached as part of a template to dom.', function (done) {
           cif._attachMembers(compoundEl, rootManifest);
@@ -1232,4 +1227,5 @@ describe('CIF', function () {
       });
     });
   });
-});
+})
+;

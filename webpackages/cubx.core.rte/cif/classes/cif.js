@@ -322,20 +322,30 @@
     if (!node) {
       node = this.getCRCRootNode();
     }
+
+    var filter = { acceptNode: function (currNode) {
+      var except = [ 'CUBX-CORE-CONNECTIONS', 'CUBX-CORE-CONNECTION', 'CUBX-CORE-INIT', 'CUBX-CORE-SLOT-INIT' ];
+      if (currNode.nodeType === currNode.ELEMENT_NODE && currNode.tagName.indexOf('-') > -1 && except.indexOf(currNode.tagName) === -1) {
+        return NodeFilter.FILTER_ACCEPT;
+      } else {
+        return NodeFilter.FILTER_REJECT;
+      }
+    }};
+
+    var safeFilter = filter.acceptNode;
+    safeFilter.acceptNode = filter.acceptNode;
+
     // 1. iterate all over children recursive  - treeWalker - collect all cubbes components
     // check all nodes of custom element and if the are cubbles (contained in crc/cache
-    var walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_ELEMENT, null, false);
+    var walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_ELEMENT, safeFilter, false);
     var node = walker.currentNode;
     var elementList = [];
-    while (node) {
-      // Custom Tag
-      if (node.nodeType === node.ELEMENT_NODE && node.tagName.indexOf('-') > -1) {
-        var manifest = window.cubx.CRC.getCache().getComponentCacheEntry(this._getTagname(node));
-        if (typeof manifest === 'object') {
-          elementList.push(node);
-        }
+    while (walker.nextNode()) {
+      var curNode = walker.currentNode;
+      var manifest = window.cubx.CRC.getCache().getComponentCacheEntry(this._getTagname(curNode));
+      if (typeof manifest === 'object') {
+        elementList.push(curNode);
       }
-      node = walker.nextNode();
     }
 
     var memberIds = [];
@@ -345,8 +355,8 @@
       this._updateCubxCoreConnections(element);
       // 3. Update cubx-core-slot-init elements
       initOrder = this._updateCubxCoreInit(element, initOrder);
-      // 4. for each cubbles call _initCubblesElementInRoot
-      this._initCubblesElementInRoot(element, memberIds);
+      // 4. for each cubbles call _initCubxElementsInRoot
+      this._initCubxElementsInRoot(element, memberIds);
     }, this);
   };
 
@@ -374,7 +384,7 @@
    * @param {array} memberIds
    * @private
    */
-  CIF.prototype._initCubblesElementInRoot = function (element, memberIds) {
+  CIF.prototype._initCubxElementsInRoot = function (element, memberIds) {
     var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
     var originMemeberId = element.getAttribute('member-id');
@@ -418,7 +428,7 @@
           ready: false
         };
       }
-      this._rootContext.addComponent(current); // add created component to contexts component list
+      // this._rootContext.addComponent(current); // add created component to contexts component list
       // set parent context if tree is a compound component (so it has a context)
       if (current.hasOwnProperty('Context')) {
         current.Context.setParent(this._rootContext);
@@ -426,7 +436,7 @@
     } else {
       current = this._createDOMTreeFromManifest(resolvedComponentManifest, element);
       //  add the comonent to rootcontext BEVOR trigger CIF_COMPONENT_DOMTREE_READY event
-      this._rootContext.addComponent(current); // add created component to contexts component list
+      // this._rootContext.addComponent(current); // add created component to contexts component list
       // set parent context if tree is a compound component (so it has a context)
       if (current.hasOwnProperty('Context')) {
         current.Context.setParent(this._rootContext);
