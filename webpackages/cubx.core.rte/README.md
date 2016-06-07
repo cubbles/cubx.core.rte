@@ -328,3 +328,4 @@ Wenn der `hookFunction` für Validierung der propagierten Daten verwendet wird, 
 Ein Abbruch der Datentransport wird  dadurch erreicht, dass der `next`-Funktion _nicht_ aufgerufen wird.
 
 
+[![Build Status](https://travis-ci.org/cubbles/cubx.core.rte.svg?branch=master)](https://travis-ci.org/cubbles/cubx.core.rte)
