@@ -130,11 +130,15 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     }
   })();
 
+  /*
+   * Check if Browser has global Promise object. If not DepMgr will add the es6-promise polyfill at the beginning of
+   * resolving dependencies
+   */
   (function () {
     if (window.Promise !== 'function') {
-      cubx.CRCInit.pollyfillPromise = true;
+      cubx.CRCInit.polyfillPromise = true;
     } else {
-      cubx.CRCInit.pollyfillPromise = false;
+      cubx.CRCInit.polyfillPromise = false;
     }
   })();
   /*

@@ -97,7 +97,8 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
       rootDependencies.unshift(get(window, 'cubx.CRCInit.rteWebpackageId') + '/cif/main');
     }
 
-    if (get(window, 'cubx.CRCInit.pollyfillPromise') === true) {
+    // load es6-promise polyfill if necessary
+    if (get(window, 'cubx.CRCInit.polyfillPromise') === true) {
       console.log('Pushing es6-promise (polyfill) into the dependencies ...');
       rootDependencies.unshift(get(window, 'cubx.CRCInit.rteWebpackageId') + '/es6-promise/html-import');
     }
