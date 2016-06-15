@@ -1,4 +1,11 @@
 [
     "package1@1.0.0/util1/main",
-    "package2@1.0.0/util1/main"
+    {
+      "endpoint": "package2@1.0.0/util1/main",
+      "manifest": {
+        "propA": "valueA"
+      },
+      "manifestUrl": "www.example.com/manifest.webpackage"
+    }
+
 ]
