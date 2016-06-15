@@ -349,14 +349,40 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
       if (!dependencies) {
         return depList;
       }
+
       // console.log(typeof dependencies)
       dependencies.forEach(function (dependency) {
-        if (typeof dependency === 'string') {
+        var valid = true; // just a flag for used for skipping the processing of current dependency when it is invalid
+        // object with at least string property 'endpoint'
+        var dep = {
+          endpoint: null
+        };
+
+        // check if dependency is of type 'object' and has at least string property 'endpoint'
+        if (typeof dependency === 'object' && dependency.hasOwnProperty('endpoint') && typeof dependency.endpoint === 'string') {
+          dep.endpoint = dependency.endpoint;
+          // set manifest if available
+          if (dependency.hasOwnProperty('manifest') && typeof dependency.manifest === 'object') {
+            dep.manifest = dependency.manifest;
+          }
+          // set manifestUrl if available
+          if (dependency.hasOwnProperty('manifestUrl') && typeof dependency.manifestUrl === 'string') {
+            dep.manifestUrl = dependency.manifestUrl;
+          }
+        } else if (typeof dependency === 'string') {
+          dep.endpoint = dependency;
+        } else {
+          console.error('Expected parameter to be a string or an object containing at least string property "endpoint": ', dependency);
+          valid = false;
+        }
+
+        // continue processing of current dependency only if it's a valid one
+        if (valid) {
           var depReferenceInitObject = {
             'referrer': referrer
           };
           // check if this is a webpackage-internal dependency
-          if (dependency.indexOf('this') === 0) {
+          if (dep.endpoint.indexOf('this') === 0) {
             var regex = /^(.*)?@([^\/]*)/;
             var regErg = regex.exec(referrer);
             var referrerPath;
@@ -365,13 +391,19 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
             } else {
               referrerPath = regErg ? (regErg[ 0 ] || '') : '';
             }
-            depReferenceInitObject.dependency = referrerPath + dependency.substr('this'.length);
+            depReferenceInitObject.dependency = referrerPath + dep.endpoint.substr('this'.length);
           } else {
-            depReferenceInitObject.dependency = dependency;
+            depReferenceInitObject.dependency = dep.endpoint;
+          }
+          // add manifest if available
+          if (dep.manifest) {
+            depReferenceInitObject.manifest = dep.manifest;
+          }
+          // add manifestUrl if available
+          if (dep.manifestUrl) {
+            depReferenceInitObject.manifestUrl = dep.manifestUrl;
           }
           depList.push(new DepReference(depReferenceInitObject));
-        } else {
-          console.error('Expected parameter to be a string, but value was: ' + typeof dependency);
         }
       });
       return depList;
@@ -590,13 +622,27 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
      */
     this.dependencies = [];
 
+    /**
+     * Object representing a manifest.webpackage file that should be used when resolving this DepReference instance.
+     * Requesting a manifest.webpackage via ajax will be skipped for this DepReference instance if this is set.
+     * @type {object}
+     */
+    this.manifest = undefined;
+
+    /**
+     * String representing an url that will be used to request the manifest.webpackage file for this DepReference instance.
+     * If there is a value set to this.manifest then this.manifestUrl will be ignored.
+     * @type {string}
+     */
+    this.manifestUrl = undefined;
+
     this.equals = function (item) {
       return item.webpackageId + item.artifactId + item.endpointId ===
         this.webpackageId + this.artifactId + this.endpointId;
     };
 
     // constructor logic
-    var init = function (dependency, referrer) {
+    var init = function (dependency, referrer, manifestUrl, manifest) {
       var regex = /[^\/]*@[^\/]*/;
       // this.webpackageId = dependency.substring(0, dependency.indexOf('/'));
       var regErg = regex.exec(dependency);
@@ -613,8 +659,14 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
       } else {
         console.warn('DepManager received referrer of unexpected type \'' + typeof referrer + '\'');
       }
+      if (manifestUrl) {
+        this.manifestUrl = manifestUrl;
+      }
+      if (manifest) {
+        this.manifest = manifest;
+      }
     }.bind(this);
-    init(initObject.dependency, initObject.referrer);
+    init(initObject.dependency, initObject.referrer, initObject.manifestUrl, initObject.manifest);
   };
 
   DepReference.prototype.getId = function () {
