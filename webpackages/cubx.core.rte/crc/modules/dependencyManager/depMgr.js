@@ -292,7 +292,7 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
    */
   DependencyMgr.prototype.setCRC = function (crc) {
     if (typeof crc !== 'object') {
-      throw new TypeError('paramter "crc" needs to be an instance of the CRC');
+      throw new TypeError('parameter "crc" needs to be an instance of the CRC');
     }
 
     this._crc = crc;
