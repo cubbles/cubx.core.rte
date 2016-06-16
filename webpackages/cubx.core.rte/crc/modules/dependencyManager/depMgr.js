@@ -382,6 +382,7 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
             'referrer': referrer
           };
           // check if this is a webpackage-internal dependency
+          // TODO: add example
           if (dep.endpoint.indexOf('this') === 0) {
             var regex = /^(.*)?@([^\/]*)/;
             var regErg = regex.exec(referrer);
@@ -487,25 +488,45 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
   DependencyMgr.prototype._resolveDepReference = function (depReference) {
     var deferred = $.Deferred();
     var self = this;
-    // refer to the manifest.webpackage -file as this is also available if we don't use a couchdb based backend
-    var url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
-    DependencyMgr.ajax({
-      url: url,
-      dataType: 'json',
-      success: function (data, textStatus) {
-        self._storeManifestFiles(data, depReference.getArtifactId());
-        deferred.resolve({
-          item: depReference,
-          data: self._extractArtifactEndpoint(depReference, data)
-        });
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        deferred.reject({
-          status: textStatus,
-          error: errorThrown
-        });
-      }
-    });
+    var url = null; // holds the url for requesting the manifest.webpackage. Will be null if there is a manifest object given in depReference.
+
+    if (depReference.manifest && typeof depReference.manifest === 'object') {
+      // resolve deferred with manifest object from depReference
+      // Note: There is no built in validation of given object against our manifest schema!
+      this._storeManifestFiles(depReference.manifest, depReference.getArtifactId());
+      deferred.resolve({
+        item: depReference,
+        data: this._extractArtifactEndpoint(depReference, depReference.manifest)
+      });
+    } else if (depReference.manifestUrl && typeof depReference.manifestUrl === 'string') {
+      // use manifestUrl vom depReference to request manifest
+      // Note: In that case there is no need that the requested file needs to have the name 'manifest.webpackage'!
+      url = depReference.manifestUrl;
+    } else {
+      // refer to the manifest.webpackage -file as this is also available if we don't use a couchdb based backend
+      url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
+    }
+
+    // only make ajax request if there is an url given
+    if (url) {
+      DependencyMgr.ajax({
+        url: url,
+        dataType: 'json',
+        success: function (data, textStatus) {
+          self._storeManifestFiles(data, depReference.getArtifactId());
+          deferred.resolve({
+            item: depReference,
+            data: self._extractArtifactEndpoint(depReference, data)
+          });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          deferred.reject({
+            status: textStatus,
+            error: errorThrown
+          });
+        }
+      });
+    }
 
     return deferred.promise();
   };
