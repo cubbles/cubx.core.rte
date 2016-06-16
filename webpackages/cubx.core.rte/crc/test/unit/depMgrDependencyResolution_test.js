@@ -218,7 +218,7 @@ window.cubx.amd.define([ 'CRC',
       /*
        *
        */
-      describe('#_getResourceDocument()', function () {
+      describe('#_resolveDepReference()', function () {
         var stub;
         var data = {};
         before(function () {
@@ -266,11 +266,76 @@ window.cubx.amd.define([ 'CRC',
           })).to.be.true;
           done();
         });
+
+        it('should request the manifest from custom manifestUrl, if there is one', function (done) {
+          depMgr._resolveDepReference({
+            webpackageId: 'package1@1.0.0',
+            manifestUrl: 'http://www.test.com/customManifest',
+            artifactId: 'util1',
+            endpointId: 'main',
+            getArtifactId: function () {
+              return this.artifactId;
+            }
+          });
+          expect(stub.calledWithMatch({
+            url: 'http://www.test.com/customManifest'
+          })).to.be.true;
+          done();
+        });
+
         after(function () {
           DepMgr.ajax.restore();
         });
       });
-      describe('#_getResourceDocument() error handling', function () {
+
+      describe('#_resolveDepReference()', function () {
+        var ajaxSpy;
+        before(function () {
+          ajaxSpy = sinon.spy(DepMgr, 'ajax');
+        });
+        it('should return manifest object, if there is one', function (done) {
+          var customManifest = {
+            version: '0.0.1-SNAPSHOT',
+            name: 'Custom manifest',
+            author: 'John Doe',
+            docType: 'webpackage',
+            artifacts: {
+              utilities: [
+                {
+                  artifactId: 'artifact1',
+                  description: 'artifact for testing purposes...',
+                  endpoints: [
+                    {
+                      endpointId: 'main',
+                      resources: ['js/test1.js', 'css/test1.css'],
+                      dependencies: ['pack1@1.0.0/util/main', 'pack2@1.0.0/util/main']
+                    }
+                  ]
+                }
+              ]
+            }
+          };
+          var promise = depMgr._resolveDepReference({
+            webpackageId: 'package1@1.0.0',
+            manifest: customManifest,
+            artifactId: 'artifact1',
+            endpointId: 'main',
+            getArtifactId: function () {
+              return this.artifactId;
+            }
+          });
+          sinon.assert.notCalled(ajaxSpy);
+          promise.then(function (result) {
+            expect(result.data).to.eql(customManifest.artifacts.utilities[0].endpoints[0]);
+            done();
+          });
+        });
+        after(function () {
+          DepMgr.ajax.restore();
+        });
+      });
+
+      describe('#_resolveDepReference() error handling', function () {
         var stub;
         before(function () {
           depMgr._baseUrl = 'http://www.base.test/webpacke-store/';
