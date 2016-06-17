@@ -233,6 +233,7 @@ window.cubx.amd.define([ 'CRC',
         });
         beforeEach(function () {
           stub.reset();
+          depMgr._responseCache.invalidate();
         });
 
         it('should return the requested endpoint data', function (done) {
@@ -273,48 +274,63 @@ window.cubx.amd.define([ 'CRC',
       });
 
       describe('#_resolveDepReference()', function () {
+        var customManifest = {
+          version: '0.0.1-SNAPSHOT',
+          name: 'custom-manifest',
+          author: 'John Doe',
+          docType: 'webpackage',
+          artifacts: {
+            utilities: [
+              {
+                artifactId: 'artifact1',
+                description: 'artifact for testing purposes...',
+                endpoints: [
+                  {
+                    endpointId: 'main',
+                    resources: ['js/test1.js', 'css/test1.css'],
+                    dependencies: ['pack1@1.0.0/util/main', 'pack2@1.0.0/util/main']
+                  }
+                ]
+              }
+            ]
+          }
+        };
+        var depReferenceItem = {
+          webpackageId: 'package1@1.0.0',
+          manifest: customManifest,
+          artifactId: 'artifact1',
+          endpointId: 'main',
+          getArtifactId: function () {
+            return this.artifactId;
+          }
+        };
         var ajaxSpy;
         before(function () {
           ajaxSpy = sinon.spy(DepMgr, 'ajax');
         });
+        beforeEach(function () {
+          depMgr._responseCache.invalidate();
+          ajaxSpy.reset();
+        });
         it('should return manifest object, if there is one', function (done) {
-          var customManifest = {
-            version: '0.0.1-SNAPSHOT',
-            name: 'Custom manifest',
-            author: 'John Doe',
-            docType: 'webpackage',
-            artifacts: {
-              utilities: [
-                {
-                  artifactId: 'artifact1',
-                  description: 'artifact for testing purposes...',
-                  endpoints: [
-                    {
-                      endpointId: 'main',
-                      resources: ['js/test1.js', 'css/test1.css'],
-                      dependencies: ['pack1@1.0.0/util/main', 'pack2@1.0.0/util/main']
-                    }
-                  ]
-                }
-              ]
-            }
-          };
-          var promise = depMgr._resolveDepReference({
-            webpackageId: 'package1@1.0.0',
-            manifest: customManifest,
-            artifactId: 'artifact1',
-            endpointId: 'main',
-            getArtifactId: function () {
-              return this.artifactId;
-            }
-          });
-          sinon.assert.notCalled(ajaxSpy);
+          var promise = depMgr._resolveDepReference(depReferenceItem);
           promise.then(function (result) {
+            sinon.assert.notCalled(ajaxSpy);
+            expect(result.data).to.eql(customManifest.artifacts.utilities[0].endpoints[0]);
+            done();
+          });
+        });
+        it('should return manifest from cache, if there is one for requested webpackage', function (done) {
+          depMgr._responseCache.addItem(depReferenceItem.webpackageId, depReferenceItem.manifest);
+          var promise = depMgr._resolveDepReference(depReferenceItem);
+          promise.then(function (result) {
+            sinon.assert.notCalled(ajaxSpy);
             expect(result.data).to.eql(customManifest.artifacts.utilities[0].endpoints[0]);
             done();
           });
         });
         after(function () {
+          depMgr._responseCache.invalidate();
           DepMgr.ajax.restore();
         });
       });

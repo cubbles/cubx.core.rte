@@ -490,22 +490,26 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
     var url = null; // holds the url for requesting the manifest.webpackage. Will be null if there is a manifest object given in depReference.
 
     // check if there is already an item in the ResponseCache for given webpackageId
-    // if (depReference.hasOwnProperty('webpackageId')) {
-    //   this._responseCache.get(depReference.webpackageId).then(function (manifest) {
-    //     if (manifest != null) {
-    //       deferred.resolve({
-    //         item: depReference,
-    //         data: self._extractArtifactEndpoint(depReference, manifest)
-    //       });
-    //     }
-    //   });
-    // }
+    if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) {
+      var cachedManifest = this._responseCache.get(depReference.webpackageId);
+      this._storeManifestFiles(cachedManifest, depReference.getArtifactId());
+      deferred.resolve({
+        item: depReference,
+        data: this._extractArtifactEndpoint(depReference, this._responseCache.get(depReference.webpackageId))
+      });
+    }
 
+    // skip further processing if deferred is already resolved and thus we do have already a manifest from ResponseCache
+    if (deferred.state() === 'resolved') {
+      return deferred.promise();
+    }
+
+    // use inline manifest from depReference, if there is any
     if (depReference.manifest && typeof depReference.manifest === 'object') {
       // resolve deferred with manifest object from depReference
       // Note: There is no built in validation of given object against our manifest schema!
       this._storeManifestFiles(depReference.manifest, depReference.getArtifactId());
-      self._responseCache.addItem(depReference.webpackageId, depReference.manifest);
+      this._responseCache.addItem(depReference.webpackageId, depReference.manifest);
       deferred.resolve({
         item: depReference,
         data: this._extractArtifactEndpoint(depReference, depReference.manifest)
@@ -513,6 +517,11 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
     } else {
       // refer to the manifest.webpackage -file as this is also available if we don't use a couchdb based backend
       url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
+    }
+
+    // skip further processing if deferred is already resolved and thus we do have already a manifest from depReference item
+    if (deferred.state() === 'resolved') {
+      return deferred.promise();
     }
 
     // only make ajax request if there is a url given
