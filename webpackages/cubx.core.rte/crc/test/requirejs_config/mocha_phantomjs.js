@@ -12,6 +12,7 @@
       'cache': 'modules/cache/cache',
       'componentResolver': 'modules/componentResolver/componentResolver',
       'eventFactory': 'modules/eventFactory/eventFactory',
+      'responseCache': 'modules/responseCache/responseCache',
       // modules needed for test from crc-loader
       'jqueryLoader': '../crc-loader/modules/jqueryLoader/jqueryLoader',
       'jquery': '../crc-loader/modules/jqueryLoader/jquery-1.11.1.min',

@@ -13,7 +13,8 @@
       'cache': url + '/modules/cache/cache',
       'componentResolver': url + '/modules/componentResolver/componentResolver',
       'utils': url + '/modules/utils/utils',
-      'eventFactory': url + '/modules/eventFactory/eventFactory'
+      'eventFactory': url + '/modules/eventFactory/eventFactory',
+      'responseCache': url + '/modules/responseCache/responseCache'
     }
   };
 

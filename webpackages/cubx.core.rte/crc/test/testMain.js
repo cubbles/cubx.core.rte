@@ -18,7 +18,8 @@
     'unit/depMgrDependencyResolution_test',
     'unit/eventFactory_test',
     'unit/storageManager_test',
-    'unit/utils_array_test'
+    'unit/utils_array_test',
+    'unit/responseCache_test'
   ];
 
   // get all tests via requireJS and run them
