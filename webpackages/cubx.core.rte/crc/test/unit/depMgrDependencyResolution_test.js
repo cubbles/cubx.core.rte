@@ -267,22 +267,6 @@ window.cubx.amd.define([ 'CRC',
           done();
         });
 
-        it('should request the manifest from custom manifestUrl, if there is one', function (done) {
-          depMgr._resolveDepReference({
-            webpackageId: 'package1@1.0.0',
-            manifestUrl: 'http://www.test.com/customManifest',
-            artifactId: 'util1',
-            endpointId: 'main',
-            getArtifactId: function () {
-              return this.artifactId;
-            }
-          });
-          expect(stub.calledWithMatch({
-            url: 'http://www.test.com/customManifest'
-          })).to.be.true;
-          done();
-        });
-
         after(function () {
           DepMgr.ajax.restore();
         });

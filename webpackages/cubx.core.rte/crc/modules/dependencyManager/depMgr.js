@@ -365,10 +365,6 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
           if (dependency.hasOwnProperty('manifest') && typeof dependency.manifest === 'object') {
             dep.manifest = dependency.manifest;
           }
-          // set manifestUrl if available
-          if (dependency.hasOwnProperty('manifestUrl') && typeof dependency.manifestUrl === 'string') {
-            dep.manifestUrl = dependency.manifestUrl;
-          }
         } else if (typeof dependency === 'string') {
           dep.endpoint = dependency;
         } else {
@@ -399,10 +395,6 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
           // add manifest if available
           if (dep.manifest) {
             depReferenceInitObject.manifest = dep.manifest;
-          }
-          // add manifestUrl if available
-          if (dep.manifestUrl) {
-            depReferenceInitObject.manifestUrl = dep.manifestUrl;
           }
           depList.push(new DepReference(depReferenceInitObject));
         }
@@ -498,10 +490,6 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
         item: depReference,
         data: this._extractArtifactEndpoint(depReference, depReference.manifest)
       });
-    } else if (depReference.manifestUrl && typeof depReference.manifestUrl === 'string') {
-      // use manifestUrl vom depReference to request manifest
-      // Note: In that case there is no need that the requested file needs to have the name 'manifest.webpackage'!
-      url = depReference.manifestUrl;
     } else {
       // refer to the manifest.webpackage -file as this is also available if we don't use a couchdb based backend
       url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
@@ -650,20 +638,13 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
      */
     this.manifest = undefined;
 
-    /**
-     * String representing an url that will be used to request the manifest.webpackage file for this DepReference instance.
-     * If there is a value set to this.manifest then this.manifestUrl will be ignored.
-     * @type {string}
-     */
-    this.manifestUrl = undefined;
-
     this.equals = function (item) {
       return item.webpackageId + item.artifactId + item.endpointId ===
         this.webpackageId + this.artifactId + this.endpointId;
     };
 
     // constructor logic
-    var init = function (dependency, referrer, manifestUrl, manifest) {
+    var init = function (dependency, referrer, manifest) {
       var regex = /[^\/]*@[^\/]*/;
       // this.webpackageId = dependency.substring(0, dependency.indexOf('/'));
       var regErg = regex.exec(dependency);
@@ -680,14 +661,11 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
       } else {
         console.warn('DepManager received referrer of unexpected type \'' + typeof referrer + '\'');
       }
-      if (manifestUrl) {
-        this.manifestUrl = manifestUrl;
-      }
       if (manifest) {
         this.manifest = manifest;
       }
     }.bind(this);
-    init(initObject.dependency, initObject.referrer, initObject.manifestUrl, initObject.manifest);
+    init(initObject.dependency, initObject.referrer, initObject.manifest);
   };
 
   DepReference.prototype.getId = function () {
