@@ -10,100 +10,77 @@ window.cubx.amd.define(['responseCache'], function (responseCache) {
       propC: 'propC',
       propD: true
     };
-
     beforeEach(function () {
       responseCache._cache = {};
     });
     describe('#addItem(key, item)', function () {
-      it('should return a promise', function () {
-        expect(responseCache.addItem(key, item)).to.be.an.instanceOf(Promise);
+      it('should add item to cache using given key', function () {
+        expect(responseCache.addItem(key, item)).to.be.eql(item);
+        expect(responseCache._cache[key]).to.be.eql(item);
+        expect(responseCache._cache[key]).to.be.eql(item);
       });
-      it('should add item to cache using given key', function (done) {
-        responseCache.addItem(key, item).then(function (result) {
-          result.should.be.eql(item);
-          expect(responseCache._cache[key]).to.be.eql(item);
-          done();
-        });
+      it('should throw an error if key is not of type string or is empty string', function () {
+        var spy = sinon.spy(responseCache, 'addItem');
+        try {
+          responseCache.addItem(123, item);
+        } catch (e) {}
+        expect(spy.threw('TypeError')).to.be.true;
+        responseCache.addItem.restore();
       });
-      it('should reject returned promise if key is not of type string or is empty string', function (done) {
-        responseCache.addItem(123, item).then(function () {}, function (error) {
-          expect(error).to.be.an.instanceOf(TypeError);
-          done();
-        });
+      it('should throw an error if item is null', function () {
+        var spy = sinon.spy(responseCache, 'addItem');
+        try {
+          responseCache.addItem(key, null);
+        } catch (e) {}
+        expect(spy.threw('TypeError')).to.be.true;
+        responseCache.addItem.restore();
       });
-      it('should reject returned promise if item is null', function (done) {
-        responseCache.addItem(key, null).then(function () {}, function (error) {
-          expect(error).to.be.an.instanceOf(TypeError);
-          done();
-        });
-      });
-      it('should override item if there is already one for given key', function (done) {
+      it('should override item if there is already one for given key', function () {
         responseCache._cache[key] = item;
-        responseCache.addItem(key, item2).then(function (result) {
-          expect(responseCache._cache[key]).to.be.eql(item2);
-          done();
-        });
+        responseCache.addItem(key, item2);
+        expect(responseCache._cache[key]).to.be.eql(item2);
       });
     });
     describe('#get(key)', function () {
-      it('should return a promise', function () {
-        expect(responseCache.get(key)).to.be.an.instanceOf(Promise);
-      });
-      it('should return the item for given key', function (done) {
+      it('should return the item for given key', function () {
         responseCache._cache[key] = item;
-        responseCache.get(key).then(function (result) {
-          result.should.be.eql(item);
-          done();
-        });
+        expect(responseCache.get(key)).to.be.eql(item);
       });
-      it('should return null if no item was found for given key', function (done) {
-        responseCache.get(key).then(function (result) {
-          expect(result).to.be.null;
-          done();
-        });
+      it('should return null if no item was found for given key', function () {
+        expect(responseCache.get(key)).to.be.null;
       });
-      it('should reject returned promise if key is not a of type string or is empty string', function (done) {
-        responseCache.get(123).then(function () {}, function (error) {
-          expect(error).to.be.an.instanceOf(TypeError);
-          done();
-        });
+      it('should throw an error if key is not of type string or is empty string', function () {
+        var spy = sinon.spy(responseCache, 'get');
+        try {
+          responseCache.get(123);
+        } catch (e) {}
+        expect(spy.threw('TypeError')).to.be.true;
+        responseCache.get.restore();
       });
     });
     describe('#removeItem(key)', function () {
-      it('should return a promise', function () {
-        expect(responseCache.removeItem(key)).to.be.an.instanceOf(Promise);
-      });
-      it('should remove item with given key from cache', function (done) {
+      it('should remove item with given key from cache and return removed item', function () {
         responseCache._cache[key] = item;
-        responseCache.removeItem(key).then(function (result) {
-          result.should.be.eql(item);
-          expect(responseCache._cache.hasOwnProperty(key)).to.be.false;
-          done();
-        });
+        expect(responseCache.removeItem(key)).to.be.eql(item);
+        expect(responseCache._cache.hasOwnProperty(key)).to.be.false;
       });
-      it('should resolve returned promise with null if no item was found for given key', function (done) {
-        responseCache.removeItem(key).then(function (result) {
-          expect(result).to.be.null;
-          done();
-        });
+      it('should return null if no item was found for given key', function () {
+        expect(responseCache.removeItem(key)).to.be.null;
       });
-      it('should reject returned promise if key is not of type string or is empty string', function (done) {
-        responseCache.removeItem(123).then(function () {}, function (error) {
-          expect(error).to.be.an.instanceOf(TypeError);
-          done();
-        });
+      it('should throw an error if key is not of type string or is empty string', function () {
+        var spy = sinon.spy(responseCache, 'removeItem');
+        try {
+          responseCache.removeItem(123);
+        } catch (e) {}
+        expect(spy.threw('TypeError')).to.be.true;
+        responseCache.removeItem.restore();
       });
     });
-    describe('#invalidate()', function() {
-      it('should return a promise', function () {
-        expect(responseCache.invalidate()).to.be.an.instanceOf(Promise);
-      });
-      it('should empty the cache', function (done) {
+    describe('#invalidate()', function () {
+      it('should empty the cache', function () {
         responseCache._cache[key] = item;
-        responseCache.invalidate().then(function () {
-          expect(Object.keys(responseCache._cache)).to.be.empty;
-          done();
-        });
+        responseCache.invalidate();
+        expect(Object.keys(responseCache._cache)).to.be.empty;
       });
     });
   });

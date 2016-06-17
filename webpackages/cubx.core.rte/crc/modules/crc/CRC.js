@@ -13,9 +13,8 @@ window.cubx.amd.define([ 'require',
     'cache',
     'componentResolver',
     'utils',
-    'eventFactory',
-    'responseCache'],
-  function (require, $, storageMgr, DepMgr, Cache, ComponentResolver, utils, eventFactory, responseCache) {
+    'eventFactory'],
+  function (require, $, storageMgr, DepMgr, Cache, ComponentResolver, utils, eventFactory) {
     'use strict';
 
     /**
@@ -94,13 +93,6 @@ window.cubx.amd.define([ 'require',
        * @private
        */
       this._storageManager = storageMgr;
-
-      /**
-       * The responseCache used by this CRC instance
-       * @type {object}
-       * @private
-       */
-      this._responseCache = responseCache;
 
       /**
        * The name of the crc ready event that is fired after crc has loaded all dependencies and is ready

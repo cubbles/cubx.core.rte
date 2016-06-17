@@ -2,7 +2,7 @@
  * Created by pwr on 13.02.2015.
  */
 
-window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
+window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, utils, responseCache) {
   'use strict';
 
   /**
@@ -38,6 +38,13 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
      * @private
      */
     this._crc = null;
+
+    /**
+     * The responseCache used by this DependencyMgr instance
+     * @type {object}
+     * @private
+     */
+    this._responseCache = responseCache;
   };
 
   // ---------------------------------------------------------------------------------------------------------------
@@ -482,10 +489,23 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
     var self = this;
     var url = null; // holds the url for requesting the manifest.webpackage. Will be null if there is a manifest object given in depReference.
 
+    // check if there is already an item in the ResponseCache for given webpackageId
+    // if (depReference.hasOwnProperty('webpackageId')) {
+    //   this._responseCache.get(depReference.webpackageId).then(function (manifest) {
+    //     if (manifest != null) {
+    //       deferred.resolve({
+    //         item: depReference,
+    //         data: self._extractArtifactEndpoint(depReference, manifest)
+    //       });
+    //     }
+    //   });
+    // }
+
     if (depReference.manifest && typeof depReference.manifest === 'object') {
       // resolve deferred with manifest object from depReference
       // Note: There is no built in validation of given object against our manifest schema!
       this._storeManifestFiles(depReference.manifest, depReference.getArtifactId());
+      self._responseCache.addItem(depReference.webpackageId, depReference.manifest);
       deferred.resolve({
         item: depReference,
         data: this._extractArtifactEndpoint(depReference, depReference.manifest)
@@ -495,13 +515,14 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils' ], function ($, utils) {
       url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
     }
 
-    // only make ajax request if there is an url given
+    // only make ajax request if there is a url given
     if (url) {
       DependencyMgr.ajax({
         url: url,
         dataType: 'json',
         success: function (data, textStatus) {
           self._storeManifestFiles(data, depReference.getArtifactId());
+          self._responseCache.addItem(depReference.webpackageId, data);
           deferred.resolve({
             item: depReference,
             data: self._extractArtifactEndpoint(depReference, data)
