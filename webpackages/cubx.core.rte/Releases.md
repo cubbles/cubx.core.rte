@@ -1,5 +1,11 @@
 # Releases
 
+## 1.10.0
+
+### Improvement
+* PLAT-524: Capability to define inline manifest object directly on rootDependency item
+* PLAT-538: Cache manifest.webpackage files using webpackage id as key
+
 ## 1.8.0
 
 ### Improvement
