@@ -4,45 +4,45 @@
 ## CRC
 (Client Runtime Container)
 
-Dieser Utility dient dazu die Runtime für eine WebApp bereit zu stellen.
+This utility provides the Runtime of a WebApp.
 
 ### Module
 #### CRC
-Der Client Runtime Container wird für die Laufzeit eines Apps benötigt. (repräsetiert durch ein WebPackage)
+The Client Runtime Container is needed to provide the runtime of an App (represented by a Webpackage).
 
 #### DependencyManager
-Der Dependency Manager löst die benötigte Abhängigkeiten auf, und fügt in das Dokument ein. Der Anforderer wird in data-referrer Attribute festgehalten.
+The Dependency Manager resolves the required dependencies and includes them into the document. The requester is attached to the data-referrer attribute.
 
 #### Cache
-Der Cache hält alle referenzierte Komponente. Der Schlüssel zu einem Komponente ist der ArtifactId.
-Der Cache speichert weiterhin den resolvedComponent Objekt, sobald es gebildet wurde. Der Schlüssel zu resolvedComponent ist der artifactId der Ursprungskomponente.
+The Cache holds all referenced components. The key to access a component is its artifactId.
+Furthermore, the cache stores the resolvedComponent object, once it is built. The key to access the resolvedComponent is the artifactId of the original component.
 
 #### ComponentResolver
-Fügt die referenzierten Komponenten rekursiv in die original Compound-Komponent-Manifest ein. Damit entsteht der Gesamthierarchie der Compound-Komponente.
+Add the referenced components recursively to the original compound component manifest. So that the whole hierarchy of the compound component is available.
 
 #### StorageManager
-Dient zur Datenpersitenz. (TODO)
+Provide the data persistence . (TODO)
 
 #### EventFactory
-Verwaltet EventTypes und stellt utility Methoden. (zum Beispiel zu erstellen CustomEvents usw.)
+Manage EventTypes and provide utility methods (e.g. to create CustomEvents, etc.).
 
 #### Utils
 
 ## CRCLoader
 (Client-Runtime-Container-Loader)
 
-Diese Utility lädt den CRC (Client Runtime Container).
+This utility loads the CRC (Client Runtime Container).
 
 ### Parameter:
 #### loadCIF (default == 'true')
-Soll das CIF geladen werden?
+Should the CIF be loaded?
 
-Mögliche Werte:  'true' | 'false
+**Posible values:**  'true' | 'false'
 
-Konfiguration via
+**Configuration through**
 
-* Attribut am CRCLoader Script-Tag: `data-crcinit-loadcif="false"
-* Globale Property
+* The attribute of the CRCLoader Script-Tag: `data-crcinit-loadcif="false"'
+* The global property: 
 
         <script>
             window.cubx = {
@@ -52,24 +52,23 @@ Konfiguration via
                 }
         </script>
 
-Hinweis: Das Attribut überschreibt die Property.
+**Note:** the attribute overwrites the property.
 
 #### runtimeMode (default == 'prod')
-Eine Applikation kann in verschiedenen Laufzeit-Modi gestartet werden.
+An application can be started in different runtime modes.
 
-Mögliche Werte: 'dev' | 'prod'
+**Posible values:** 'dev' | 'prod'
 
-Konfiguration via
 
-* URL Parameter `runtimeMode=dev`
+**Configuration through**
+
+* The URL parameter `runtimeMode=dev`
 ### Attributes:
 #### data-cubx-startevent (default DOMContentEvent)
-Trigger-Event für Laden der CRC. Der Konfigurierte Event muss eintreffen (oder muss bereits eingetroffen sein), bevor der CRC geladen wird.
+Event which is triggered to indicate that the the CRC has loaded.
 
 ### Root Dependencies
-
-Die Konfiguration der Root dependencies kann in einem initiale globale  Konfigurationsobjekt festgelegt werden.
-Bei Abhängigkeiten, die keine Cubbles sind, ist es auch die einzige möglichkeit.
+The configuration of the root dependencies can be defined through an initial global configuration object. This object is the only way to load dependencies that are not part of the Cubbles platform
 
     <script>
         window.cubx = {
@@ -81,44 +80,41 @@ Bei Abhängigkeiten, die keine Cubbles sind, ist es auch die einzige möglichkei
         }
     </script>
 
-Dependencies zu Cubbles können in der HTML-Tag mit der Attribute "cubx-dependency" definiert werden.
+The dependencies of a Cubbles component can be defined using the the attribute "cubx-dependency" within its HTML tag, as follows: 
 
-    <my-example-element cubx-dependency="examples@0.1-SNAPSHOT/my-example-element/main"></my-example-element>
+    <my-example-component cubx-dependency="examples@0.1-SNAPSHOT/my-example-component /main"></my-example-component >
 
-oder Definition in der selben Webpackage
+If the dependency is defined in the same webpackage, the key word 'this' can be used instead of the webpackageId (i.e. 'webpaackageName@version'), as follows: 
 
     <my-example-element cubx-dependency="this/my-example-element/main"></my-example-element>
 
 ## CIF
 (Component Integration Framework)
 
-* Der Framework erstellt den HTML/Javascript Code für die Cubbles-Komponenten. Dabei werden alle in manifest.webpackage definierte members,
-Connections und Initialisierungen initialisiert bzw. durchgefürht. Bei Compound-Komponenten wird der Subtree generiert.
-* Es können gemischt Cubbles-Komponenten und anderen HTML-Tags vorhanden sein.
-* Cubbles Komponenten können in der Dom-Hierarchie in tiefern Ebenen vorhanden sein.
-* Cubbles Komponenten (slots) können mit Hilfe der Cubbles-HTML-API verbunden werden
-* Cubbles Komponenten (slots) können mit Hilfe der Cubbles-HTML-API initialisiert werden.
-
+* The Framework generates the HTML/Javascript code for the Cubbles components. At the same time all members, connections and initializations  defined in the manifest.webpackage are initialized. A subtree will be generated for compound components.
+* The Cubbles components can be mixed with HTML tags.
+* The Cubbles components can exist within deep levels of Dom hierarchy
+* The Cubbles component (slots) can be connected by means of the Cubbles-HTML-API
+* The Cubbles component (slots) can be initialized by means of the Cubbles-HTML-API
 
 ### Cubbles-HTML-API
-#### Connection zw. Cubbles definiern
+#### Definition of connections between Cubbles components
 
-So sieht der Connectiondefinition aus:
+The connections between components can be defined as follows:
 
     <cubx-core-connections>
       <cubx-core-connection source="message", destination="myMemeber2:textInput" connectionId="connection1"></cubx-core-connection>
       <cubx-core-connection source="switchOn", destination="myMemeber3:switch" connectionId="connection2"></cubx-core-connection>
     </cubx-core-connections>
 
-  * alle Connections werden im Content des Source-Elements definiert. Der Cubbles-Element hat `<cubx-core-connections>` Tag als Kind.
-  Die einzelne `<cubx-core-slot-init` Tags sind direkte Kinder von `<cubx-core-connections>`. (Die HTML-Elemente für Connections werden generell und nur im Content des Source-Elements definiert.)
-  * Eine einzelne Connection wird mit der Tag `<cubx-core-slot-init` und die Attribute `source`, `destination`, und `connection-id` definiert.
-      * `connection-id: eindeutige Identifikator des Connections innerhalb eines Contexts
-      * ``source`: source slot
-      * `destination`: id des Ziel-Komponents, und mit ":" getrennt der Ziel-Slot
-  * Die Ausführungsreihenfolge der Connections während der Laufziet ist identisch mit der Definitionsreihenfolge
-
-Beispiel:
+  * All connections are defined only within the content of the source elements. The `<cubx-core-connections>` tag should be child of the Cubbles component. Additionally, each `<cubx-core-slot-init>` tag is direct child of the  `<cubx-core-connections>` tag.
+  * Each `<cubx-core-slot-init>` tag should be defined by means of the `source`, `destination`, and `connection-id` attributes.
+   * `connection-id`: id for the connection that is unique within a context.
+   * `source`: name of the source slot
+   * `destination`: id of the target component and name of the target slot divided by ":".
+  * The connections are applied or resolved during runtime in the same order in which they were defined.
+ 
+Example:
 
     <my-first-cubbles id="first">
       <cubx-core-connections>
@@ -128,9 +124,9 @@ Beispiel:
     ...
     <my-second-cubbles id="second"></my-second-cubbles>
 
-#### Initialisierung der Slots definieren
+#### Definition of the slots initialization
 
-So sieht die Initialisierungsdefinition aus:
+The slots initialization can be defined as follows:
 
     <cubx-core-init>
       <cubx-core-slot-init slot="message">"HalloWorld!"</cubx-core-slot-init>
@@ -139,13 +135,13 @@ So sieht die Initialisierungsdefinition aus:
       <cubx-core-slot-init slot="config">{ "label": "Name", "value" : "Max Musternamm"}</cubx-core-slot-init>
     </cubx-core-init>
 
-* Die Initialisierung wird im Content des Elements definiert: der Cubbles-Element hat `<cubx-core-init>` als Kindelement.
-* Die einzelne Slot-Initialisierungsdefinitionen erfolgen durch `<cubx-core-slot-init>` Tags.  (Kinder von `<cubx-core-init>`.)
-      * Der Attribute `slot` definiert, welcher Slot initialisiert wird,
-      * Text-Content des Element definiert den zu initialisierende Value als JSON.
- * Die Ausführungsreihenfolge der Initialisierung  ist identisch mit der Definitionsreihenfolge im Dom-Baum.
+* The initialization of the slots should be defined by means of the `<cubx-core-init>`. The `<cubx-core-init>` is a child of the Cubble component.
+* Each slot is defined using the `<cubx-core-slot-init>` tag as child of `<cubx-core-init>`.
+ * The `slot` attribute indicates the name of the slot that will be initilized.
+ * The text content of the `<cubx-core-slot-init>` indicates the initial value of the slot as JSON.
+* The initialization of each slot is carried out in the same order in which they were defined.
 
-Beispiel:
+Example:
 
         <my-first-cubbles id="first">
          <cubx-core-init>
@@ -165,40 +161,35 @@ Beispiel:
                  </cubx-core-init>
          </my-second-cubbles>
 
-#### Slots-Werte eines Cubbles initialisieren
+## HTML representation of components
+The whole DOM tree is generated based on the component description (manifest.component). At the same time, the HTML tags that represent connections, the elementary components and the compound components are generated.
 
-## HTML Repräsentation der Komponenten
+The attributes of components are:
 
-An Hand der Komponenten Beschreibung (manifest.component) wird rekursiv das gesamte DOM-Baum generiert.
-Dabei werden sowohl die HTML-Tags, welche Connections abbilden, als auch Elementary-Komponenten und Compound-Komponenten erzeugt.
+* `cubx-dependency`: dependency that contains the code needed by the component (`<webpackageId>/<artifactId>/<endpoint>`).
+* `cubx-component-id`: id of the component (`<webpackageId>/<artifactId>`)
+* `runtime-id`: unique id within the application - it consists of its parent component runtime-id (in case it exists) and its own cubx-component-id, as well as its member-id
+* `member-id`: (optional) id attribute of the member component (source:  manifest.webpackage -> membera[x].memberId) (It is used as identifier of sibling components)
 
-Attribute der Komponenten:
-* cubx-dependency: Dependency der den Code der Komponente enthält (<webpackageId>/<artifactId>/<endpoint>)
-* cubx-component-id: Id der Komponente: (<webpackageId>/<artifactId>)
-* runtime-id: eindeutige Id innerhalb des Anwendungs - setzt sich zusammen aus parent runtime-id (sofern parent
-Komponente existiert) und der eigene cubx-component-id, sowie member-id
-* member-id: (optional) Id-Attribut der Member-Komponente. (Quelle manifest.webpackage -> membera[x].memberId) (Es wird als Identifikator von Geschwisterkomponenten verwendet.)
-
-Beispiele:
+Example:
 
     Root-Tag (compound):
     <cif-test-compound-outer cubx-component-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT">
+    
     member (compound):
     <cif-test-compound cubx-component-id="com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT:com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT.member2" member-id="member2"/>
 
     member (elementary):
     <cif-test-a cubx-component-id="com.incowia.jtrs.cif-test-a-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT:com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT.2:com.incowia.jtrs.cif-test-a-0.1.0-SNAPSHOT.member1" member-id="member1">
 
-### Komponenten
-An der manifest.webpackage generierte Komponenten werden mit Attributen, wie zum Beispiel `runtime-id` angereichert.
+### Components
+The manifest.webpackage holds the generated components with their attributes, e.g. `runtime-id`.
 
-### Compound Komponenten - Context
-Jede Coumpound Komponent hat sein eigenes Context-Objekt.  Innerhalb dieses Kontextes wird die Propagierung der Slots realisiert.
+### Compound components - Context
+Each compound component has its own Context object. Within this context the propagation from slots is performed.
 
-#### Compound Komponent HTML-Templates
-
-Ein Compound Komponent __kann__ die Integration der Member-Komponenten durch ein HTML-Template definieren.
-Beispiel für eine Template für `my-compound` (my-compound-template.html):
+#### Compound component HTML templates
+The integration of member components in a compound component can be defined by means of a HTML template. The following is an example of a template for `my-compound` component (my-compound-template.html):
 
     <template id="my-compound">
          <div>
@@ -214,17 +205,16 @@ Beispiel für eine Template für `my-compound` (my-compound-template.html):
           <div>
     </template>
 
+It is important that the id attribute of the template references the artifactId of the component. The member components are added as tags whose `member-id-ref` attribute references its `memberId` in the manifest.webpackage.
 
-Dabei ist es wichtig, das der id Attribut des Templates den ArtifactId des Komponents referenziert. Die Member-Elemente werden als Tags eingefügt, und referenzieren jeweils in member-id-ref Attribute den in der manifest.webpackage definierte `memberId`.
+For the HTML template to be available, it should be added as resource in the endpoint of the component. 
 
-Damit der HTML-Template verfügbar ist, muss er als Resource in den Endpoint des Komponents eingetragen werden.
-
-Wenn kein HTML-Template für die Compound Komponente vorhanden ist, werden die Member Komponente weiterhin in der Definitionsreihenfolge als direkte Kinder eingefügt.
+If no template is provided, the member components are added in the same order in which they are defined in the manifest.webpackage.
 
 ### Connections
-Die Connection-Informationen werden in der HTML-Cutom-Tags "cubx-connections" und "cubx-connection" beschrieben.
-Nach Abschluss der Generierung der HTML Tags wird der Dom-Baum geparst, und an Hand der Connection-Tags wird es
-in der Connection-Liste aufgenommen und gehalten. Diese interne Liste steuert die Propagation des Slots.
+The connection information is described in the HTML custom tags "cubx-connections" and "cubx-connection".
+
+After the generation of the HTML tags, the Dom tree is parsed. The connection list is hold by the connection tag, this list manages the slots propagation.
 
     <cubx-connections style="display: none;">
         <cubx-connection source="slota" destination="2:slotaa"></cubx-connection>
@@ -236,26 +226,24 @@ in der Connection-Liste aufgenommen und gehalten. Diese interne Liste steuert di
 
 ### Events
 
-* `cifStart` - Zeigt an wann der Cif anfängt seine Aufgaben abarbeiten.
-* `cifReady`  - Zeigt an, das der CIF Initial Processe (Elemente erzeugen, Connections registrieren und Slotinitialisierung durchführen)
- abgeschlossen ist
-* `cifInitStart` - Wird bei Start der Slotinitialisierung geworfen
-* `cifInitReady` - Wird nach Beendigung der Slotinitialisierung geworfen
-* `cifComponentReady`- Wird von dem einzelnen Komponenten geworfen und in CIF empfangen. Wenn für alle Komponente, die von CIF generiert wurden, den `cifComponentReady` Event empfangen wurde, wird `cifAllComponentsReady` Event geworfen.
-* `cifAllComponentsReady` - Imliziert, dass alle von CIF generierten Komponenten fertig sind. Nach Empfang dieser Events werden erst die Connections and Inits Definitionen umgesetzt.
+* `cifStart` - indicates when the CIF starts to complete its tasks.
+* `cifReady`  - indicates that the CIF initial process (elements generation, connections registration and slots initialization) is completed.
+* `cifInitStart` - triggered when the slots initialization starts
+* `cifInitReady` - triggered when the slots initialization finishes
+* `cifComponentReady`-  triggered by each component and listened by the CIF. When the `cifComponentReady` of all components generated by the CIF are triggered, the `cifAllComponentsReady` event is triggered.
+* `cifAllComponentsReady` - indicates that all the components generated by the CIF are ready. After this event is triggered, the connections and inits definitions are applied.
 
 
 ## CubxPolymer
 (Cubbles Wrapper for Polymer 1.x Elements)
 
-CubxPolymer bildet einen Wrapper für das Polymer-Objekt. Durch den Wrapper wird das Objekt um die
-_CubblesComponent-API_ erweitert.
+The CubxPolymer represents a wrapper for the Polymer object. The object is added to the _CubblesComponent-API_ by the wrapper.
 
-Konkret bedeutet das
+It represents the addition of: 
 
-1. die Erweiterung um ein sog. _model_ und
-2. Methoden zur externen Interaktion mit dem Model (vorzugsweise genutzt durch das CIF) und
-3. Methoden zur internen Interaktion mit dem Model (innerhalb der Komponente).
+1.  a so called _model_,
+2. the methods for the external interaction with the model (espacially used by the CIF) and
+3. the methods for the internal interaction with the model (inside the component)
 
 ## Webcomponents
 (3th-party webcomponents library)
@@ -263,21 +251,17 @@ Konkret bedeutet das
 The webcomponent.js polyfills enable Web Components in (evergreen) browsers that lack native support.
 
 
-## So wirds gemacht...
+## How to do it...
 
-### Verwendung von _hookFunction_
+### Use of  _hookFunction_
+From modelVersion 8.2 it is possible to define a `hookFunction` in each connection. This function will be executed:
+* when the connection data is propagated and
+* before the propagated data is transferred to the target component and slot
 
-Ab modelVersion 8.2 ist es möglich, an jede definierte Connection eine `hookFunction` zu definieren.
-Diese Funktion wird ausgeführt
+#### Configuration
+The attribute `hookFunction` can contain an anonyme function (as string) or the function name of an existing global function (incl. namespace).
 
-* wenn durch die Connection Daten propagiert werden und
-* before die propagierte Daten in die Zielkomponente und Slot übergeben werden.
-
-#### Konfiguration
-Das Attribut `hookFunction` kann sowohl eine anonyme Funktion (als String) als auch den Funktionsname
-eines existierenden globalen Funktion (incl. Namespace) enthalten.
-
-Connection Beispiel - mit `hookFunction` mittels anonyme Funktion
+The following is an example of a connection with a anonyme `hookFunction`:
 
     {
         "connectionId": "member-a:c-member-b:c",
@@ -292,7 +276,7 @@ Connection Beispiel - mit `hookFunction` mittels anonyme Funktion
         "hookFunction": "function(value, next) { var newValue = {}; newValue.name = value.firstname ? value.firstname + ' ' : ''; newValue.name += value.name; next(newValue);};"
       }
 
-Connection Beispiel - mit `hookFunction` mittels globale Funktionsname
+And the following is an example of a connection with a global `hookFunction`, indicating using its name and namespace:
 
     {
         "connectionId": "member-a:a-member-b:a",
@@ -307,25 +291,18 @@ Connection Beispiel - mit `hookFunction` mittels globale Funktionsname
         "hookFunction": "cubx.hookFunctions.multiply10"
       }
 
-In der oberen Beispiel verwendete globale Funktion (cubx.hookFunctions.multiply10) kann z.Bsp.
-in einem Artifact von Typ Utility definiert werden. Der Funktion wird in diesem Beispiel in der Namespace `window.cubx.hookFunctions` definiert.
-
-Beispiel für Funktionsdefinition
+The global function in the example above (cubx.hookFunctions.multiply10) can be defined for example by means of an Artifact of type Utility. In this example the function is defined in the `window.cubx.hookFunctions`  namespace, as follows:
 
     window.cubx.hookFunctions.multiply10 = function(value, next) {
         value = Number(value) * 10;
         next(value);
     };
 
+The following two parameters are passed to the _hookFunction_ (_cubx.hookFunctions.multiply10_ in the example):
 
-Den _hookFunction_ (in dem oberen Beispiel _cubx.hookFunctions.multiply10_) wird bei Aufruf zwei Parameter übergeben:
+* `value`: represents the propagate data
+* `next`: a function that will further process the of data propagation. It should be called after the modification of the value. This function received the modified value as parameter.
 
-* value - entspricht die propagierte Daten.
-* next - eine Funktion, welches der Weiterverarbeitung der Datentransport initiiert. Der Aufruf von `next` sollte nach
- der Modifizierung der propagierten Daten erfolgen. Als Parameter bekommt sie einen Parameter, welcher die modifizierte Daten enthält.
-
-Wenn der `hookFunction` für Validierung der propagierten Daten verwendet wird, kann bei invaliden Daten eine Abbruch erfolgen.
-Ein Abbruch der Datentransport wird  dadurch erreicht, dass der `next`-Funktion _nicht_ aufgerufen wird.
-
+If the `hookFunction`  is employed to validate the propagated date, it can abort the propagation by **not** calling the `next` function.
 
 [![Build Status](https://travis-ci.org/cubbles/cubx.core.rte.svg?branch=master)](https://travis-ci.org/cubbles/cubx.core.rte)
