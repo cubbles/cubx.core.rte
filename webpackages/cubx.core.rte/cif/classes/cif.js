@@ -328,7 +328,7 @@
       if (currNode.nodeType === currNode.ELEMENT_NODE && currNode.tagName.indexOf('-') > -1 && except.indexOf(currNode.tagName) === -1) {
         return NodeFilter.FILTER_ACCEPT;
       } else {
-        return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_SKIP;
       }
     }};
 

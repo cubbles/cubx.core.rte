@@ -1393,5 +1393,202 @@ describe('CIF', function () {
         compoundEl2.model.should.have.property('testslotA', 'Hello World!');
       });
     });
+    describe('crcRoot contains cubbles in subtree, not as direct child', function () {
+      var container;
+      var divEl;
+      var manifestCiftestE;
+      var manifestCiftestA;
+      // eslint-disable-next-line no-unused-vars
+      var getResolvedComponentStub;
+      // eslint-disable-next-line no-unused-vars
+      var getComponentCacheEntryStub;
+
+      var compoundEl;
+      var compoundEl2;
+      var connectionId;
+      beforeEach(function () {
+        manifestCiftestA = {
+          webpackageId: 'test.package-ciftest-a@0.1/ciftest-a',
+          artifactId: 'ciftest-a',
+          artifactType: 'compoundComponent',
+          modelVersion: '8.0.0',
+          slots: [
+            {
+              slotId: 'testslotAAA'
+            }
+          ],
+          members: [
+            {
+              componentId: 'test.package-ciftest-b@0.1/ciftest-b',
+              artifactType: 'elementaryComponent',
+              artifactId: 'ciftest-b',
+              memberId: 'B-Element',
+              slots: [
+                {
+                  slotId: 'testslotB'
+                }
+              ]
+            },
+            {
+              componentId: 'test.package-ciftest-c@0.1/ciftest-c',
+              artifactType: 'compoundComponent',
+              artifactId: 'ciftest-c',
+              memberId: 'C-element',
+              slots: [
+                {
+                  slotId: 'testslotC'
+                }
+              ],
+
+              members: [
+                {
+                  componentId: 'test.package-ciftest-d@0.1/ciftest-d',
+                  memberId: 'D-Element',
+                  artifactType: 'elementaryComponent',
+                  artifactId: 'ciftest-d',
+                  slots: [ {
+                    slotId: 'testslotD'
+                  }
+                  ]
+                }
+              ],
+              connections: []
+            } ],
+          connections: []
+        };
+        manifestCiftestE = {
+          webpackageId: 'test.package-ciftest-a@0.1/ciftest-e',
+          artifactId: 'ciftest-e',
+          artifactType: 'compoundComponent',
+          modelVersion: '8.0.0',
+          slots: [
+            {
+              slotId: 'testslotE'
+            }
+          ],
+          members: [
+            {
+              componentId: 'test.package-ciftest-b@0.1/ciftest-b',
+              artifactType: 'elementaryComponent',
+              artifactId: 'ciftest-b',
+              memberId: 'B-Element',
+              slots: [
+                {
+                  slotId: 'testslotB'
+                }
+              ]
+            },
+            {
+              componentId: 'test.package-ciftest-c@0.1/ciftest-a',
+              artifactType: 'compoundComponent',
+              artifactId: 'ciftest-a',
+              memberId: 'A-element',
+              slots: [
+                {
+                  slotId: 'testslotA'
+                }
+              ],
+
+              members: [
+                {
+                  componentId: 'test.package-ciftest-d@0.1/ciftest-d',
+                  memberId: 'D-Element',
+                  artifactType: 'elementaryComponent',
+                  artifactId: 'ciftest-d',
+                  slots: [
+                    {
+                      slotId: 'testslotD'
+                    }
+                  ]
+
+                }
+              ],
+              connections: []
+            }
+          ],
+          connections: []
+        };
+        crc = window.cubx.CRC;
+        container = document.querySelector('[cubx-core-crc]');
+        divEl = document.createElement('div');
+        container.appendChild(divEl);
+        var constructor = cif.getCompoundComponentElementConstructor('ciftest-a');
+        compoundEl = new constructor();
+        compoundEl.setAttribute('member-id', 'one');
+        divEl.appendChild(compoundEl);
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-e');
+        compoundEl2 = new constructor();
+        compoundEl2.setAttribute('member-id', 'two');
+        divEl.appendChild(compoundEl2);
+        connectionId = 'testCon1';
+        createConnection(compoundEl, manifestCiftestA.slots[ 0 ].slotId, 'two', manifestCiftestE.slots[ 0 ].slotId, connectionId);
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+          var ergManifest;
+          switch (componentId) {
+            case 'ciftest-a' :
+              ergManifest = manifestCiftestA;
+              break;
+            case 'ciftest-e' :
+              ergManifest = manifestCiftestE;
+              break;
+            default:
+              break;
+
+          }
+          return ergManifest;
+        });
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function () {
+          return {};
+        });
+      });
+      afterEach(function () {
+        var elList = container.children;
+        while (elList[ 0 ]) {
+          var el = elList[ 0 ];
+          container.removeChild(el);
+        }
+        crc.getResolvedComponent.restore();
+        crc.getCache().getComponentCacheEntry.restore();
+        container.Context._children = [];
+        container.Context._components = [];
+        container.Context._connectionMgr._connections = [];
+      });
+      it('should initialize the components', function () {
+        cif._initCubxElements(container);
+        cif._initConnections();
+
+        var ciftestA = divEl.firstElementChild;
+        ciftestA.should.have.property('tagName', 'CIFTEST-A');
+        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
+        ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
+        var ciftestE = ciftestA.nextElementSibling;
+        ciftestE.should.have.property('tagName', 'CIFTEST-E');
+        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
+        ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
+      });
+      it('should have a connection in the connectionManager', function () {
+        cif._initCubxElements(container);
+        cif._initConnections();
+
+        var conMgr = container.Context.getConnectionMgr();
+        conMgr._connections.should.have.length(1);
+        var con = conMgr._connections[ 0 ];
+        expect(con).to.be.exists;
+        con.should.have.property('source');
+        con.source.should.have.property('component', compoundEl);
+        con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));
+        con.source.should.have.property('slot', manifestCiftestA.slots[ 0 ].slotId);
+        con.should.have.property('destination');
+        con.destination.should.have.property('component', compoundEl2);
+        con.destination.should.have.property('memberId', compoundEl2.getAttribute('member-id'));
+        con.destination.should.have.property('slot', manifestCiftestE.slots[ 0 ].slotId);
+        con.should.have.property('connectionId', connectionId);
+        con.should.have.property('copyValue', true);
+        con.should.have.property('repeatedValues', false);
+        con.should.have.property('hookFunction', null);
+      });
+    });
   });
 });
