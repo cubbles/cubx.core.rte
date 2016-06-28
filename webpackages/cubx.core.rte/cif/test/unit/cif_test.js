@@ -2,10 +2,8 @@
 
 describe('CIF', function () {
   var cif;
-  var Context;
   before(function () {
     cif = window.cubx.cif.cif;
-    Context = window.cubx.cif.Context;
   });
   describe('#CIF()', function () {
     it('should create a new cif object', function () {
@@ -72,28 +70,20 @@ describe('CIF', function () {
     before(function () {
       container = document.querySelector('[cubx-core-crc]');
     });
-    describe('if context not exists', function () {
+    describe('_cifReady attribute is false', function () {
+      beforeEach(function () {
+        cif._cifReady = false;
+      });
       it('should be false', function () {
-        expect(cif.isReady(container)).to.be.false;
+        expect(cif.isReady()).to.be.false;
       });
     });
 
-    describe('if context', function () {
+    describe('_cifReady attribute is true', function () {
       /* eslint-disable no-unused-vars*/
-      var stubContextIsready;
-      /* eslint-ensable no-unused-vars*/
-      var context;
-      before(function () {
-        context = new Context(container);
-        stubContextIsready = sinon.stub(context, 'isReady', function () {
-          return true;
-        });
-        cif._rootContextList = [];
-        cif._rootContextList.push(context);
-      });
-      after(function () {
-        context.isReady.restore();
-        cif._rootContextList = [];
+
+      beforeEach(function () {
+        cif._cifReady = true;
       });
       it('should be true', function () {
         expect(cif.isReady(container)).to.be.true;

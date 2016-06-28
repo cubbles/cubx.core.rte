@@ -79,6 +79,13 @@
     this._cifAllComponentsReady = false;
 
     /**
+     * ready flag for cif
+     * @type {boolean}
+     * @private
+     */
+    this._cifReady = false;
+
+    /**
      * map of elemnt waiting for create subtree
      * key: runtimeId
      * value: true|false
@@ -153,18 +160,10 @@
   /**
    *
    * @memberOf CIF
-   * @param {HTMLElement} node A crc root node
    * @return {boolean} true if cif for that crc root is ready. False otherwise
    */
-  CIF.prototype.isReady = function (node) {
-    if (!node) {
-      node = this.getCRCRootNode();
-    }
-    var context = _.find(this._rootContextList, function (item) {
-      return item.getRootElement() === node;
-    }, this);
-
-    return context ? context.isReady() : false;
+  CIF.prototype.isReady = function () {
+    return this._cifReady;
   };
 
   /**
@@ -1216,8 +1215,11 @@
 
     if (node.Context) {
       node.Context.setReady();
-      cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_READY);
-      node.dispatchEvent(cifReadyEvent);
+      if (!this._cifReady) {
+        this._cifReady = true;
+        cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_READY);
+        node.dispatchEvent(cifReadyEvent);
+      }
     }
   };
 

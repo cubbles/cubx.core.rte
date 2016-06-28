@@ -5,6 +5,16 @@
 ### Improvement
 * PLAT-524: Capability to define inline manifest object directly on rootDependency item
 * PLAT-538: Cache manifest.webpackage files using webpackage id as key
+* fire cifReady Event just first time (PLAT-545)
+
+## BugFixes
+* Fixed: Not direct children was ignored (Jira:PLAT-534)
+
+## 1.9.0
+ * Composite Case
+    * Coder can combine any html elements inside of crc-root
+    * It can be defined connections between cubbles,
+    * Cubbles can be initialized with slot values
 
 ## 1.8.0
 
