@@ -6,6 +6,7 @@
 * PLAT-524: Capability to define inline manifest object directly on rootDependency item
 * PLAT-538: Cache manifest.webpackage files using webpackage id as key
 * fire cifReady Event just first time (PLAT-545)
+* BDE-230: Resources wit absolute urls are allowed by means of the 'allowAbsoluteResourceUrls' attribute from CRCInit object
 
 ## BugFixes
 * Fixed: Not direct children was ignored (Jira:PLAT-534)
