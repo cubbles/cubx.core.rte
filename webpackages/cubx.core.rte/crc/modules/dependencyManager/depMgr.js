@@ -2,7 +2,7 @@
  * Created by pwr on 13.02.2015.
  */
 
-window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, utils, responseCache) {
+window.cubx.amd.define([ 'jqueryLoader', 'utils', 'responseCache' ], function ($, utils, responseCache) {
   'use strict';
 
   /**
@@ -180,7 +180,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
           var currentEndpoint = arguments[ i ].data;
           if (!currentEndpoint) {
             console.error('Endpoint ' + arguments[ i ].item.webpackageId + '/' + arguments[ i ].item.artifactId + ' / ' +
-               arguments[ i ].item.endpointId + ' not found.');
+              arguments[ i ].item.endpointId + ' not found.');
           }
           // attach all the resources to DepReference item if there are any
           if (currentEndpoint.hasOwnProperty('resources') && currentEndpoint.resources.length > 0) {
@@ -245,9 +245,12 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
     for (var i = 0; i < depList.length; i++) {
       var currentDepRef = depList[ i ];
       for (var j = 0; j < currentDepRef.resources.length; j++) {
-        resourceList.push(this._createResourceFromItem(currentDepRef.webpackageId + '/' +
+        var resource = this._createResourceFromItem(currentDepRef.webpackageId + '/' +
           currentDepRef.artifactId, currentDepRef.resources[ j ],
-          this._runtimeMode, currentDepRef.referrer));
+          this._runtimeMode, currentDepRef.referrer);
+        if (resource) {
+          resourceList.push(resource);
+        }
       }
     }
     return resourceList;
@@ -439,13 +442,23 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
     }
 
     var file;
-    if (qualifiedArtifactId === '') {
-      file = item[ runtimeMode ];
+
+    var get = window.cubx.utils.get;
+    var allowAbsoluteResourceUrls = get(window, 'cubx.CRCInit.allowAbsoluteResourceUrls');
+    if (item[ runtimeMode ].indexOf('http') === 0 || item[ runtimeMode ].indexOf('blob') === 0) {
+      if (allowAbsoluteResourceUrls) {
+        file = item[ runtimeMode ];
+      } else {
+        console.warn('The following url is not allowed, because it is an absolute url. ', item[ runtimeMode ]);
+        return;
+      }
     } else {
       file = this._baseUrl + qualifiedArtifactId + '/' + item[ runtimeMode ];
     }
-    var type = this._determineResourceType(file);
-    return new Resource(file, type.name, referrer);
+
+    var resMetaObj = this._determineResourceType(file);
+
+    return new Resource(resMetaObj.fileName, resMetaObj.fileType.name, referrer);
   };
 
   /**
@@ -457,7 +470,13 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
    */
   DependencyMgr.prototype._determineResourceType = function (fileName) {
     var fileType;
-    var fileEnding = fileName.split('.')[ fileName.split('.').length - 1 ];
+    var paramTypeIndex = fileName.indexOf('?type=');
+    var paramType;
+    if (paramTypeIndex > 0) {
+      paramType = fileName.substr(paramTypeIndex + 6);
+      fileName = fileName.substring(0, paramTypeIndex);
+    }
+    var fileEnding = paramType || fileName.split('.')[ fileName.split('.').length - 1 ];
 
     for (var property in DependencyMgr._types) {
       if (DependencyMgr._types.hasOwnProperty(property)) {
@@ -474,7 +493,10 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache'], function ($, 
       }
     }
 
-    return fileType;
+    return {
+      fileType: fileType,
+      fileName: fileName
+    };
   };
 
   /**

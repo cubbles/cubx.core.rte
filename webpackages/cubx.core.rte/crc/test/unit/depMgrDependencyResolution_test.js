@@ -111,26 +111,82 @@ window.cubx.amd.define([ 'CRC',
           resource.should.have.property('type', 'javascript');
           depMgr._baseUrl = '';
         });
+
+        describe('resources with absolute url', function () {
+          describe('allowAbsoluteResourceUrls is false', function () {
+            it('should not create a new resource for item given as string using an absolute url, since allowAbsoluteResourceUrls = false', function () {
+              var absoluteUrlString = 'blob:http://xxxxxx?type=js';
+              var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+              expect(resource).to.be.undefined;
+            });
+          });
+
+          describe('allowAbsoluteResourceUrls is true', function () {
+            beforeEach(function () {
+              window.cubx.CRCInit.allowAbsoluteResourceUrls = true;
+            });
+            afterEach(function () {
+              window.cubx.CRCInit.allowAbsoluteResourceUrls = false;
+            });
+
+            it('should create a new resource of type "javascript" for item given as string using an absolute url', function () {
+              var absoluteUrlString = 'blob:http://xxxxxx?type=js';
+              var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+              resource.should.have.property('path', 'blob:http://xxxxxx');
+              resource.should.have.property('type', 'javascript');
+            });
+            it('should create a new resource of type "htmlImport" for item given as string using an absolute url', function () {
+              var absoluteUrlString = 'blob:http://xxxxxx?type=html';
+              var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+              resource.should.have.property('path', 'blob:http://xxxxxx');
+              resource.should.have.property('type', 'htmlImport');
+            });
+            it('should create a new resource of type "stylesheet" for item given as string using an absolute url', function () {
+              var absoluteUrlString = 'blob:http://xxxxxx?type=css';
+              var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+              resource.should.have.property('path', 'blob:http://xxxxxx');
+              resource.should.have.property('type', 'stylesheet');
+            });
+          });
+        });
       });
 
       describe('#_determineResourceType()', function () {
         it('should associate fileEnding ".js" with type "javascript"', function () {
           var fileName = 'test.min.js';
-          var type = depMgr._determineResourceType(fileName);
-          expect(type.name).to.eql('javascript');
+          var erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('javascript');
         });
         it('should associate fileEnding ".css" with type "stylesheet"', function () {
           var fileName = 'test.min.css';
-          var type = depMgr._determineResourceType(fileName);
-          expect(type.name).to.eql('stylesheet');
+          var erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('stylesheet');
         });
         it('should associate fileEnding ".html" and ".htm" with type "htmlImport"', function () {
           var fileName = 'import.html';
-          var type = depMgr._determineResourceType(fileName);
-          expect(type.name).to.eql('htmlImport');
+          var erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('htmlImport');
           fileName = 'import.htm';
-          type = depMgr._determineResourceType(fileName);
-          expect(type.name).to.eql('htmlImport');
+          erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('htmlImport');
+        });
+        it('should associate type parameter "js" with type "javascript"', function () {
+          var fileName = 'blob:http://xxxxxx?type=js';
+          var erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('javascript');
+          erg.fileName.should.equal('blob:http://xxxxxx');
+        });
+        it('should associate type parameter "html" with type "htmlImport"', function () {
+          var fileName = 'blob:http://xxxxxx?type=html';
+          var erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('htmlImport');
+          erg.fileName.should.equal('blob:http://xxxxxx');
+        });
+        it('should associate type parameter "css" with type "stylesheet"', function () {
+          var fileName = 'blob:http://xxxxxx?type=css';
+          var erg = depMgr._determineResourceType(fileName);
+          expect(erg.fileType.name).to.eql('stylesheet');
+          erg.fileName.should.equal('blob:http://xxxxxx');
         });
       });
 
@@ -287,8 +343,8 @@ window.cubx.amd.define([ 'CRC',
                 endpoints: [
                   {
                     endpointId: 'main',
-                    resources: ['js/test1.js', 'css/test1.css'],
-                    dependencies: ['pack1@1.0.0/util/main', 'pack2@1.0.0/util/main']
+                    resources: [ 'js/test1.js', 'css/test1.css' ],
+                    dependencies: [ 'pack1@1.0.0/util/main', 'pack2@1.0.0/util/main' ]
                   }
                 ]
               }
@@ -316,7 +372,7 @@ window.cubx.amd.define([ 'CRC',
           var promise = depMgr._resolveDepReference(depReferenceItem);
           promise.then(function (result) {
             sinon.assert.notCalled(ajaxSpy);
-            expect(result.data).to.eql(customManifest.artifacts.utilities[0].endpoints[0]);
+            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ].endpoints[ 0 ]);
             done();
           });
         });
@@ -325,7 +381,7 @@ window.cubx.amd.define([ 'CRC',
           var promise = depMgr._resolveDepReference(depReferenceItem);
           promise.then(function (result) {
             sinon.assert.notCalled(ajaxSpy);
-            expect(result.data).to.eql(customManifest.artifacts.utilities[0].endpoints[0]);
+            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ].endpoints[ 0 ]);
             done();
           });
         });

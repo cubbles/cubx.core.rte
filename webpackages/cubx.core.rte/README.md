@@ -42,7 +42,7 @@ Should the CIF be loaded?
 **Configuration through**
 
 * The attribute of the CRCLoader Script-Tag: `data-crcinit-loadcif="false"'
-* The global property: 
+* The global property:
 
         <script>
             window.cubx = {
@@ -63,10 +63,24 @@ An application can be started in different runtime modes.
 **Configuration through**
 
 * The URL parameter `runtimeMode=dev`
+
 ### Attributes:
 #### data-cubx-startevent (default DOMContentEvent)
 Event which is triggered to indicate that the the CRC has loaded.
 
+#### allow-absolute-resource-urls
+If is allow-absolute-resource-urls==true, allow usage of absolut resource urls. Default value is false.
+
+... or set direct in CRCInit object...
+
+    <script>
+        window.cubx = {
+            "CRCInit": {
+                "allowAbsoluteResourceUrls": true
+            }
+        }
+    </script>
+    
 ### Root Dependencies
 The configuration of the root dependencies can be defined through an initial global configuration object. This object is the only way to load dependencies that are not part of the Cubbles platform
 
@@ -80,13 +94,37 @@ The configuration of the root dependencies can be defined through an initial glo
         }
     </script>
 
-The dependencies of a Cubbles component can be defined using the the attribute "cubx-dependency" within its HTML tag, as follows: 
+
+The dependencies of a Cubbles component can be defined using the the attribute "cubx-dependency" within its HTML tag, as follows:
 
     <my-example-component cubx-dependency="examples@0.1-SNAPSHOT/my-example-component /main"></my-example-component >
 
-If the dependency is defined in the same webpackage, the key word 'this' can be used instead of the webpackageId (i.e. 'webpaackageName@version'), as follows: 
+If the dependency is defined in the same webpackage, the key word 'this' can be used instead of the webpackageId (i.e. 'webpaackageName@version'), as follows:
 
     <my-example-element cubx-dependency="this/my-example-element/main"></my-example-element>
+
+#### Inline manifest definition:
+
+The dependency can be defined as an object with the attributes manifest and endpoint:
+
+    <script>
+        window.cubx = {
+            "CRCInit": {"rootDependencies": [
+               {
+                   "endpoint": "this/util1/main",
+                   "manifest": {
+                       "name": "my-webpackage-name",
+                       "groupId": "com.example",
+                       "version": "0.1.0",
+                       //.... Put your manifest here. Note: this needs to be a full valid webpackage.manifest regarding to document api
+                      // for more details see: https://github.com/cubbles/cubx-webpackage-document-api/wiki
+                   }
+               }
+            ]
+        }
+    </script>
+
+
 
 ## CIF
 (Component Integration Framework)
@@ -113,7 +151,7 @@ The connections between components can be defined as follows:
    * `source`: name of the source slot
    * `destination`: id of the target component and name of the target slot divided by ":".
   * The connections are applied or resolved during runtime in the same order in which they were defined.
- 
+
 Example:
 
     <my-first-cubbles id="first">
@@ -175,7 +213,7 @@ Example:
 
     Root-Tag (compound):
     <cif-test-compound-outer cubx-component-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT">
-    
+
     member (compound):
     <cif-test-compound cubx-component-id="com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT:com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT.member2" member-id="member2"/>
 
@@ -207,7 +245,7 @@ The integration of member components in a compound component can be defined by m
 
 It is important that the id attribute of the template references the artifactId of the component. The member components are added as tags whose `member-id-ref` attribute references its `memberId` in the manifest.webpackage.
 
-For the HTML template to be available, it should be added as resource in the endpoint of the component. 
+For the HTML template to be available, it should be added as resource in the endpoint of the component.
 
 If no template is provided, the member components are added in the same order in which they are defined in the manifest.webpackage.
 
@@ -239,7 +277,7 @@ After the generation of the HTML tags, the Dom tree is parsed. The connection li
 
 The CubxPolymer represents a wrapper for the Polymer object. The object is added to the _CubblesComponent-API_ by the wrapper.
 
-It represents the addition of: 
+It represents the addition of:
 
 1.  a so called _model_,
 2. the methods for the external interaction with the model (espacially used by the CIF) and

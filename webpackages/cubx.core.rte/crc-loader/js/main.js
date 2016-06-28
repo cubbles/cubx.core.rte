@@ -155,6 +155,16 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
   })();
 
   /*
+   *
+   */
+  (function () {
+    var attributeName = 'allow-absolute-resource-urls';
+    var allowAbsoluteResourceUrls = crcLoaderElement.getAttribute(attributeName);
+    var defaultValue = false;
+    cubx.CRCInit.allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || defaultValue;
+  })();
+
+  /*
    * Set option 'runtimeMode' (default == 'prod')
    */
   function getURLParameter (name) {
