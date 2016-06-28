@@ -158,6 +158,9 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
    *
    */
   (function () {
+    if (cubx.CRCInit.allowAbsoluteResourceUrls) {
+      return;
+    }
     var attributeName = 'allow-absolute-resource-urls';
     var allowAbsoluteResourceUrls = crcLoaderElement.getAttribute(attributeName);
     var defaultValue = false;
