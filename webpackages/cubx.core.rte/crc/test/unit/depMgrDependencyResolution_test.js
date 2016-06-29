@@ -131,11 +131,14 @@ window.cubx.amd.define([ 'CRC',
           });
 
           describe('allowAbsoluteResourceUrls is true', function () {
+            var spyConsoleWarn;
             beforeEach(function () {
               window.cubx.CRCInit.allowAbsoluteResourceUrls = true;
+              spyConsoleWarn = sinon.spy(console,'warn');
             });
             afterEach(function () {
               window.cubx.CRCInit.allowAbsoluteResourceUrls = false;
+              console.warn.restore();
             });
 
             it('should create a new resource of type "javascript" for item given as string using an absolute url', function () {
@@ -185,6 +188,14 @@ window.cubx.amd.define([ 'CRC',
                 consoleWarnSpy.calledOnce;
                 consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx)');
               });
+            });
+            it('should not create a new resource for given item since it has not a valid type', function () {
+              var absoluteUrlString = 'blob:http://xxxxxx?type=';
+              var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+              expect(resource).to.be.undefined;
+              spyConsoleWarn.should.be.calledOnce;
+              spyConsoleWarn.should.be.calledWithMatch('The type of the following resource is not valid, it should "js", "html" or "css": ');
+
             });
           });
         });

@@ -449,7 +449,7 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils', 'responseCache' ], function ($
       if (allowAbsoluteResourceUrls) {
         file = item[ runtimeMode ];
       } else {
-        console.warn('The following url is not allowed, because it is an absolute url. (' + item[ runtimeMode ] + ')');
+        console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ', item[ runtimeMode ]);
         return;
       }
     } else {
