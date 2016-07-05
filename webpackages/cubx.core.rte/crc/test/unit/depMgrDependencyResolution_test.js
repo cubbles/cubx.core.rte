@@ -114,10 +114,19 @@ window.cubx.amd.define([ 'CRC',
 
         describe('resources with absolute url', function () {
           describe('allowAbsoluteResourceUrls is false', function () {
+            var consoleWarnSpy;
+            beforeEach(function () {
+              consoleWarnSpy = sinon.spy(console, 'warn');
+            });
+            afterEach(function () {
+              console.warn.restore();
+            });
             it('should not create a new resource for item given as string using an absolute url, since allowAbsoluteResourceUrls = false', function () {
               var absoluteUrlString = 'blob:http://xxxxxx?type=js';
               var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
               expect(resource).to.be.undefined;
+              consoleWarnSpy.should.be.calledOnce;
+              consoleWarnSpy.should.be.calledWith('The following url is not allowed, because it is an absolute url. (blob:http://xxxxxx?type=js)');
             });
           });
 
@@ -147,6 +156,36 @@ window.cubx.amd.define([ 'CRC',
               resource.should.have.property('path', 'blob:http://xxxxxx');
               resource.should.have.property('type', 'stylesheet');
             });
+            describe('not create reaource', function () {
+              var consoleWarnSpy;
+              beforeEach(function () {
+                consoleWarnSpy = sinon.spy(console, 'warn');
+              });
+              afterEach(function () {
+                console.warn.restore();
+              });
+              it('should not create a new resource and return undefined, if the type valu is unkown', function () {
+                var absoluteUrlString = 'blob:http://xxxxxx?type=xxx';
+                var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+                expect(resource).to.be.undefined;
+                consoleWarnSpy.calledOnce;
+                consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx?type=xxx)');
+              });
+              it('should not create a new resource and return undefined, if the type parameter missed', function () {
+                var absoluteUrlString = 'blob:http://xxxxxx?yyy=xxx';
+                var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+                expect(resource).to.be.undefined;
+                consoleWarnSpy.calledOnce;
+                consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx?yyy=xxx)');
+              });
+              it('should not create a new resource and return undefined, if no paramter exists', function () {
+                var absoluteUrlString = 'blob:http://xxxxxx';
+                var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
+                expect(resource).to.be.undefined;
+                consoleWarnSpy.calledOnce;
+                consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx)');
+              });
+            });
           });
         });
       });
@@ -155,38 +194,56 @@ window.cubx.amd.define([ 'CRC',
         it('should associate fileEnding ".js" with type "javascript"', function () {
           var fileName = 'test.min.js';
           var erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('javascript');
+          erg.fileType.name.should.eql('javascript');
         });
         it('should associate fileEnding ".css" with type "stylesheet"', function () {
           var fileName = 'test.min.css';
           var erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('stylesheet');
+          erg.fileType.name.should.eql('stylesheet');
         });
         it('should associate fileEnding ".html" and ".htm" with type "htmlImport"', function () {
           var fileName = 'import.html';
           var erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('htmlImport');
+          erg.fileType.name.should.eql('htmlImport');
           fileName = 'import.htm';
           erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('htmlImport');
+          erg.fileType.name.should.eql('htmlImport');
         });
         it('should associate type parameter "js" with type "javascript"', function () {
           var fileName = 'blob:http://xxxxxx?type=js';
           var erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('javascript');
+          erg.fileType.name.should.eql('javascript');
           erg.fileName.should.equal('blob:http://xxxxxx');
         });
         it('should associate type parameter "html" with type "htmlImport"', function () {
           var fileName = 'blob:http://xxxxxx?type=html';
           var erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('htmlImport');
+          erg.fileType.name.should.eql('htmlImport');
           erg.fileName.should.equal('blob:http://xxxxxx');
         });
         it('should associate type parameter "css" with type "stylesheet"', function () {
           var fileName = 'blob:http://xxxxxx?type=css';
           var erg = depMgr._determineResourceType(fileName);
-          expect(erg.fileType.name).to.eql('stylesheet');
+          erg.fileType.name.should.eql('stylesheet');
           erg.fileName.should.equal('blob:http://xxxxxx');
+        });
+        it('should associate type parameter "js" with type "javascript"', function () {
+          var fileName = 'blob:http://xxxxxx?type=xxx';
+          var erg = depMgr._determineResourceType(fileName);
+          erg.should.have.property('fileType', undefined);
+          erg.fileName.should.equal('blob:http://xxxxxx');
+        });
+        it('should associate type parameter "js" with type "javascript"', function () {
+          var fileName = 'blob:http://xxxxxx';
+          var erg = depMgr._determineResourceType(fileName);
+          erg.should.have.property('fileType', undefined);
+          erg.fileName.should.equal('blob:http://xxxxxx');
+        });
+        it('should associate type parameter "js" with type "javascript"', function () {
+          var fileName = 'blob:http://xxxxxx?yyy';
+          var erg = depMgr._determineResourceType(fileName);
+          erg.should.have.property('fileType', undefined);
+          erg.fileName.should.equal('blob:http://xxxxxx?yyy');
         });
       });
 
