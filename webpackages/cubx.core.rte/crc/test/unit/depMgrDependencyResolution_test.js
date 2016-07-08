@@ -134,7 +134,7 @@ window.cubx.amd.define([ 'CRC',
             var spyConsoleWarn;
             beforeEach(function () {
               window.cubx.CRCInit.allowAbsoluteResourceUrls = true;
-              spyConsoleWarn = sinon.spy(console,'warn');
+              spyConsoleWarn = sinon.spy(console, 'warn');
             });
             afterEach(function () {
               window.cubx.CRCInit.allowAbsoluteResourceUrls = false;
@@ -195,7 +195,6 @@ window.cubx.amd.define([ 'CRC',
               expect(resource).to.be.undefined;
               spyConsoleWarn.should.be.calledOnce;
               spyConsoleWarn.should.be.calledWithMatch('The type of the following resource is not valid, it should "js", "html" or "css": ');
-
             });
           });
         });
