@@ -449,7 +449,7 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils', 'responseCache' ], function ($
       if (allowAbsoluteResourceUrls) {
         file = item[ runtimeMode ];
       } else {
-        console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ', item[ runtimeMode ]);
+        console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ' + item[ runtimeMode ]);
         return;
       }
     } else {
@@ -458,7 +458,7 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils', 'responseCache' ], function ($
 
     var resMetaObj = this._determineResourceType(file);
     if (!resMetaObj.fileType) {
-      console.warn('The following resource will be ignored, because the type of the resource is unkown. (' + item[ runtimeMode ] + ')');
+      console.warn('The following resource will be ignored, because the type of the resource is unkown. It should be "js", "html" or "css". (' + item[ runtimeMode ] + ')');
       return;
     }
     return new Resource(resMetaObj.fileName, resMetaObj.fileType.name, referrer);

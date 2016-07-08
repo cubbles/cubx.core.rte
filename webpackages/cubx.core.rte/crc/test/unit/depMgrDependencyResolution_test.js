@@ -126,19 +126,16 @@ window.cubx.amd.define([ 'CRC',
               var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
               expect(resource).to.be.undefined;
               consoleWarnSpy.should.be.calledOnce;
-              consoleWarnSpy.should.be.calledWith('The following url is not allowed, because it is an absolute url. (blob:http://xxxxxx?type=js)');
+              consoleWarnSpy.should.be.calledWith('The following resource can not be loaded since the use of absolute urls is not allowed by default: blob:http://xxxxxx?type=js');
             });
           });
 
           describe('allowAbsoluteResourceUrls is true', function () {
-            var spyConsoleWarn;
             beforeEach(function () {
               window.cubx.CRCInit.allowAbsoluteResourceUrls = true;
-              spyConsoleWarn = sinon.spy(console, 'warn');
             });
             afterEach(function () {
               window.cubx.CRCInit.allowAbsoluteResourceUrls = false;
-              console.warn.restore();
             });
 
             it('should create a new resource of type "javascript" for item given as string using an absolute url', function () {
@@ -159,10 +156,10 @@ window.cubx.amd.define([ 'CRC',
               resource.should.have.property('path', 'blob:http://xxxxxx');
               resource.should.have.property('type', 'stylesheet');
             });
-            describe('not create reaource', function () {
-              var consoleWarnSpy;
+            describe('not create resource', function () {
+              var spyConsoleWarn;
               beforeEach(function () {
-                consoleWarnSpy = sinon.spy(console, 'warn');
+                spyConsoleWarn = sinon.spy(console, 'warn');
               });
               afterEach(function () {
                 console.warn.restore();
@@ -171,30 +168,23 @@ window.cubx.amd.define([ 'CRC',
                 var absoluteUrlString = 'blob:http://xxxxxx?type=xxx';
                 var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
                 expect(resource).to.be.undefined;
-                consoleWarnSpy.calledOnce;
-                consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx?type=xxx)');
+                spyConsoleWarn.calledOnce;
+                spyConsoleWarn.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx?type=xxx)');
               });
               it('should not create a new resource and return undefined, if the type parameter missed', function () {
                 var absoluteUrlString = 'blob:http://xxxxxx?yyy=xxx';
                 var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
                 expect(resource).to.be.undefined;
-                consoleWarnSpy.calledOnce;
-                consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx?yyy=xxx)');
+                spyConsoleWarn.calledOnce;
+                spyConsoleWarn.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx?yyy=xxx)');
               });
               it('should not create a new resource and return undefined, if no paramter exists', function () {
                 var absoluteUrlString = 'blob:http://xxxxxx';
                 var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
                 expect(resource).to.be.undefined;
-                consoleWarnSpy.calledOnce;
-                consoleWarnSpy.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx)');
+                spyConsoleWarn.calledOnce;
+                spyConsoleWarn.calledWith('The following resource will be ignored, because the type of the resource is unkown. (blob:http://xxxxxx)');
               });
-            });
-            it('should not create a new resource for given item since it has not a valid type', function () {
-              var absoluteUrlString = 'blob:http://xxxxxx?type=';
-              var resource = depMgr._createResourceFromItem(id, absoluteUrlString, 'prod');
-              expect(resource).to.be.undefined;
-              spyConsoleWarn.should.be.calledOnce;
-              spyConsoleWarn.should.be.calledWithMatch('The type of the following resource is not valid, it should "js", "html" or "css": ');
             });
           });
         });
