@@ -61,13 +61,13 @@ window.cubx.amd.define([], function () {
         // artifact is not a component
         return;
       }
-      var webpackageId = document.groupId;
-      if (webpackageId && webpackageId.length > 0) {
-        webpackageId += '.';
-      }
-      webpackageId += document.name;
+
+      var webpackageId = document.name;
       webpackageId += '@';
       webpackageId += document.version;
+      if (document.groupId && document.groupId.length > 0) {
+        webpackageId = document.groupId + '.' + webpackageId;
+      }
       componentEntry.webpackageId = webpackageId;
       this._addComponentCacheEntry(componentEntry);
     } else {
