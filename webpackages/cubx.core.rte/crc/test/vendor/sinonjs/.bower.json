@@ -14,7 +14,7 @@
     "tag": "v1.12.2",
     "commit": "243d02187a66db5b41544bcff269018a0771a284"
   },
-  "_source": "git://github.com/blittle/sinon.js.git",
+  "_source": "https://github.com/blittle/sinon.js.git",
   "_target": "~1.12.2",
   "_originalSource": "sinonjs"
 }

@@ -10,11 +10,13 @@
     "node_modules",
     "bower_components"
   ],
-  "dependencies": {},
+  "dependencies": {
+
+  },
   "devDependencies": {
     "mocha": "^2.2.4",
     "chai": "^2.2.0",
-    "sinonjs": "~1.12.2"
-
+    "sinonjs": "~1.12.2",
+    "sinon-chai": "^2.8.0"
   }
 }
