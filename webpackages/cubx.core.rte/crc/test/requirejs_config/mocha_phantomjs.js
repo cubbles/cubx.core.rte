@@ -1,6 +1,7 @@
 (function () {
   'use strict';
 
+  // configure requireJS to run inside browser
   window.cubx.amd.require.config({
     baseUrl: '../',
     paths: {
@@ -13,6 +14,7 @@
       'componentResolver': 'modules/componentResolver/componentResolver',
       'eventFactory': 'modules/eventFactory/eventFactory',
       'responseCache': 'modules/responseCache/responseCache',
+      'manifestConverter': 'modules/manifestConverter/manifestConverter',
       // modules needed for test from crc-loader
       'jqueryLoader': '../crc-loader/modules/jqueryLoader/jqueryLoader',
       'jquery': '../crc-loader/modules/jqueryLoader/jquery-1.11.1.min',

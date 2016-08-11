@@ -19,7 +19,8 @@
     'unit/eventFactory_test',
     'unit/storageManager_test',
     'unit/utils_array_test',
-    'unit/responseCache_test'
+    'unit/responseCache_test',
+    'unit/manifestConverter_test'
   ];
 
   // get all tests via requireJS and run them

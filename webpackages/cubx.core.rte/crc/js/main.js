@@ -14,7 +14,8 @@
       'componentResolver': url + '/modules/componentResolver/componentResolver',
       'utils': url + '/modules/utils/utils',
       'eventFactory': url + '/modules/eventFactory/eventFactory',
-      'responseCache': url + '/modules/responseCache/responseCache'
+      'responseCache': url + '/modules/responseCache/responseCache',
+      'manifestConverter': url + '/modules/manifestConverter/manifestConverter'
     }
   };
 

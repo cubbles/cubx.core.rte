@@ -2,7 +2,7 @@
  * Created by pwr on 13.02.2015.
  */
 
-window.cubx.amd.define([ 'jqueryLoader', 'utils', 'responseCache' ], function ($, utils, responseCache) {
+window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConverter'], function ($, utils, responseCache, manifestConverter) {
   'use strict';
 
   /**
@@ -45,6 +45,13 @@ window.cubx.amd.define([ 'jqueryLoader', 'utils', 'responseCache' ], function ($
      * @private
      */
     this._responseCache = responseCache;
+
+    /**
+     * The manifestConverter used by the DpenendencyMgr instance
+     * @type {object}
+     * @private
+     */
+    this._manifestConverter = manifestConverter;
   };
 
   // ---------------------------------------------------------------------------------------------------------------
