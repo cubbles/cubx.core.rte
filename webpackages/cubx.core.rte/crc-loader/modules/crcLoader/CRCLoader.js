@@ -17,6 +17,12 @@ cubx.amd.define([ 'require', 'jqueryLoader' ], function (require, $) {
     this._crcLoaderResourcesBaseUrl = null;
     this._crcBaseUrl = null;
     this._webpackageBaseUrl = null;
+    /**
+     * crcRoot Element
+     * @type {HTMLElement}
+     * @private
+     */
+    this._crcRoot = null;
   };
 
   // -----------------------------------------------------------------------------------------------------------
@@ -29,6 +35,11 @@ cubx.amd.define([ 'require', 'jqueryLoader' ], function (require, $) {
    */
   CRCLoader.prototype.run = function () {
     document.addEventListener('crcDepMgrReady', this._includeMainScript.bind(this));
+    var crcContainer = document.querySelector('[cubx-core-crc]');
+    if (!crcContainer) {
+      crcContainer = document.body;
+    }
+    this._crcRoot = crcContainer;
     var self = this;
     var action = function () {
       self._addComponentIdsToRootdependencies();
@@ -42,30 +53,26 @@ cubx.amd.define([ 'require', 'jqueryLoader' ], function (require, $) {
   };
 
   CRCLoader.prototype._addComponentIdsToRootdependencies = function () {
-    var crcContainer = document.querySelector('[cubx-core-crc]');
-    if (crcContainer) {
-      var elements = crcContainer.querySelectorAll('[cubx-dependency]');
-      if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
-        cubx.CRCInit.rootDependencies = [];
-      }
-      for (var i = 0; i < elements.length; i++) {
-        cubx.CRCInit.rootDependencies.push(elements[ i ].getAttribute('cubx-dependency'));
-      }
+    var elements = this._crcRoot.querySelectorAll('[cubx-dependency]');
+    if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
+      cubx.CRCInit.rootDependencies = [];
+    }
+    for (var i = 0; i < elements.length; i++) {
+      cubx.CRCInit.rootDependencies.push(elements[ i ].getAttribute('cubx-dependency'));
     }
   };
 
   CRCLoader.prototype._load = function () {
     var crcLoader = this;
     var crcModuleName = crcLoader._crcBaseUrl + '/modules/crc/CRC.js';
-
+    var me = this;
     // get CRC
     $.getScript(crcLoader._crcBaseUrl + '/js/main.js', function () {
       require([ crcModuleName ], function (crc) {
         window.cubx.CRC = crc;
 
         // select crcRoot element and init crc on it
-        var crcRoot = window.document.querySelector('[cubx-core-crc]');
-        window.cubx.CRC.init(crcRoot);
+        window.cubx.CRC.init(me._crcRoot);
         // now run resolve the dependencies
         var depMgr = crc.getDependencyMgr();
         depMgr.init();

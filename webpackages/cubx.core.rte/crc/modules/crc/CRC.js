@@ -29,7 +29,7 @@ window.cubx.amd.define([ 'require',
        /* @type {string}
        /* @private
        */
-      this._version = '1.10.0';
+      this._version = '2.0.0-SNAPSHOT';
 
       /**
        * jQuery object containing only one element to which the crc should be appended
@@ -128,7 +128,7 @@ window.cubx.amd.define([ 'require',
        * @type {string[]}
        * @private
        */
-      this._supportedModelVersionList = [ '8.0', '8.1', '8.2', '8.3' ];
+      this._supportedModelVersionList = [ '8.0', '8.1', '8.2', '8.3', '9.0' ];
     };
 
     // --------------------------------------------------------------------------------------------------------------
@@ -147,14 +147,13 @@ window.cubx.amd.define([ 'require',
       this._runtimeMode = get(window, 'cubx.CRCInit.runtimeMode');
       this._root = root;
       this._ie_polyfills();
-      // TODO PLAT-88: data-crc-id muss von aussen kommen , evtl . bei fehlende angabe in crcLoader generieren
       if (this._root) {
         root.setAttribute('data-crc-id', this._crcElId);
         root.setAttribute('data-crc-version', this._version);
       } else {
         console.warn(
           'Can\'t set the attributes "data-crc-id" and "data-crc-version", because' +
-          ' no element with attribute "cubx-core-crc" found.');
+          ' no element could be identified as crc root element.');
       }
     };
 
@@ -212,7 +211,7 @@ window.cubx.amd.define([ 'require',
       var el = document.querySelector('[data-crc-id="' + this._crcElId + '"]');
       if (!el) {
         console.log(
-          'Cant get the crc container element, because no element with attribute "cubx-core-crc" found.');
+          'Cant get the crc container element, because no element could be identified as crc root element.');
       }
       return el;
     };

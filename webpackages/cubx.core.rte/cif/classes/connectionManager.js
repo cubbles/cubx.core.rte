@@ -412,7 +412,7 @@
   };
 
   ConnectionManager.prototype._findParentComponent = function (component) {
-    if (component.parentNode.isCompoundComponent || component.parentNode.hasAttribute('cubx-core-crc')) {
+    if (component.parentNode.isCompoundComponent || component.parentNode.hasAttribute('cubx-core-crc') || component.parentNode === document.body) {
       return component.parentNode;
     }
     return this._findParentComponent(component.parentNode);

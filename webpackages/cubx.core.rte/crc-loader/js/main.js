@@ -115,18 +115,17 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
    */
   (function () {
     var attributeName = 'data-CRCInit.loadCIF';
-    var loadCIF = crcLoaderElement.getAttribute(attributeName);
+    var loadCIFAttr = crcLoaderElement.getAttribute(attributeName);
     attributeName = 'data-crcinit-loadcif';
-    loadCIF = loadCIF || crcLoaderElement.getAttribute(attributeName);
-    var defaultValue = true;
-    loadCIF = loadCIF || defaultValue;
-    if ([ 'true', 'false' ].indexOf(loadCIF) > -1) {
-      cubx.CRCInit.loadCIF = loadCIF;
-    } else {
+    loadCIFAttr = loadCIFAttr || crcLoaderElement.getAttribute(attributeName);
+    var defaultValue = 'true';
+    var loadCIF = loadCIFAttr || defaultValue;
+    cubx.CRCInit.loadCIF = loadCIF;
+    if ([ 'true', 'false' ].indexOf(loadCIFAttr) > -1) {
       console.warn(
         'Expected CRCLoader attribute "' + attributeName + '" to be "true" or "false". ' +
-        'Got "' + loadCIF + '".' +
-        'Going to use "' + defaultValue + '".');
+        'Got "' + loadCIFAttr + '". ' +
+        'Going to use default value "' + defaultValue + '".');
     }
   })();
 

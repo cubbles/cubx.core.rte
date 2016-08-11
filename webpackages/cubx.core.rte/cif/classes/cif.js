@@ -675,8 +675,8 @@
    */
   CIF.prototype._createDOMTreeFromManifest = function (manifest, root) {
     if (manifest.artifactId !== root.tagName.toLowerCase()) {
-      throw new Error('The manifest referenz a different tag (' + manifest.artifactId +
-        ') as in cubx-core-crc container found tag (' + root.tagName.toLowerCase() + ').');
+      throw new Error('The manifest has referenced a different tag (' + manifest.artifactId +
+        '), than the tag in the CRC container (' + root.tagName.toLowerCase() + ').');
     }
     var runtimeId = root.getAttribute('runtime-id');
     this._componentReady[ runtimeId ] = {

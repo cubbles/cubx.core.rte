@@ -95,7 +95,7 @@
               "elementary-example.html"
             ],
             "dependencies": [
-              "cubx.core.rte@1.5.0/cubxpolymer/main"
+              "cubx.core.rte@2.0.0-SNAPSHOT/cubxpolymer/main"
             ]
           }
         ],
