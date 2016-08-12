@@ -1217,6 +1217,9 @@
       node.Context.setReady();
       if (!this._cifReady) {
         this._cifReady = true;
+        if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+          console.log('cif is ready');
+        }
         cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_READY);
         node.dispatchEvent(cifReadyEvent);
       }

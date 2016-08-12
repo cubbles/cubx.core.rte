@@ -53,12 +53,17 @@ cubx.amd.define([ 'require', 'jqueryLoader' ], function (require, $) {
   };
 
   CRCLoader.prototype._addComponentIdsToRootdependencies = function () {
-    var elements = this._crcRoot.querySelectorAll('[cubx-dependency]');
+    var elements = this._crcRoot.querySelectorAll('[cubx-webpackage-id]');
     if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
       cubx.CRCInit.rootDependencies = [];
     }
     for (var i = 0; i < elements.length; i++) {
-      cubx.CRCInit.rootDependencies.push(elements[ i ].getAttribute('cubx-dependency'));
+      var dependency = elements[ i ].getAttribute('cubx-webpackage-id') + '/' + elements[ i ].tagName.toLowerCase();
+      var cubxEndpointId = elements[ i ].getAttribute('cubx-endpoint-id');
+      if (cubxEndpointId) {
+        dependency += '/' + cubxEndpointId;
+      }
+      cubx.CRCInit.rootDependencies.push(dependency);
     }
   };
 
