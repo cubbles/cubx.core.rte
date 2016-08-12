@@ -37,7 +37,7 @@ describe('CIF', function () {
       window.cubx.cif.cif._rootContext = originRootContext;
     });
 
-    it('context.initConnections should be called once ', function () {
+    it('context.initSlots should be called once ', function () {
       cif._initSlots(container);
 
       expect(rootContextInitSlotsStub.calledOnce).to.be.true;

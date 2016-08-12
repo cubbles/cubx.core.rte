@@ -20,39 +20,99 @@ describe('Initializer', function () {
     var childChild;
     var spyInitializerParseInitSlotsForElement;
     var spyInitializerParseInitSlotsForContext;
-    beforeEach(function () {
-      var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-parent');
-      element = new constructor();
-      constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child');
-      child = new constructor();
-      child.Context.setParent(element.Context);
-      constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-childchild');
-      childChild = new constructor();
-      childChild.Context.setParent(child.Context);
+    describe('default (function calls)', function () {
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-parent');
+        element = new constructor();
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child');
+        child = new constructor();
+        child.Context.setParent(element.Context);
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-childchild');
+        childChild = new constructor();
+        childChild.Context.setParent(child.Context);
 
-      spyInitializerParseInitSlotsForElement = sinon.spy(initializer, '_parseInitSlotsForElement');
-      spyInitializerParseInitSlotsForContext = sinon.spy(initializer, 'parseInitSlotsForContext');
-      initializer.parseInitSlotsForContext(element.Context);
-    });
-    afterEach(function () {
-      initializer._parseInitSlotsForElement.restore();
-      initializer.parseInitSlotsForContext.restore();
-    });
-    it('#_parseInitSlotsForElement should be called three times', function () {
-      expect(spyInitializerParseInitSlotsForElement.calledThrice).to.be.true;
-    });
-    it('#_parseInitSlotsForElement should be called with param element', function () {
-      expect(spyInitializerParseInitSlotsForElement.calledWith(element)).to.be.true;
-    });
-    it('#parseInitSlotsForContext should be called twice', function () {
-      expect(spyInitializerParseInitSlotsForContext.calledThrice).to.be.true;
-    });
-    it('#parseInitSlotsForContext should be called with param child.Context', function () {
-      expect(spyInitializerParseInitSlotsForContext.calledWith(child.Context)).to.be.true;
-    });
+        spyInitializerParseInitSlotsForElement = sinon.spy(initializer, '_parseInitSlotsForElement');
+        spyInitializerParseInitSlotsForContext = sinon.spy(initializer, 'parseInitSlotsForContext');
+        initializer.parseInitSlotsForContext(element.Context);
+      });
+      afterEach(function () {
+        initializer._parseInitSlotsForElement.restore();
+        initializer.parseInitSlotsForContext.restore();
+      });
+      it('#_parseInitSlotsForElement should be called three times', function () {
+        expect(spyInitializerParseInitSlotsForElement.calledThrice).to.be.true;
+      });
+      it('#_parseInitSlotsForElement should be called with param element', function () {
+        expect(spyInitializerParseInitSlotsForElement.calledWith(element)).to.be.true;
+      });
+      it('#parseInitSlotsForContext should be called twice', function () {
+        expect(spyInitializerParseInitSlotsForContext.calledThrice).to.be.true;
+      });
+      it('#parseInitSlotsForContext should be called with param child.Context', function () {
+        expect(spyInitializerParseInitSlotsForContext.calledWith(child.Context)).to.be.true;
+      });
 
-    it('#parseInitSlotsForContext should be called with param childChild.Context', function () {
-      expect(spyInitializerParseInitSlotsForContext.calledWith(childChild.Context)).to.be.true;
+      it('#parseInitSlotsForContext should be called with param childChild.Context', function () {
+        expect(spyInitializerParseInitSlotsForContext.calledWith(childChild.Context)).to.be.true;
+      });
+    });
+    describe('integrated cubx-core-init', function () {
+      function initSlot (parent, name, value) {
+        var initSlotEl = document.createElement('cubx-core-slot-init');
+        initSlotEl.setSlot(name);
+        initSlotEl.innerHTML = JSON.stringify(value);
+        parent.appendChild(initSlotEl);
+      }
+
+      var element;
+      var child;
+      var child2;
+      /* eslint-disable no-unused-vars */
+      var stubIsInputSlot;
+      /* eslint-enable no-unused-vars */
+      beforeEach(function () {
+        initializer._initList = [];
+        var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-parent');
+        element = new constructor();
+
+        var initEl = document.createElement('cubx-core-init');
+        element.appendChild(initEl);
+        initEl.appendChild(document.createElement('br'));
+        initSlot(initEl, 'slotA', 'a');
+        initEl.appendChild(document.createElement('br'));
+        initSlot(initEl, 'slotB', 'b');
+
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child');
+        child = new constructor();
+        child.Context.setParent(element.Context);
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child2');
+        child2 = new constructor();
+        child2.Context.setParent(element.Context);
+        stubIsInputSlot = sinon.stub(element, 'isInputSlot', function () {
+          return true;
+        });
+
+        initializer.parseInitSlotsForContext(element.Context);
+      });
+      afterEach(function () {
+        element.isInputSlot.restore();
+        initializer._initList = [];
+      });
+      it('initializer._initList should have length = 2', function () {
+        initializer._initList.should.have.length(2);
+      });
+      it('first element ', function () {
+        initializer._initList[ 0 ].should.have.property('_slot', 'slotA');
+        initializer._initList[ 0 ].should.have.property('_value', 'a');
+        initializer._initList[ 0 ].should.have.property('_component');
+        initializer._initList[ 0 ].should.have.property('_context');
+      });
+      it('second element', function () {
+        initializer._initList[ 1 ].should.have.property('_slot', 'slotB');
+        initializer._initList[ 1 ].should.have.property('_value', 'b');
+        initializer._initList[ 1 ].should.have.property('_component');
+        initializer._initList[ 1 ].should.have.property('_context');
+      });
     });
   });
   describe('#_parseInitSlotsForElement', function () {
@@ -78,6 +138,57 @@ describe('Initializer', function () {
         var initEl = document.createElement('cubx-core-init');
         element.appendChild(initEl);
         initSlot(initEl, 'slotA', 'a');
+        initSlot(initEl, 'slotB', 'b');
+
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child');
+        child = new constructor();
+        child.Context.setParent(element.Context);
+        constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child2');
+        child2 = new constructor();
+        child2.Context.setParent(element.Context);
+        stubIsInputSlot = sinon.stub(element, 'isInputSlot', function () {
+          return true;
+        });
+
+        initializer._parseInitSlotsForElement(element, element.Context);
+      });
+      afterEach(function () {
+        element.isInputSlot.restore();
+        initializer._initList = [];
+      });
+      it('initializer._initList should have length = 2', function () {
+        initializer._initList.should.have.length(2);
+      });
+      it('first element ', function () {
+        initializer._initList[ 0 ].should.have.property('_slot', 'slotA');
+        initializer._initList[ 0 ].should.have.property('_value', 'a');
+        initializer._initList[ 0 ].should.have.property('_component');
+        initializer._initList[ 0 ].should.have.property('_context');
+      });
+      it('second element', function () {
+        initializer._initList[ 1 ].should.have.property('_slot', 'slotB');
+        initializer._initList[ 1 ].should.have.property('_value', 'b');
+        initializer._initList[ 1 ].should.have.property('_component');
+        initializer._initList[ 1 ].should.have.property('_context');
+      });
+    });
+    describe('init compound (outer) with forign html elements in <cubx-core-init>', function () {
+      var element;
+      var child;
+      var child2;
+      /* eslint-disable no-unused-vars */
+      var stubIsInputSlot;
+      /* eslint-enable no-unused-vars */
+      beforeEach(function () {
+        initializer._initList = [];
+        var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-parent');
+        element = new constructor();
+
+        var initEl = document.createElement('cubx-core-init');
+        element.appendChild(initEl);
+        element.appendChild(document.createElement('br'));
+        initSlot(initEl, 'slotA', 'a');
+        element.appendChild(document.createElement('br'));
         initSlot(initEl, 'slotB', 'b');
 
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child');

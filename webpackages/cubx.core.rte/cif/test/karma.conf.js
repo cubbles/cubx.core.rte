@@ -47,8 +47,8 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
-    // reporters: [ 'progress', 'junit', 'html', 'mocha'],
+    // reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
+    reporters: ['progress', 'junit', 'html', 'mocha'],
     junitReporter: {
       outputDir: 'test-results/surefire-reports',
       outputFile: 'TEST-karma.xml'
@@ -62,10 +62,10 @@ module.exports = function (config) {
       output: 'autowatch'
     },
 
-    coverageReporter: {
-      type: 'html',
-      dir: 'test-results/coverage/'
-    },
+    // coverageReporter: {
+    //   type: 'html',
+    //   dir: 'test-results/coverage/'
+    // },
     // web server port
     port: 9876,
 
@@ -82,9 +82,9 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [ 'Chrome', 'Firefox' ], //, 'Firefox', 'Chrome'
+    // browsers: [ 'Chrome', 'Firefox' ], //, 'Firefox', 'Chrome'
     // use just Chrome for debugging in Webstorm
-    // browsers: [ 'Chrome' ],
+    browsers: [ 'Chrome' ],
     captureTimeout: 6000,
 
     // Continuous Integration mode

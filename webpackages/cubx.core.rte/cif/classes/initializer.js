@@ -102,7 +102,13 @@
       // The parent is the coponent self (internal init, or an elementary component
       // For compound in the subtree of component will this Method called separate
       if (parent === component || this._isElementaryComponent(parent) && context.findParentContextOfElement(parent).isSame(context)) {
-        this._addAllInitSlotEntriesToInitList(parent, context, initElement.children);
+        var initSlotElements = [];
+        for (var i = 0; i < initElement.children.length; i++) {
+          if (initElement.children[ i ].tagName === 'CUBX-CORE-SLOT-INIT') {
+            initSlotElements.push(initElement.children[ i ]);
+          }
+        }
+        this._addAllInitSlotEntriesToInitList(parent, context, initSlotElements);
       }
     }, this);
   };
