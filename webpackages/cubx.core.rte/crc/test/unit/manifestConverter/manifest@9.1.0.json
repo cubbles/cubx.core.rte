@@ -25,9 +25,21 @@
                 "description": "This app demonstrates ...",
                 "resources": ["index.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1/htmlimport",
-                    "com.hm.demos.aviator@1.0/component2/htmlimport"
+                    {
+                        "artifactId": "bar-chart",
+                        "webpackageId": "d3-charts-lib@1.0",
+                        "endpointId": "main"
+                    },
+                    {
+                        "artifactId": "component1",
+                        "webpackageId": "com.hm.demos.aviator@1.0",
+                        "endpointId": "htmlimport"
+                    },
+                    {
+                        "artifactId": "component2",
+                        "webpackageId": "com.hm.demos.aviator@1.0",
+                        "endpointId": "htmlimport"
+                    }
                 ]
             }
         ],
@@ -37,11 +49,24 @@
                 "description": "This compound demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [
-                    "this/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1/htmlimport",
-                    "com.hm.demos.aviator@1.0/component2/htmlimport",
-                    "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view",
-                    "com.incowia.emob.view@1.0.0-SNAPSHOT/generic-view"
+                    {
+                        "artifactId": "my-util1"
+                    },
+                    {
+                        "artifactId": "station-view",
+                        "webpackageId": "com.incowia.emob.view@1.0.0-SNAPSHOT"
+                    },
+                    {
+                        "artifactId": "generic-view",
+                        "webpackageId": "com.incowia.emob.view@1.0.0-SNAPSHOT"
+                    }
+                ],
+                "dependencyExcludes": [
+                    {
+                        "artifactId": "component3",
+                        "webpackageId": "com.hm.demos.aviator@1.0",
+                        "endpointId": "htmlimport"
+                    }
                 ],
                 "slots": [
                     {
@@ -148,9 +173,19 @@
                 ],
                 "resources": ["import.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1/htmlimport",
-                    "com.hm.demos.aviator@1.0/component2/htmlimport"
+                    {
+                        "artifactId": "bar-chart",
+                        "webpackageId": "d3-charts-lib@1.0",
+                        "endpointId": "main"
+                    },
+                    {
+                        "artifactId": "component1",
+                        "webpackageId": "com.hm.demos.aviator@1.0"
+                    },
+                    {
+                        "artifactId": "component2",
+                        "webpackageId": "com.hm.demos.aviator@1.0"
+                    }
                 ]
             }
         ],
@@ -160,7 +195,11 @@
                 "description": "This util demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main"
+                    {
+                        "artifactId": "bar-chart",
+                        "endpointId": "main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    }
                 ]
             },
             {
@@ -168,7 +207,11 @@
                 "description": "This util demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main"
+                    {
+                        "artifactId": "bar-chart",
+                        "endpointId": "main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    }
                 ]
             },
             {
@@ -176,7 +219,11 @@
                 "description": "This util demonstrates ...",
                 "resources": ["import.min.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main"
+                    {
+                        "artifactId": "bar-chart",
+                        "endpointId": "main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    }
                 ]
             }
         ]

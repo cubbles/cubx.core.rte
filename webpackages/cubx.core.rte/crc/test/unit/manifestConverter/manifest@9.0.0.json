@@ -37,9 +37,9 @@
                 "description": "This compound demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [
-                    "this/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1/htmlimport",
-                    "com.hm.demos.aviator@1.0/component2/htmlimport"
+                    "this/my-util1",
+                    "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic/main",
+                    "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view/main"
                 ],
                 "slots": [
                     {

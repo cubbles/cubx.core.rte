@@ -53,6 +53,11 @@ window.cubx.amd.define([], function () {
     return transformationList;
   };
 
+  /**
+   *
+   * @param manifest
+   * @private
+   */
   ManifestConverter.prototype._addResourcesArrayToArtifacts = function (manifest) {
 
   };
