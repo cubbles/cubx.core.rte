@@ -38,8 +38,8 @@
                 "resources": ["import.html"],
                 "dependencies": [
                     "this/my-util1",
-                    "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic/main",
-                    "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view/main"
+                    "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic",
+                    "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view"
                 ],
                 "slots": [
                     {
@@ -147,8 +147,9 @@
                 "resources": ["import.html"],
                 "dependencies": [
                     "d3-charts-lib@1.0/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1/htmlimport",
-                    "com.hm.demos.aviator@1.0/component2/htmlimport"
+                    "com.hm.demos.aviator@1.0/component1",
+                    "com.hm.demos.aviator@1.0/component2",
+                    "this/my-artifact/main"
                 ]
             }
         ],
@@ -162,7 +163,7 @@
                 ]
             },
             {
-                "artifactId": "my-util2-main",
+                "artifactId": "my-util2'main",
                 "description": "This util demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [

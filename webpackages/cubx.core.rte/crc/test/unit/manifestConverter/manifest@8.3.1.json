@@ -175,10 +175,7 @@
                 "endpoints": [
                     {
                         "endpointId": "main",
-                        "resources": ["import.html"],
-                        "dependencies": [
-                            "d3-charts-lib@1.0/bar-chart/main"
-                        ]
+                        "resources": ["import.html"]
                     }
                 ]
             },

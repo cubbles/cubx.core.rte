@@ -19,9 +19,13 @@ window.cubx.amd.define([], function () {
      */
     this._transformationMatrix = {
       '8.x.x': [
-        this._addResourcesArrayToArtifacts
+        this._addResourcesArrayToArtifacts,
+        this._removeSingleEndpointsFromArtifacts,
+        this._convertArtifactDependencyItems
       ],
-      '9.0.0': [],
+      '9.0.0': [
+        this._convertArtifactDependencyItems
+      ],
       '9.1.0': []
     };
 
@@ -31,6 +35,12 @@ window.cubx.amd.define([], function () {
      * @private
      */
     this._targetVersion = '9.1.0';
+
+    /**
+     * The separator that is used when concatenating artifactId and endpointId from ModelVersion 8.x manifest files
+     * @type {string}
+     */
+    this.endpointSeparator = '#';
   };
 
   /**
@@ -54,12 +64,63 @@ window.cubx.amd.define([], function () {
   };
 
   /**
-   *
-   * @param manifest
+   * Iterate over each artifact and create a 'resources' property for each of them.
+   * Note: The changes will be made directly on the given manifest object.
+   * Note: If there is already a resources array for an artifact it will be overwritten!
+   * @param {object} manifest A valid manifest object
    * @private
+   * @memberOf ManifestConverter
    */
   ManifestConverter.prototype._addResourcesArrayToArtifacts = function (manifest) {
+    // iterate over each artifact but ignore all artifacts of type 'app'
+    Object.keys(manifest.artifacts).forEach(function (artifactType) {
+      if (artifactType !== 'apps') {
+        manifest.artifacts[artifactType].forEach(function (artifact) {
+          artifact.resources = [];
+        });
+      }
+    });
+  };
 
+  /**
+   * Convert each dependency in dependencies array from string to object. Only dependencies on artifact level will be
+   * considered.
+   * Note: The changes will be made directly on the given manifest object.
+   * @param {object} manifest A valid manifest object
+   * @memberOf ManifestConverter
+   * @private
+   */
+  ManifestConverter.prototype._convertArtifactDependencyItems = function (manifest) {
+
+  };
+
+  /**
+   * Remove endpoints for artifacts that have only one endpoint.
+   * Note: The changes will be made directly on the given manifest object.
+   * @param {object} manifest A valid manifest object
+   * @memberOf ManifestConverter
+   * @private
+   */
+  ManifestConverter.prototype._removeSingleEndpointsFromArtifacts = function (manifest) {
+    var self = this;
+    Object.keys(manifest.artifacts).forEach(function (artifactType) {
+      manifest.artifacts[artifactType].forEach(function (artifact) {
+        // only process artifact if there is one single endpoint
+        if (artifact.endpoints.length === 1) {
+          // append endpointId to artifactId using defined separator
+          artifact.artifactId = artifact.artifactId + self.endpointSeparator + artifact.endpoints[0].endpointId;
+          // move resources from endpoint to artifact, if there are any
+          if (artifact.endpoints[0].resources.length > 0) {
+            artifact.resources = artifact.endpoints[0].resources;
+          }
+          // move dependencies from endpoint to artifact, if there are any
+          if (artifact.endpoints[0].hasOwnProperty('dependencies') && artifact.endpoints[0].dependencies.length > 0) {
+            artifact.dependencies = artifact.endpoints[0].dependencies;
+          }
+          delete artifact.endpoints;
+        }
+      });
+    });
   };
 
   /**
