@@ -21,7 +21,7 @@ window.cubx.amd.define([], function () {
       '8.x.x': [
         this._addResourcesArrayToArtifacts,
         this._removeSingleEndpointsFromArtifacts,
-        this._convertMultipleEnpointsToArtifacts,
+        this._convertMultipleEndpointsToArtifacts,
         this._convertArtifactDependencyItems
       ],
       '9.0.0': [
@@ -123,8 +123,33 @@ window.cubx.amd.define([], function () {
    * @param {object} manifest A valid manifest object
    * @private
    */
-  ManifestConverter.prototype._convertMultipleEnpointsToArtifacts = function (manifest) {
-
+  ManifestConverter.prototype._convertMultipleEndpointsToArtifacts = function (manifest) {
+    var self = this;
+    Object.keys(manifest.artifacts).forEach(function (artifactType) {
+      var convertedArtifacts = [];
+      manifest.artifacts[artifactType].forEach(function (artifact, index, artifacts) {
+        if (artifact.endpoints.length > 1) {
+          artifact.endpoints.forEach(function (endpoint) {
+            var convertedArtifact = JSON.parse(JSON.stringify(artifact));
+            convertedArtifact.artifactId = convertedArtifact.artifactId + self.endpointSeparator + endpoint.endpointId;
+            convertedArtifact.resources = endpoint.resources;
+            if (endpoint.hasOwnProperty('dependencies')) {
+              convertedArtifact.dependencies = endpoint.dependencies;
+            }
+            if (endpoint.hasOwnProperty('description') && convertedArtifact.hasOwnProperty('description')) {
+              convertedArtifact.description = convertedArtifact.description + ' ' + endpoint.description;
+            } else if (!convertedArtifact.hasOwnProperty('description') && endpoint.hasOwnProperty('description')) {
+              convertedArtifact.description = endpoint.description;
+            }
+            delete convertedArtifact.endpoints;
+            convertedArtifacts.push(convertedArtifact);
+          });
+        } else {
+          convertedArtifacts.push(artifact);
+        }
+      });
+      manifest.artifacts[artifactType] = convertedArtifacts;
+    });
   };
 
   /**

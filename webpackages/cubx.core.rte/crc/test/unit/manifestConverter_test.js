@@ -122,6 +122,36 @@ window.cubx.amd.define(
             expect(dependency).to.eql({artifactId: 'my-util1'});
           });
         });
+        describe('#_convertMultipleEndpointsToArtifacts()', function () {
+          it('should remove all artifacts with multiple endpoints', function () {
+            manifestConverter._convertMultipleEndpointsToArtifacts(manifest);
+            Object.keys(manifest.artifacts).forEach(function (artifactType) {
+              manifest.artifacts[artifactType].forEach(function (artifact) {
+                if (artifact.hasOwnProperty('endpoints')) {
+                  expect(artifact.endpoints).has.lengthOf(1);
+                } else {
+                  expect(artifact).to.not.hasOwnProperty('endpoints');
+                }
+              });
+            });
+          });
+          it('should create new artifact with artifactId [artifactId]#[endpointId] for each endpoint holding coressponding resources and dependencies.', function () {
+            manifestConverter._convertMultipleEndpointsToArtifacts(manifest);
+            expect(manifest.artifacts.utilities).to.have.lengthOf(3);
+            expect(manifest.artifacts.utilities[1]).to.eql({
+              artifactId: 'my-util2#main',
+              description: 'This util demonstrates ...',
+              resources: ['import.html'],
+              dependencies: ['d3-charts-lib@1.0/bar-chart/main']
+            });
+            expect(manifest.artifacts.utilities[2]).to.eql({
+              artifactId: 'my-util2#min',
+              description: 'This util demonstrates ...',
+              resources: ['import.min.html'],
+              dependencies: ['d3-charts-lib@1.0/bar-chart/main']
+            });
+          });
+        });
       });
     });
   });

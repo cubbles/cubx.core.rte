@@ -191,7 +191,7 @@
                         ]
                     },
                     {
-                        "endpointId": "min-1",
+                        "endpointId": "min",
                         "resources": ["import.min.html"],
                         "dependencies": [
                             "d3-charts-lib@1.0/bar-chart/main"
