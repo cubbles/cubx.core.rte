@@ -47,7 +47,7 @@
                         "resources": ["import.html"],
                         "dependencies": [
                             "this/my-util1/main",
-                            "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic/main",
+                            "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic-view/main",
                             "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view/main"
                         ]
                     }
@@ -76,18 +76,18 @@
                 "members": [
                     {
                         "memberId": "vehiclesPerChargingstationCorrelator",
-                        "componentId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic/main",
+                        "componentId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic-view",
                         "displayName": "Korrelation - Fahrzeuge pro Ladestation",
                         "description": "This member is used ..."
                     },
                     {
                         "memberId": "vehiclePerSharingstationCorrelator",
-                        "componentId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic/main",
+                        "componentId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic-view",
                         "displayName": "Korrelation - Fahrzeuge pro Carsharing-Station"
                     },
                     {
                         "memberId": "stationView",
-                        "componentId": "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view/main",
+                        "componentId": "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view",
                         "displayName": "Korrelation - Fahrzeuge pro Carsharing-Station"
                     }
                 ],

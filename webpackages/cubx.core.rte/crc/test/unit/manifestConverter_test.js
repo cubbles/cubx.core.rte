@@ -104,7 +104,7 @@ window.cubx.amd.define(
           it('should convert dependency "[webpackageId]/[artifactId]" to {webpackageId: "[webpackageId]", artifactId: "[artifactId]"}.', function () {
             manifestConverter._convertArtifactDependencyItems(manifest);
             var dependencies = manifest.artifacts.compoundComponents[0].dependencies;
-            expect(dependencies[1]).to.eql({artifactId: 'generic', webpackageId: 'com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT'});
+            expect(dependencies[1]).to.eql({artifactId: 'generic-view', webpackageId: 'com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT'});
             expect(dependencies[2]).to.eql({artifactId: 'station-view', webpackageId: 'com.incowia.emob.view@1.0.0-SNAPSHOT'});
 
             dependencies = manifest.artifacts.elementaryComponents[0].dependencies;
@@ -150,6 +150,24 @@ window.cubx.amd.define(
               resources: ['import.min.html'],
               dependencies: ['d3-charts-lib@1.0/bar-chart/main']
             });
+          });
+        });
+        describe('#_convertComponentIdToArtifactIdInMembers()', function () {
+          it('should add property "artifactId" and remove property "componentId" for all members in compound components.', function () {
+            manifestConverter._convertComponentIdToArtifactIdInMembers(manifest);
+            manifest.artifacts.compoundComponents.forEach(function (compound) {
+              compound.members.forEach(function (member) {
+                expect(member).to.have.ownProperty('artifactId');
+                expect(member).to.not.have.ownProperty('componentId');
+              });
+            });
+          });
+          it('should assign corresponding [artifactId] value to property "artifactId" for each member', function () {
+            manifestConverter._convertComponentIdToArtifactIdInMembers(manifest);
+            var members = manifest.artifacts.compoundComponents[0].members;
+            expect(members[0].artifactId).to.eql('generic-view');
+            expect(members[1].artifactId).to.eql('generic-view');
+            expect(members[2].artifactId).to.eql('station-view');
           });
         });
       });

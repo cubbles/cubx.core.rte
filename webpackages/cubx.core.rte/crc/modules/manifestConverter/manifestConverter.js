@@ -22,12 +22,13 @@ window.cubx.amd.define([], function () {
         this._addResourcesArrayToArtifacts,
         this._removeSingleEndpointsFromArtifacts,
         this._convertMultipleEndpointsToArtifacts,
-        this._convertArtifactDependencyItems
+        this._convertArtifactDependencyItems,
+        this._convertComponentIdToArtifactIdInMembers
       ],
       '9.0.0': [
-        this._convertArtifactDependencyItems
-      ],
-      '9.1.0': []
+        this._convertArtifactDependencyItems,
+        this._convertComponentIdToArtifactIdInMembers
+      ]
     };
 
     /**
@@ -112,6 +113,22 @@ window.cubx.amd.define([], function () {
             dependencies[index] = dependencyObject;
           });
         }
+      });
+    });
+  };
+
+  /**
+   * Rename componentId property to artifactId and remove webpackageId|this in each member of compounds.
+   * Note: The changes will be made directly on the given manifest object.
+   * @memberOf ManifestConverter
+   * @param {object} manifest A valid manifest object
+   * @private
+   */
+  ManifestConverter.prototype._convertComponentIdToArtifactIdInMembers = function (manifest) {
+    manifest.artifacts.compoundComponents.forEach(function (compound) {
+      compound.members.forEach(function (member) {
+        member.artifactId = member.componentId.split('/')[1];
+        delete member.componentId;
       });
     });
   };
