@@ -42,7 +42,7 @@ cubx.amd.define([ 'require', 'jqueryLoader' ], function (require, $) {
     this._crcRoot = crcContainer;
     var self = this;
     var action = function () {
-      self._addComponentIdsToRootdependencies();
+      self._addComponentDependenciesToRootdependencies();
       self._load();
     };
     if (cubx.CRCInit.startEventArrived) {
@@ -52,19 +52,35 @@ cubx.amd.define([ 'require', 'jqueryLoader' ], function (require, $) {
     }
   };
 
-  CRCLoader.prototype._addComponentIdsToRootdependencies = function () {
+  CRCLoader.prototype._addComponentDependenciesToRootdependencies = function () {
     var elements = this._crcRoot.querySelectorAll('[cubx-webpackage-id]');
     if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
       cubx.CRCInit.rootDependencies = [];
     }
     for (var i = 0; i < elements.length; i++) {
-      var dependency = elements[ i ].getAttribute('cubx-webpackage-id') + '/' + elements[ i ].tagName.toLowerCase();
-      var cubxEndpointId = elements[ i ].getAttribute('cubx-endpoint-id');
-      if (cubxEndpointId) {
-        dependency += '/' + cubxEndpointId;
-      }
-      cubx.CRCInit.rootDependencies.push(dependency);
+      cubx.CRCInit.rootDependencies.push(this._createDependency(elements[i]));
     }
+  };
+
+  /**
+   * create a dependency from elment attributes
+   * @param element cubx elment
+   * @returns {object}
+   * @private
+   */
+  CRCLoader.prototype._createDependency = function (element) {
+    var dependency = {
+      artifactId: element.tagName.toLowerCase()
+    };
+    var webpackageId = element.getAttribute('cubx-webpackage-id');
+    if (webpackageId !== 'this') {
+      dependency.webpackageId = webpackageId;
+    }
+    var cubxEndpointId = element.getAttribute('cubx-endpoint-id');
+    if (cubxEndpointId) {
+      dependency.endpointId = cubxEndpointId;
+    }
+    return dependency;
   };
 
   CRCLoader.prototype._load = function () {

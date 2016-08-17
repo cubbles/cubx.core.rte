@@ -84,25 +84,71 @@ If is allow-absolute-resource-urls==true, allow usage of absolut resource urls. 
 ### Root Dependencies
 The configuration of the root dependencies can be defined through an initial global configuration object. This object is the only way to load dependencies that are not part of the Cubbles platform
 
+*Example: artifacts from the own webpackage*  
+If the dependency is defined in the same webpackage, the webpackageId must not be defined.
+ 
     <script>
         window.cubx = {
             "CRCInit": {
                 "rootDependencies": [
-                    "this/util1/main"
+                     {
+                        "artifactId": "util1"
+                     }
                 ]
             }
         }
     </script>
 
+*Example: artifacts from an other webpackage*  
+For modelVersion >= 9.0 must be just the webpackageId and the artifactId defined. 
+ 
+    <script>
+        window.cubx = {
+            "CRCInit": {
+                "rootDependencies": [
+                     {
+                        "webpackageId": "com.incowia.demos.demo5@1.0.0"
+                        "artifactId": "util1"
+                     }
+                ]
+            }
+        }
+    </script>
+    
+*Example: artifacts from an other webpackage with modelVersion <=8.3.0*  
+For modelVersion < 9.0 must be the webpackageId, artifactId and the endpointId defined. 
 
-The dependencies of a Cubbles component can be defined using the the attribute "cubx-dependency" within its HTML tag, as follows:
+    <script>
+        window.cubx = {
+            "CRCInit": {
+                "rootDependencies": [
+                     {
+                        "webpackageId": "com.incowia.demos.demo1@1.0.0"
+                        "artifactId": "util1",
+                        "endpoint": "main"
+                     }
+                ]
+            }
+        }
+    </script>
 
-    <my-example-component cubx-dependency="examples@0.1-SNAPSHOT/my-example-component /main"></my-example-component >
+The dependencies of a Cubbles component can be defined using the the attribute ``cubx-webpackage-id`` within its HTML tag. The ``artifactId`` is defined through the tagname of the element. (It is ``my-example-compound``in the below examples.)
 
-If the dependency is defined in the same webpackage, the key word 'this' can be used instead of the webpackageId (i.e. 'webpaackageName@version'), as follows:
+*Example: artifacts from the own webpackage*  
+If the dependency is defined in the same webpackage, the key word 'this' can be used instead of the webpackageId :
 
-    <my-example-element cubx-dependency="this/my-example-element/main"></my-example-element>
+    <my-example-component cubx-webpackage-id="this"></my-example-component>
 
+*Example: artifacts from an other webpackage*  
+If the dependency is defined in an other webpackage, it must be in ``cubx-webpackage-id`` attribute the webpackageId (i.e. '[groupId.]webpackageName@version') defined.
+
+    <my-example-component cubx-webpackge-id="examples@0.1-SNAPSHOT"></my-example-component >
+
+*Example: artifacts from an other webpackage with modelVersion <= 8.3.0*  
+If the dependency is defined in a webpacakge with an older modelVersion (modelVersion <= 8.3.0), it must be an additional attribute ´´cubx-endpint-id`` defined.
+    
+    <my-example-component cubx-webpackage-id="examples@0.1-SNAPSHOT/" cubx-endpoint-id="main"></my-example-component >
+    
 #### Inline manifest definition:
 
 The dependency can be defined as an object with the attributes manifest and endpoint:
