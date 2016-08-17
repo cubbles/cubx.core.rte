@@ -95,7 +95,7 @@ window.cubx.amd.define(
             expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
 
             dependencies = manifest.artifacts.utilities[0].dependencies;
-            expect(dependencies).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
+            expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
             dependencies = manifest.artifacts.utilities[1].dependencies;
             expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
             dependencies = manifest.artifacts.utilities[2].dependencies;
@@ -119,7 +119,7 @@ window.cubx.amd.define(
           it('should convert dependency "this/[artifactId]" to object {artifactId: "[artifactId]"}.', function () {
             manifestConverter._convertArtifactDependencyItems(manifest);
             var dependency = manifest.artifacts.compoundComponents[0].dependencies[0];
-            expect(dependency).to.eql({artifactId: 'my-util'});
+            expect(dependency).to.eql({artifactId: 'my-util1'});
           });
         });
       });

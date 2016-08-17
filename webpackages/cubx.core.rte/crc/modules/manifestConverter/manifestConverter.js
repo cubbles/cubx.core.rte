@@ -21,6 +21,7 @@ window.cubx.amd.define([], function () {
       '8.x.x': [
         this._addResourcesArrayToArtifacts,
         this._removeSingleEndpointsFromArtifacts,
+        this._convertMultipleEnpointsToArtifacts,
         this._convertArtifactDependencyItems
       ],
       '9.0.0': [
@@ -91,6 +92,38 @@ window.cubx.amd.define([], function () {
    * @private
    */
   ManifestConverter.prototype._convertArtifactDependencyItems = function (manifest) {
+    var self = this;
+    Object.keys(manifest.artifacts).forEach(function (artifactType) {
+      manifest.artifacts[artifactType].forEach(function (artifact) {
+        if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
+          artifact.dependencies.forEach(function (dependency, index, dependencies) {
+            var segments = dependency.split('/');
+            var dependencyObject = {};
+            if (segments[0] !== 'this') {
+              dependencyObject.webpackageId = segments[0];
+            }
+            switch (segments.length) {
+              case 2:
+                dependencyObject.artifactId = segments[1];
+                break;
+              case 3:
+                dependencyObject.artifactId = segments[1] + self.endpointSeparator + segments[2];
+            }
+            dependencies[index] = dependencyObject;
+          });
+        }
+      });
+    });
+  };
+
+  /**
+   * Convert Artifacts which have multiple endpoints to multiple Artifacts.
+   * Note: The changes will be made directly on the given manifest object.
+   * @memberOf ManifestConverter
+   * @param {object} manifest A valid manifest object
+   * @private
+   */
+  ManifestConverter.prototype._convertMultipleEnpointsToArtifacts = function (manifest) {
 
   };
 
