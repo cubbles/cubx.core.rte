@@ -21,7 +21,7 @@
     "artifacts": {
         "apps": [
             {
-                "artifactId": "my-app#main",
+                "artifactId": "my-app",
                 "description": "This app demonstrates ...",
                 "endpoints": [
                     {
@@ -187,6 +187,7 @@
                     {
                         "endpointId": "main",
                         "resources": ["import.html"],
+                        "description": "This endpoint is used for...",
                         "dependencies": [
                             "d3-charts-lib@1.0/bar-chart/main"
                         ]

@@ -21,7 +21,7 @@
     "artifacts": {
         "apps": [
             {
-                "artifactId": "my-app",
+                "artifactId": "my-app#main",
                 "description": "This app demonstrates ...",
                 "resources": ["index.html"],
                 "dependencies": [
@@ -189,7 +189,7 @@
             },
             {
                 "artifactId": "my-util2#main",
-                "description": "This util demonstrates ...",
+                "description": "This util demonstrates ... This endpoint is used for...",
                 "resources": ["import.html"],
                 "dependencies": [
                     {

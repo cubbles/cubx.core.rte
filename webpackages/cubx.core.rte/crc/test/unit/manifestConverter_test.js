@@ -121,7 +121,7 @@ window.cubx.amd.define(
             expect(manifest.artifacts.utilities).to.have.lengthOf(3);
             expect(manifest.artifacts.utilities[1]).to.eql({
               artifactId: 'my-util2#main',
-              description: 'This util demonstrates ...',
+              description: 'This util demonstrates ... This endpoint is used for...',
               resources: ['import.html'],
               dependencies: ['d3-charts-lib@1.0/bar-chart/main']
             });

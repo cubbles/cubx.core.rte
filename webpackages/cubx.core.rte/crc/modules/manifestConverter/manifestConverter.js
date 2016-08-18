@@ -19,11 +19,11 @@ window.cubx.amd.define([], function () {
      */
     this._transformationMatrix = {
       '8.x.x': [
-        this._addResourcesArrayToArtifacts,
-        this._removeSingleEndpointsFromArtifacts,
-        this._convertMultipleEndpointsToArtifacts,
-        this._convertArtifactDependencyItems,
-        this._convertComponentIdToArtifactIdInMembers
+        '_addResourcesArrayToArtifacts',
+        '_removeSingleEndpointsFromArtifacts',
+        '_convertMultipleEndpointsToArtifacts',
+        '_convertArtifactDependencyItems',
+        '_convertComponentIdToArtifactIdInMembers'
       ]
     };
 
@@ -99,13 +99,7 @@ window.cubx.amd.define([], function () {
             if (segments[0] !== 'this') {
               dependencyObject.webpackageId = segments[0];
             }
-            switch (segments.length) {
-              case 2:
-                dependencyObject.artifactId = segments[1];
-                break;
-              case 3:
-                dependencyObject.artifactId = segments[1] + self.endpointSeparator + segments[2];
-            }
+            dependencyObject.artifactId = segments[1] + self.endpointSeparator + segments[2];
             dependencies[index] = dependencyObject;
           });
         }
@@ -202,8 +196,18 @@ window.cubx.amd.define([], function () {
    * @memberOf ManifestConverter
    */
   ManifestConverter.prototype.convert = function (manifest) {
-    // var modelVersion = manifest.modelVersion;
     var convertedManifest = typeof manifest === 'string' ? JSON.parse(manifest) : manifest;
+    var modelVersion = convertedManifest.modelVersion;
+    var self = this;
+
+    // for now only convert manifests that hav model version 8.x.x
+    if (modelVersion.indexOf('8.') === 0) {
+      var transformationList = this._determineTransformationList(modelVersion);
+      transformationList.forEach(function (fn) {
+        self[fn](convertedManifest);
+      });
+      convertedManifest.modelVersion = this._targetVersion;
+    }
 
     return convertedManifest;
   };
