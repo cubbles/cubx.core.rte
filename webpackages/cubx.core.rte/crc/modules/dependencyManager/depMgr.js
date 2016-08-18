@@ -2,7 +2,7 @@
  * Created by pwr on 13.02.2015.
  */
 
-window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConverter'], function ($, utils, responseCache, manifestConverter) {
+window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConverter', 'axios'], function ($, utils, responseCache, manifestConverter, axios) {
   'use strict';
 
   /**
@@ -47,7 +47,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     this._responseCache = responseCache;
 
     /**
-     * The manifestConverter used by the DpenendencyMgr instance
+     * The manifestConverter used by this DependencyMgr instance
      * @type {object}
      * @private
      */
