@@ -21,7 +21,7 @@
     "artifacts": {
         "apps": [
             {
-                "artifactId": "my-app",
+                "artifactId": "my-app#main",
                 "description": "This app demonstrates ...",
                 "endpoints": [
                     {
@@ -162,7 +162,8 @@
                         "dependencies": [
                             "d3-charts-lib@1.0/bar-chart/main",
                             "com.hm.demos.aviator@1.0/component1/htmlimport",
-                            "com.hm.demos.aviator@1.0/component2/htmlimport"
+                            "com.hm.demos.aviator@1.0/component2/htmlimport",
+                            "this/my-artifact/main"
                         ]
                     }
                 ]

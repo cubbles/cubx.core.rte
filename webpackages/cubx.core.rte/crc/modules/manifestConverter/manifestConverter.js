@@ -5,7 +5,7 @@ window.cubx.amd.define([], function () {
   'use strict';
 
   /**
-   * The manifestConverter can be used to convert manifest.webpackage objects between model Versions.
+   * The manifestConverter can be used to convert manifest.webpackage objects.
    * @class ManifestConverter
    * @global
    * @constructor
@@ -22,10 +22,6 @@ window.cubx.amd.define([], function () {
         this._addResourcesArrayToArtifacts,
         this._removeSingleEndpointsFromArtifacts,
         this._convertMultipleEndpointsToArtifacts,
-        this._convertArtifactDependencyItems,
-        this._convertComponentIdToArtifactIdInMembers
-      ],
-      '9.0.0': [
         this._convertArtifactDependencyItems,
         this._convertComponentIdToArtifactIdInMembers
       ]
@@ -145,7 +141,7 @@ window.cubx.amd.define([], function () {
     Object.keys(manifest.artifacts).forEach(function (artifactType) {
       var convertedArtifacts = [];
       manifest.artifacts[artifactType].forEach(function (artifact, index, artifacts) {
-        if (artifact.endpoints.length > 1) {
+        if (artifact.hasOwnProperty('endpoints') && artifact.endpoints.length > 1) {
           artifact.endpoints.forEach(function (endpoint) {
             var convertedArtifact = JSON.parse(JSON.stringify(artifact));
             convertedArtifact.artifactId = convertedArtifact.artifactId + self.endpointSeparator + endpoint.endpointId;
@@ -199,14 +195,15 @@ window.cubx.amd.define([], function () {
   };
 
   /**
-   * Convert a given manifest files into latest modelVersion
-   * @param {object} manifest
-   * @return {object}convertedManifest
+   * Convert a given manifest files into latest modelVersion.
+   * Note: If the given manifest is of type object the conversion is done directly on the manifest object.
+   * @param {object|string} manifest Object or JSON string representing a manifest.webpackage.
+   * @return {object} convertedManifest An object representing a converted manifest.
    * @memberOf ManifestConverter
    */
   ManifestConverter.prototype.convert = function (manifest) {
     // var modelVersion = manifest.modelVersion;
-    var convertedManifest = JSON.parse(JSON.stringify(manifest));
+    var convertedManifest = typeof manifest === 'string' ? JSON.parse(manifest) : manifest;
 
     return convertedManifest;
   };

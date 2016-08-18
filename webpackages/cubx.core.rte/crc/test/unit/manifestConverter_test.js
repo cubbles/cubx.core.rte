@@ -2,16 +2,16 @@ window.cubx.amd.define(
   [
     'manifestConverter',
     'text!unit/manifestConverter/manifest@8.3.1.json',
-    'text!unit/manifestConverter/manifest@9.0.0.json',
-    'text!unit/manifestConverter/manifest@9.1.0.json'
+    'text!unit/manifestConverter/convertedManifest@9.1.0.json'
   ],
-  function (manifestConverter, manifest831, manifest900, manifest910) {
+  function (manifestConverter, manifest831, convertedManifest910) {
     'use strict';
 
     describe('ManifestConverter', function () {
-      describe('Converter Methods', function () {
+      describe('Single converter methods', function () {
         var manifest;
         var originalManifest;
+        var convertedManifest = JSON.parse(convertedManifest910);
         beforeEach(function () {
           manifest = JSON.parse(manifest831);
           originalManifest = JSON.parse(manifest831);
@@ -80,46 +80,27 @@ window.cubx.amd.define(
         });
         describe('#_convertArtifactDependencyItems()', function () {
           beforeEach(function () {
-            manifest = JSON.parse(manifest900);
+            manifest = JSON.parse(manifest831);
+            manifestConverter._removeSingleEndpointsFromArtifacts(manifest);
+            manifestConverter._convertMultipleEndpointsToArtifacts(manifest);
           });
           it('should convert dependency "[webpackageId]/[artifactId]/[endpointId]" to {webpackageId: "[webpackageId]", artifactId: "[artifactId]#[endpointId]"}.', function () {
             manifestConverter._convertArtifactDependencyItems(manifest);
             var dependencies = manifest.artifacts.apps[0].dependencies;
-            expect(dependencies).to.eql([
-              {artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'},
-              {artifactId: 'component1#htmlimport', webpackageId: 'com.hm.demos.aviator@1.0'},
-              {artifactId: 'component2#htmlimport', webpackageId: 'com.hm.demos.aviator@1.0'}
-            ]);
+            expect(dependencies).to.eql(convertedManifest.artifacts.apps[0].dependencies);
 
             dependencies = manifest.artifacts.elementaryComponents[0].dependencies;
-            expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
+            expect(dependencies).to.eql(convertedManifest.artifacts.elementaryComponents[0].dependencies);
 
-            dependencies = manifest.artifacts.utilities[0].dependencies;
-            expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
             dependencies = manifest.artifacts.utilities[1].dependencies;
-            expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
+            expect(dependencies).to.eql(convertedManifest.artifacts.utilities[1].dependencies);
             dependencies = manifest.artifacts.utilities[2].dependencies;
-            expect(dependencies[0]).to.eql({artifactId: 'bar-chart#main', webpackageId: 'd3-charts-lib@1.0'});
-          });
-          it('should convert dependency "[webpackageId]/[artifactId]" to {webpackageId: "[webpackageId]", artifactId: "[artifactId]"}.', function () {
-            manifestConverter._convertArtifactDependencyItems(manifest);
-            var dependencies = manifest.artifacts.compoundComponents[0].dependencies;
-            expect(dependencies[1]).to.eql({artifactId: 'generic-view', webpackageId: 'com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT'});
-            expect(dependencies[2]).to.eql({artifactId: 'station-view', webpackageId: 'com.incowia.emob.view@1.0.0-SNAPSHOT'});
-
-            dependencies = manifest.artifacts.elementaryComponents[0].dependencies;
-            expect(dependencies[1]).to.eql({artifactId: 'component1', webpackageId: 'com.hm.demos.aviator@1.0'});
-            expect(dependencies[2]).to.eql({artifactId: 'component2', webpackageId: 'com.hm.demos.aviator@1.0'});
+            expect(dependencies).to.eql(convertedManifest.artifacts.utilities[2].dependencies);
           });
           it('should convert dependency "this/[artifactId]/[endpointId]" to object {artifactId: "[artifactId]#[endpointId]"}.', function () {
             manifestConverter._convertArtifactDependencyItems(manifest);
             var dependency = manifest.artifacts.elementaryComponents[0].dependencies[3];
-            expect(dependency).to.eql({artifactId: 'my-artifact#main'});
-          });
-          it('should convert dependency "this/[artifactId]" to object {artifactId: "[artifactId]"}.', function () {
-            manifestConverter._convertArtifactDependencyItems(manifest);
-            var dependency = manifest.artifacts.compoundComponents[0].dependencies[0];
-            expect(dependency).to.eql({artifactId: 'my-util1'});
+            expect(dependency).to.eql(convertedManifest.artifacts.elementaryComponents[0].dependencies[3]);
           });
         });
         describe('#_convertMultipleEndpointsToArtifacts()', function () {
@@ -168,6 +149,26 @@ window.cubx.amd.define(
             expect(members[0].artifactId).to.eql('generic-view');
             expect(members[1].artifactId).to.eql('generic-view');
             expect(members[2].artifactId).to.eql('station-view');
+          });
+        });
+      });
+      describe('Complete manifest transformations', function () {
+        describe('#convert()', function () {
+          it('should convert given manifest with model version 8.x.x to model version 9.1', function () {
+            var manifest = JSON.parse(manifest831);
+            var expectedResult = JSON.parse(convertedManifest910);
+            var convertedManifest = manifestConverter.convert(manifest);
+            expect(convertedManifest).to.eql(expectedResult);
+          });
+          it('should apply conversion directly on given manifest if it\'s an object', function () {
+            var manifestAsObject = JSON.parse(manifest831);
+            var convertedManifest = manifestConverter.convert(manifestAsObject);
+            expect(convertedManifest).equal(manifestAsObject);
+          });
+          it('should return converted manifest as object if manifest is given as JSON string', function () {
+            var manifestAsJson = manifest831;
+            var convertedManifest = manifestConverter.convert(manifestAsJson);
+            expect(convertedManifest).to.be.instanceOf(Object);
           });
         });
       });

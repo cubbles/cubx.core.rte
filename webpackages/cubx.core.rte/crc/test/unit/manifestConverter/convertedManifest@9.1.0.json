@@ -2,7 +2,7 @@
     "name": "my-webpackage",
     "groupId": "org.example",
     "version": "0.2.0",
-    "modelVersion": "9.0.0",
+    "modelVersion": "9.1.0",
     "docType": "webpackage",
     "author": {
         "name": "John Doe",
@@ -25,21 +25,38 @@
                 "description": "This app demonstrates ...",
                 "resources": ["index.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1/htmlimport",
-                    "com.hm.demos.aviator@1.0/component2/htmlimport"
+                    {
+                        "artifactId": "bar-chart#main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    },
+                    {
+                        "artifactId": "component1#htmlimport",
+                        "webpackageId": "com.hm.demos.aviator@1.0"
+                    },
+                    {
+                        "artifactId": "component2#htmlimport",
+                        "webpackageId": "com.hm.demos.aviator@1.0"
+                    }
                 ]
             }
         ],
         "compoundComponents": [
             {
-                "artifactId": "my-compound",
+                "artifactId": "my-compound#main",
                 "description": "This compound demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [
-                    "this/my-util1",
-                    "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic-view",
-                    "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view"
+                    {
+                        "artifactId": "my-util1#main"
+                    },
+                    {
+                        "artifactId": "generic-view#main",
+                        "webpackageId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT"
+                    },
+                    {
+                        "artifactId": "station-view#main",
+                        "webpackageId": "com.incowia.emob.view@1.0.0-SNAPSHOT"
+                    }
                 ],
                 "slots": [
                     {
@@ -65,18 +82,18 @@
                 "members": [
                     {
                         "memberId": "vehiclesPerChargingstationCorrelator",
-                        "componentId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic-view",
+                        "artifactId": "generic-view",
                         "displayName": "Korrelation - Fahrzeuge pro Ladestation",
                         "description": "This member is used ..."
                     },
                     {
                         "memberId": "vehiclePerSharingstationCorrelator",
-                        "componentId": "com.incowia.emob.generic-correlator@1.0.0-SNAPSHOT/generic-view",
+                        "artifactId": "generic-view",
                         "displayName": "Korrelation - Fahrzeuge pro Carsharing-Station"
                     },
                     {
                         "memberId": "stationView",
-                        "componentId": "com.incowia.emob.view@1.0.0-SNAPSHOT/station-view",
+                        "artifactId": "station-view",
                         "displayName": "Korrelation - Fahrzeuge pro Carsharing-Station"
                     }
                 ],
@@ -122,7 +139,7 @@
         ],
         "elementaryComponents": [
             {
-                "artifactId": "my-elementary",
+                "artifactId": "my-elementary#main",
                 "description": "This elementary demonstrates ...",
                 "slots": [
                     {
@@ -146,36 +163,50 @@
                 ],
                 "resources": ["import.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main",
-                    "com.hm.demos.aviator@1.0/component1",
-                    "com.hm.demos.aviator@1.0/component2",
-                    "this/my-artifact/main"
+                    {
+                        "artifactId": "bar-chart#main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    },
+                    {
+                        "artifactId": "component1#htmlimport",
+                        "webpackageId": "com.hm.demos.aviator@1.0"
+                    },
+                    {
+                        "artifactId": "component2#htmlimport",
+                        "webpackageId": "com.hm.demos.aviator@1.0"
+                    },
+                    {
+                        "artifactId": "my-artifact#main"
+                    }
                 ]
             }
         ],
         "utilities": [
             {
-                "artifactId": "my-util1",
+                "artifactId": "my-util1#main",
+                "description": "This util demonstrates ...",
+                "resources": ["import.html"]
+            },
+            {
+                "artifactId": "my-util2#main",
                 "description": "This util demonstrates ...",
                 "resources": ["import.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main"
+                    {
+                        "artifactId": "bar-chart#main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    }
                 ]
             },
             {
-                "artifactId": "my-util2'main",
-                "description": "This util demonstrates ...",
-                "resources": ["import.html"],
-                "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main"
-                ]
-            },
-            {
-                "artifactId": "my-util2-min",
+                "artifactId": "my-util2#min",
                 "description": "This util demonstrates ...",
                 "resources": ["import.min.html"],
                 "dependencies": [
-                    "d3-charts-lib@1.0/bar-chart/main"
+                    {
+                        "artifactId": "bar-chart#main",
+                        "webpackageId": "d3-charts-lib@1.0"
+                    }
                 ]
             }
         ]
