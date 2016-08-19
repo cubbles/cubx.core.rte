@@ -114,7 +114,11 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     // load es6-promise polyfill if necessary
     if (get(window, 'cubx.CRCInit.polyfillPromise') === true) {
       console.log('Pushing es6-promise (polyfill) into the dependencies ...');
-      rootDependencies.unshift(get(window, 'cubx.CRCInit.rteWebpackageId') + '/es6-promise/html-import');
+      var promiseDep = {
+        webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId'),
+        artifactId: 'es6-promise'
+      };
+      rootDependencies.unshift(promiseDep);
     }
 
     // set all top level dependencies as initial depList
