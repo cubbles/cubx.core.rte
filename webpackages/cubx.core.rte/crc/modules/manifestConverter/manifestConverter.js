@@ -115,6 +115,9 @@ window.cubx.amd.define([], function () {
    * @private
    */
   ManifestConverter.prototype._convertComponentIdToArtifactIdInMembers = function (manifest) {
+    if (!manifest.artifacts.hasOwnProperty('compoundComponents')) {
+      return;
+    };
     manifest.artifacts.compoundComponents.forEach(function (compound) {
       compound.members.forEach(function (member) {
         member.artifactId = member.componentId.split('/')[1];
@@ -171,7 +174,7 @@ window.cubx.amd.define([], function () {
     Object.keys(manifest.artifacts).forEach(function (artifactType) {
       manifest.artifacts[artifactType].forEach(function (artifact) {
         // only process artifact if there is one single endpoint
-        if (artifact.endpoints.length === 1) {
+        if (artifact.hasOwnProperty('endpoints') && artifact.endpoints.length === 1) {
           // append endpointId to artifactId using defined separator
           artifact.artifactId = artifact.artifactId + self.endpointSeparator + artifact.endpoints[0].endpointId;
           // move resources from endpoint to artifact, if there are any
