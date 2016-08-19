@@ -149,9 +149,9 @@ cubx.amd.define(['polyfills'], function () {
       artifactId: artifactId
     };
 
-    if (webpackageId) {
+    if (webpackageId && webpackageId !== 'this') {
       dependency.webpackageId = webpackageId;
-    } else {
+    } else if (!webpackageId) {
       // search webpackageId in dependency for artifact
       var artifactDep = window.cubx.CRCInit.rootDependencies.find(function (dep) {
         return dep.artifactId === artifactElement.tagName.toLowerCase();

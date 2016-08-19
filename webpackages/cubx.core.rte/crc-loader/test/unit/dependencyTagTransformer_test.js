@@ -758,6 +758,45 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           dep.should.have.not.property('endpointId');
         });
       });
+      describe('dependency element created (element has webpackage-id="this" and artifact-id attribute', function () {
+        var depArray;
+        var element;
+        var webpackageId;
+        var artifactWebpackageId;
+        var artifactId;
+        var artifactElement;
+        var elementName;
+        var artifactElementName;
+        beforeEach(function () {
+          depArray = [];
+          webpackageId = 'this';
+          artifactId = 'example-component';
+          artifactWebpackageId = 'xyz@345';
+          elementName = 'cubx-dependency';
+          artifactElementName = 'root-artifact';
+          element = document.createElement(elementName);
+          element.setAttribute('webpackage-id', webpackageId);
+          element.setAttribute('artifact-id', artifactId);
+
+          artifactElement = document.createElement(artifactElementName);
+          artifactElement.setAttribute('cubx-webpackage-id', artifactWebpackageId);
+          depArray.push({
+            artifactId: artifactElement.tagName.toLowerCase(),
+            webpackageId: artifactWebpackageId
+          });
+        });
+        afterEach(function () {
+          delete window.cubx.CRCInit.rootDependencies;
+          depArray = [];
+        });
+
+        it('should create a new dependency', function () {
+          var dep = dependencyTagTransformer._createDependency(element, artifactElement, depArray);
+          dep.should.not.have.property('webpackageId');
+          dep.should.have.property('artifactId', artifactId);
+          dep.should.have.not.property('endpointId');
+        });
+      });
       describe('dependency element created (element has just artifact-id attribute, dependency of parent element has webpackage-id attribute', function () {
         var depArray;
         var element;
