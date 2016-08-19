@@ -47,11 +47,13 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     this._responseCache = responseCache;
 
     /**
-     * The manifestConverter used by this DependencyMgr instance
+     * Holds an axios instance used for requesting manifest.webpackage files
      * @type {object}
      * @private
      */
-    this._manifestConverter = manifestConverter;
+    this._axios = axios.create({
+      transformResponse: [DependencyMgr._prepareResponseData]
+    });
   };
 
   // ---------------------------------------------------------------------------------------------------------------
@@ -108,17 +110,21 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     // load cif, if it is not excluded by config
     if (get(window, 'cubx.CRCInit.loadCIF') === 'true') {
       console.log('Pushing cif into the dependencies ...');
-      rootDependencies.unshift(get(window, 'cubx.CRCInit.rteWebpackageId') + '/cif/main');
+      rootDependencies.unshift({
+        artifactId: 'cif',
+        endpointId: 'main', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an enpointId here
+        webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
+      });
     }
 
     // load es6-promise polyfill if necessary
     if (get(window, 'cubx.CRCInit.polyfillPromise') === true) {
       console.log('Pushing es6-promise (polyfill) into the dependencies ...');
-      var promiseDep = {
-        webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId'),
-        artifactId: 'es6-promise'
-      };
-      rootDependencies.unshift(promiseDep);
+      rootDependencies.unshift({
+        artifactId: 'es6-promise',
+        endpointId: 'html-import', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an enpointId here
+        webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
+      });
     }
 
     // set all top level dependencies as initial depList
@@ -345,6 +351,20 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
   };
 
   /**
+   * Prepare given data for Dependency Resolution. This is used to convert manifest.webpackage files before resolving
+   * Dependencies.
+   * @param {object} data The data to be transformed
+   * @return {object} the prepared data
+   * @static
+   * @memberOf DependencyMgr
+   * @private
+   */
+  DependencyMgr._prepareResponseData = function (data) {
+    var manifest = manifestConverter.convert(data);
+    return JSON.stringify(manifest);
+  };
+
+  /**
    * Alias for jQuery's ajax() method
    * @type {function}
    * @memberOf DependencyMgr
@@ -358,8 +378,8 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
   /**
    * Create and get a list with elements from type of DepRef from the passed artifact-endpoint dependencies.
    * @param {Array} dependencies dependency attribute from artifact-endpoint
-   * @param {string | undefined} referrer is the full endpointId ({webpackageId}/{artifactId}/{endpointId}) of the
-   *     artifact-endpoint, which refers to the  dependencies passed with the first parameter
+   * @param {object | undefined} referrer is an object containing the artifactId and webpackageId of the artifact, which
+   *    refers to the dependencies passed with the first parameter. If there is only an artifactId it refers to
    * @return {Array} dependency list, which elements DepRef objects are.
    * @private
    * @memberOf DependencyMgr
@@ -370,26 +390,20 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       if (!dependencies) {
         return depList;
       }
+      // TODO: Referrer soll auch als object analog zu einer rootDependency übegeben werden
 
       // console.log(typeof dependencies)
       dependencies.forEach(function (dependency) {
-        var valid = true; // just a flag for used for skipping the processing of current dependency when it is invalid
-        // object with at least string property 'endpoint'
-        var dep = {
-          endpoint: null
-        };
+        var valid = true; // just a flag used for skipping the processing of current dependency when it is invalid
 
-        // check if dependency is of type 'object' and has at least string property 'endpoint'
-        if (typeof dependency === 'object' && dependency.hasOwnProperty('endpoint') && typeof dependency.endpoint === 'string') {
-          dep.endpoint = dependency.endpoint;
-          // set manifest if available
-          if (dependency.hasOwnProperty('manifest') && typeof dependency.manifest === 'object') {
-            dep.manifest = dependency.manifest;
-          }
-        } else if (typeof dependency === 'string') {
-          dep.endpoint = dependency;
-        } else {
-          console.error('Expected parameter to be a string or an object containing at least string property "endpoint": ', dependency);
+        // check if dependency is of type 'object' and has at least string property 'artifactId'
+        if (!(typeof dependency === 'object' && dependency.hasOwnProperty('artifactId') && typeof dependency.artifactId === 'string')) {
+          console.error('Expected parameter to be an object containing at least string property "artifactId": ', dependency);
+          valid = false;
+        }
+        // check if depdencies manifest property is of type object (in case there is a manifest property)
+        if (dependency.hasOwnProperty('manifest') && typeof dependency.manifest !== 'object') {
+          console.error('Expected parameter to be an object containing at least string property "artifactId": ', dependency);
           valid = false;
         }
 
@@ -399,24 +413,29 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
             'referrer': referrer
           };
           // check if this is a webpackage-internal dependency
-          // TODO: add example
-          if (dep.endpoint.indexOf('this') === 0) {
-            var regex = /^(.*)?@([^\/]*)/;
-            var regErg = regex.exec(referrer);
-            var referrerPath;
-            if (!regErg) {
-              referrerPath = referrer.substr(0, referrer.indexOf('/'));
-            } else {
-              referrerPath = regErg ? (regErg[ 0 ] || '') : '';
-            }
-            depReferenceInitObject.dependency = referrerPath + dep.endpoint.substr('this'.length);
-          } else {
-            depReferenceInitObject.dependency = dep.endpoint;
+          if (dependency.hasOwnProperty('webpackageId') && typeof dependency.webpackageId) {
+            depReferenceInitObject.webpackageId = dependency.webpackageId;
           }
+
+
+          // if (dep.endpoint.indexOf('this') === 0) {
+          //   var regex = /^(.*)?@([^\/]*)/; <-- match auf [webpackage]@[version]
+          //   var regErg = regex.exec(referrer);
+          //   var referrerPath;
+          //   if (!regErg) { <-- Dieser Fall tritt nur ein, wenn der referrer keine vollständige webpackageId enhält
+          //     referrerPath = referrer.substr(0, referrer.indexOf('/'));
+          //   } else {
+          //     referrerPath = regErg ? (regErg[ 0 ] || '') : '';
+          //   }
+          //   depReferenceInitObject.dependency = referrerPath + dep.endpoint.substr('this'.length);
+          // } else {
+          //   depReferenceInitObject.dependency = dep.endpoint;
+          // }
           // add manifest if available
-          if (dep.manifest) {
-            depReferenceInitObject.manifest = dep.manifest;
-          }
+          // if (dep.manifest) {
+          //   depReferenceInitObject.manifest = dep.manifest;
+          // }
+
           depList.push(new DepReference(depReferenceInitObject));
         }
       });
@@ -562,27 +581,54 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
     // only make ajax request if there is a url given
     if (url) {
-      DependencyMgr.ajax({
-        url: url,
-        dataType: 'json',
-        success: function (data, textStatus) {
-          self._storeManifestFiles(data, depReference.getArtifactId());
-          self._responseCache.addItem(depReference.webpackageId, data);
-          deferred.resolve({
-            item: depReference,
-            data: self._extractArtifactEndpoint(depReference, data)
-          });
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          deferred.reject({
-            status: textStatus,
-            error: errorThrown
-          });
-        }
+      // DependencyMgr.ajax({
+      //   url: url,
+      //   dataType: 'json',
+      //   success: function (data, textStatus) {
+      //     self._storeManifestFiles(data, depReference.getArtifactId());
+      //     self._responseCache.addItem(depReference.webpackageId, data);
+      //     deferred.resolve({
+      //       item: depReference,
+      //       data: self._extractArtifactEndpoint(depReference, data)
+      //     });
+      //   },
+      //   error: function (jqXHR, textStatus, errorThrown) {
+      //     deferred.reject({
+      //       status: textStatus,
+      //       error: errorThrown
+      //     });
+      //   }
+      // });
+
+      this._fetchManifest(url).then(function (data) {
+        self._storeManifestFiles(data, depReference.getArtifactId());
+        self._responseCache.addItem(depReference.webpackageId, data);
+        deferred.resolve({
+          item: depReference,
+          data: self._extractArtifactEndpoint(depReference, data)
+        });
+      }, function (error) {
+        deferred.reject({
+          status: error.response.status,
+          error: error
+        });
       });
     }
 
     return deferred.promise();
+  };
+
+  /**
+   * Request a manifest.webpackage file using ajax
+   * @param {string} url The url for fetching the manifest.webpackage from
+   * @return {object} Promise
+   * @private
+   * @memberOf DependencyMgr
+   */
+  DependencyMgr.prototype._fetchManifest = function (url) {
+    return this._axios.request({
+      url: url
+    });
   };
 
   /**

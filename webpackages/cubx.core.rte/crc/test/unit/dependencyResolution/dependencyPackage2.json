@@ -2,18 +2,19 @@
     "artifacts": {
         "utilities": [
             {
-                "artifactId": "util1",
+                "artifactId": "util1#main",
                 "description": "This util demonstrates ...",
-                "endpoints": [
+                "resources": [
+                    "js/pack2.js"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "js/pack2.js"
-                        ],
-                        "dependencies": [
-                            "package3@1.0.0/util/main",
-                            "package5@1.0.0/util/main"
-                        ]
+                        "artifactId": "util#main",
+                        "webpackageId": "package3@1.0.0"
+                    },
+                    {
+                        "artifactId": "util#main",
+                        "webpackageId": "package5@1.0.0"
                     }
                 ]
             }

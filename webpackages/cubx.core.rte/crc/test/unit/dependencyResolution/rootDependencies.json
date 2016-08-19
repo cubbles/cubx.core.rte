@@ -1,11 +1,16 @@
 [
-    "package1@1.0.0/util1/main",
     {
-      "endpoint": "package2@1.0.0/util1/main",
-      "manifest": {
-        "propA": "valueA"
-      },
-      "manifestUrl": "www.example.com/manifest.webpackage"
+        "artifactId": "util1",
+        "endpointId": "main",
+        "webpackageId": "package1@1.0.0"
+    },
+    {
+        "artifactId": "util1",
+        "endpointId": "main",
+        "webpackageId": "package2@1.0.0",
+        "manifest": {
+            "propA": "valueA"
+        }
     }
 
 ]

@@ -1,6 +1,16 @@
 [
-  "cubx.core.test.crc-loader-test/util1/main",
-  "cubx.core.test.crc-loader-test/util2/main",
-  "cubx.core.test.crc-loader-test/util3/min"
+    {
+        "artifactId": "util1",
+        "webpackageId": "cubx.core.test.crc-loader-test",
+        "endpointId": "main"
+    },
+    {
+        "artifactId": "util2",
+        "webpackageId": "cubx.core.test.crc-loader-test"
+    },
+    {
+        "artifactId": "util3",
+        "webpackageId": "cubx.core.test.crc-loader-test"
+    }
 ]
 

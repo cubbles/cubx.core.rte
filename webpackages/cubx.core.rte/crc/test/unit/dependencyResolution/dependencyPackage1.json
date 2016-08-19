@@ -4,17 +4,18 @@
             {
                 "artifactId": "util1",
                 "description": "This util demonstrates ...",
-                "endpoints": [
+                "resources": [
+                    "js/pack1.js",
+                    "css/pack1.css"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "js/pack1.js",
-                            "css/pack1.css"
-                        ],
-                        "dependencies": [
-                            "package3@1.0.0/util/main",
-                            "package4@1.0.0/util/main"
-                        ]
+                        "artifactId": "util#main",
+                        "webpackageId": "package3@1.0.0"
+                    },
+                    {
+                        "artifactId": "util#main",
+                        "webpackageId": "package4@1.0.0"
                     }
                 ]
             }
