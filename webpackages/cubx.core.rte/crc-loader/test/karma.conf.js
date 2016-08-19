@@ -40,10 +40,10 @@ module.exports = function (config) {
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      'js/**/*.js': 'coverage',
-      'modules/**/*.js': 'coverage'
-    },
+    // preprocessors: {
+    //   'js/**/*.js': 'coverage',
+    //   'modules/**/*.js': 'coverage'
+    // },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -63,10 +63,10 @@ module.exports = function (config) {
       output: 'autowatch'
     },
 
-    coverageReporter: {
-      type: 'html',
-      dir: 'test-results/coverage/'
-    },
+    // coverageReporter: {
+    //   type: 'html',
+    //   dir: 'test-results/coverage/'
+    // },
     // web server port
     port: 9876,
 

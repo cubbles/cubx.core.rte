@@ -11,6 +11,8 @@
       'crcLoader': 'modules/crcLoader/CRCLoader',
       'jqueryLoader': 'modules/jqueryLoader/jqueryLoader',
       'jquery': 'modules/jqueryLoader/jquery-1.11.1.min',
+      'dependencyTagTransformer': 'modules/dependencyTagTransformer/dependencyTagTransformer',
+      'polyfills': 'modules/polyfills/polyfills',
       // text plugin only needed for tests right now
       'text': 'test/vendor/text/text',
       // unit tests

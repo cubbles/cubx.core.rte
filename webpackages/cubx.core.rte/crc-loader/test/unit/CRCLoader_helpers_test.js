@@ -1,13 +1,9 @@
 'use strict';
-/**
- * Created by pwr on 09.02.2015.
- */
-console.log('called!!!');
-window.cubx = window.cubx ? window.cubx : {};
-window.cubx.amd = window.cubx.amd ? window.cubx.amd : {};
+window.cubx = window.cubx || {};
+window.cubx.amd = window.cubx.amd || {};
 window.cubx.amd.define([ 'crcLoader',
     'jqueryLoader' ],
-  function (crcLoader, $) {
+  function (crcLoader) {
     describe('CRCLoader (helpers)', function () {
       describe('#_createDependency', function () {
         it('html element has "cubx-webpackage-id" attribute with this', function () {

@@ -9,7 +9,8 @@
   // define all tests that should be performed (relative to test/index.html)
   var tests = [
     'unit/CRCLoader_test',
-    'unit/CRCLoader_helpers_test'
+    'unit/CRCLoader_helpers_test',
+    'unit/dependencyTagTransformer_test'
   ];
 
   // get all tests via requireJS and run them

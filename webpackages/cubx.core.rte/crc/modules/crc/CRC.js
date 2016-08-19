@@ -146,7 +146,6 @@ window.cubx.amd.define([ 'require',
       this._baseUrl = get(window, 'cubx.CRCInit.webpackageBaseUrl');
       this._runtimeMode = get(window, 'cubx.CRCInit.runtimeMode');
       this._root = root;
-      this._ie_polyfills();
       if (this._root) {
         root.setAttribute('data-crc-id', this._crcElId);
         root.setAttribute('data-crc-version', this._version);
@@ -336,34 +335,6 @@ window.cubx.amd.define([ 'require',
     // --------------------------------                 Private Methods
     // ------------------------------
     // ------------------------------------------------------------------------------------------------------------
-    CRC.prototype._ie_polyfills = function () {
-      if (typeof window.CustomEvent !== 'function') {
-        window.CustomEvent = function (event, params) {
-          params = params || { bubbles: false, cancelable: false, detail: undefined };
-          var evt = document.createEvent('CustomEvent');
-          evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-          return evt;
-        };
-        window.CustomEvent.prototype = window.Event.prototype;
-      }
-      if (!window.String.prototype.startsWith) {
-        window.String.prototype.startsWith = function (searchString, position) {
-          position = position || 0;
-          return this.indexOf(searchString, position) === position;
-        };
-      }
-      if (!window.String.prototype.endsWith) {
-        window.String.prototype.endsWith = function (searchString, position) {
-          var subjectString = this.toString();
-          if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-            position = subjectString.length;
-          }
-          position -= searchString.length;
-          var lastIndex = subjectString.indexOf(searchString, position);
-          return lastIndex !== -1 && lastIndex === position;
-        };
-      }
-    };
     /**
      * Build a processedManifest, and store in cache.
      * @param {object | string} artifactId

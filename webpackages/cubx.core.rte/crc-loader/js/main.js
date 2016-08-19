@@ -199,7 +199,9 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
   cubx.amd.require.config({
     paths: {
       'crcLoader': crcLoaderBaseUrl + '/modules/crcLoader/CRCLoader',
+      'dependencyTagTransformer': crcLoaderBaseUrl + 'modules/dependencyTagTransformer/dependencyTagTransformer',
       'jqueryLoader': crcLoaderBaseUrl + '/modules/jqueryLoader/jqueryLoader',
+      'polyfills': crcLoaderBaseUrl + '/modules/polyfills/polyfills',
       'jquery': crcLoaderBaseUrl + '/modules/jqueryLoader/jquery-1.11.1.min'
     }
   });
@@ -208,7 +210,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
    * Do the basic bootstrap by getting CRCLoader module.
    * Note: The CRC version that is requested is defined in manifest.cubx
    */
-  cubx.amd.require([ 'crcLoader', 'jqueryLoader' ], function (crcLoader, $) {
+  cubx.amd.require([ 'crcLoader', 'jqueryLoader', 'polyfills' ], function (crcLoader, $) {
     // set CRCLoader to cubx namespace
     cubx.CRCLoader = crcLoader;
 
