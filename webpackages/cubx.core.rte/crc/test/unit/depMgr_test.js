@@ -33,9 +33,9 @@ window.cubx.amd.define(
           expect(depMgr._baseUrl).to.eql('http://test.org');
         });
         it('should remove "property" endpoints from each rootDependency if available and append it to artifactId', function () {
-          expect(depMgr._depList[0]).to.eql({
+          expect(depMgr._depList[0]).to.contain.all.keys({
             artifactId: 'util1#main',
-            wepackageId: 'cubx.core.test.crc-loader-test'
+            webpackageId: 'cubx.core.test.crc-loader-test'
           });
           expect(depMgr._depList[0]).not.to.have.ownProperty('endpointId');
         });

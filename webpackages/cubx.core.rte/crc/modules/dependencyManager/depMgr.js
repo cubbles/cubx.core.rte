@@ -127,9 +127,12 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       });
     }
 
+    // remove endpointId properties from rootDependencies and append endpointId to artifactId using separator '#'
+    // needed for backwards compatibility to modelVersion 8.x
+    this._removeEndpointIdFromRootDependencies(rootDependencies);
+
     // set all top level dependencies as initial depList
-    var rootReferrer = window.location.pathname.substr(1);
-    this._depList = this._createDepReferenceListFromEndpointDependencies(rootDependencies, rootReferrer);
+    this._depList = this._createDepReferenceListFromEndpointDependencies(rootDependencies, null);
   };
 
   /**
@@ -379,18 +382,25 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
    * Create and get a list with elements from type of DepRef from the passed artifact-endpoint dependencies.
    * @param {Array} dependencies dependency attribute from artifact-endpoint
    * @param {object | undefined} referrer is an object containing the artifactId and webpackageId of the artifact, which
-   *    refers to the dependencies passed with the first parameter. If there is only an artifactId it refers to
+   *    refers to the dependencies passed with the first parameter.
    * @return {Array} dependency list, which elements DepRef objects are.
    * @private
    * @memberOf DependencyMgr
    */
   DependencyMgr.prototype._createDepReferenceListFromEndpointDependencies =
     function (dependencies, referrer) {
+      var self = this;
       var depList = [];
       if (!dependencies) {
         return depList;
       }
-      // TODO: Referrer soll auch als object analog zu einer rootDependency übegeben werden
+
+      // check given referrer is of type object
+      if (referrer && typeof referrer !== 'object') {
+        console.error('Expect parameter "referrer" to be null or of type object: ', referrer);
+        // if referrer is invalid set it to null. A referrer with value 'null' is interpreted as 'root'
+        referrer = null;
+      }
 
       // console.log(typeof dependencies)
       dependencies.forEach(function (dependency) {
@@ -410,17 +420,21 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
         // continue processing of current dependency only if it's a valid one
         if (valid) {
           var depReferenceInitObject = {
-            'referrer': referrer
+            referrer: referrer,
+            artifactId: dependency.artifactId,
+            webpackageId: self._determineWebpackageId(dependency, referrer)
           };
-          // check if this is a webpackage-internal dependency
-          if (dependency.hasOwnProperty('webpackageId') && typeof dependency.webpackageId) {
-            depReferenceInitObject.webpackageId = dependency.webpackageId;
+
+          // add manifest if available
+          if (dependency.manifest) {
+            depReferenceInitObject.manifest = dependency.manifest;
           }
 
+          depList.push(new DepReference(depReferenceInitObject));
 
           // if (dep.endpoint.indexOf('this') === 0) {
           //   var regex = /^(.*)?@([^\/]*)/; <-- match auf [webpackage]@[version]
-          //   var regErg = regex.exec(referrer);
+          //   var regErg = regex.exec(referrer);s
           //   var referrerPath;
           //   if (!regErg) { <-- Dieser Fall tritt nur ein, wenn der referrer keine vollständige webpackageId enhält
           //     referrerPath = referrer.substr(0, referrer.indexOf('/'));
@@ -431,12 +445,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
           // } else {
           //   depReferenceInitObject.dependency = dep.endpoint;
           // }
-          // add manifest if available
-          // if (dep.manifest) {
-          //   depReferenceInitObject.manifest = dep.manifest;
-          // }
-
-          depList.push(new DepReference(depReferenceInitObject));
         }
       });
       return depList;
@@ -530,6 +538,43 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       fileType: fileType,
       fileName: fileName
     };
+  };
+
+  /**
+   * Internal helper method to determine the webpackageId of a given dependency in the context of a given referrer. If no referrer is given, then
+   * dependency needs to have property webpackageId.
+   * @memberOf DependencyMgr
+   * @param {object} dependency An object containing at least string property "artifactId" and optional string property "webpackageId"
+   * @param {object|null} referrer An object containing string properties "artifactId" and "webpackageId" or null
+   * @return {string} The webpackageId of the dependency or an empty string if no webpackageId could be determined
+   * @private
+   */
+  DependencyMgr.prototype._determineWebpackageId = function (dependency, referrer) {
+    if (dependency.hasOwnProperty('webpackageId') && typeof dependency.webpackageId === 'string') {
+      return dependency.webpackageId;
+    } else if (referrer && typeof referrer === 'object' && referrer.hasOwnProperty('webpackageId') && referrer.hasOwnProperty('artifactId')) {
+      // if there is no webpackageId given then we assume that the dependency resides in the same webpackage like the referrer
+      return referrer.webpackageId;
+    } else {
+      console.error('Could not determine webpackageId for dependency: ', dependency, ' and referrer: ', referrer);
+      return '';
+    }
+  };
+
+  /**
+   * Internal helper method for removing endpointId property from all rootDependencies having this property. The value of the
+   * endpointId property is appended to the artifactId used endpointSeparator from ManifestConverter.
+   * @memberOf DependencyMgr
+   * @param {object} rootDependencies
+   * @private
+   */
+  DependencyMgr.prototype._removeEndpointIdFromRootDependencies = function (rootDependencies) {
+    rootDependencies.forEach(function (dependency) {
+      if (dependency.hasOwnProperty('endpointId') && typeof dependency.endpointId === 'string') {
+        dependency.artifactId = dependency.artifactId + manifestConverter.endpointSeparator + dependency.endpointId;
+        delete dependency.endpointId;
+      }
+    });
   };
 
   /**
@@ -711,19 +756,13 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
      * id of the webpackage
      * @type {string}
      */
-    this.webpackageId = undefined;
+    this.webpackageId = initObject.webpackageId;
 
     /**
      * id of the artifact
      * @type {string}
      */
-    this.artifactId = undefined;
-
-    /**
-     * id of the endpoint
-     * @type {string}
-     */
-    this.endpointId = undefined;
+    this.artifactId = initObject.artifactId;
 
     /**
      * id list of referrer of webpackage
@@ -748,40 +787,27 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
      * Requesting a manifest.webpackage via ajax will be skipped for this DepReference instance if this is set.
      * @type {object}
      */
-    this.manifest = undefined;
+    this.manifest = initObject.manifest || undefined;
 
     this.equals = function (item) {
-      return item.webpackageId + item.artifactId + item.endpointId ===
-        this.webpackageId + this.artifactId + this.endpointId;
+      return item.webpackageId + item.artifactId === this.webpackageId + this.artifactId;
     };
 
     // constructor logic
-    var init = function (dependency, referrer, manifest) {
-      var regex = /[^\/]*@[^\/]*/;
-      // this.webpackageId = dependency.substring(0, dependency.indexOf('/'));
-      var regErg = regex.exec(dependency);
-      if (!regErg) {
-        this.webpackageId = dependency.substr(0, dependency.indexOf('/'));
-      } else {
-        this.webpackageId = regErg ? (regErg[ 0 ] || '') : '';
-      }
-      this.artifactId = dependency.substring(dependency.indexOf(this.webpackageId) + this.webpackageId.length + 1,
-        dependency.lastIndexOf('/'));
-      this.endpointId = dependency.substring(dependency.lastIndexOf('/') + 1);
-      if (typeof referrer === 'string') {
+    (function (referrer) {
+      if (referrer && typeof referrer === 'object' && referrer.hasOwnProperty('webpackageId') && referrer.hasOwnProperty('artifactId')) {
         this.referrer.push(referrer);
+      } else if (referrer === null) {
+        // if referrer is null we assume it's a root dependency. So we set referrer to 'root'
+        this.referrer.push('root');
       } else {
         console.warn('DepManager received referrer of unexpected type \'' + typeof referrer + '\'');
       }
-      if (manifest) {
-        this.manifest = manifest;
-      }
-    }.bind(this);
-    init(initObject.dependency, initObject.referrer, initObject.manifest);
+    }.bind(this))(initObject.referrer);
   };
 
   DepReference.prototype.getId = function () {
-    return this.webpackageId + '/' + this.artifactId + '/' + this.endpointId;
+    return this.webpackageId + '/' + this.artifactId;
   };
   DepReference.prototype.getArtifactId = function () {
     return this.artifactId;
