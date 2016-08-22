@@ -2,7 +2,7 @@
   "artifacts": {
     "utilities": [
       {
-        "artifactId": "util#main",
+        "artifactId": "util4",
         "description": "This util demonstrates ...",
         "resources": [],
         "dependencies": []

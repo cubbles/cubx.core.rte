@@ -88,7 +88,7 @@ window.cubx.amd.define([ 'CRC',
             };
             this._storeManifestFiles(documents[ depReferenceItem.webpackageId ], depReferenceItem.artifactId);
             if (depReferenceItem.hasOwnProperty('webpackageId')) {
-              data.data = crcDepMgr._extractArtifactEndpoint(depReferenceItem,
+              data.data = crcDepMgr._extractArtifact(depReferenceItem,
                 documents[ depReferenceItem.webpackageId ]);
             }
             // simulate a request duration of 500 ms for each request

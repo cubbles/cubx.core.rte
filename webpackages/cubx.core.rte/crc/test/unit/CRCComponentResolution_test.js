@@ -53,7 +53,7 @@ window.cubx.amd.define([ 'CRC',
               };
               depMgr._storeManifestFiles(documents[ item.webpackageId ], item.artifactId);
               if (item.hasOwnProperty('webpackageId')) {
-                data.data = depMgr._extractArtifactEndpoint(item, documents[ item.webpackageId ]);
+                data.data = depMgr._extractArtifact(item, documents[ item.webpackageId ]);
               }
               deferred.resolve(data);
               return deferred.promise();

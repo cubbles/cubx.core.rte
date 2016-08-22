@@ -430,20 +430,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
           }
 
           depList.push(new DepReference(depReferenceInitObject));
-
-          // if (dep.endpoint.indexOf('this') === 0) {
-          //   var regex = /^(.*)?@([^\/]*)/; <-- match auf [webpackage]@[version]
-          //   var regErg = regex.exec(referrer);s
-          //   var referrerPath;
-          //   if (!regErg) { <-- Dieser Fall tritt nur ein, wenn der referrer keine vollständige webpackageId enhält
-          //     referrerPath = referrer.substr(0, referrer.indexOf('/'));
-          //   } else {
-          //     referrerPath = regErg ? (regErg[ 0 ] || '') : '';
-          //   }
-          //   depReferenceInitObject.dependency = referrerPath + dep.endpoint.substr('this'.length);
-          // } else {
-          //   depReferenceInitObject.dependency = dep.endpoint;
-          // }
         }
       });
       return depList;
@@ -594,7 +580,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       this._storeManifestFiles(cachedManifest, depReference.getArtifactId());
       deferred.resolve({
         item: depReference,
-        data: this._extractArtifactEndpoint(depReference, this._responseCache.get(depReference.webpackageId))
+        data: this._extractArtifact(depReference, this._responseCache.get(depReference.webpackageId))
       });
     }
 
@@ -611,7 +597,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       this._responseCache.addItem(depReference.webpackageId, depReference.manifest);
       deferred.resolve({
         item: depReference,
-        data: this._extractArtifactEndpoint(depReference, depReference.manifest)
+        data: this._extractArtifact(depReference, depReference.manifest)
       });
     } else {
       // refer to the manifest.webpackage -file as this is also available if we don't use a couchdb based backend
@@ -633,7 +619,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       //     self._responseCache.addItem(depReference.webpackageId, data);
       //     deferred.resolve({
       //       item: depReference,
-      //       data: self._extractArtifactEndpoint(depReference, data)
+      //       data: self._extractArtifact(depReference, data)
       //     });
       //   },
       //   error: function (jqXHR, textStatus, errorThrown) {
@@ -649,7 +635,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
         self._responseCache.addItem(depReference.webpackageId, data);
         deferred.resolve({
           item: depReference,
-          data: self._extractArtifactEndpoint(depReference, data)
+          data: self._extractArtifact(depReference, data)
         });
       }, function (error) {
         deferred.reject({
@@ -682,28 +668,23 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
    *     properties or 'id' string property of the requested webpackage (normally an item of type DepReference)
    * @private
    * @memberOf DependencyMgr
-   * @returns {array | undefined} the dependencies of the passed artifactEndpointReference or undefined, if the
-   *     endpoint has not been found.
+   * @returns {array | undefined} the dependencies of the passed artifactReference or undefined, if the
+   *     artifact has not been found.
    */
-  DependencyMgr.prototype._extractArtifactEndpoint = function (depReference, manifest) {
-    var artifactEndpoint;
+  DependencyMgr.prototype._extractArtifact = function (depReference, manifest) {
+    var requestedArtifact;
     if (manifest) {
       // for apps, elementaryComponents etc.
       // console.log(JSON.stringify(manifest))
       Object.keys(manifest.artifacts).some(function (artifactType) {
         manifest.artifacts[ artifactType ].some(function (artifact) {
           if (artifact.artifactId === depReference.artifactId) {
-            artifact.endpoints.some(function (endpoint) {
-              if (endpoint.endpointId === depReference.endpointId) {
-                artifactEndpoint = endpoint;
-                return true;
-              }
-            });
+            requestedArtifact = artifact;
           }
         });
       });
     }
-    return artifactEndpoint;
+    return requestedArtifact;
   };
   /**
    * Find index of given DepReference item in internal depList

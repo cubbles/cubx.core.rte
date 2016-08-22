@@ -264,17 +264,17 @@ window.cubx.amd.define([ 'CRC',
               item: depReference
             };
             if (depReference.webpackageId === 'package1@1.0.0') {
-              data.data = depMgr._extractArtifactEndpoint(depReference, JSON.parse(pkg1));
+              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg1));
             } else if (depReference.webpackageId === 'package2@1.0.0') {
-              data.data = depMgr._extractArtifactEndpoint(depReference, JSON.parse(pkg2));
+              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg2));
             } else if (depReference.webpackageId === 'package3@1.0.0') {
-              data.data = depMgr._extractArtifactEndpoint(depReference, JSON.parse(pkg3));
+              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg3));
             } else if (depReference.webpackageId === 'package4@1.0.0') {
-              data.data = depMgr._extractArtifactEndpoint(depReference, JSON.parse(pkg4));
+              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg4));
             } else if (depReference.webpackageId === 'package5@1.0.0') {
-              data.data = depMgr._extractArtifactEndpoint(depReference, JSON.parse(pkg5));
+              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg5));
             } else if (depReference.webpackageId === 'package6@1.0.0') {
-              data.data = depMgr._extractArtifactEndpoint(depReference, JSON.parse(pkg6));
+              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg6));
             }
             // console.log(depReference.webpackageId + ': ' + JSON.stringify(data.data))
             // simulate a request duration of 500 ms for each request
@@ -307,17 +307,17 @@ window.cubx.amd.define([ 'CRC',
           depMgr._resolveDependencies(function (resolvedDependencies) {
             // console.log(depMgr._depList);
             resolvedDependencies[ 0 ].should.have.property('resources');
-            resolvedDependencies[ 0 ].resources.should.eql(JSON.parse(pkg6).artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
+            resolvedDependencies[ 0 ].resources.should.eql(JSON.parse(pkg6).artifacts.utilities[ 0 ].resources);
             resolvedDependencies[ 1 ].should.have.property('resources');
-            resolvedDependencies[ 1 ].resources.should.eql(JSON.parse(pkg5).artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
+            resolvedDependencies[ 1 ].resources.should.eql(JSON.parse(pkg5).artifacts.utilities[ 0 ].resources);
             resolvedDependencies[ 2 ].should.have.property('resources');
-            resolvedDependencies[ 2 ].resources.should.eql(JSON.parse(pkg3).artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
+            resolvedDependencies[ 2 ].resources.should.eql(JSON.parse(pkg3).artifacts.utilities[ 0 ].resources);
             resolvedDependencies[ 3 ].should.have.property('resources');
-            resolvedDependencies[ 3 ].resources.should.eql(JSON.parse(pkg4).artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
+            resolvedDependencies[ 3 ].resources.should.eql(JSON.parse(pkg4).artifacts.utilities[ 0 ].resources);
             resolvedDependencies[ 4 ].should.have.property('resources');
-            resolvedDependencies[ 4 ].resources.should.eql(JSON.parse(pkg1).artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
+            resolvedDependencies[ 4 ].resources.should.eql(JSON.parse(pkg1).artifacts.utilities[ 0 ].resources);
             resolvedDependencies[ 5 ].should.have.property('resources');
-            resolvedDependencies[ 5 ].resources.should.eql(JSON.parse(pkg2).artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
+            resolvedDependencies[ 5 ].resources.should.eql(JSON.parse(pkg2).artifacts.utilities[ 0 ].resources);
             done();
           }, rootDepReferences);
         });
@@ -343,27 +343,32 @@ window.cubx.amd.define([ 'CRC',
 
           // fake data response for mocked ajax request
           data = JSON.parse(pkg1);
-          // Mock ajax request to return webpackage data
-          stub = sinon.stub(DepMgr, 'ajax').yieldsToAsync('success', data, 'success');
+
+          // Mock _fetchManifest method to return promise
+          stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
+            return new Promise(function (resolve, reject) {
+              window.setTimeout(function () {
+                resolve(data);
+              }, 1000);
+            });
+          });
         });
         beforeEach(function () {
           stub.reset();
           depMgr._responseCache.invalidate();
         });
 
-        it('should return the requested endpoint data', function (done) {
+        it('should return the requested artifact data', function (done) {
           var promise = depMgr._resolveDepReference({
             webpackageId: 'package1@1.0.0',
             artifactId: 'util1',
-            endpointId: 'main',
             getArtifactId: function () {
               return this.artifactId;
             }
           });
           promise.then(function (result) {
             // console.log('done:' + JSON.stringify(result.data))
-            // console.log(data.artifacts.utilities[0].endpoints[0])
-            expect(result.data).to.eql(data.artifacts.utilities[ 0 ].endpoints[ 0 ]);
+            expect(result.data).to.eql(data.artifacts.utilities[ 0 ]);
             done();
           });
         });
@@ -372,19 +377,16 @@ window.cubx.amd.define([ 'CRC',
           depMgr._resolveDepReference({
             webpackageId: 'package1@1.0.0',
             artifactId: 'util1',
-            endpointId: 'main',
             getArtifactId: function () {
               return this.artifactId;
             }
           });
-          expect(stub.calledWithMatch({
-            url: depMgr._baseUrl + 'package1@1.0.0/manifest.webpackage'
-          })).to.be.true;
+          expect(stub.calledWithMatch(depMgr._baseUrl + 'package1@1.0.0/manifest.webpackage')).to.be.true;
           done();
         });
 
         after(function () {
-          DepMgr.ajax.restore();
+          depMgr._fetchManifest.restore();
         });
       });
 
@@ -399,13 +401,8 @@ window.cubx.amd.define([ 'CRC',
               {
                 artifactId: 'artifact1',
                 description: 'artifact for testing purposes...',
-                endpoints: [
-                  {
-                    endpointId: 'main',
-                    resources: [ 'js/test1.js', 'css/test1.css' ],
-                    dependencies: [ 'pack1@1.0.0/util/main', 'pack2@1.0.0/util/main' ]
-                  }
-                ]
+                resources: [ 'js/test1.js', 'css/test1.css' ],
+                dependencies: [{webpackageId: 'pack1@1.0.0', artifactId: 'util'}, {webpackageId: 'pack2@1.0.0', artifactId: 'main'}]
               }
             ]
           }
@@ -414,24 +411,23 @@ window.cubx.amd.define([ 'CRC',
           webpackageId: 'package1@1.0.0',
           manifest: customManifest,
           artifactId: 'artifact1',
-          endpointId: 'main',
           getArtifactId: function () {
             return this.artifactId;
           }
         };
-        var ajaxSpy;
+        var fetchManifestSpy;
         before(function () {
-          ajaxSpy = sinon.spy(DepMgr, 'ajax');
+          fetchManifestSpy = sinon.spy(depMgr, '_fetchManifest');
         });
         beforeEach(function () {
           depMgr._responseCache.invalidate();
-          ajaxSpy.reset();
+          fetchManifestSpy.reset();
         });
         it('should return manifest object, if there is one', function (done) {
           var promise = depMgr._resolveDepReference(depReferenceItem);
           promise.then(function (result) {
-            sinon.assert.notCalled(ajaxSpy);
-            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ].endpoints[ 0 ]);
+            sinon.assert.notCalled(fetchManifestSpy);
+            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ]);
             done();
           });
         });
@@ -439,14 +435,14 @@ window.cubx.amd.define([ 'CRC',
           depMgr._responseCache.addItem(depReferenceItem.webpackageId, depReferenceItem.manifest);
           var promise = depMgr._resolveDepReference(depReferenceItem);
           promise.then(function (result) {
-            sinon.assert.notCalled(ajaxSpy);
-            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ].endpoints[ 0 ]);
+            sinon.assert.notCalled(fetchManifestSpy);
+            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ]);
             done();
           });
         });
         after(function () {
           depMgr._responseCache.invalidate();
-          DepMgr.ajax.restore();
+          depMgr._fetchManifest.restore();
         });
       });
 

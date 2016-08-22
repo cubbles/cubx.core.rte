@@ -1,12 +1,10 @@
 [
     {
         "artifactId": "util1",
-        "endpointId": "main",
         "webpackageId": "package1@1.0.0"
     },
     {
-        "artifactId": "util1",
-        "endpointId": "main",
+        "artifactId": "util2",
         "webpackageId": "package2@1.0.0",
         "manifest": {
             "propA": "valueA"

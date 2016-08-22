@@ -10,11 +10,11 @@
                 ],
                 "dependencies": [
                     {
-                        "artifactId": "util#main",
+                        "artifactId": "util3",
                         "webpackageId": "package3@1.0.0"
                     },
                     {
-                        "artifactId": "util#main",
+                        "artifactId": "util4",
                         "webpackageId": "package4@1.0.0"
                     }
                 ]

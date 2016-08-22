@@ -2,7 +2,7 @@
     "artifacts": {
         "utilities": [
             {
-                "artifactId": "util#main",
+                "artifactId": "util3",
                 "description": "This util demonstrates ...",
                 "resources": [
                     "js/pack3.js",
@@ -10,7 +10,7 @@
                 ],
                 "dependencies": [
                     {
-                        "artifactId": "util#main",
+                        "artifactId": "util5",
                         "webpackageId": "package5@1.0.0"
                     }
                 ]
