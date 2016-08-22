@@ -349,7 +349,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
         }
       }
     }
-
     return false;
   };
 

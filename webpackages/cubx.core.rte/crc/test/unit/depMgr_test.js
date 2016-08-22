@@ -33,11 +33,10 @@ window.cubx.amd.define(
           expect(depMgr._baseUrl).to.eql('http://test.org');
         });
         it('should remove "property" endpoints from each rootDependency if available and append it to artifactId', function () {
-          expect(depMgr._depList[0]).to.contain.all.keys({
-            artifactId: 'util1#main',
-            webpackageId: 'cubx.core.test.crc-loader-test'
-          });
-          expect(depMgr._depList[0]).not.to.have.ownProperty('endpointId');
+          var item = depMgr._depList[0];
+          item.artifactId.should.equal('util1#main');
+          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
+          item.should.not.have.ownProperty('endpointId');
         });
       });
 
@@ -59,29 +58,35 @@ window.cubx.amd.define(
       describe('#_createDepReferenceListFromEndpointDependencies()', function () {
         var depMgr;
         var dependencies;
-        before(function () {
+        beforeEach(function () {
           depMgr = CRC.getDependencyMgr();
           dependencies = JSON.parse(depList);
         });
         it('should create list of DepReference items from given list of dependencies', function () {
-          var referrer = 'testReferrer';
+          var referrer = {
+            webpackageId: 'testWebpackagePackageId',
+            artifactId: 'testArtifactId'
+          };
           var depList = depMgr._createDepReferenceListFromEndpointDependencies(dependencies, referrer);
           expect(depList).to.have.lengthOf(3);
-          expect(depList[0]).to.contain.all.keys({
-            artifactId: 'util1#main',
-            webpackageId: 'cubx.core.test.crc-loader-test',
-            referrer: referrer
-          });
-          expect(depList[1]).to.contain.all.keys({
-            artifactId: 'util2',
-            webpackageId: 'cubx.core.test.crc-loader-test',
-            referrer: referrer
-          });
-          expect(depList[2]).to.contain.all.keys({
-            artifactId: 'util3',
-            webpackageId: 'cubx.core.test.crc-loader-test',
-            referrer: referrer
-          });
+          var item = depList[0];
+          item.artifactId.should.equal('util1');
+          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
+          item.referrer[0].should.eql(referrer);
+
+          item = depList[1];
+          item.artifactId.should.equal('util2');
+          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
+          item.referrer[0].should.eql(referrer);
+
+          item = depList[2];
+          item.artifactId.should.equal('util3');
+          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
+          item.referrer[0].should.eql(referrer);
+        });
+        it('should set referrer to "root" if param referrer is set to null', function () {
+          var item = depMgr._createDepReferenceListFromEndpointDependencies(dependencies, null)[0];
+          item.referrer[0].should.equal('root');
         });
       });
     });
