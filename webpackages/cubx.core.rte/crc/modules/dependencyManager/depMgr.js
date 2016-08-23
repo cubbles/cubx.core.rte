@@ -280,19 +280,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
   };
 
   /**
-   * Public method used to dynamically add dependencies.
-   * @memberOf DependencyMgr
-   * @param {object} dependencies
-   * @return {Array} resolved dependencyList
-   */
-  DependencyMgr.prototype.addToCache = function (dependencies) {
-    var rootDeps = dependencies || [];
-    var depList = this._createDepReferenceListFromEndpointDependencies(rootDeps, 'dynamically-added');
-    depList = this._resolveDependencies(null, depList);
-    return depList;
-  };
-
-  /**
    * Write Resource-References for Dependencies in DOM.
    * @memberOf DependencyMgr
    * @param {array} depList Array containing references to all needed resources

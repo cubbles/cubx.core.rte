@@ -14,15 +14,13 @@
         "elementaryComponents": [
             {
                 "artifactId": "my-component-5",
-                "endpoints": [
+                "resources": [
+                    "res5.html"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "res5.html"
-                        ],
-                        "dependencies": [
-                            "org.example.package-6@1.0.0/my-util-6/main"
-                        ]
+                        "webpackageId": "org.example.package-6@1.0.0",
+                        "artifactId": "my-util-6"
                     }
                 ]
             }

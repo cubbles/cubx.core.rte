@@ -14,13 +14,8 @@
         "utilities": [
             {
                 "artifactId": "my-util-6",
-                "endpoints": [
-                    {
-                        "endpointId": "main",
-                        "resources": [
-                            "res6.js"
-                        ]
-                    }
+                "resources": [
+                    "res6.js"
                 ]
             }
         ]

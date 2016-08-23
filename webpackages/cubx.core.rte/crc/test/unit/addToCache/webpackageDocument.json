@@ -15,18 +15,25 @@
             {
                 "artifactId": "my-app",
                 "description": "This app demonstrates ...",
-                "endpoints": [
+                "resources": [
+                    "test.js"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "test.js"
-                        ],
-                        "dependencies": [
-                            "org.example.package-1@1.0.0/my-component-1/main",
-                            "org.example.package-2@1.0.0/my-component-2/main",
-                            "org.example.package-7@1.0.0/my-component-7/main",
-                            "org.example.package-7@1.0.0/my-component-8/main"
-                        ]
+                        "webpackageId": "org.example.package-1@1.0.0",
+                        "artifactId": "my-component-1"
+                    },
+                    {
+                        "webpackageId": "org.example.package-2@1.0.0",
+                        "artifactId": "my-component-2"
+                    },
+                    {
+                        "webpackageId": "org.example.package-7@1.0.0",
+                        "artifactId": "my-component-7"
+                    },
+                    {
+                        "webpackageId": "org.example.package-7@1.0.0",
+                        "artifactId": "my-component-8"
                     }
                 ]
             }

@@ -14,13 +14,8 @@
         "utilities": [
             {
                 "artifactId": "my-util-4",
-                "endpoints": [
-                    {
-                        "endpointId": "main",
-                        "resources": [
-                            "res4.js"
-                        ]
-                    }
+                "resources": [
+                    "res4.js"
                 ]
             }
         ]

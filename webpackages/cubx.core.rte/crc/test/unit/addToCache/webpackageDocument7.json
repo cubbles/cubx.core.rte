@@ -14,31 +14,25 @@
         "compoundComponents": [
             {
                 "artifactId": "my-component-7",
-                "endpoints": [
+                "resources": [
+                    "res1.js",
+                    "res2.css"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "res1.js",
-                            "res2.css"
-                        ],
-                        "dependencies": [
-                            "this/my-component-9/main"
-                        ]
+                        "artifactId": "my-component-9"
                     }
                 ]
             },
             {
                 "artifactId": "my-component-8",
-                "endpoints": [
+                "resources": [
+                    "res1.js",
+                    "res2.css"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "res1.js",
-                            "res2.css"
-                        ],
-                        "dependencies": [
-                                    "this/my-component-10/main"
-                        ]
+                        "artifactId": "my-component-10"
                     }
                 ]
             }
@@ -46,26 +40,16 @@
         "elementaryComponents": [
             {
                 "artifactId": "my-component-9",
-                "endpoints": [
-                    {
-                        "endpointId": "main",
-                        "resources": [
-                            "res9.js",
-                            "res9.css"
-                        ]
-                    }
+                "resources": [
+                    "res9.js",
+                    "res9.css"
                 ]
             },
             {
                 "artifactId": "my-component-10",
-                "endpoints": [
-                    {
-                        "endpointId": "main",
-                        "resources": [
-                            "res10.js",
-                            "res10.css"
-                        ]
-                    }
+                "resources": [
+                    "res10.js",
+                    "res10.css"
                 ]
             }
         ]

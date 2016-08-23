@@ -18,7 +18,7 @@ window.cubx.amd.define([ 'CRC',
     'use strict';
     var crcDepMgr;
 
-    describe('DepMgr.addToCache', function () {
+    describe('DepMgrComponentCaching', function () {
       var documents = {};
 
       before(function () {
@@ -37,7 +37,7 @@ window.cubx.amd.define([ 'CRC',
       after(function () {
         CubxNamespaceManager.resetNamespace(CRC, 'DepMgr.addToCache.after');
       });
-      describe('#_resolveDepReference() from Cache', function () {
+      describe('#_resolveDepReference()', function () {
         var depReferenceItem;
         var cache;
 
@@ -45,18 +45,21 @@ window.cubx.amd.define([ 'CRC',
           cache = CRC.getCache();
           cache.clean();
           depReferenceItem = {
-            'webpackageId': 'package-1@1.0.0',
-            'artifactId': 'my-component-1',
-            'endpointId': 'main',
+            webpackageId: 'package-1@1.0.0',
+            artifactId: 'my-component-1',
             getArtifactId: function () {
               return this.artifactId;
             }
           };
           var data = documents[ 'org.example.package-1@1.0.0' ];
-          sinon.stub(DepMgr, 'ajax').yieldsToAsync('success', data);
+          sinon.stub(crcDepMgr, '_fetchManifest').returns(new Promise(function (resolve, reject) {
+            setTimeout(function () {
+              resolve(data);
+            }, 500);
+          }));
         });
         after(function () {
-          DepMgr.ajax.restore();
+          crcDepMgr._fetchManifest.restore();
         });
         beforeEach(function () {
           cache.clean();
@@ -65,7 +68,7 @@ window.cubx.amd.define([ 'CRC',
           cache.clean();
         });
 
-        it('call of _resolveDepReference cause a cache entry', function (done) {
+        it('should cause a cache entry each time _resolveDepReference() is called', function (done) {
           var promise = crcDepMgr._resolveDepReference(depReferenceItem);
           promise.then(function () {
             var cache = crcDepMgr._crc.getCache();
@@ -74,117 +77,6 @@ window.cubx.amd.define([ 'CRC',
             erg.should.be.an('object');
             done();
           });
-        });
-      });
-      describe('#addToCache', function () {
-        var cache;
-        before(function () {
-          cache = crcDepMgr._crc.getCache();
-          cache._componentCache = {};
-          sinon.stub(crcDepMgr, '_resolveDepReference', function (depReferenceItem) {
-            var deferred = $.Deferred();
-            var data = {
-              item: depReferenceItem
-            };
-            this._storeManifestFiles(documents[ depReferenceItem.webpackageId ], depReferenceItem.artifactId);
-            if (depReferenceItem.hasOwnProperty('webpackageId')) {
-              data.data = crcDepMgr._extractArtifact(depReferenceItem,
-                documents[ depReferenceItem.webpackageId ]);
-            }
-            // simulate a request duration of 500 ms for each request
-
-            deferred.resolve(data);
-
-            return deferred.promise();
-          });
-          var rootDependencies = documents[ 'org.example.my-webpackage@0.2.0' ].artifacts.apps[ 0 ]
-            .endpoints[ 0 ].dependencies;
-          crcDepMgr.addToCache(rootDependencies);
-        });
-        after(function () {
-          cache._componentCache = {};
-          crcDepMgr._resolveDepReference.restore();
-        });
-
-        it('referenced artifacts from my-component-1 should be exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-1');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-1@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-1');
-          erg.should.have.property('artifactType', 'compoundComponent');
-        });
-
-        it('manifest.webpackage for my-component-2 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-2');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-2@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-2');
-          erg.should.have.property('artifactType', 'compoundComponent');
-        });
-
-        it('manifest.webpackage for my-component-3 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-3');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-3@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-3');
-          erg.should.have.property('artifactType', 'compoundComponent');
-        });
-        it('manifest.cubxfor my-util-4 should be not exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-util-4');
-          expect(erg).to.be.empty;
-        });
-
-        it('manifest.webpackage for my-component-5 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-5');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-5@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-5');
-          erg.should.have.property('artifactType', 'elementaryComponent');
-        });
-
-        it('manifest.cubxfor my-util-6 should be not exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-util-6');
-          expect(erg).to.be.empty;
-        });
-
-        it('manifest.webpackage for my-component-7 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-7');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-7@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-7');
-          erg.should.have.property('artifactType', 'compoundComponent');
-        });
-
-        it('manifest.webpackage for my-component-8 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-8');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-7@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-8');
-          erg.should.have.property('artifactType', 'compoundComponent');
-        });
-
-        it('manifest.webpackage for my-component-9 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-9');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-7@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-9');
-          erg.should.have.property('artifactType', 'elementaryComponent');
-        });
-
-        it('manifest.webpackage for my-component-10 should be exists exists in Cache', function () {
-          var erg = cache.getComponentCacheEntry('my-component-10');
-          expect(erg).not.empty;
-          erg.should.be.an('object');
-          erg.should.have.property('webpackageId', 'org.example.package-7@1.0.0');
-          erg.should.have.property('artifactId', 'my-component-10');
-          erg.should.have.property('artifactType', 'elementaryComponent');
         });
       });
     });

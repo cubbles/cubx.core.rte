@@ -38,7 +38,8 @@ window.cubx.amd.define([], function () {
   };
 
   /**
-   * stor the component in cache. Artifacts,  which not components are, will not store.
+   * store the component in cache. Artifacts, which are not of artifactType "elementaryComponent" or "compoundComponent"
+   * will be ignored.
    * @memberOf Cache
    * @param {string|object} document webpackageDocument
    * @param {string} artifactId
@@ -48,7 +49,7 @@ window.cubx.amd.define([], function () {
       document = JSON.parse(document);
     }
 
-    // modelVersion püfen
+    // modelVersion prüfen
     if (!this._crc._isModelVersionSupported(document.modelVersion)) {
       console.warn('Webpackage with id ' + document.groupId + '.' + document.name + ' has modelVersion ' +
         document.modelVersion +
@@ -167,7 +168,7 @@ window.cubx.amd.define([], function () {
 
   /**
    * Find the component in the document, add the attribute "artifactType" and return the component.
-   * If the artifact not found in document.artifact.compoundComponentss or document.artifacts.elementaryComponents,
+   * If the artifact not found in document.artifact.compoundComponents or document.artifacts.elementaryComponents,
    * return null.
    * @param {object} document webpackage document
    * @param {string} artifactId

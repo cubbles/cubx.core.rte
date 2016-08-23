@@ -14,16 +14,14 @@
         "compoundComponents": [
             {
                 "artifactId": "my-component-3",
-                "endpoints": [
+                "resources": [
+                    "res3.js",
+                    "res3.css"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "res3.js",
-                            "res3.css"
-                        ],
-                        "dependencies": [
-                            "org.example.package-5@1.0.0/my-component-5/main"
-                        ]
+                        "webpackageId": "org.example.package-5@1.0.0",
+                        "artifactId": "my-component-5"
                     }
                 ]
             }
