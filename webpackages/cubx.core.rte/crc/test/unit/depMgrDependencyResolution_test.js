@@ -450,17 +450,19 @@ window.cubx.amd.define([ 'CRC',
         var stub;
         before(function () {
           depMgr._baseUrl = 'http://www.base.test/webpacke-store/';
-          stub = sinon.stub(DepMgr, 'ajax', function (ajaxConfig) {
+          stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
             // simulating a 500ms timeout
-            setTimeout(function () {
-              ajaxConfig.error({}, 'timeout');
-            }, 500);
+            return new Promise(function (resolve, reject) {
+              setTimeout(function () {
+                reject({response: {status: 'timeout'}});
+              }, 500);
+            });
           });
         });
         beforeEach(function () {
           stub.reset();
         });
-        it('should call fail method on the returned promise if ajax request fails', function (done) {
+        it('should reject the returned promise if ajax request fails', function (done) {
           var depRef = {
             id: 'package_2-1.0.0'
           };
@@ -471,7 +473,7 @@ window.cubx.amd.define([ 'CRC',
           });
         });
         after(function () {
-          DepMgr.ajax.restore();
+          depMgr._fetchManifest.restore();
           depMgr._baseUrl = '';
         });
       });
@@ -479,24 +481,29 @@ window.cubx.amd.define([ 'CRC',
        * Find index of given DepReference item in internal depList.
        */
       describe('#_getIndexOfDepReferenceItem()', function () {
-        var endpointDependencies;
+        var artifactDependencies;
+        var testReferrer = {
+          webpackageId: 'testWebpackage',
+          artifactId: 'testArtifactId'
+        };
         before(function () {
-          endpointDependencies = JSON.parse(rootDependencies);
+          depMgr._depList = null;
+          artifactDependencies = JSON.parse(rootDependencies);
           depMgr.init();
         });
         it('should return index of DepReference item in internal depList', function () {
-          var depReferences = depMgr._createDepReferenceListFromEndpointDependencies(endpointDependencies,
-            'testReferrer');
+          var depReferences = depMgr._createDepReferenceListFromEndpointDependencies(artifactDependencies, testReferrer);
+          depMgr._depList = depReferences;
           expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, depReferences[ 0 ])).to.equal(0);
         });
         it('should return -1, as given item is not in internal depList', function () {
           var items = depMgr._createDepReferenceListFromEndpointDependencies([
-            'test-1.2.3/generic/main'
-          ], 'testReferrer');
+            {webpackageId: 'test-1.2.3', artifactId: 'generic'}
+          ], testReferrer);
           expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, items[ 0 ])).to.equal(-1);
         });
         after(function () {
-          depMgr._depJson = null;
+          depMgr._depList = null;
         });
       });
 
