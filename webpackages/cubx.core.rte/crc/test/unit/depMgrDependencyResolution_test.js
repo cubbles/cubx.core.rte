@@ -514,18 +514,25 @@ window.cubx.amd.define([ 'CRC',
         var internalDepList = [];
         var item1;
         var item2;
+        var item3;
         before(function () {
           window.cubx.CRCInit.runtimeMode = 'prod';
           depMgr.init();
         });
         beforeEach(function () {
+          var testReferrer = {
+            webpackageId: 'testWebpackage',
+            artifactId: 'testArtifactId'
+          };
           var items = depMgr._createDepReferenceListFromEndpointDependencies([
-            'package1@1.0.0/generic1/main1',
-            'package2@1.0.0/generic2/main2'
-          ], 'testReferrer');
+            {webpackageId: 'package1@1.0.0', artifactId: 'generic1'},
+            {webpackageId: 'package2@1.0.0', artifactId: 'generic2'},
+            {webpackageId: 'package3@1.0.0', artifactId: 'util#main'}
+          ], testReferrer);
 
           item1 = items[ 0 ];
           item2 = items[ 1 ];
+          item3 = items[ 2 ];
           item1.resources = [
             'test1_1.js',
             {
@@ -542,15 +549,19 @@ window.cubx.amd.define([ 'CRC',
             'test2_2.js',
             'test2_3.html'
           ];
+          item3.resources = [
+            'test3-1.js'
+          ];
           internalDepList.push(item1);
           internalDepList.push(item2);
+          internalDepList.push(item3);
         });
         it('should return a list of all resources in correct order for given list of DepReference items',
           function () {
             depMgr._runtimeMode.should.be.eql('prod');
             var resourceList = depMgr._calculateResourceList(internalDepList);
             // console.log(resourceList);
-            resourceList.should.have.length(6);
+            resourceList.should.have.length(7);
             resourceList[ 0 ].should.have.property('path',
               depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' + item1.resources[ 0 ]);
             resourceList[ 1 ].should.have.property('path',
@@ -566,6 +577,12 @@ window.cubx.amd.define([ 'CRC',
             resourceList[ 5 ].should.have.property('path',
               depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' + item2.resources[ 2 ]);
           });
+        it('should ignore endpointId appendix on artifacts that where converted by the manifestConverter', function () {
+          depMgr._runtimeMode.should.be.eql('prod');
+          var resourceList = depMgr._calculateResourceList(internalDepList);
+          resourceList[ 6 ].should.have.property('path',
+            depMgr._baseUrl + item3.webpackageId + '/util/' + item3.resources[ 0 ]);
+        });
         afterEach(function () {
           internalDepList = [];
         });

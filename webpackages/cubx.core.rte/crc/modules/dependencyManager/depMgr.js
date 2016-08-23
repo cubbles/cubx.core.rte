@@ -198,7 +198,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
           // current DepReference item for which the dependencies where requested
           var currentDepReference = arguments[ i ].item;
           var currentEndpoint = arguments[ i ].data;
-          if (!currentEndpoint) {
+          if (!currentEndpoint) { // TODO: convert endpoint to artifact by simple renaming variable and adjusting error log below
             console.error('Endpoint ' + arguments[ i ].item.webpackageId + '/' + arguments[ i ].item.artifactId + ' / ' +
               arguments[ i ].item.endpointId + ' not found.');
           }
@@ -265,8 +265,11 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     for (var i = 0; i < depList.length; i++) {
       var currentDepRef = depList[ i ];
       for (var j = 0; j < currentDepRef.resources.length; j++) {
-        var resource = this._createResourceFromItem(currentDepRef.webpackageId + '/' +
-          currentDepRef.artifactId, currentDepRef.resources[ j ],
+        // remove endpoint appendix from artifactId if there was one added by the manifestConverter
+        var qualifiedArtifactId = currentDepRef.artifactId.indexOf('#') > -1
+          ? currentDepRef.webpackageId + '/' + currentDepRef.artifactId.split('#')[0]
+          : currentDepRef.webpackageId + '/' + currentDepRef.artifactId;
+        var resource = this._createResourceFromItem(qualifiedArtifactId, currentDepRef.resources[ j ],
           this._runtimeMode, currentDepRef.referrer);
         if (resource) {
           resourceList.push(resource);
