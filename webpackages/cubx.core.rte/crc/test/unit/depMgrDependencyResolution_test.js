@@ -515,12 +515,12 @@ window.cubx.amd.define([ 'CRC',
           depMgr.init();
         });
         it('should return index of DepReference item in internal depList', function () {
-          var depReferences = depMgr._createDepReferenceListFromEndpointDependencies(artifactDependencies, testReferrer);
+          var depReferences = depMgr._createDepReferenceListFromArtifactDependencies(artifactDependencies, testReferrer);
           depMgr._depList = depReferences;
           expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, depReferences[ 0 ])).to.equal(0);
         });
         it('should return -1, as given item is not in internal depList', function () {
-          var items = depMgr._createDepReferenceListFromEndpointDependencies([
+          var items = depMgr._createDepReferenceListFromArtifactDependencies([
             {webpackageId: 'test-1.2.3', artifactId: 'generic'}
           ], testReferrer);
           expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, items[ 0 ])).to.equal(-1);
@@ -547,7 +547,7 @@ window.cubx.amd.define([ 'CRC',
             webpackageId: 'testWebpackage',
             artifactId: 'testArtifactId'
           };
-          var items = depMgr._createDepReferenceListFromEndpointDependencies([
+          var items = depMgr._createDepReferenceListFromArtifactDependencies([
             {webpackageId: 'package1@1.0.0', artifactId: 'generic1'},
             {webpackageId: 'package2@1.0.0', artifactId: 'generic2'},
             {webpackageId: 'package3@1.0.0', artifactId: 'util#main'}

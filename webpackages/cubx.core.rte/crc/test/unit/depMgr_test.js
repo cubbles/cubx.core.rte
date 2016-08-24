@@ -55,7 +55,7 @@ window.cubx.amd.define(
         });
       });
 
-      describe('#_createDepReferenceListFromEndpointDependencies()', function () {
+      describe('#_createDepReferenceListFromArtifactDependencies()', function () {
         var depMgr;
         var dependencies;
         beforeEach(function () {
@@ -67,7 +67,7 @@ window.cubx.amd.define(
             webpackageId: 'testWebpackagePackageId',
             artifactId: 'testArtifactId'
           };
-          var depList = depMgr._createDepReferenceListFromEndpointDependencies(dependencies, referrer);
+          var depList = depMgr._createDepReferenceListFromArtifactDependencies(dependencies, referrer);
           expect(depList).to.have.lengthOf(3);
           var item = depList[0];
           item.artifactId.should.equal('util1');
@@ -85,7 +85,7 @@ window.cubx.amd.define(
           item.referrer[0].should.eql(referrer);
         });
         it('should set referrer to "root" if param referrer is set to null', function () {
-          var item = depMgr._createDepReferenceListFromEndpointDependencies(dependencies, null)[0];
+          var item = depMgr._createDepReferenceListFromArtifactDependencies(dependencies, null)[0];
           item.referrer[0].should.equal('root');
         });
       });

@@ -112,7 +112,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       console.log('Pushing cif into the dependencies ...');
       rootDependencies.unshift({
         artifactId: 'cif',
-        endpointId: 'main', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an enpointId here
+        endpointId: 'main', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an endpointId here
         webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
       });
     }
@@ -122,7 +122,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       console.log('Pushing es6-promise (polyfill) into the dependencies ...');
       rootDependencies.unshift({
         artifactId: 'es6-promise',
-        endpointId: 'html-import', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an enpointId here
+        endpointId: 'html-import', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an endpointId here
         webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
       });
     }
@@ -132,7 +132,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     this._removeEndpointIdFromRootDependencies(rootDependencies);
 
     // set all top level dependencies as initial depList
-    this._depList = this._createDepReferenceListFromEndpointDependencies(rootDependencies, null);
+    this._depList = this._createDepReferenceListFromArtifactDependencies(rootDependencies, null);
   };
 
   /**
@@ -166,7 +166,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
   /**
    * This method gets all direct and indirect dependencies by fetching manifest.webpackage files from all of them.
-   * It will iterate over the endpoint-dependencies and fetch non resolved dependency as long as there are any.
+   * It will iterate over the artifact-dependencies and fetch non resolved dependency as long as there are any.
    * At the end the depList will be passed to the function passed with the 'next' -parameter.
    * Note: the list items will <b>not</b> contain the needed files!
    * @memberOf DependencyMgr
@@ -208,9 +208,9 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
           // if there are dependencies, create new DepReference Items
           if (currentArtifact.hasOwnProperty('dependencies') && currentArtifact.dependencies.length > 0) {
-            // all the dependencies of current artifactEndpointObject
+            // all the dependencies of current artifactObject
             var referredDepReferences =
-              self._createDepReferenceListFromEndpointDependencies(currentArtifact.dependencies,
+              self._createDepReferenceListFromArtifactDependencies(currentArtifact.dependencies,
                 {webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
             referredDepReferences.forEach(function (referredDepReferenceItem) {
               var indexOfCurrentDepReferenceItem = self._getIndexOfDepReferenceItem(depList,
@@ -381,7 +381,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
    * @private
    * @memberOf DependencyMgr
    */
-  DependencyMgr.prototype._createDepReferenceListFromEndpointDependencies = // TODO: rename method to _createDepReferenceListFromArtifactDependencies
+  DependencyMgr.prototype._createDepReferenceListFromArtifactDependencies =
     function (dependencies, referrer) {
       var self = this;
       var depList = [];
@@ -558,8 +558,8 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
   };
 
   /**
-   * Resolve and return the artifact-endpoint object, described by the argument.
-   * @param {DepReference} depReference Object containing a reference to an artifact-endpoint
+   * Resolve and return the artifact object, described by the argument.
+   * @param {DepReference} depReference Object containing a reference to an artifact
    * @private
    * @memberOf DependencyMgr
    * @returns {object} promise JQuery promise object
@@ -721,10 +721,10 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
   /**
    * Class for representing a dependency item in a dependency list. Each dependency is in fact a reference to an
-   * artifact´s endpoint within a webpackage.
+   * artifact within a webpackage.
    * @global
    * @constructor
-   * @param {object} initObject with the structure of an endpoint´s dependency array
+   * @param {object} initObject with the structure of an artifacts´s dependency array
    */
   var DepReference = function (initObject) {
     /**
