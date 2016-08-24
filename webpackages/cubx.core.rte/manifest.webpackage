@@ -85,7 +85,7 @@
             "endpointId": "html-import"
           },
           {
-            "webpackageId": "polymer-1.2.3",
+            "webpackageId": "polymer-1.2.3@1.0.2",
             "artifactId": "polymer",
             "endpointId": "main"
           },
