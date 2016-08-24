@@ -1,4 +1,4 @@
-/*globals describe, before, beforeEach, it, after, sinon */
+/*globals describe, before, beforeEach, it, after, sinon, expect */
 window.cubx.amd.define([ 'CRC',
     'dependencyManager',
     'jqueryLoader',
@@ -292,7 +292,7 @@ window.cubx.amd.define([ 'CRC',
         });
 
         it('should return list of all dependencies', function (done) {
-          this.timeout(3000);
+          // this.timeout(3000);
           var rootDepReferences = depMgr._depList;
           depMgr._resolveDependencies(function (resolvedDependencies) {
             for (var i = 0; i < expectedDepList.length; i++) {
@@ -302,7 +302,7 @@ window.cubx.amd.define([ 'CRC',
           }, rootDepReferences);
         });
         it('should set resources array to each created DepReference item', function (done) {
-          this.timeout(3500);
+          // this.timeout(3500);
           var rootDepReferences = depMgr._depList;
           depMgr._resolveDependencies(function (resolvedDependencies) {
             // console.log(depMgr._depList);
@@ -320,6 +320,29 @@ window.cubx.amd.define([ 'CRC',
             resolvedDependencies[ 5 ].resources.should.eql(JSON.parse(pkg2).artifacts.utilities[ 0 ].resources);
             done();
           }, rootDepReferences);
+        });
+        it('should set referrers correctly to each created and resolved DepReference item', function (done) {
+          var rootDependencies = depMgr._depList;
+          depMgr._resolveDependencies(function (resolvedDependencies) {
+            resolvedDependencies.some(function (dep) {
+              dep.should.have.property('referrer');
+            });
+            expect(resolvedDependencies[0].referrer).to.deep.include({webpackageId: 'package5@1.0.0', artifactId: 'util5'});
+            expect(resolvedDependencies[0].referrer).to.have.lengthOf(1);
+            expect(resolvedDependencies[1].referrer).to.deep.include({webpackageId: 'package3@1.0.0', artifactId: 'util3'});
+            expect(resolvedDependencies[1].referrer).to.deep.include({webpackageId: 'package2@1.0.0', artifactId: 'util2'});
+            expect(resolvedDependencies[1].referrer).to.have.lengthOf(2);
+            expect(resolvedDependencies[2].referrer).to.deep.include({webpackageId: 'package1@1.0.0', artifactId: 'util1'});
+            expect(resolvedDependencies[2].referrer).to.deep.include({webpackageId: 'package2@1.0.0', artifactId: 'util2'});
+            expect(resolvedDependencies[2].referrer).to.have.lengthOf(2);
+            expect(resolvedDependencies[3].referrer).to.deep.include({webpackageId: 'package1@1.0.0', artifactId: 'util1'});
+            expect(resolvedDependencies[3].referrer).to.have.lengthOf(1);
+            expect(resolvedDependencies[4].referrer).to.include('root');
+            expect(resolvedDependencies[4].referrer).to.have.lengthOf(1);
+            expect(resolvedDependencies[5].referrer).to.include('root');
+            expect(resolvedDependencies[5].referrer).to.have.lengthOf(1);
+            done();
+          }, rootDependencies);
         });
         afterEach(function () {
           depMgr._depList = null;
@@ -591,6 +614,32 @@ window.cubx.amd.define([ 'CRC',
         });
       });
 
-      // describe('#_')
+      describe('#_fetchManifest', function () {
+        var depMgr;
+        var axiosStub;
+        before(function () {
+          depMgr = CRC.getDependencyMgr();
+          axiosStub = sinon.stub(Object.getPrototypeOf(depMgr._axios), 'request', function (url) {
+            return new Promise(function (resolve, reject) {
+              setTimeout(function () {
+                resolve();
+              }, 250);
+            });
+          });
+        });
+        it('should call axios.request method with given url', function (done) {
+          depMgr._fetchManifest('https://www.example.test').then(function () {
+            expect(axiosStub.calledWith({url: 'https://www.example.test'})).to.be.true;
+            done();
+          });
+        });
+        it('should return a promise', function () {
+          var promise = depMgr._fetchManifest('https://www.example.test');
+          expect(promise).to.be.an.instanceOf(Promise);
+        });
+        after(function () {
+          axiosStub.restore();
+        });
+      });
     });
   });

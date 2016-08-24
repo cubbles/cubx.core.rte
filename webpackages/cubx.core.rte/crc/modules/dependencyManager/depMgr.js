@@ -197,22 +197,21 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
         for (var i = 0; i < deferredDepReferenceResolutions.length; i++) {
           // current DepReference item for which the dependencies where requested
           var currentDepReference = arguments[ i ].item;
-          var currentEndpoint = arguments[ i ].data;
-          if (!currentEndpoint) { // TODO: convert endpoint to artifact by simple renaming variable and adjusting error log below
-            console.error('Endpoint ' + arguments[ i ].item.webpackageId + '/' + arguments[ i ].item.artifactId + ' / ' +
-              arguments[ i ].item.endpointId + ' not found.');
+          var currentArtifact = arguments[ i ].data;
+          if (!currentArtifact) {
+            console.error('Artifact ' + arguments[ i ].item.webpackageId + '/' + arguments[ i ].item.artifactId + ' not found.');
           }
           // attach all the resources to DepReference item if there are any
-          if (currentEndpoint.hasOwnProperty('resources') && currentEndpoint.resources.length > 0) {
-            currentDepReference.resources = currentEndpoint.resources;
+          if (currentArtifact.hasOwnProperty('resources') && currentArtifact.resources.length > 0) {
+            currentDepReference.resources = currentArtifact.resources;
           }
 
           // if there are dependencies, create new DepReference Items
-          if (currentEndpoint.hasOwnProperty('dependencies') && currentEndpoint.dependencies.length > 0) {
+          if (currentArtifact.hasOwnProperty('dependencies') && currentArtifact.dependencies.length > 0) {
             // all the dependencies of current artifactEndpointObject
             var referredDepReferences =
-              self._createDepReferenceListFromEndpointDependencies(currentEndpoint.dependencies,
-                currentDepReference.getId());
+              self._createDepReferenceListFromEndpointDependencies(currentArtifact.dependencies,
+                {webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
             referredDepReferences.forEach(function (referredDepReferenceItem) {
               var indexOfCurrentDepReferenceItem = self._getIndexOfDepReferenceItem(depList,
                 currentDepReference);
@@ -229,12 +228,12 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
                   var existingDepReferenceItem = depList[ indexOfReferredDepReferenceItem ];
                   utils.Array.removeItemFromArray(depList, existingDepReferenceItem);
                   utils.Array.insertBefore(depList, existingDepReferenceItem, currentDepReference);
-                  existingDepReferenceItem.referrer.push(currentDepReference.getId());
+                  existingDepReferenceItem.referrer.push({webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
                 }());
               } else {
                 (function () {
                   var existingDepReferenceItem = depList[ indexOfReferredDepReferenceItem ];
-                  existingDepReferenceItem.referrer.push(currentDepReference.getId());
+                  existingDepReferenceItem.referrer.push({webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
                 }());
               }
             });
@@ -288,18 +287,24 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     // var element = document.getElementsByTagName('head')[0].firstElementChild;
     for (var i = 0; i < depList.length; i++) {
       var current = depList[ i ];
+      var currentReferrer = [];
+      current.referrer.some(function (referrer, index) {
+        currentReferrer[index] = typeof referrer === 'string'
+                                 ? referrer
+                                 : referrer.webpackageId + '/' + referrer.artifactId;
+      });
       switch (current.type) {
         case DependencyMgr._types.stylesheet.name :
           // utils.DOM.prependStylesheetToHead(current.path, element);
-          utils.DOM.appendStylesheetToHead(current.path, current.referrer);
+          utils.DOM.appendStylesheetToHead(current.path, currentReferrer);
           break;
         case DependencyMgr._types.htmlImport.name :
           // utils.DOM.prependHtmlImportToHead(current.path, element);
-          utils.DOM.appendHtmlImportToHead(current.path, current.referrer);
+          utils.DOM.appendHtmlImportToHead(current.path, currentReferrer);
           break;
         case DependencyMgr._types.javascript.name :
           // utils.DOM.prependScriptTagToHead(current.path, element);
-          utils.DOM.appendScriptTagToHead(current.path, current.referrer);
+          utils.DOM.appendScriptTagToHead(current.path, currentReferrer);
       }
     }
     window.cubx.CRC.fireDepMgrReadyEvent();
@@ -368,15 +373,15 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
   // ---------------------------------------------------------------------------------------------------------------
 
   /**
-   * Create and get a list with elements from type of DepRef from the passed artifact-endpoint dependencies.
-   * @param {Array} dependencies dependency attribute from artifact-endpoint
+   * Create and get a list with elements from type of DepRef from the passed artifact dependencies.
+   * @param {Array} dependencies dependency attribute from artifact
    * @param {object | undefined} referrer is an object containing the artifactId and webpackageId of the artifact, which
    *    refers to the dependencies passed with the first parameter.
    * @return {Array} dependency list, which elements DepRef objects are.
    * @private
    * @memberOf DependencyMgr
    */
-  DependencyMgr.prototype._createDepReferenceListFromEndpointDependencies =
+  DependencyMgr.prototype._createDepReferenceListFromEndpointDependencies = // TODO: rename method to _createDepReferenceListFromArtifactDependencies
     function (dependencies, referrer) {
       var self = this;
       var depList = [];
@@ -386,7 +391,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
       // check given referrer is of type object
       if (referrer && typeof referrer !== 'object') {
-        console.error('Expect parameter "referrer" to be null or of type object: ', referrer);
+        console.warn('Expect parameter "referrer" to be null or of type object: ', referrer, '. Will use "root" as fallback referrer');
         // if referrer is invalid set it to null. A referrer with value 'null' is interpreted as 'root'
         referrer = null;
       }
