@@ -24,7 +24,7 @@ window.cubx.amd.define([], function () {
         '_convertMultipleEndpointsToArtifacts',
         '_convertArtifactDependencyItems',
         '_convertComponentIdToArtifactIdInMembers'
-      ]
+      ] // TODO: need to resolve PLAT-578 in order to work correctly with depMgr!
     };
 
     /**

@@ -52,7 +52,8 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
      * @private
      */
     this._axios = axios.create({
-      transformResponse: [DependencyMgr._prepareResponseData]
+      transformResponse: [DependencyMgr._prepareResponseData],
+      responseType: 'json'
     });
   };
 
@@ -112,7 +113,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       console.log('Pushing cif into the dependencies ...');
       rootDependencies.unshift({
         artifactId: 'cif',
-        endpointId: 'main', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an endpointId here
         webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
       });
     }
@@ -122,7 +122,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       console.log('Pushing es6-promise (polyfill) into the dependencies ...');
       rootDependencies.unshift({
         artifactId: 'es6-promise',
-        endpointId: 'html-import', // as long as manifest.webpackage is not migrated to modelVersion 9.1. we still need an endpointId here
         webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
       });
     }
@@ -130,6 +129,10 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     // remove endpointId properties from rootDependencies and append endpointId to artifactId using separator '#'
     // needed for backwards compatibility to modelVersion 8.x
     this._removeEndpointIdFromRootDependencies(rootDependencies);
+
+    // we need to ensure that each rootDependency has a valid webpackageId as this will be used to build path for
+    // requesting associated mannifest.webpackage files
+    this._determineWebpackageIdsForRootRependencies(rootDependencies);
 
     // set all top level dependencies as initial depList
     this._depList = this._createDepReferenceListFromArtifactDependencies(rootDependencies, null);
@@ -358,7 +361,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
    */
   DependencyMgr._prepareResponseData = function (data) {
     var manifest = manifestConverter.convert(data);
-    return JSON.stringify(manifest);
+    return manifest;
   };
 
   /**
@@ -542,6 +545,27 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
   };
 
   /**
+   * Internal Helper for adding a webpackageId to each rootDependency
+   * @param {object} rootDependencies
+   * @private
+   */
+  DependencyMgr.prototype._determineWebpackageIdsForRootRependencies = function (rootDependencies) {
+    var regExp = /([^\/]*)?@([^\/]*)/; // matches on valid webpackageIds,
+    // e.g. matches "cubx.core.artifactsearch@1.5.0" in "https://cubbles.world/sandbox/cubx.core.artifactsearch@1.5.0/artifactsearch/index.html"
+    var pathname = window.location.pathname;
+    var result = regExp.exec(pathname);
+    // if we find a valid webpackageId in pathname use this for rootWebpackageIds. Otherwise we assume that we are requesting
+    // the webpage from localhost using cubx developer tools.
+    var webpackageId = result ? result[0] : pathname.split('/')[1];
+
+    rootDependencies.forEach(function (dep) {
+      if (!dep.hasOwnProperty('webpackageId') && webpackageId) {
+        dep.webpackageId = webpackageId;
+      }
+    });
+  };
+
+  /**
    * Internal helper method for removing endpointId property from all rootDependencies having this property. The value of the
    * endpointId property is appended to the artifactId used endpointSeparator from ManifestConverter.
    * @memberOf DependencyMgr
@@ -606,31 +630,12 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
     // only make ajax request if there is a url given
     if (url) {
-      // DependencyMgr.ajax({
-      //   url: url,
-      //   dataType: 'json',
-      //   success: function (data, textStatus) {
-      //     self._storeManifestFiles(data, depReference.getArtifactId());
-      //     self._responseCache.addItem(depReference.webpackageId, data);
-      //     deferred.resolve({
-      //       item: depReference,
-      //       data: self._extractArtifact(depReference, data)
-      //     });
-      //   },
-      //   error: function (jqXHR, textStatus, errorThrown) {
-      //     deferred.reject({
-      //       status: textStatus,
-      //       error: errorThrown
-      //     });
-      //   }
-      // });
-
-      this._fetchManifest(url).then(function (data) {
-        self._storeManifestFiles(data, depReference.getArtifactId());
-        self._responseCache.addItem(depReference.webpackageId, data);
+      this._fetchManifest(url).then(function (response) {
+        self._storeManifestFiles(response.data, depReference.getArtifactId());
+        self._responseCache.addItem(depReference.webpackageId, response.data);
         deferred.resolve({
           item: depReference,
-          data: self._extractArtifact(depReference, data)
+          data: self._extractArtifact(depReference, response.data)
         });
       }, function (error) {
         deferred.reject({

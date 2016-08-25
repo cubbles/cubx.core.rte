@@ -54,7 +54,7 @@ window.cubx.amd.define([ 'CRC',
           var data = documents[ 'org.example.package-1@1.0.0' ];
           sinon.stub(crcDepMgr, '_fetchManifest').returns(new Promise(function (resolve, reject) {
             setTimeout(function () {
-              resolve(data);
+              resolve({data: data});
             }, 500);
           }));
         });

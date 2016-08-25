@@ -371,7 +371,7 @@ window.cubx.amd.define([ 'CRC',
           stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
             return new Promise(function (resolve, reject) {
               window.setTimeout(function () {
-                resolve(data);
+                resolve({data: data});
               }, 1000);
             });
           });
