@@ -278,12 +278,12 @@ The integration of member components in a compound component can be defined by m
     <template id="my-compound">
          <div>
              <h1>My awsome compound…</h1>
-             <div class=”row”>
-                <div class=”col-xs-6”>
-                    <my-comp1 member-id-ref=”m1”/>
+             <div class="row">
+                <div class="col-xs-6">
+                    <my-comp1 member-id-ref="m1"/>
                 </div>
-                <div class=”col-xs-6”>
-                    <my-comp2 member-id-ref=”m2” />
+                <div class="col-xs-6">
+                    <my-comp2 member-id-ref="m2" />
                 </div>
               </div>
           <div>
