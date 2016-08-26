@@ -2,9 +2,10 @@ window.cubx.amd.define(
   [
     'manifestConverter',
     'text!unit/manifestConverter/manifest@8.3.1.json',
+    'text!unit/manifestConverter/manifest@9.1.0.json',
     'text!unit/manifestConverter/convertedManifest@9.1.0.json'
   ],
-  function (manifestConverter, manifest831, convertedManifest910) {
+  function (manifestConverter, manifest831, manifest910, convertedManifest910) {
     'use strict';
 
     describe('ManifestConverter', function () {
@@ -149,6 +150,34 @@ window.cubx.amd.define(
             expect(members[0].artifactId).to.eql('generic-view');
             expect(members[1].artifactId).to.eql('generic-view');
             expect(members[2].artifactId).to.eql('station-view');
+          });
+        });
+        describe('#_removeEndpointsFromDependencyItems()', function () {
+          var convertedManifest;
+          var expectedManifest = JSON.parse(convertedManifest910);
+          beforeEach(function () {
+            convertedManifest = JSON.parse(manifest910);
+          });
+          it('should remove "endpointId" properties from each dependency if there is such a property', function () {
+            manifestConverter._removeEndpointsFromDependencyItems(convertedManifest);
+            Object.keys(convertedManifest.artifacts).forEach(function (artifactType) {
+              convertedManifest.artifacts[artifactType].forEach(function (artifact) {
+                if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
+                  artifact.dependencies.forEach(function (dep) {
+                    dep.should.not.have.ownProperty('endpointId');
+                  });
+                }
+              });
+            });
+          });
+          it('should append endpointId value to corresponding artifactId using separator "#"', function () {
+            // expect(convertedManifest.artifacts.apps[0].dependencies).to.eql(expectedManifest.artifacts.apps[0].dependencies);
+            manifestConverter._removeEndpointsFromDependencyItems(convertedManifest);
+            expect(convertedManifest.artifacts.apps[0].dependencies).to.eql(expectedManifest.artifacts.apps[0].dependencies);
+            expect(convertedManifest.artifacts.compoundComponents[0].dependencies).to.eql(expectedManifest.artifacts.compoundComponents[0].dependencies);
+            expect(convertedManifest.artifacts.elementaryComponents[0].dependencies).to.eql(expectedManifest.artifacts.elementaryComponents[0].dependencies);
+            expect(convertedManifest.artifacts.utilities[1].dependencies).to.eql(expectedManifest.artifacts.utilities[1].dependencies);
+            expect(convertedManifest.artifacts.utilities[2].dependencies).to.eql(expectedManifest.artifacts.utilities[2].dependencies);
           });
         });
       });

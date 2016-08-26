@@ -790,7 +790,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
     return this.webpackageId + '/' + this.artifactId;
   };
   DepReference.prototype.getArtifactId = function () {
-    return this.artifactId;
+    return this.artifactId.indexOf('#') > -1 ? this.artifactId.split('#')[0] : this.artifactId;
   };
   /* ----------------------------------------------------------------------------------------------------------------*/
   /* --------------------------------------- Resource Class ---------------------------------------------*/

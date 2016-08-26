@@ -25,8 +25,8 @@ module.exports = function (config) {
         served: true
       },
       'https://webblebase.net/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
-      '../utilities/js/guid.js',
-      '../utilities/js/domTreeUtils.js',
+      '../guid-utility/js/guid.js',
+      '../dom-tree-utilities/js/domTreeUtils.js',
       'js/dynamicConnectionUtils.js',
       '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../cif/classes/connectionManager.js',

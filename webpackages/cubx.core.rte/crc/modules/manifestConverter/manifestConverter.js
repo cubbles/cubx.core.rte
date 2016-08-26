@@ -24,7 +24,10 @@ window.cubx.amd.define([], function () {
         '_convertMultipleEndpointsToArtifacts',
         '_convertArtifactDependencyItems',
         '_convertComponentIdToArtifactIdInMembers'
-      ] // TODO: need to resolve PLAT-578 in order to work correctly with depMgr!
+      ],
+      '9.1.0': [
+        '_removeEndpointsFromDependencyItems'
+      ]
     };
 
     /**
@@ -101,6 +104,30 @@ window.cubx.amd.define([], function () {
             }
             dependencyObject.artifactId = segments[1] + self.endpointSeparator + segments[2];
             dependencies[index] = dependencyObject;
+          });
+        }
+      });
+    });
+  };
+
+  /**
+   * Convert each dependencyItem by removing endpointId property (if available) and append it's value to artifactId
+   * using separator '#'.
+   * Note: The changes will be made directly on the given manifest object.
+   * @memberOf ManifestConverter
+   * @param {object} manifest A valid manifest object
+   * @private
+   */
+  ManifestConverter.prototype._removeEndpointsFromDependencyItems = function (manifest) {
+    var self = this;
+    Object.keys(manifest.artifacts).forEach(function (artifactType) {
+      manifest.artifacts[artifactType].forEach(function (artifact) {
+        if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
+          artifact.dependencies.forEach(function (dependency, index, dependencies) {
+            if (typeof dependency === 'object' && dependency.hasOwnProperty('endpointId')) {
+              dependency.artifactId = dependency.artifactId + self.endpointSeparator + dependency.endpointId;
+              delete dependency.endpointId;
+            };
           });
         }
       });
@@ -202,16 +229,12 @@ window.cubx.amd.define([], function () {
     var convertedManifest = typeof manifest === 'string' ? JSON.parse(manifest) : manifest;
     var modelVersion = convertedManifest.modelVersion;
     var self = this;
+    var transformationList = this._determineTransformationList(modelVersion);
 
-    // for now only convert manifests that hav model version 8.x.x
-    if (modelVersion.indexOf('8.') === 0) {
-      var transformationList = this._determineTransformationList(modelVersion);
-      transformationList.forEach(function (fn) {
-        self[fn](convertedManifest);
-      });
-      convertedManifest.modelVersion = this._targetVersion;
-    }
-
+    transformationList.forEach(function (fn) {
+      self[fn](convertedManifest);
+    });
+    convertedManifest.modelVersion = this._targetVersion;
     return convertedManifest;
   };
 
