@@ -201,6 +201,47 @@ window.cubx.amd.define(
           });
         });
       });
+      describe('Public API', function () {
+        var artifact;
+        var cleanArtifact;
+        beforeEach(function () {
+          artifact = {
+            artifactId: 'my-artifact#main',
+            resources: [
+              'main.js'
+            ],
+            dependencies: [
+              {webpackageId: 'my-webpackage', artifactId: 'comp-a#main'},
+              {webpackageId: 'my-webpackage', artifactId: 'comp-b'}
+            ]
+          };
+          cleanArtifact = {
+            artifactId: 'my-artifact',
+            resources: [
+              'main.js'
+            ],
+            dependencies: [
+              {webpackageId: 'my-webpackage', artifactId: 'comp-a'},
+              {webpackageId: 'my-webpackage', artifactId: 'comp-b'}
+            ]
+          };
+        });
+        describe('#cleanArtifact()', function () {
+          it('should return given artifact if no modification where necessary', function () {
+            var result = manifestConverter.cleanArtifact(cleanArtifact);
+            result.should.equal(cleanArtifact);
+          });
+          it('should return a new object representing a the cleaned artifact. All \'#[endpointId]\' appendices should be removed', function () {
+            var result = manifestConverter.cleanArtifact(artifact);
+            result.should.have.ownProperty('artifactId', artifact.artifactId);
+            result.dependencies.should.eql([
+              {webpackageId: 'my-webpackage', artifactId: 'comp-a'},
+              {webpackageId: 'my-webpackage', artifactId: 'comp-b'}
+            ]);
+            result.should.not.equal(artifact);
+          });
+        });
+      });
     });
   });
 

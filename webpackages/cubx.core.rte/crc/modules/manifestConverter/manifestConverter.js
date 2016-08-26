@@ -238,5 +238,33 @@ window.cubx.amd.define([], function () {
     return convertedManifest;
   };
 
+  /**
+   * Removes all '#[endpointId]' appendices on artifactIds in given artifact and returns a new artifact. The given artifact
+   * won't be manipulated.
+   * @memberOf ManifestConverter
+   * @param {object} artifact
+   * @return {object} A new cleaned artifact or the given artifact if nothing was cleaned
+   **/
+  ManifestConverter.prototype.cleanArtifact = function (artifact) {
+    var cleanedArtifact = JSON.parse(JSON.stringify(artifact));
+    var cleaned = false;
+
+    if (cleanedArtifact.artifactId.indexOf(this.endpointSeparator) > -1) {
+      cleanedArtifact.artifactId = cleanedArtifact.artifactId.split(this.endpointSeparator)[0];
+      cleaned = true;
+    }
+
+    if (cleanedArtifact.hasOwnProperty('dependencies') && cleanedArtifact.dependencies.length > 0) {
+      cleanedArtifact.dependencies.forEach(function (dep) {
+        if (dep.artifactId.indexOf(this.endpointSeparator) > -1) {
+          dep.artifactId = dep.artifactId.split(this.endpointSeparator)[0];
+          cleaned = true;
+        }
+      }, this);
+    }
+
+    return cleaned ? cleanedArtifact : artifact;
+  };
+
   return new ManifestConverter();
 });
