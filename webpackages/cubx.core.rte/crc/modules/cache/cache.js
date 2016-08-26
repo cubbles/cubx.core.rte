@@ -154,10 +154,7 @@ window.cubx.amd.define(['manifestConverter'], function (manifestConverter) {
    * @private
    */
   Cache.prototype._addComponentCacheEntry = function (artifactEntry) {
-    var artifactId;
-    artifactId = artifactEntry.artifactId;
-    // remove '#[endpointId]' appendix if present.
-    artifactId = artifactId.indexOf('#') > -1 ? artifactId.split('#')[0] : artifactId;
+    var artifactId = artifactEntry.artifactId;
     var id = artifactEntry.webpackageId + '/' + artifactId;
     var otherArtifact = this.getComponentCacheEntry(artifactId);
     if (otherArtifact && (otherArtifact.webpackageId !== artifactEntry.webpackageId)) {
@@ -182,29 +179,22 @@ window.cubx.amd.define(['manifestConverter'], function (manifestConverter) {
     if (!artifactId) {
       return null;
     }
-    var currentArtifactId;
 
     if (document.artifacts && document.artifacts.compoundComponents) {
       for (i = 0; i < document.artifacts.compoundComponents.length; i++) {
-        currentArtifactId = document.artifacts.compoundComponents[ i ].artifactId;
-        // check if this artifactId was converted using manifestConverter. If so remove '#[endpoint]' to find artifact
-        currentArtifactId = currentArtifactId.indexOf('#') > -1 ? currentArtifactId.split('#')[0] : currentArtifactId;
-        if (currentArtifactId === artifactId) {
+        if (document.artifacts.compoundComponents[ i ].artifactId === artifactId) {
           document.artifacts.compoundComponents[ i ].artifactType = ArtifactTypes.COMPOUND_COMPONENT;
           document.artifacts.compoundComponents[ i ].modelVersion = document.modelVersion;
-          return document.artifacts.compoundComponents[ i ];
+          return manifestConverter.cleanArtifact(document.artifacts.compoundComponents[ i ]);
         }
       }
     }
     if (document.artifacts && document.artifacts.elementaryComponents) {
       for (i = 0; i < document.artifacts.elementaryComponents.length; i++) {
-        currentArtifactId = document.artifacts.elementaryComponents[ i ].artifactId;
-        // check if this artifactId was converted using manifestConverter. If so remove '#[endpoint]' to find artifact
-        currentArtifactId = currentArtifactId.indexOf('#') > -1 ? currentArtifactId.split('#')[0] : currentArtifactId;
-        if (currentArtifactId === artifactId) {
+        if (document.artifacts.elementaryComponents[ i ].artifactId === artifactId) {
           document.artifacts.elementaryComponents[ i ].artifactType = ArtifactTypes.ELEMENTARY_COMPONENT;
           document.artifacts.elementaryComponents[ i ].modelVersion = document.modelVersion;
-          return document.artifacts.elementaryComponents[ i ];
+          return manifestConverter.cleanArtifact(document.artifacts.elementaryComponents[ i ]);
         }
       }
     }
