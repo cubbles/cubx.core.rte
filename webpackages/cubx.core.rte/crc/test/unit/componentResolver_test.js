@@ -59,7 +59,6 @@ window.cubx.amd.define([
           it('should be equals with an expected document', function () {
             var processedErg = resolver.processManifest('compound-A');
             // console.log('processedErg', JSON.stringify(processedErg, null, 2));
-            console.log(processedErg);
             expect(processedErg).to.be.not.undefined;
             expect(processedErg).to.be.not.null;
             expect(processedErg).to.be.not.empty;

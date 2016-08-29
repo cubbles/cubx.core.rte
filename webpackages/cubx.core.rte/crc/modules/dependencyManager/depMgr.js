@@ -424,7 +424,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
 
           // add manifest if available
           if (dependency.manifest) {
-            depReferenceInitObject.manifest = dependency.manifest;
+            depReferenceInitObject.manifest = manifestConverter.convert(dependency.manifest);
           }
 
           depList.push(new DepReference(depReferenceInitObject));

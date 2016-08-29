@@ -5,10 +5,6 @@
     },
     {
         "artifactId": "util2",
-        "webpackageId": "package2@1.0.0",
-        "manifest": {
-            "propA": "valueA"
-        }
+        "webpackageId": "package2@1.0.0"
     }
-
 ]

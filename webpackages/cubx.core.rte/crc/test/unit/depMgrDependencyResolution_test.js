@@ -292,7 +292,6 @@ window.cubx.amd.define([ 'CRC',
         });
 
         it('should return list of all dependencies', function (done) {
-          // this.timeout(3000);
           var rootDepReferences = depMgr._depList;
           depMgr._resolveDependencies(function (resolvedDependencies) {
             for (var i = 0; i < expectedDepList.length; i++) {
@@ -302,7 +301,6 @@ window.cubx.amd.define([ 'CRC',
           }, rootDepReferences);
         });
         it('should set resources array to each created DepReference item', function (done) {
-          // this.timeout(3500);
           var rootDepReferences = depMgr._depList;
           depMgr._resolveDependencies(function (resolvedDependencies) {
             // console.log(depMgr._depList);
