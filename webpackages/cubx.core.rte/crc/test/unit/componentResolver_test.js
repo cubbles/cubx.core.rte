@@ -28,7 +28,6 @@ window.cubx.amd.define([
         cache = CRC.getCache();
         cache._componentCache = {};
         resolver = CRC.getComponentResolver();
-        //
         documents[ 'test.compound-A@1.0.0' ] = JSON.parse(doc1);
         documents[ 'test.compound-B@1.0.0' ] = JSON.parse(doc2);
         documents[ 'test.elementary-C@1.0.0' ] = JSON.parse(doc3);
@@ -60,68 +59,11 @@ window.cubx.amd.define([
           it('should be equals with an expected document', function () {
             var processedErg = resolver.processManifest('compound-A');
             // console.log('processedErg', JSON.stringify(processedErg, null, 2));
+            console.log(processedErg);
             expect(processedErg).to.be.not.undefined;
             expect(processedErg).to.be.not.null;
             expect(processedErg).to.be.not.empty;
             expect(processedErg).to.eql(resolvedComponentObject);
-          });
-        });
-        describe('with ambiguous components (1) (build resolvedComponent)', function () {
-          var spy;
-          beforeEach(function () {
-            depMgr._storeManifestFiles(documents[ 'test.compound-A@1.0.0' ], 'compound-A');
-            depMgr._storeManifestFiles(documents[ 'test.compound-B@1.0.0' ], 'compound-B');
-            depMgr._storeManifestFiles(documents[ 'test.elementary-C@1.0.0' ], 'elementary-C');
-            depMgr._storeManifestFiles(documents[ 'test.elementary-D@1.0.0' ], 'elementary-D');
-            depMgr._storeManifestFiles(documents[ 'test.elementary-E@1.0.0' ], 'elementary-E');
-            depMgr._storeManifestFiles(documents[ 'test.compound-A@1.0.0' ], 'elementary-F');
-
-            var cacheEntry = cache.getComponentCacheEntry('elementary-E');
-            // cache-entry verändern
-            cacheEntry.webpackageId = 'elementary-E@1.0.0';
-            spy = sinon.spy(console, 'error');
-          });
-          afterEach(function () {
-            delete cache._componentCache[ 'compound-A' ];
-            delete cache._componentCache[ 'compound-B' ];
-            delete cache._componentCache[ 'elementary-C' ];
-            delete cache._componentCache[ 'elementary-D' ];
-            delete cache._componentCache[ 'elementary-E' ];
-            delete cache._componentCache[ 'elementary-F' ];
-            console.error.restore();
-          });
-          it('should get a console error', function () {
-            resolver.processManifest('compound-A');
-            expect(spy.calledOnce).to.be.true;
-          });
-        });
-        describe('with ambiguous components (2) (build resolvedComponent)', function () {
-          var spy;
-          beforeEach(function () {
-            depMgr._storeManifestFiles(documents[ 'test.compound-A@1.0.0' ], 'compound-A');
-            depMgr._storeManifestFiles(documents[ 'test.compound-B@1.0.0' ], 'compound-B');
-            depMgr._storeManifestFiles(documents[ 'test.elementary-C@1.0.0' ], 'elementary-C');
-            depMgr._storeManifestFiles(documents[ 'test.elementary-D@1.0.0' ], 'elementary-D');
-            depMgr._storeManifestFiles(documents[ 'test.elementary-E@1.0.0' ], 'elementary-E');
-            depMgr._storeManifestFiles(documents[ 'test.compound-A@1.0.0' ], 'elementary-F');
-
-            var cacheEntry = cache.getComponentCacheEntry('compound-B');
-            // cache-entry verändern
-            cacheEntry.members[ 1 ].componentId = 'xxx.elementary-E@1.0.0/elementary-E';
-            spy = sinon.spy(console, 'error');
-          });
-          afterEach(function () {
-            delete cache._componentCache[ 'compound-A' ];
-            delete cache._componentCache[ 'compound-B' ];
-            delete cache._componentCache[ 'elementary-C' ];
-            delete cache._componentCache[ 'elementary-D' ];
-            delete cache._componentCache[ 'elementary-E' ];
-            delete cache._componentCache[ 'elementary-F' ];
-            console.error.restore();
-          });
-          it('should get a console error', function () {
-            resolver.processManifest('compound-A');
-            expect(spy.calledOnce).to.be.true;
           });
         });
       });

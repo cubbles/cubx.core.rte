@@ -2,7 +2,7 @@
     "name": "compound-B",
     "groupId": "test",
     "version": "1.0.0",
-    "modelVersion": "8.0.0",
+    "modelVersion": "9.1.0",
     "docType": "webpackage",
     "author": {
         "name": "John Doe",
@@ -20,16 +20,17 @@
         "compoundComponents": [
             {
                 "artifactId": "compound-B",
-                "endpoints": [
+                "resources": [
+                    "res1.html"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "res1.html"
-                        ],
-                        "dependencies": [
-                            "test.elementary-D@1.0.0/elementary-D/main",
-                            "test.elementary-E@1.0.0/elementary-E/main"
-                        ]
+                        "webpackageId": "test.elementary-D@1.0.0",
+                        "artifactId": "elementary-D"
+                    },
+                    {
+                        "webpackageId": "test.elementary-E@1.0.0",
+                        "artifactId": "elementary-E"
                     }
                 ],
                 "slots": [
@@ -40,12 +41,12 @@
                 ],
                 "members": [
                     {
-                        "componentId": "test.elementary-D@1.0.0/elementary-D",
+                        "artifactId": "elementary-D",
                         "memberId": "1",
                         "displayName": "Elementary Component D"
                     },
                     {
-                        "componentId": "test.elementary-E@1.0.0/elementary-E",
+                        "artifactId": "elementary-E",
                         "memberId": "2",
                         "displayName": "Elementary Component E"
                     }

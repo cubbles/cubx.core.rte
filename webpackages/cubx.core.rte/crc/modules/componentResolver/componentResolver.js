@@ -1,7 +1,7 @@
 /**
  * Created by jtrs on 21.05.2015.
  */
-window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
+window.cubx.amd.define([], function () {
   'use strict';
 
   /**
@@ -19,7 +19,7 @@ window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
   /* ******************************************************************************** */
   /**
    * Build a big completed manifest recursive over all member.
-   * @param {string} artifactId document object or wbpackage id or webpackage name.
+   * @param {string} artifactId document object or webpackage id or webpackage name.
    * @return {object} processed manifest object
    * @memberOf ComponentResolver
    */
@@ -38,9 +38,7 @@ window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
       return processedManifest;
     }
 
-    var manifest = $.extend(true, {}, componentManifest);
-
-    this._deleteEndpoints(manifest);
+    var manifest = JSON.parse(JSON.stringify(componentManifest));
 
     this._process(manifest);
 
@@ -50,54 +48,42 @@ window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
   /* ******************************************************************************** */
   /*                                  private methods                                 */
   /* ******************************************************************************** */
-  ComponentResolver.prototype._deleteEndpoints = function (manifest) {
-    delete manifest.endpoints;
-  };
 
   /**
-   * process a completeing of member objects.
+   * process a completition of member objects.
    * @param {object} manifest to completet
    * @private
    * @memberOf ComponentResolver
    */
   ComponentResolver.prototype._process = function (manifest) {
     if (manifest.members && typeof manifest.members === 'object') {
-      if (manifest.members.constructor === Array) {
+      if (manifest.members.length > 0) {
         for (var index = 0; index < manifest.members.length; index++) {
-          manifest.members[ index ] =
-            this._completeMemberManifest(manifest.members[ index ], manifest.webpackageId);
+          manifest.members[ index ] = this._completeMemberManifest(manifest.members[ index ]);
         }
-      } else {
-        manifest.members = this._completeMemberManifest(manifest.members, manifest.webpackageId);
       }
     }
   };
 
   /**
-   * Complete an member item.
-   * @param {object} item memeber item
+   * Complete a member item.
+   * @param {object} item member item
    * @private
    * @memberOf ComponentResolver
    */
-  ComponentResolver.prototype._completeMemberManifest = function (item, webpackageId) {
-    if (item.componentId.startsWith('this')) {
-      item.componentId = item.componentId.replace('this', webpackageId);
-    }
-
-    var submanifest = this._getSubmanifest(item.componentId);
+  ComponentResolver.prototype._completeMemberManifest = function (item) {
+    var submanifest = this._getSubmanifest(item.artifactId);
     return this._addAttributesToMember(item, submanifest);
   };
 
   /**
    * get the manifest objects for id.
-   * @param {string} componentId
+   * @param {string} artifactId
    * @return {object} manifest for id
-   * private
+   * @private
    * @memberOf ComponentResolver
    */
-  ComponentResolver.prototype._getSubmanifest = function (componentId) {
-    var artifactId = componentId.substr(componentId.lastIndexOf('/') + 1);
-    var webpackageId = componentId.substr(0, componentId.lastIndexOf('/'));
+  ComponentResolver.prototype._getSubmanifest = function (artifactId) {
     var componentManifest = this._cache.getComponentCacheEntry(artifactId);
 
     if (!componentManifest) {
@@ -107,18 +93,12 @@ window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
       return;
     }
 
-    if (!componentManifest.webpackageId || componentManifest.webpackageId !== webpackageId) {
-      console.error(
-        'The artifact in component cache has an other webpackageId (' + componentManifest.webpackageId +
-        ') as expected (' + webpackageId + '). Ambiguous components? ');
-    }
-
     this._process(componentManifest);
     return componentManifest;
   };
   /**
    * Add all attribute from an submanifest to an member item
-   * @param {object} item memeber item
+   * @param {object} item member item
    * @param {object} manifest a manifest object
    * @return {object} completed manifest
    * @private
@@ -126,11 +106,10 @@ window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
    */
   ComponentResolver.prototype._addAttributesToMember = function (item, manifest) {
     for (var attr in manifest) {
-      if (manifest.hasOwnProperty(attr) && attr !== 'endpoints') {
-        item[ attr ] = manifest[ attr ];
-      }
+      item[attr] = manifest[attr];
     }
     return item;
   };
+
   return ComponentResolver;
 });

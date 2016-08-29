@@ -2,7 +2,7 @@
     "name": "compound-A",
     "groupId": "test",
     "version": "1.0.0",
-    "modelVersion": "8.0.0",
+    "modelVersion": "9.1.0",
     "docType": "webpackage",
     "author": {
         "name": "John Doe",
@@ -20,37 +20,40 @@
         "compoundComponents": [
             {
                 "artifactId": "compound-A",
-                "endpoints": [
+                "resources": [
+                    "res1.html"
+                ],
+                "dependencies": [
                     {
-                        "endpointId": "main",
-                        "resources": [
-                            "res1.html"
-                        ],
-                        "dependencies": [
-                            "test.compound-B@1.0.0/compound-B/main",
-                            "test.compound-C@1.0.0/compound-C/main",
-                            "this/elementary-F/main"
-                        ]
+                        "webpackageId": "test.compound-B@1.0.0",
+                        "artifactId": "compound-B"
+                    },
+                    {
+                        "webpackageId": "test.compound-C@1.0.0",
+                        "artifactId": "compound-C"
+                    },
+                    {
+                        "artifactId": "elementary-F"
                     }
                 ],
                 "members": [
                     {
-                        "componentId": "test.compound-B@1.0.0/compound-B",
+                        "artifactId": "compound-B",
                         "memberId": "1",
                         "displayName": "Compound Component B"
                     },
                     {
-                        "componentId": "test.elementary-C@1.0.0/elementary-C",
+                        "artifactId": "elementary-C",
                         "memberId": "2",
                         "displayName": "Elementary Component C"
                     },
                     {
-                        "componentId": "test.elementary-C@1.0.0/elementary-C",
+                        "artifactId": "elementary-C",
                         "memberId": "3",
                         "displayName": "Elementary Component C"
                     },
                     {
-                        "componentId": "this/elementary-F",
+                        "artifactId": "elementary-F",
                         "memberId": "4",
                         "displayName": "Elementary Component F"
                     }
@@ -119,16 +122,10 @@
             {
                 "artifactId": "elementary-F",
                 "description": "",
-                "endpoints": [
-                    {
-                        "endpointId": "main",
-                        "resources": [
-                            "component/elementary-F.html"
-                        ],
-                        "dependencies": [
-                        ]
-                    }
+                "resources": [
+                    "component/elementary-F.html"
                 ],
+                "dependencies": [],
                 "slots": [
                     {
                         "slotId": "inputField",

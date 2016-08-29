@@ -2,14 +2,29 @@
     "artifactId": "compound-A",
     "webpackageId": "test.compound-A@1.0.0",
     "artifactType": "compoundComponent",
-    "modelVersion": "8.0.0",
+    "modelVersion": "9.1.0",
+    "resources": [
+        "res1.html"
+    ],
+    "dependencies": [
+        {
+            "webpackageId": "test.compound-B@1.0.0",
+            "artifactId": "compound-B"
+        },
+        {
+            "webpackageId": "test.compound-C@1.0.0",
+            "artifactId": "compound-C"
+        },
+        {
+            "artifactId": "elementary-F"
+        }
+    ],
     "members": [
         {
             "artifactId": "compound-B",
             "webpackageId": "test.compound-B@1.0.0",
-            "componentId": "test.compound-B@1.0.0/compound-B",
             "artifactType": "compoundComponent",
-            "modelVersion": "8.0.0",
+            "modelVersion": "9.1.0",
             "memberId": "1",
             "displayName": "Compound Component B",
             "slots": [
@@ -18,14 +33,29 @@
                     "type": "number"
                 }
             ],
+            "resources": [
+                "res1.html"
+            ],
+            "dependencies": [
+                {
+                    "webpackageId": "test.elementary-D@1.0.0",
+                    "artifactId": "elementary-D"
+                },
+                {
+                    "webpackageId": "test.elementary-E@1.0.0",
+                    "artifactId": "elementary-E"
+                }
+            ],
             "members": [
                 {
                     "webpackageId": "test.elementary-D@1.0.0",
-                    "componentId": "test.elementary-D@1.0.0/elementary-D",
                     "artifactId": "elementary-D",
                     "artifactType": "elementaryComponent",
                     "memberId": "1",
-                    "modelVersion": "8.0.0",
+                    "resources": [
+                        "res1.html"
+                    ],
+                    "modelVersion": "9.1.0",
                     "displayName": "Elementary Component D",
                     "slots": [
                         {
@@ -39,10 +69,12 @@
                 },
                 {
                     "webpackageId": "test.elementary-E@1.0.0",
-                    "componentId": "test.elementary-E@1.0.0/elementary-E",
                     "artifactId": "elementary-E",
                     "artifactType": "elementaryComponent",
-                    "modelVersion": "8.0.0",
+                    "modelVersion": "9.1.0",
+                    "resources": [
+                        "res1.html"
+                    ],
                     "memberId": "2",
                     "displayName": "Elementary Component E",
                     "slots": [
@@ -110,11 +142,13 @@
         },
         {
             "webpackageId": "test.elementary-C@1.0.0",
-            "componentId": "test.elementary-C@1.0.0/elementary-C",
             "artifactId": "elementary-C",
             "artifactType": "elementaryComponent",
-            "modelVersion": "8.0.0",
+            "modelVersion": "9.1.0",
             "memberId": "2",
+            "resources": [
+                "res1.html"
+            ],
             "displayName": "Elementary Component C",
             "slots": [
                 {
@@ -128,11 +162,13 @@
         },
         {
             "webpackageId": "test.elementary-C@1.0.0",
-            "componentId": "test.elementary-C@1.0.0/elementary-C",
             "artifactId": "elementary-C",
             "artifactType": "elementaryComponent",
-            "modelVersion": "8.0.0",
+            "modelVersion": "9.1.0",
             "memberId": "3",
+            "resources": [
+                "res1.html"
+            ],
             "displayName": "Elementary Component C",
             "slots": [
                 {
@@ -146,10 +182,13 @@
         },
         {
             "webpackageId": "test.compound-A@1.0.0",
-            "componentId": "test.compound-A@1.0.0/elementary-F",
             "artifactId": "elementary-F",
             "artifactType": "elementaryComponent",
-            "modelVersion": "8.0.0",
+            "modelVersion": "9.1.0",
+            "resources": [
+                "component/elementary-F.html"
+            ],
+            "dependencies": [],
             "description": "",
             "memberId": "4",
             "displayName": "Elementary Component F",
