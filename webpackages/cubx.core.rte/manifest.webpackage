@@ -101,14 +101,14 @@
         "artifactId": "webcomponents",
         "description": "The origin polyfill library version 0.7.18.",
         "resources": [
-          "webcomponents.js"
+          "webcomponents.min.js"
         ]
       },
       {
         "artifactId": "webcomponents-lite",
         "description": "The origin polyfill library version 0.7.18.",
         "resources": [
-          "webcomponents-lite.js"
+            "webcomponents-lite.min.js"
         ]
       },
       {
