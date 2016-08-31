@@ -34,7 +34,7 @@ module.exports = function (grunt) {
       var subtreesFileContent = {
         'devtools': {
           'localFolder': 'devtools-mappedIn',
-          'repository': 'https://pmt.incowia.de/webble/r/client/cubbles-coder-devtools.git',
+          'repository': 'https://github.com/cubbles/cubbles-coder-devtools.git',
           'branch': 'master'
         }
       };
