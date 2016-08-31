@@ -27,7 +27,7 @@ window.cubx.amd.define([ 'crcLoader',
         });
       });
 
-      describe('#_addComponentDependenciesToRootdependencies', function () {
+      describe('#_addComponentDependenciesToRootdependencies()', function () {
         before(function () {
           crcLoader._crcRoot = document.body;
         });
@@ -224,7 +224,7 @@ window.cubx.amd.define([ 'crcLoader',
         });
       });
 
-      describe('#_isDependencyInRootDependencies', function () {
+      describe('#_isDependencyInRootDependencies()', function () {
         var element;
         var elementName;
         var webpackageId;
@@ -317,6 +317,77 @@ window.cubx.amd.define([ 'crcLoader',
           it('should be not log warning', function () {
             crcLoader._isDependencyInRootDependencies(element);
             spyWarn.should.be.not.called;
+          });
+        });
+      });
+
+      describe('#_checkRootDependencies()', function () {
+        before(function () {
+          crcLoader._crcRoot = document.body;
+        });
+        after(function () {
+          delete crcLoader._crcRoot;
+        });
+        describe('rootDependencies exists not', function () {
+          beforeEach(function () {
+            window.cubx.CRCInit = {};
+          });
+          afterEach(function () {
+            delete window.cubx.CRCInit.rootDependencies;
+          });
+          it('should be the rootDependencies property created', function () {
+            crcLoader._checkRootDependencies();
+            window.cubx.CRCInit.should.have.property('rootDependencies');
+            window.cubx.CRCInit.rootDependencies.should.be.an('array');
+          });
+        });
+        describe('root dependencie included only valid entries', function () {
+          var origRootDependencies;
+          beforeEach(function () {
+            window.cubx.CRCInit = {rootDependencies: []};
+            window.cubx.CRCInit.rootDependencies.push({
+              artifactId: 'my-elem'
+            });
+            window.cubx.CRCInit.rootDependencies.push({
+              artifactId: 'other-comp',
+              webpackageId: 'example@1.2.3'
+            });
+            origRootDependencies = [];
+            origRootDependencies = origRootDependencies.concat(window.cubx.CRCInit.rootDependencies);
+          });
+          afterEach(function () {
+            delete window.cubx.CRCInit.rootDependencies;
+          });
+          it('rootDependencies should be keeped', function () {
+            crcLoader._checkRootDependencies();
+            window.cubx.CRCInit.rootDependencies.should.be.eql(origRootDependencies);
+          });
+        });
+        describe('root dependencie included valid and not valid entries', function () {
+          var origRootDependencies;
+          beforeEach(function () {
+            window.cubx.CRCInit = {rootDependencies: []};
+            window.cubx.CRCInit.rootDependencies.push({
+              artifactId: 'my-elem'
+            });
+            window.cubx.CRCInit.rootDependencies.push({
+              artifactId: 'other-comp',
+              webpackageId: 'example@1.2.3'
+            });
+            window.cubx.CRCInit.rootDependencies.push('other.example@1.4.5/other-artifact/main');
+            window.cubx.CRCInit.rootDependencies.push('this/my-comp2/main');
+            origRootDependencies = [];
+            origRootDependencies = origRootDependencies.concat(window.cubx.CRCInit.rootDependencies);
+          });
+          afterEach(function () {
+            delete window.cubx.CRCInit.rootDependencies;
+          });
+          it('rootDependencies should included just the object elements, the string elements will be deleted', function () {
+            crcLoader._checkRootDependencies();
+            window.cubx.CRCInit.rootDependencies.should.be.not.eql(origRootDependencies);
+            window.cubx.CRCInit.rootDependencies.should.have.length(2);
+            window.cubx.CRCInit.rootDependencies[0].should.be.an('object');
+            window.cubx.CRCInit.rootDependencies[1].should.be.an('object');
           });
         });
       });

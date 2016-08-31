@@ -1,7 +1,7 @@
 {
     "uploadConfigs": {
         "dev": {
-            "url": "http://boot2docker.me/core",
+            "url": "http://cubbles-base-local/core",
             "proxy": "",
             "debug": false
         },

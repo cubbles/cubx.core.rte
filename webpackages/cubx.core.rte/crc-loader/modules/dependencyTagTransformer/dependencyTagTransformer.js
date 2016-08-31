@@ -9,7 +9,7 @@
  *
  * @module DependencyTagTransformer_Module
  */
-cubx.amd.define(['polyfills'], function () {
+cubx.amd.define([ 'polyfills' ], function () {
   /**
    * Empty constructor.
    * @global
@@ -39,12 +39,15 @@ cubx.amd.define(['polyfills'], function () {
     cubx.CRCInit.rootDependencies.forEach(function (dep) {
       artifactList.push(dep.artifactId);
     });
+    if (artifactList.length === 0) {
+      return;
+    }
     var artifactElements = crcLoader._crcRoot.querySelectorAll(artifactList.join(','));
 
     var i;
     var len = artifactElements.length;
     for (i = 0; i < len; i++) {
-      var element = artifactElements[i];
+      var element = artifactElements[ i ];
       var foundling = this._findDependenciesAndExcludesInElement(element);
       this._addToCubxCRCInit(foundling.dependencies, element, 'rootDependencies', crcLoader._cubxCRCInitRootDependenciesOriginLength);
       this._addToCubxCRCInit(foundling.excludes, element, 'rootDependencyExcludes', crcLoader._cubxCRCInitRootDependencyExcludesOriginLength);
@@ -68,11 +71,11 @@ cubx.amd.define(['polyfills'], function () {
     var dependencies = [];
     var excludes = [];
     for (i = 0; i < len; i++) {
-      if (childElements[i].tagName === 'CUBX-DEPENDENCIES') {
-        dependencies = this._filterChildElements(childElements[i], 'cubx-dependency');
+      if (childElements[ i ].tagName === 'CUBX-DEPENDENCIES') {
+        dependencies = this._filterChildElements(childElements[ i ], 'cubx-dependency');
       }
-      if (childElements[i].tagName === 'CUBX-DEPENDENCY-EXCLUDES') {
-        excludes = this._filterChildElements(childElements[i], 'cubx-dependency-exclude');
+      if (childElements[ i ].tagName === 'CUBX-DEPENDENCY-EXCLUDES') {
+        excludes = this._filterChildElements(childElements[ i ], 'cubx-dependency-exclude');
       }
     }
     return {

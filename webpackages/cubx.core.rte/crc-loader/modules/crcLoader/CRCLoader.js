@@ -55,6 +55,7 @@ cubx.amd.define([ 'require',
       self._cubxCRCInitRootDependenciesOriginLength = cubx.CRCInit.rootDependencies ? cubx.CRCInit.rootDependencies.length : 0;
       // keep origin length of cubx.CRCInit.rootDependencyExcludes
       self._cubxCRCInitRootDependencyExludesOriginLength = cubx.CRCInit.rootDependencyExcludes ? cubx.CRCInit.rootDependencyExcludes.length : 0;
+      self._checkRootDependencies();
       self._addComponentDependenciesToRootdependencies();
       self._addDependenciesAndExcludesToRootdependencies();
       self._load();
@@ -108,6 +109,25 @@ cubx.amd.define([ 'require',
   // -----------------------------------------------------------------------------------------------------------
   // --------------------------------   Private Methods ---------------------------------
   // ----------------------------------------------------------------------------------------------------------
+
+  /**
+   * check the root dependencies, and get a warning, if the dependency not an object, or it has not an attribute.
+   * @private
+   */
+  CRCLoader.prototype._checkRootDependencies = function () {
+    if (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined') {
+      cubx.CRCInit.rootDependencies = [];
+    }
+    var validDeps = [];
+    cubx.CRCInit.rootDependencies.forEach(function (dep) {
+      if (typeof dep === 'object' && dep.artifactId) {
+        validDeps.push(dep);
+      } else {
+        console.warn('The dependency definition "' + dep + '" will be removed, because it is not valid for this rte version. A valid dependency definition should be an object, and it should to have at least the attribute artifactId');
+      }
+    });
+    cubx.CRCInit.rootDependencies = validDeps;
+  };
   /**
    * Parse and add the dependencies from dom tree to the cubx.CRCInit.rootDependencies.
    * The dependencieas are  through cubx-webpackage-id and tagName as artifactId defined.
