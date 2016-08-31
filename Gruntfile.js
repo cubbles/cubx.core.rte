@@ -51,7 +51,7 @@ module.exports = function (grunt) {
       tmp: '.tmp'
     },
     config: { // set default configs location
-      src: [ 'tasks/configs/*.js', workspacePath + '**/grunt-wct*.js' ]
+      src: [ 'tasks/configs/*.js', path.join(workspacePath, '**', 'grunt-wct*.js') ]
     }
   };
 
