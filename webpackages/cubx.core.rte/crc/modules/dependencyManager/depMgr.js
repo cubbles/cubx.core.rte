@@ -360,6 +360,7 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
    * @private
    */
   DependencyMgr._prepareResponseData = function (data) {
+    // TODO: check, if data is a valid manifest object/string
     var manifest = manifestConverter.convert(data);
     return manifest;
   };
