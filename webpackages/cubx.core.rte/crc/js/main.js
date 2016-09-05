@@ -16,7 +16,8 @@
       'eventFactory': url + '/modules/eventFactory/eventFactory',
       'responseCache': url + '/modules/responseCache/responseCache',
       'manifestConverter': url + '/modules/manifestConverter/manifestConverter',
-      'axios': url + '/modules/axios/axios.min'
+      'axios': url + '/modules/axios/axios.min',
+      'dependencyTree': url + '/modules/dependencyTree/dependencyTree'
     }
   };
 

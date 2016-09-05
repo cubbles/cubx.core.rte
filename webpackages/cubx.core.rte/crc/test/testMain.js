@@ -20,7 +20,8 @@
     'unit/storageManager_test',
     'unit/utils_array_test',
     'unit/responseCache_test',
-    'unit/manifestConverter_test'
+    'unit/manifestConverter_test',
+    'unit/dependencyTree_test'
   ];
 
   // get all tests via requireJS and run them

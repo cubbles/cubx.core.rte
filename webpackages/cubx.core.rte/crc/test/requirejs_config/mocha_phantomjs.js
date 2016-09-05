@@ -16,6 +16,7 @@
       'responseCache': 'modules/responseCache/responseCache',
       'manifestConverter': 'modules/manifestConverter/manifestConverter',
       'axios': 'modules/axios/axios.min',
+      'dependencyTree': 'modules/dependencyTree/dependencyTree',
       // modules needed for test from crc-loader
       'jqueryLoader': '../crc-loader/modules/jqueryLoader/jqueryLoader',
       'jquery': '../crc-loader/modules/jqueryLoader/jquery-1.11.1.min',

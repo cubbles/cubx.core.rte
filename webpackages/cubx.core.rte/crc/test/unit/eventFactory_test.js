@@ -103,7 +103,7 @@ window.cubx.amd.define([ 'CRC',
         beforeEach(function () {
 
         });
-        describe('create an enven from type EventFactory.types.CIF_READY', function () {
+        describe('create an event from type EventFactory.types.CIF_READY', function () {
           var detail;
           beforeEach(function () {
             type = EventFactory.types.CIF_READY;
@@ -121,7 +121,7 @@ window.cubx.amd.define([ 'CRC',
             event.should.have.property('bubbles', true);
           });
         });
-        describe('create an enven from type EventFactory.types.COMPONENT_READY', function () {
+        describe('create an event from type EventFactory.types.COMPONENT_READY', function () {
           var detail;
           beforeEach(function () {
             type = EventFactory.types.COMPONENT_READY;
@@ -139,7 +139,7 @@ window.cubx.amd.define([ 'CRC',
             event.should.have.property('bubbles', true);
           });
         });
-        describe('create an enven from type EventFactory.types.CIF_ALL_COMPONENTS_READY', function () {
+        describe('create an event from type EventFactory.types.CIF_ALL_COMPONENTS_READY', function () {
           var detail;
           beforeEach(function () {
             type = EventFactory.types.CIF_ALL_COMPONENTS_READY;
@@ -158,7 +158,7 @@ window.cubx.amd.define([ 'CRC',
               event.should.have.property('bubbles', true);
             });
         });
-        describe('create an enven from type EventFactory.types.CIF_MODEL_CHANGE', function () {
+        describe('create an event from type EventFactory.types.CIF_MODEL_CHANGE', function () {
           var detail;
           beforeEach(function () {
             type = EventFactory.types.CIF_MODEL_CHANGE;
@@ -187,7 +187,7 @@ window.cubx.amd.define([ 'CRC',
             });
         });
 
-        describe('create an enven from type EventFactory.types.CIF_INIT_START', function () {
+        describe('create an event from type EventFactory.types.CIF_INIT_START', function () {
           beforeEach(function () {
             type = EventFactory.types.CIF_INIT_START;
           });
@@ -202,7 +202,7 @@ window.cubx.amd.define([ 'CRC',
             });
         });
 
-        describe('create an enven from type EventFactory.types.CIF_START', function () {
+        describe('create an event from type EventFactory.types.CIF_START', function () {
           beforeEach(function () {
             type = EventFactory.types.CIF_START;
           });
@@ -216,7 +216,7 @@ window.cubx.amd.define([ 'CRC',
               event.should.have.property('bubbles', true);
             });
         });
-        describe('create an enven from type EventFactory.types.CIF_INIT_READY', function () {
+        describe('create an event from type EventFactory.types.CIF_INIT_READY', function () {
           beforeEach(function () {
             type = EventFactory.types.CIF_INIT_READY;
           });
