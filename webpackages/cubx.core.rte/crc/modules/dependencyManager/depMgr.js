@@ -836,6 +836,5 @@ window.cubx.amd.define(
        */
       this.referrer = referrer;
     };
-
-  return DependencyMgr;
-});
+    return DependencyMgr;
+  });
