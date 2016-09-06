@@ -379,6 +379,69 @@ window.cubx.amd.define(
     // ---------------------------------------------------------------------------------------------------------------
 
     /**
+     * Build a DependencyTree for a list of given dependencies.
+     * Note: The returned dependencyTree will NOT be cleaned regarding version conflicts or redundant dependencies!
+     * @memberOf DependencyMgr
+     * @param {array} rootDependencies Array of DepReference items
+     * @private
+     * @return {object} promise Will be resolved with calculated DependencyTree or error
+     */
+    DependencyMgr.prototype._buildRawDependencyTree = function (rootDependencies) {
+      if (!Array.isArray(rootDependencies)) {
+        throw new TypeError('parameter \'rootDependencies\' needs to be an array');
+      }
+
+      return new Promise(function (resolve, reject) {
+        var depTree = new DependencyTree();
+        var resolutionsQueue;
+
+        (function resolveDependencies (dependencies) {
+          resolutionsQueue = [];
+          dependencies.forEach(function (dep) {
+            resolutionsQueue.push(this._resolveDepReferenceDependencies(dep));
+          }.bind(this));
+          Promise.all(resolutionsQueue).then(function (resolves) {
+            // TODO: create node in depTree and insert it at corresponding place
+          });
+        }.bind(this))(rootDependencies);
+
+        resolve(depTree);
+      }.bind(this));
+    };
+
+    /**
+     * Helper for resolving all Dependencies of a DepReference item for creating the DependencyTree. In contrast to method _resolveDepReference()
+     * there will be no caching of resolved artifacts. Only the response cache will be used to avoid requesting the same manifest
+     * multiple times. The returned promise is resolved with an array of DepReference items representing the Dependencies for
+     * the given depReference.
+     * @memberOf DependencyMgr
+     * @param {object} depReference
+     * @returns {object} promise
+     * @private
+     */
+    DependencyMgr.prototype._resolveDepReferenceDependencies = function (depReference) {
+      return new Promise(function (resolve, reject) {
+        var dependencies = [];
+        var processManifest = function (manifest) {
+          var artifact = this._extractArtifact(depReference, manifest);
+          if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
+            dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies);
+            resolve(dependencies);
+          }
+        }.bind(this);
+
+        if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) { // use manifest from responseCache if available
+          processManifest(this._responseCache.get(depReference.webpackageId));
+        } else if (typeof depReference.manifest === 'object') { // use inline manifest from depReference if set
+          processManifest(depReference.manifest);
+        } else { // default case: request manifest using ajax
+          var url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
+          this._fetchManifest(url).then(function (response) { processManifest(response.data); });
+        }
+      }.bind(this));
+    };
+
+    /**
      * Create and get a list with elements from type of DepRef from the passed artifact dependencies.
      * @param {Array} dependencies dependency attribute from artifact
      * @param {object | undefined} referrer is an object containing the artifactId and webpackageId of the artifact, which
@@ -795,6 +858,7 @@ window.cubx.amd.define(
     DepReference.prototype.getArtifactId = function () {
       return this.artifactId;
     };
+
     /* ----------------------------------------------------------------------------------------------------------------*/
     /* --------------------------------------- Resource Class ---------------------------------------------*/
     /* ----------------------------------------------------------------------------------------------------------------*/

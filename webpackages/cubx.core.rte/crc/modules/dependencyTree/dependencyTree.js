@@ -122,6 +122,7 @@
           }
         });
         if (index) {
+          node.parent = null;
           children.splice(index, 1);
         } else {
           return null;
