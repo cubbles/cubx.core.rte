@@ -207,12 +207,10 @@ describe('CIF', function () {
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
         ciftestA.getAttribute('member-id').should.have.exists;
-        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
         ciftestE.getAttribute('member-id').should.have.exists;
-        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -403,12 +401,10 @@ describe('CIF', function () {
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
         ciftestA.getAttribute('member-id').should.have.exists;
-        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
         ciftestE.getAttribute('member-id').should.have.exists;
-        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -833,17 +829,14 @@ describe('CIF', function () {
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
         ciftestA.getAttribute('member-id').should.have.exists;
-        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
         ciftestE.getAttribute('member-id').should.have.exists;
-        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
         var ciftestF = ciftestE.nextElementSibling;
         ciftestF.should.have.property('tagName', 'CIFTEST-F');
         ciftestF.getAttribute('member-id').should.have.exists;
-        ciftestF.getAttribute('cubx-component-id').should.be.equals(manifestCiftestF.webpackageId + '/' + manifestCiftestF.artifactId);
         ciftestF.getAttribute('runtime-id').should.be.equals(manifestCiftestF.webpackageId + '/' + manifestCiftestF.artifactId + '.' + ciftestF.getAttribute('member-id'));
       });
       it('should initialize the connections', function () {
@@ -1118,12 +1111,10 @@ describe('CIF', function () {
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
         ciftestA.getAttribute('member-id').should.have.exists;
-        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
         ciftestE.getAttribute('member-id').should.have.exists;
-        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -1355,12 +1346,10 @@ describe('CIF', function () {
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
         ciftestA.getAttribute('member-id').should.have.exists;
-        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
         ciftestE.getAttribute('member-id').should.have.exists;
-        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -1560,12 +1549,10 @@ describe('CIF', function () {
         var ciftestA = divEl.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
         ciftestA.getAttribute('member-id').should.have.exists;
-        ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
         ciftestE.getAttribute('member-id').should.have.exists;
-        ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {

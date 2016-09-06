@@ -15,7 +15,7 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       '../webcomponents/webcomponents-lite.js',
-      'https://webblebase.net/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
+      'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
       'test/testSetup.js',
       'test/mock/CRCMock.js',
       '../guid-utility/js/guid.js',
