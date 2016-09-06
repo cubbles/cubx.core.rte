@@ -94,7 +94,7 @@ describe('CIF', function () {
         container.Context._children = [];
         container.Context._components = [];
       });
-      describe('whitout id, member-id, runtime-id and component-id attributes', function () {
+      describe('whitout id, member-id, runtime-id attributes', function () {
         it('should initialize the components', function (done) {
           cif._initCubxElements(container);
           window.setTimeout(function () {
@@ -104,14 +104,13 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.have.length(36);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
           }, 100);
         });
       });
-      describe('whith id, without member-id, runtime-id and component-id attributes', function () {
+      describe('whith id, without member-id, runtime-id attributes', function () {
         var memberId;
         beforeEach(function () {
           memberId = 'test-member-id';
@@ -127,14 +126,13 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.be.equals(memberId);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + memberId);
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
           }, 100);
         });
       });
-      describe('whith id and member-id, without runtime-id and component-id attributes', function () {
+      describe('whith id and member-id, without runtime-id attributes', function () {
         var memberId;
         var id;
         beforeEach(function () {
@@ -153,61 +151,8 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.be.equals(memberId);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + memberId);
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
-            done();
-          }, 100);
-        });
-      });
-      describe('whitout id, member-id, runtime-id and  with existing correct component-id attribute', function () {
-        var componentId;
-        beforeEach(function () {
-          componentId = manifest.webpackageId + '/' + manifest.artifactId;
-          compoundEl.setAttribute('cubx-component-id', componentId);
-        });
-
-        it('should initialize the components', function (done) {
-          cif._initCubxElements(container);
-          window.setTimeout(function () {
-            var ciftestA = container.firstElementChild;
-            ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
-            ciftestA.getAttribute('member-id').should.have.length(36);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
-            ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(componentId);
-            var ciftestB = ciftestA.firstElementChild;
-            ciftestB.should.have.property('tagName', 'CIFTEST-B');
-            done();
-          }, 100);
-        });
-      });
-      describe('whitout id, member-id, runtime-id and  with existing uncorrect component-id attribute', function () {
-        var componentId;
-        // eslint-disable-next-line no-unsused-vars
-        var spy;
-        beforeEach(function () {
-          componentId = 'some/uncorrect/componentid';
-          compoundEl.setAttribute('cubx-component-id', componentId);
-          spy = sinon.spy(console, 'warn');
-        });
-        afterEach(function () {
-          console.warn.restore();
-        });
-        it('should initialize the components', function (done) {
-          cif._initCubxElements(container);
-          window.setTimeout(function () {
-            var ciftestA = container.firstElementChild;
-            ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
-            ciftestA.getAttribute('member-id').should.have.length(36);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
-            ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId);
-            var ciftestB = ciftestA.firstElementChild;
-            ciftestB.should.have.property('tagName', 'CIFTEST-B');
-            spy.should.calledOnce;
             done();
           }, 100);
         });
@@ -231,7 +176,6 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.be.equals(id);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(runtimeId);
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             done();
@@ -259,7 +203,6 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.have.length(36);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             spy.should.calledOnce;
@@ -511,14 +454,12 @@ describe('CIF', function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
           ciftestA.getAttribute('member-id').should.have.exists;
-          ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
           ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
           var ciftestB = ciftestA.firstElementChild;
           ciftestB.should.have.property('tagName', 'CIFTEST-B');
           var ciftestE = ciftestA.nextElementSibling;
           ciftestE.should.have.property('tagName', 'CIFTEST-E');
           ciftestE.getAttribute('member-id').should.have.exists;
-          ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
           ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
           var ciftestB2 = ciftestE.firstElementChild;
           ciftestB2.should.have.property('tagName', 'CIFTEST-B');
@@ -781,14 +722,12 @@ describe('CIF', function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
             ciftestA.getAttribute('member-id').should.have.exists;
-            ciftestA.getAttribute('cubx-component-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId);
             ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             var ciftestE = ciftestA.nextElementSibling;
             ciftestE.should.have.property('tagName', 'CIFTEST-E');
             ciftestE.getAttribute('member-id').should.have.exists;
-            ciftestE.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
             ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
             var ciftestB2 = ciftestE.firstElementChild;
             ciftestB2.should.have.property('tagName', 'CIFTEST-B');
@@ -797,7 +736,6 @@ describe('CIF', function () {
             var ciftestE2 = ciftestE.nextElementSibling;
             ciftestE2.should.have.property('tagName', 'CIFTEST-E');
             ciftestE2.getAttribute('member-id').should.have.exists;
-            ciftestE2.getAttribute('cubx-component-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId);
             ciftestE2.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE2.getAttribute('member-id'));
 
             done();
@@ -901,8 +839,6 @@ describe('CIF', function () {
       window.setTimeout(function () {
         domTree.should.have.property('tagName', manifest.artifactId.toUpperCase());
         expect(domTree.getAttribute('foo')).to.be.equal('bar');
-        expect(domTree.getAttribute('cubx-component-id')).to.be.exist;
-        domTree.getAttribute('cubx-component-id').should.equals(componentId);
         expect(domTree.getAttribute('runtime-id')).to.be.exist;
         domTree.getAttribute('runtime-id').should.equals(id);
         domTree.should.have.property('_connections');
@@ -910,16 +846,11 @@ describe('CIF', function () {
         domTree._inits.should.deep.equals(manifest.inits);
         // members
         domTree.firstElementChild.should.have.property('tagName', manifest.members[ 0 ].artifactId.toUpperCase());
-        expect(domTree.firstElementChild.getAttribute('cubx-component-id')).to.be.exist;
-        domTree.firstElementChild.getAttribute('cubx-component-id').should.equals(manifest.members[ 0 ].componentId);
         expect(domTree.firstElementChild.getAttribute('runtime-id')).to.be.exist;
         domTree.firstElementChild.getAttribute('runtime-id').should.equals(id + ':' + manifest.members[ 0 ].componentId + '.' + manifest.members[ 0 ].memberId);
         expect(domTree.firstElementChild.getAttribute('member-id')).to.be.exist;
         domTree.firstElementChild.getAttribute('member-id').should.equals(manifest.members[ 0 ].memberId);
         domTree.firstElementChild.nextElementSibling.should.have.property('tagName', manifest.members[ 1 ].artifactId.toUpperCase());
-        expect(domTree.firstElementChild.nextElementSibling.getAttribute('cubx-component-id')).to.be.exist;
-        domTree.firstElementChild.nextElementSibling.getAttribute('cubx-component-id').should
-          .equals(manifest.members[ 1 ].componentId);
         expect(domTree.firstElementChild.nextElementSibling.getAttribute('runtime-id')).to.be.exist;
         domTree.firstElementChild.nextElementSibling.getAttribute('runtime-id').should.equals(id + ':' + manifest.members[ 1 ].componentId + '.' + manifest.members[ 1 ].memberId);
         expect(domTree.firstElementChild.nextElementSibling.getAttribute('member-id')).to.be.exist;
@@ -929,9 +860,6 @@ describe('CIF', function () {
         domTree.firstElementChild.nextElementSibling._connections.should.deep.equals(manifest.members[ 1 ].connections);
         domTree.firstElementChild.nextElementSibling._inits.should.deep.equals(manifest.members[ 1 ].inits);
         domTree.firstElementChild.nextElementSibling.firstElementChild.should.have.property('tagName', manifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
-        expect(domTree.firstElementChild.nextElementSibling.firstElementChild.getAttribute('cubx-component-id')).to.be.exist;
-        domTree.firstElementChild.nextElementSibling.firstElementChild.getAttribute('cubx-component-id').should
-          .equals(manifest.members[ 1 ].members[ 0 ].componentId);
         expect(domTree.firstElementChild.nextElementSibling.firstElementChild.getAttribute('runtime-id')).to.be.exist;
         domTree.firstElementChild.nextElementSibling.firstElementChild.getAttribute('runtime-id').should.equals(id + ':' + manifest.members[ 1 ].componentId + '.' + manifest.members[ 1 ].memberId + ':' + manifest.members[ 1 ].members[ 0 ].componentId + '.' + manifest.members[ 1 ].members[ 0 ].memberId);
         expect(domTree.firstElementChild.nextElementSibling.firstElementChild.getAttribute('member-id')).to.be.exist;

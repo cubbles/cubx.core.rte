@@ -389,7 +389,6 @@
     var originMemeberId = element.getAttribute('member-id');
     var originId = element.getAttribute('id');
     var originRuntimeId = element.getAttribute('runtime-id');
-    var originComponentId = element.getAttribute('cubx-component-id');
     var memberId = originMemeberId || originId || guid();
     var componentId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
     var runtimeId = componentId + '.' + memberId;
@@ -407,13 +406,6 @@
       element.setAttribute('runtime-id', runtimeId);
     }
 
-    if (originComponentId && originComponentId !== componentId) {
-      console.warn('The "component-id" attribute is set to a not valid value (' + originComponentId + '). It will set the correct value:' + componentId);
-      element.setAttribute('cubx-component-id', componentId);
-    }
-    if (!originComponentId) {
-      element.setAttribute('cubx-component-id', componentId);
-    }
     if (!originMemeberId) {
       element.setAttribute('member-id', memberId);
     }
@@ -721,9 +713,8 @@
    * @private
    */
   CIF.prototype._attachMembers = function (root, rootManifest, deeplevel) {
-    var compId = root.getAttribute('cubx-component-id');
     var rootRuntimeId = root.getAttribute('runtime-id');
-    var artifactId = compId.substring(compId.lastIndexOf('/') + 1);
+    var artifactId = root.tagName.toLowerCase();
     var promise = this._findTemplate(artifactId);
     var me = this;
     promise.then(
@@ -786,7 +777,6 @@
         continue;
       }
       var componentId = manifest.webpackageId + '/' + manifest.artifactId;
-      component.setAttribute('cubx-component-id', componentId);
       // create runtimeId
       runtimeId = rootRuntimeId + ':' + componentId + '.' + memberId;
       component.setAttribute('runtime-id', runtimeId);
@@ -876,9 +866,9 @@
         // add created compound component to parent contexts component array
         root.Context.addComponent(component); // add created component to parent contexts component array
       }
-      component.setAttribute('cubx-component-id', currentMember.componentId);
+      var componentId = currentMember.webpackageId + '/' + currentMember.artifactId;
       // create runtimeId
-      runtimeId = rootRuntimeId + ':' + currentMember.componentId + '.' + currentMember.memberId;
+      runtimeId = rootRuntimeId + ':' + componentId + '.' + currentMember.memberId;
       component.setAttribute('runtime-id', runtimeId);
       //  add  Element to list of waiting for Ready Elements --> Ready-Event necessary
       this._componentReady[ runtimeId ] = {
