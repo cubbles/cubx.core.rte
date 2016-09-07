@@ -1,7 +1,11 @@
 {
   "name": "rte",
   "groupId": "cubx.core",
+<<<<<<< 5adfc5bcc58dac46b2322275d4b873e2b959ce94
   "version": "2.1.0-SNAPSHOT",
+=======
+  "version": "2.0.1",
+>>>>>>> PLAT-595 / PLAT-587: rte version 2.0.1
   "modelVersion": "9.1.0",
   "docType": "webpackage",
   "description": "",
