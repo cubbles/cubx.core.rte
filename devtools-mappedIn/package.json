@@ -52,7 +52,7 @@
     "time-grunt": "~1.0.0"
   },
   "devDependencies": {
-    "cubx-karma-requirejs": "git+https://pmt.incowia.de/webble/r/client/utilities/cubx-karma-requirejs.git#1.0.5",
+    "cubx-karma-requirejs": "^1.0.5",
     "grunt-karma": "^0.12.2",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
