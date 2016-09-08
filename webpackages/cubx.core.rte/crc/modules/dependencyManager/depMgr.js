@@ -119,7 +119,7 @@ window.cubx.amd.define(
         });
       }
 
-      // load es6-promise polyfill if necessary
+      // load es6-promise polyfill if necessary --> TODO: move to static script include because DepMgr already needs Promises
       if (get(window, 'cubx.CRCInit.polyfillPromise') === true) {
         console.log('Pushing es6-promise (polyfill) into the dependencies ...');
         rootDependencies.unshift({
@@ -393,39 +393,71 @@ window.cubx.amd.define(
 
       return new Promise(function (resolve, reject) {
         var depTree = new DependencyTree();
-        var resolutionsQueue;
+        var rootNodes = [];
 
-        (function resolveDependencies (dependencies) {
-          resolutionsQueue = [];
-          dependencies.forEach(function (dep) {
+        // first create rootNodes in dependency tree based on rootDependencies
+        rootDependencies.forEach(function (rootDependency) {
+          var node = new DependencyTree.Node();
+          node.data = rootDependency;
+          depTree.insertNode(node);
+          rootNodes.push(node);
+        });
+
+        // define recursively called function for resolving dependencyTree level by level
+        // parentNodes is an array of same length as dependencies. parentNodes[i] is a parentNode reference for
+        // dependencies[i]
+        (function resolveDependencies (dependencies, parentNodes) {
+          var resolutionsQueue = [];
+          var nodes = [];
+
+          dependencies.forEach(function (dep, index) {
             resolutionsQueue.push(this._resolveDepReferenceDependencies(dep));
           }.bind(this));
-          Promise.all(resolutionsQueue).then(function (resolves) {
-            // TODO: create node in depTree and insert it at corresponding place
-          });
-        }.bind(this))(rootDependencies);
 
-        resolve(depTree);
+          Promise.all(resolutionsQueue).then(function (results) {
+            var unresolvedDependencies = [];
+            // empty resolutionsQueue
+            resolutionsQueue = [];
+            // create and insert node in DependencyTree for each resolved dependency
+            results.forEach(function (result, index) {
+              var parentNode = parentNodes[index];
+              result.forEach(function (depRefItem) {
+                var node = new DependencyTree.Node();
+                node.data = depRefItem;
+                depTree.insertNode(node, parentNode);
+                unresolvedDependencies.push(depRefItem);
+                nodes.push(node);
+              });
+            });
+
+            if (unresolvedDependencies.length > 0) {
+              resolveDependencies.bind(this, unresolvedDependencies, nodes)();
+            } else {
+              resolve(depTree);
+            }
+          }.bind(this));
+        }.bind(this))(rootDependencies, rootNodes);
       }.bind(this));
     };
 
     /**
-     * Helper for resolving all Dependencies of a DepReference item for creating the DependencyTree. In contrast to method _resolveDepReference()
+     * Helper for resolving all Dependencies of a given DepReference item for creating the DependencyTree. In contrast to method _resolveDepReference()
      * there will be no caching of resolved artifacts. Only the response cache will be used to avoid requesting the same manifest
      * multiple times. The returned promise is resolved with an array of DepReference items representing the Dependencies for
      * the given depReference.
      * @memberOf DependencyMgr
-     * @param {object} depReference
+     * @param {object} depReference A DepReference item
      * @returns {object} promise
      * @private
      */
+    // TODO: Test me!!
     DependencyMgr.prototype._resolveDepReferenceDependencies = function (depReference) {
       return new Promise(function (resolve, reject) {
         var dependencies = [];
         var processManifest = function (manifest) {
           var artifact = this._extractArtifact(depReference, manifest);
           if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
-            dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies);
+            dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
             resolve(dependencies);
           }
         }.bind(this);
@@ -493,7 +525,7 @@ window.cubx.amd.define(
               depReferenceInitObject.manifest = manifestConverter.convert(dependency.manifest);
             }
 
-            depList.push(new DepReference(depReferenceInitObject));
+            depList.push(new DependencyMgr.DepReference(depReferenceInitObject));
           }
         });
         return depList;
@@ -797,7 +829,7 @@ window.cubx.amd.define(
      * @constructor
      * @param {object} initObject with the structure of an artifacts´s dependency array
      */
-    var DepReference = function (initObject) {
+    DependencyMgr.DepReference = function (initObject) {
       /**
        * id of the webpackage
        * @type {string}
@@ -852,10 +884,10 @@ window.cubx.amd.define(
       }.bind(this))(initObject.referrer);
     };
 
-    DepReference.prototype.getId = function () {
+    DependencyMgr.DepReference.prototype.getId = function () {
       return this.webpackageId + '/' + this.artifactId;
     };
-    DepReference.prototype.getArtifactId = function () {
+    DependencyMgr.DepReference.prototype.getArtifactId = function () {
       return this.artifactId;
     };
 

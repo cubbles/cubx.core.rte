@@ -21,7 +21,8 @@
     'unit/utils_array_test',
     'unit/responseCache_test',
     'unit/manifestConverter_test',
-    'unit/dependencyTree_test'
+    'unit/dependencyTree_test',
+    'unit/depMgrDependencyTreeCreation_test'
   ];
 
   // get all tests via requireJS and run them
