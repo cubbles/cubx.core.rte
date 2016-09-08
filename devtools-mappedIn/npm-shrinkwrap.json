@@ -6022,13 +6022,12 @@
     },
     "cubx-karma-requirejs": {
       "version": "1.0.5",
-      "from": "git+https://pmt.incowia.de/webble/r/client/utilities/cubx-karma-requirejs.git#201a91b03e57cf34d4f1a679eadadaf4d698eacf",
-      "resolved": "git+https://pmt.incowia.de/webble/r/client/utilities/cubx-karma-requirejs.git#201a91b03e57cf34d4f1a679eadadaf4d698eacf",
+      "from": "cubx-karma-requirejs@>=1.0.5 <2.0.0",
+      "resolved": "https://registry.npmjs.org/cubx-karma-requirejs/-/cubx-karma-requirejs-1.0.5.tgz",
       "dependencies": {
         "cubx-requirejs": {
-          "version": "1.0.0",
-          "from": "https://npm.webblebase.net:444/cubx-requirejs/-/cubx-requirejs-1.0.0.tgz",
-          "resolved": "https://npm.webblebase.net:444/cubx-requirejs/-/cubx-requirejs-1.0.0.tgz"
+          "version": "1.0.2",
+          "from": "cubx-requirejs@1.0.2"
         },
         "karma": {
           "version": "0.13.9",
