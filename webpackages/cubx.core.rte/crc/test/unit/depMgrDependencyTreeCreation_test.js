@@ -109,11 +109,81 @@
           });
           after(function () {
             stub.restore();
+            CubxNamespaceManager.resetNamespace(CRC);
           });
         });
         describe('#_resolveDepReferenceDependencies()', function () {
+          var stub;
+          var depRefItem;
+
+          before(function () {
+            CubxNamespaceManager.resetNamespace(CRC);
+            window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
+            depMgr = CRC.getDependencyMgr();
+            depMgr.init();
+
+            // mock _fetchManifest method
+            stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
+              return new Promise(function (resolve, reject) {
+                var response = {};
+                if (url.indexOf('package1@1.0.0') >= 0) { response.data = JSON.parse(pkg1); }
+                if (url.indexOf('package2@1.0.0') >= 0) { response.data = JSON.parse(pkg2); }
+                if (url.indexOf('package3@1.0.0') >= 0) { response.data = JSON.parse(pkg3); }
+                if (url.indexOf('package4@1.0.0') >= 0) { response.data = JSON.parse(pkg4); }
+                if (url.indexOf('package5@1.0.0') >= 0) { response.data = JSON.parse(pkg5); }
+                if (url.indexOf('package6@1.0.0') >= 0) { response.data = JSON.parse(pkg6); }
+                window.setTimeout(function () { resolve(response); }, 200);
+              });
+            });
+          });
+          beforeEach(function () {
+            depMgr._responseCache.invalidate();
+            depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+            stub.reset();
+          });
           it('should return a promise', function () {
-            // expect(depMgr._resolveDepReferenceDependencies(depMgr._depList[0])).to.be.an.instanceOf(Promise);
+            expect(depMgr._resolveDepReferenceDependencies(depRefItem)).to.be.an.instanceOf(Promise);
+          });
+          it('should resolve the returned promise with an array containing the dependencies of given dependency', function () {
+            return depMgr._resolveDepReferenceDependencies(depRefItem).then(function (result) {
+              result.should.be.an.instanceOf(Array);
+              result.should.have.lengthOf(2);
+              result[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result[1].getId()).to.equal('package4@1.0.0/util4');
+            });
+          });
+          it('should use inline manifest from from given dependency if there is any', function () {
+            depRefItem.manifest = JSON.parse(pkg1);
+            return depMgr._resolveDepReferenceDependencies(depRefItem).then(function (result) {
+              expect(stub.callCount).to.equal(0);
+              result.should.have.lengthOf(2);
+              result[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result[1].getId()).to.equal('package4@1.0.0/util4');
+            });
+          });
+          it('should use manifest from responseCache if there is already one for given webpackageId', function () {
+            depMgr._responseCache.addItem(depRefItem.webpackageId, JSON.parse(pkg1));
+            return depMgr._resolveDepReferenceDependencies(depRefItem).then(function (result) {
+              expect(stub.callCount).to.equal(0);
+              result.should.have.lengthOf(2);
+              result[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result[1].getId()).to.equal('package4@1.0.0/util4');
+            });
+          });
+          it('should add inline or requested manifest to response cache if there is no entry for corresponding webpackageId', function () {
+            return depMgr._resolveDepReferenceDependencies(depRefItem).then(function (result) {
+              expect(depMgr._responseCache.get(depRefItem.webpackageId)).to.eql(JSON.parse(pkg1));
+            });
+          });
+          after(function () {
+            stub.restore();
+            CubxNamespaceManager.resetNamespace(CRC);
           });
         });
       });

@@ -410,7 +410,7 @@ window.cubx.amd.define(
           var resolutionsQueue = [];
           var nodes = [];
 
-          dependencies.forEach(function (dep, index) {
+          dependencies.forEach(function (dep) {
             resolutionsQueue.push(this._resolveDepReferenceDependencies(dep));
           }.bind(this));
 
@@ -450,11 +450,13 @@ window.cubx.amd.define(
      * @returns {object} promise
      * @private
      */
-    // TODO: Test me!!
     DependencyMgr.prototype._resolveDepReferenceDependencies = function (depReference) {
       return new Promise(function (resolve, reject) {
         var dependencies = [];
-        var processManifest = function (manifest) {
+        var processManifest = function (manifest, cache) {
+          if (cache) {
+            this._responseCache.addItem(depReference.webpackageId, manifest);
+          }
           var artifact = this._extractArtifact(depReference, manifest);
           if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
             dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
@@ -463,12 +465,12 @@ window.cubx.amd.define(
         }.bind(this);
 
         if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) { // use manifest from responseCache if available
-          processManifest(this._responseCache.get(depReference.webpackageId));
+          processManifest(this._responseCache.get(depReference.webpackageId), false);
         } else if (typeof depReference.manifest === 'object') { // use inline manifest from depReference if set
-          processManifest(depReference.manifest);
+          processManifest(depReference.manifest, true);
         } else { // default case: request manifest using ajax
           var url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
-          this._fetchManifest(url).then(function (response) { processManifest(response.data); });
+          this._fetchManifest(url).then(function (response) { processManifest(response.data, true); });
         }
       }.bind(this));
     };
