@@ -383,10 +383,11 @@ window.cubx.amd.define(
      * Note: The returned dependencyTree will NOT be cleaned regarding version conflicts or redundant dependencies!
      * @memberOf DependencyMgr
      * @param {array} rootDependencies Array of DepReference items
+     * @param {string} baseUrl The URL from which the manifest.webpackage files should be requested.
      * @private
      * @return {object} promise Will be resolved with calculated DependencyTree or error
      */
-    DependencyMgr.prototype._buildRawDependencyTree = function (rootDependencies) {
+    DependencyMgr.prototype._buildRawDependencyTree = function (rootDependencies, baseUrl) {
       if (!Array.isArray(rootDependencies)) {
         throw new TypeError('parameter \'rootDependencies\' needs to be an array');
       }
@@ -411,7 +412,12 @@ window.cubx.amd.define(
           var nodes = [];
 
           dependencies.forEach(function (dep) {
-            resolutionsQueue.push(this._resolveDepReferenceDependencies(dep));
+            try {
+              resolutionsQueue.push(this._resolveDepReferenceDependencies(dep, baseUrl));
+            } catch (error) {
+              console.error('Could not resolve Dependency ', dep.getId());
+              reject(error);
+            }
           }.bind(this));
 
           Promise.all(resolutionsQueue).then(function (results) {
@@ -435,7 +441,10 @@ window.cubx.amd.define(
             } else {
               resolve(depTree);
             }
-          }.bind(this));
+          }.bind(this), function (error) {
+            console.error('Could not resolve Dependency: ', error);
+            reject(error);
+          });
         }.bind(this))(rootDependencies, rootNodes);
       }.bind(this));
     };
@@ -447,10 +456,20 @@ window.cubx.amd.define(
      * the given depReference.
      * @memberOf DependencyMgr
      * @param {object} depReference A DepReference item
+     * @param {string} baseUrl The URL from which the manifest.webpackage files should be requested.
      * @returns {object} promise
      * @private
      */
-    DependencyMgr.prototype._resolveDepReferenceDependencies = function (depReference) {
+    DependencyMgr.prototype._resolveDepReferenceDependencies = function (depReference, baseUrl) {
+      // check depReference
+      if (!(depReference instanceof DependencyMgr.DepReference)) {
+        throw new TypeError('parameter \'depReference\' need to be an instance of DependencyMgr.DepReference');
+      }
+      // check baseUrl
+      if (typeof baseUrl !== 'string') {
+        throw new TypeError('parameter \'baseUrl\' needs to be of type string');
+      }
+
       return new Promise(function (resolve, reject) {
         var dependencies = [];
         var processManifest = function (manifest, cache) {
@@ -464,13 +483,19 @@ window.cubx.amd.define(
           }
         }.bind(this);
 
+        // append '/' to baseUrl if not present
+        baseUrl = baseUrl.lastIndexOf('/') === baseUrl.length - 1 ? baseUrl : baseUrl + '/';
+
         if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) { // use manifest from responseCache if available
           processManifest(this._responseCache.get(depReference.webpackageId), false);
         } else if (typeof depReference.manifest === 'object') { // use inline manifest from depReference if set
           processManifest(depReference.manifest, true);
         } else { // default case: request manifest using ajax
-          var url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
-          this._fetchManifest(url).then(function (response) { processManifest(response.data, true); });
+          var url = baseUrl + depReference.webpackageId + '/manifest.webpackage';
+          this._fetchManifest(url).then(
+            function (response) { processManifest(response.data, true); },
+            function (error) { reject(error); }
+          );
         }
       }.bind(this));
     };
