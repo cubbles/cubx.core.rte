@@ -17,6 +17,7 @@
       'responseCache': url + '/modules/responseCache/responseCache',
       'manifestConverter': url + '/modules/manifestConverter/manifestConverter',
       'axios': url + '/modules/axios/axios.min',
+      // 'es6promise': url + '/modules/ES6Promise/es6-promise-polyfill',
       'dependencyTree': url + '/modules/dependencyTree/dependencyTree'
     }
   };
