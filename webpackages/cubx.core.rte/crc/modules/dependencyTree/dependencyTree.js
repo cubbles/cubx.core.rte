@@ -21,6 +21,15 @@
     };
 
     /**
+     * Remove all duplicate Dependencies from DependencyTree.
+     * @memberOf DependencyTree
+     * @returns {object} The DependencyTree without duplicates
+     */
+    DependencyTree.prototype.removeDuplicates = function () {
+      return this;
+    };
+
+    /**
      * Insert a node into dependency tree. If no parent is given, then the node will be added to rootNodes.
      * If before is given then the nodes will be inserted right before this node in parents children. Otherwise it will
      * be appended to the array of child nodes.
@@ -188,7 +197,7 @@
      */
     DependencyTree.Node = function () {
       /**
-       * Stores the data of the node.
+       * Stores the data of the node. Normally this will be an instance of DependencyMgr.DepReference
        * @type {object|misc}
        */
       this.data = null;
@@ -204,6 +213,19 @@
        * @type {Array}
        */
       this.children = [];
+
+      /**
+       * References another existing node from the DependencyTree. This is used to resolve redundant Dependency Nodes
+       * inside the DependencyTree.
+       * @type {object}
+       */
+      this.usesExisting = null;
+
+      /**
+       * Holds a list of all Nodes that references this node in their usesExisting property
+       * @type {Array}
+       */
+      this.usedBy = [];
     };
 
     /**

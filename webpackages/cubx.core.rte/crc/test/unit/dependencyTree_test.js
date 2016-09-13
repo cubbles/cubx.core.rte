@@ -1,3 +1,4 @@
+/* globals describe, before, beforeEach, after, afterEach, it, expect*/
 'use strict';
 (function () {
   window.cubx.amd.define(['dependencyTree'], function (DependencyTree) {

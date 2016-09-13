@@ -198,7 +198,6 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
 
   /*
    * Do the basic bootstrap by getting CRCLoader module.
-   * Note: The CRC version that is requested is defined in manifest.cubx
    */
   cubx.amd.require([ 'crcLoader', 'jqueryLoader', 'polyfills', 'es6promise' ], function (crcLoader, $) {
     // set CRCLoader to cubx namespace
