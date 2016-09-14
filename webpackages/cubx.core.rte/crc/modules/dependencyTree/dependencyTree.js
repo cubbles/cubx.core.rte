@@ -215,11 +215,11 @@
       this.children = [];
 
       /**
-       * References another existing node from the DependencyTree. This is used to resolve redundant Dependency Nodes
+       * References other existing nodes from the DependencyTree. This is used to resolve redundant Dependency Nodes
        * inside the DependencyTree.
        * @type {object}
        */
-      this.usesExisting = null;
+      this.usesExisting = [];
 
       /**
        * Holds a list of all Nodes that references this node in their usesExisting property

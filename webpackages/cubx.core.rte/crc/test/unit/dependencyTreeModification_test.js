@@ -99,7 +99,7 @@
           depTree._rootNodes[1].children.should.be.eql([childB2]);
           depTree._rootNodes[1].children[0].children.should.be.eql([childB21]);
         });
-        it('returned DependencyTree should contain each webpackage exactly once', function () {
+        it('should return DependencyTree which contains each webpackage exactly once', function () {
           // packageIds in breadth first order
           var packageIds = [
             'package1@1.0.0/util1',
@@ -116,6 +116,13 @@
             count++;
           });
           count.should.be.eql(6);
+        });
+        it('should create correct \'usedBy\' and \'usesExisting\' relations', function () {
+          depTree.removeDuplicates();
+          nodeB.usesExisting.should.be.eql([childA1]);
+          childA1.usedBy.should.be.eql([nodeB]);
+          childA1.usesExisting.should.be.eql([childB2]);
+          childB2.usedBy.should.be.eql([childA1]);
         });
       });
     });
