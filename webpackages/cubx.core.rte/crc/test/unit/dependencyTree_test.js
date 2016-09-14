@@ -15,11 +15,14 @@
         rootNode1 = new DependencyTree.Node();
         rootNode1.data = {prop1: 'test', prop2: 1234};
         childC = new DependencyTree.Node();
+        childC.parent = rootNode1;
         rootNode1.children = [childC];
         rootNode2 = new DependencyTree.Node();
         rootNode2.data = {prop1: 'test2', prop2: 4321};
         childA = new DependencyTree.Node();
+        childA.parent = rootNode2;
         childB = new DependencyTree.Node();
+        childB.parent = rootNode2;
         rootNode2.children = [childA, childB];
         depTree._rootNodes = [rootNode1, rootNode2];
       });
@@ -64,6 +67,10 @@
         it('should return null if node to be removed could not be found in tree', function () {
           var node = depTree.removeNode(new DependencyTree.Node());
           expect(node).to.be.null;
+        });
+        it('should return the removed node', function () {
+          var node = depTree.removeNode(childA);
+          expect(node).to.eql(childA);
         });
       });
       describe('#traverseDF()', function () {

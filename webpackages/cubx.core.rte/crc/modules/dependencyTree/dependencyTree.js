@@ -21,15 +21,6 @@
     };
 
     /**
-     * Remove all duplicate Dependencies from DependencyTree.
-     * @memberOf DependencyTree
-     * @returns {object} The DependencyTree without duplicates
-     */
-    DependencyTree.prototype.removeDuplicates = function () {
-      return this;
-    };
-
-    /**
      * Insert a node into dependency tree. If no parent is given, then the node will be added to rootNodes.
      * If before is given then the nodes will be inserted right before this node in parents children. Otherwise it will
      * be appended to the array of child nodes.
@@ -99,6 +90,25 @@
     };
 
     /**
+     * Remove all duplicate Dependencies from DependencyTree. Nodes are considered equal if the assigned webpackageId
+     * and artifactId is equal.
+     * @memberOf DependencyTree
+     * @returns {object} The DependencyTree without duplicates
+     */
+    DependencyTree.prototype.removeDuplicates = function () {
+      var nodesBF = {}; // holds a map of all nodes using "[webpackageId]/[artifactId]" as key
+      this.traverseBF(function (node) {
+        if (nodesBF.hasOwnProperty(node.data.getId())) {
+          this.removeNode(node);
+        } else {
+          nodesBF[node.data.getId()] = node;
+        }
+      }.bind(this));
+
+      return this;
+    };
+
+    /**
      * Remove a given node (including all of its descendants).
      * @memberOf DependencyTree
      * @param {object} node The node to be removed
@@ -112,14 +122,7 @@
 
       // holds children array from which the given node needs to be removed. If given node is rootNode
       // children will be the rootNodes array
-      var children;
-      var self = this;
-      this.traverseBF(function (current) {
-        if (node.equals(current)) {
-          children = current.parent ? current.parent.children : self._rootNodes;
-          return false;
-        }
-      });
+      var children = node.parent ? node.parent.children : this._rootNodes;
 
       // find and remove node from children array
       if (children) {
@@ -130,9 +133,10 @@
             return true;
           }
         });
-        if (index) {
+        if (index >= 0) {
           node.parent = null;
           children.splice(index, 1);
+          return node;
         } else {
           return null;
         }
