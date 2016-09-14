@@ -21,6 +21,23 @@
     };
 
     /**
+     * Check if the given node is in DependencyTree.
+     * @memberOf DependencyTree
+     * @param {object} node
+     * @returns {boolean} True if Node is in DependencyTree, false otherwise.
+     */
+    DependencyTree.prototype.contains = function (node) {
+      // if we can reach any of the current rootNodes by using the parent reference node is member of DependencyTree
+      while (node.parent != null) {
+        node = node.parent;
+      };
+
+      return this._rootNodes.some(function (rootNode) {
+        return rootNode.equals(node);
+      });
+    };
+
+    /**
      * Insert a node into dependency tree. If no parent is given, then the node will be added to rootNodes.
      * If before is given then the nodes will be inserted right before this node in parents children. Otherwise it will
      * be appended to the array of child nodes.
@@ -97,8 +114,14 @@
      */
     DependencyTree.prototype.removeDuplicates = function () {
       var nodesBF = {}; // holds a map of all nodes using "[webpackageId]/[artifactId]" as key
+
       this.traverseBF(function (node) {
-        if (nodesBF.hasOwnProperty(node.data.getId())) {
+        if (this.contains(node) && nodesBF.hasOwnProperty(node.data.getId())) {
+          var existingNode = nodesBF[node.data.getId()];
+          if (node.parent != null) {
+            node.parent.usesExisting.push(existingNode);
+            existingNode.usedBy.push(node.parent);
+          }
           this.removeNode(node);
         } else {
           nodesBF[node.data.getId()] = node;
@@ -122,7 +145,13 @@
 
       // holds children array from which the given node needs to be removed. If given node is rootNode
       // children will be the rootNodes array
-      var children = node.parent ? node.parent.children : this._rootNodes;
+      var children;
+      this.traverseBF(function (current) {
+        if (node.equals(current)) {
+          children = current.parent ? current.parent.children : this._rootNodes;
+          return false;
+        }
+      }.bind(this));
 
       // find and remove node from children array
       if (children) {

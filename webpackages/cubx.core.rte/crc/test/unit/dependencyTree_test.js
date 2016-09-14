@@ -130,6 +130,15 @@
           consoleStub.restore();
         });
       });
+      describe('#contains()', function () {
+        it('should return true if given node is member of the DependencyTree', function () {
+          expect(depTree.contains(childA)).to.be.true;
+        });
+        it('should return false if given node is not member of the DependencyTree', function () {
+          var node = new DependencyTree.Node();
+          expect(depTree.contains(node)).to.be.false;
+        });
+      });
     });
   });
 })();
