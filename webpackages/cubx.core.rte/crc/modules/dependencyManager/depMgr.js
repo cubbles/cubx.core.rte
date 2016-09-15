@@ -470,8 +470,8 @@ window.cubx.amd.define(
           var artifact = this._extractArtifact(depReference, manifest);
           if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
             dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
-            resolve(dependencies);
           }
+          resolve(dependencies);
         }.bind(this);
 
         // append '/' to baseUrl if not present
