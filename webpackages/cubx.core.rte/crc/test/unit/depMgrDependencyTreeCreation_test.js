@@ -1,3 +1,4 @@
+/* globals describe, before, beforeEach, after, afterEach, it, expect*/
 (function () {
   'use strict';
 
@@ -197,7 +198,7 @@
               expect(result[1].getId()).to.equal('package4@1.0.0/util4');
             });
           });
-          it('should use inline manifest from from given dependency if there is any', function () {
+          it('should use inline manifest from given dependency if there is any', function () {
             depRefItem.manifest = JSON.parse(pkg1);
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
               expect(stub.callCount).to.equal(0);
@@ -259,6 +260,58 @@
                 error.should.have.ownProperty('message');
               });
             });
+          });
+        });
+        describe('#_checkAndAddExcludesToDepReference()', function () {
+          var depRefItem;
+          var manifest;
+
+          beforeEach(function () {
+            CubxNamespaceManager.resetNamespace(CRC);
+            window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
+            depMgr = CRC.getDependencyMgr();
+            depMgr.init();
+            manifest = {
+              name: 'testPackage',
+              groupId: 'com.test',
+              version: '1.0.0',
+              modelVersion: '9.1.0',
+              docType: 'webpackage',
+              artifacts: {
+                utilities: [
+                  {
+                    artifactId: 'testArtifact',
+                    dependencyExcludes: [
+                      {webpackageId: 'exclude@1', artifactId: 'util1'},
+                      {webpackageId: 'exclude@2', artifactId: 'util2'}
+                    ]
+                  }
+                ]
+              }
+            };
+            depRefItem = new DepMgr.DepReference({webpackageId: 'com.test.testPackage@1.0.0', artifactId: 'testArtifact', referrer: null});
+          });
+          it('should return the given DepReference instance', function () {
+            expect(depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest)).to.eql(depRefItem);
+          });
+          it('should throw an TypeError if first given parameter is not an instance of DepReference', function () {
+            try {
+              depMgr._checkAndAddExcludesToDepReference({}, manifest);
+            } catch (error) {
+              error.should.be.instanceOf(TypeError);
+            }
+          });
+          it('should throw an TypeError if second given parameter is not an object', function () {
+            try {
+              depMgr._checkAndAddExcludesToDepReference(depRefItem, 123);
+            } catch (error) {
+              error.should.be.instanceOf(TypeError);
+            }
+          });
+          it('should add all dependencyExlcudes defined in given manifest for corresponding artifact to given DepReference', function () {
+            depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest);
+            depRefItem.should.have.ownProperty('dependencyExcludes');
+            depRefItem.dependencyExcludes.should.be.equal(manifest.artifacts.utilities[0].dependencyExcludes);
           });
         });
       });

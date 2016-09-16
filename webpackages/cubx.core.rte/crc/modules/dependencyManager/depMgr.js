@@ -441,6 +441,27 @@ window.cubx.amd.define(
     };
 
     /**
+     * Check if a given DepReference has dependencyExcludes defined based on the given manifest. If there are any they
+     * will be added to given DepReference.
+     * @memberOf DependencyMgr
+     * @param {object} depReference A DepReference item for which to check and add dependencyExcludes
+     * @param {object} manifest A valid manifest object containing the definition of given DepReference
+     * @returns {object} The given DepReference
+     * @private
+     */
+    DependencyMgr.prototype._checkAndAddExcludesToDepReference = function (depReference, manifest) {
+      // make some paramter type checking
+      if (!depReference instanceof DependencyMgr.DepReference) {
+        throw new TypeError('parameter \'depReference\' needs to be an instance of DependencyMgr.DepReference');
+      }
+      if (typeof manifest !== 'object') {
+        throw new TypeError('paramter \'manifest\' needs to be a an object representing a webpackage.manifest');
+      }
+
+      return depReference;
+    };
+
+    /**
      * Helper for resolving all Dependencies of a given DepReference item for creating the DependencyTree. In contrast to method _resolveDepReference()
      * there will be no caching of resolved artifacts. Only the response cache will be used to avoid requesting the same manifest
      * multiple times. The returned promise is resolved with an array of DepReference items representing the Dependencies for
