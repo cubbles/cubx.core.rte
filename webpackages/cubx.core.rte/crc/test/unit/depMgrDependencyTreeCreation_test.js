@@ -311,7 +311,7 @@
           it('should add all dependencyExlcudes defined in given manifest for corresponding artifact to given DepReference', function () {
             depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest);
             depRefItem.should.have.ownProperty('dependencyExcludes');
-            depRefItem.dependencyExcludes.should.be.equal(manifest.artifacts.utilities[0].dependencyExcludes);
+            depRefItem.dependencyExcludes.should.be.eql(manifest.artifacts.utilities[0].dependencyExcludes);
           });
         });
       });

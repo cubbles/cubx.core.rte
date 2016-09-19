@@ -458,6 +458,12 @@ window.cubx.amd.define(
         throw new TypeError('paramter \'manifest\' needs to be a an object representing a webpackage.manifest');
       }
 
+      // find artifact in given manifest that corresponds with given depReference
+      var artifact = this._extractArtifact(depReference, manifest);
+      if (artifact.hasOwnProperty('dependencyExcludes') && artifact.dependencyExcludes.length > 0) {
+        depReference.dependencyExcludes = JSON.parse(JSON.stringify(artifact.dependencyExcludes));
+      }
+
       return depReference;
     };
 
@@ -799,7 +805,7 @@ window.cubx.amd.define(
     };
 
     /**
-     * Get the dependencies of a webpackage from base
+     * Extract an artifact from a given manifest by artifactId from given DepReference
      * @param {DepReference} depReference Object containing either 'groupId', 'name' and 'version' string
      * @param {string} manifest file of the referred webpackage
      *     properties or 'id' string property of the requested webpackage (normally an item of type DepReference)
@@ -898,6 +904,12 @@ window.cubx.amd.define(
        * @type {Array}
        */
       this.dependencies = [];
+
+      /**
+       * Array holding depedencyExcludes in the form of {webpackageId: [webpackageId], artifactId: [artifactId]}
+       * @type {Array}
+       */
+      this.dependencyExcludes = [];
 
       /**
        * Object representing a manifest.webpackage file that should be used when resolving this DepReference instance.
