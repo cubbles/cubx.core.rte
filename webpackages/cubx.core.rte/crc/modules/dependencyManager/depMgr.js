@@ -441,6 +441,47 @@ window.cubx.amd.define(
     };
 
     /**
+     * Iterate over a given DependencyTree and check each node if there are dependecyExcludes defined in coressponding
+     * manifest. If so these dependencyExcludes will be added.
+     * @memberOf DependencyMgr
+     * @param {object} depTree A DependencyTree instance
+     * @param {string baseUrl A url used to request manifest files from
+     * @return {object} promise A Promise
+     * @private
+     */
+    DependencyMgr.prototype._checkDepTreeForExcludes = function (depTree, baseUrl) {
+      // make some type checking
+      if (!depTree  instanceof DependencyTree) {
+        throw new TypeError('parameter \'depTree\' needs to be an instance of DependencyMgr.DependencyTree');
+      }
+      if (typeof baseUrl !== 'string') {
+        throw new TypeError('parameter \'baseUrl\' needs to be of type string');
+      }
+
+      return new Promise(function (resolve, reject) {
+        // TODO: traverse through tree an request manifest for each node used for adding dependencyExcludes, if there are any.
+        var nodes = [];
+        var promises = [];
+        depTree.traverseBF(function (node) {
+          nodes.push(node);
+          promises.push(this._getManifestForDepReference(node.data, baseUrl));
+        }.bind(this));
+
+        Promise.all(promises).then(function (results) {
+          results.forEach(function (manifest, index) {
+            try {
+              this._checkAndAddExcludesToDepReference(nodes[index].data, manifest);
+            } catch (e) {
+              // TODO: add some error hnadling
+            }
+          }.bind(this));
+        }.bind(this), function (error) {
+          // TODO: add some error handling
+        });
+      }.bind(this));
+    };
+
+    /**
      * Check if a given DepReference has dependencyExcludes defined based on the given manifest. If there are any they
      * will be added to given DepReference.
      * @memberOf DependencyMgr
@@ -468,10 +509,10 @@ window.cubx.amd.define(
     };
 
     /**
-     * Helper for resolving all Dependencies of a given DepReference item for creating the DependencyTree. In contrast to method _resolveDepReference()
-     * there will be no caching of resolved artifacts. Only the response cache will be used to avoid requesting the same manifest
-     * multiple times. The returned promise is resolved with an array of DepReference items representing the Dependencies for
-     * the given depReference.
+     * Helper for resolving all Dependencies of a given DepReference item for creating the DependencyTree. In contrast
+     * to method _resolveDepReference() there will be no caching of resolved artifacts. Only the response cache will be
+     * used to avoid requesting the same manifest multiple times. The returned promise is resolved with an array of
+     * DepReference items representing the Dependencies for the given depReference.
      * @memberOf DependencyMgr
      * @param {object} depReference A DepReference item
      * @param {string} baseUrl The URL from which the manifest.webpackage files should be requested.
@@ -521,8 +562,8 @@ window.cubx.amd.define(
     /**
      * Create and get a list with elements from type of DepRef from the passed artifact dependencies.
      * @param {Array} dependencies dependency attribute from artifact
-     * @param {object | undefined} referrer is an object containing the artifactId and webpackageId of the artifact, which
-     *    refers to the dependencies passed with the first parameter.
+     * @param {object | undefined} referrer is an object containing the artifactId and webpackageId of the artifact,
+     *   which refers to the dependencies passed with the first parameter.
      * @return {Array} dependency list, which elements DepRef objects are.
      * @private
      * @memberOf DependencyMgr
@@ -667,10 +708,11 @@ window.cubx.amd.define(
     };
 
     /**
-     * Internal helper method to determine the webpackageId of a given dependency in the context of a given referrer. If no referrer is given, then
-     * dependency needs to have property webpackageId.
+     * Internal helper method to determine the webpackageId of a given dependency in the context of a given referrer.
+     * If no referrer is given, then dependency needs to have property webpackageId.
      * @memberOf DependencyMgr
-     * @param {object} dependency An object containing at least string property "artifactId" and optional string property "webpackageId"
+     * @param {object} dependency An object containing at least string property "artifactId" and optional string
+     *   property "webpackageId"
      * @param {object|null} referrer An object containing string properties "artifactId" and "webpackageId" or null
      * @return {string} The webpackageId of the dependency or an empty string if no webpackageId could be determined
      * @private
@@ -709,8 +751,26 @@ window.cubx.amd.define(
     };
 
     /**
-     * Internal helper method for removing endpointId property from all rootDependencies having this property. The value of the
-     * endpointId property is appended to the artifactId used endpointSeparator from ManifestConverter.
+     * Get manifest for given DepReference item. The lookahead is in following order:
+     * 1. If there is an inline manifest assigned to given depReference return this one
+     * 2. If there is already a manifest in responseCache for corresponding webpackageId return this one
+     * 3. Request the manifest from Base using given baseUrl
+     * The returned promised will be resolved with the resolved manifest (as object)
+     * @memberOf DependencyMgr
+     * @param {object} depReference DepReference item
+     * @param {string} [baseUrl]
+     * @returns {object} promise
+     * @private
+     */
+    DependencyMgr.prototype._getManifestForDepReference = function (depReference, baseUrl) {
+      return new Promise(function (resolve, reject) {
+        // TODO: implement me!
+      });
+    };
+
+    /**
+     * Internal helper method for removing endpointId property from all rootDependencies having this property. The
+     * value of the endpointId property is appended to the artifactId used endpointSeparator from ManifestConverter.
      * @memberOf DependencyMgr
      * @param {object} rootDependencies
      * @private
@@ -829,6 +889,7 @@ window.cubx.amd.define(
       }
       return requestedArtifact;
     };
+
     /**
      * Find index of given DepReference item in internal depList
      * @param {array} depList A dependeny list
@@ -938,6 +999,7 @@ window.cubx.amd.define(
     DependencyMgr.DepReference.prototype.getId = function () {
       return this.webpackageId + '/' + this.artifactId;
     };
+
     DependencyMgr.DepReference.prototype.getArtifactId = function () {
       return this.artifactId;
     };
@@ -983,5 +1045,6 @@ window.cubx.amd.define(
        */
       this.referrer = referrer;
     };
+
     return DependencyMgr;
   });

@@ -120,6 +120,30 @@
               expect(tree._rootNodes[1].children[0].children[0].children[0].data.getId()).to.equal('package6@1.0.0/util6');
             });
           });
+          // it('should call _checkAndAddExcludesToDepReference() for each Node in raw DependencyTree', function () {
+          //   var stub = sinon.stub(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesToDepReference');
+          //   return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function () {
+          //     expect(stub.callCount).to.be.equal(11);
+          //     // check stub calls in breadth order traversal
+          //     expect(stub.getCall(0).args[0].getId()).to.be.equal('package1@1.0.0/util1');
+          //     expect(stub.getCall(1).args[0].getId()).to.be.equal('package2@1.0.0/util2');
+          //     expect(stub.getCall(2).args[0].getId()).to.be.equal('package3@1.0.0/util3');
+          //     expect(stub.getCall(3).args[0].getId()).to.be.equal('package4@1.0.0/util4');
+          //     expect(stub.getCall(4).args[0].getId()).to.be.equal('package3@1.0.0/util3');
+          //     expect(stub.getCall(5).args[0].getId()).to.be.equal('package5@1.0.0/util5');
+          //     expect(stub.getCall(6).args[0].getId()).to.be.equal('package5@1.0.0/util5');
+          //     expect(stub.getCall(7).args[0].getId()).to.be.equal('package5@1.0.0/util5');
+          //     expect(stub.getCall(8).args[0].getId()).to.be.equal('package6@1.0.0/util6');
+          //     expect(stub.getCall(9).args[0].getId()).to.be.equal('package6@1.0.0/util6');
+          //     expect(stub.getCall(10).args[0].getId()).to.be.equal('package6@1.0.0/util6');
+          //     stub.restore();
+          //   });
+          // });
+          // it('should enrich each Node in DependencyTree with corresponding dependencyExcludes', function () {
+          //   return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function (tree) {
+          //
+          //   });
+          // });
           describe('Error Handling', function () {
             it('should throw an TypeError if \'dependencies\' parameter is not an Array', function () {
               try {
@@ -283,7 +307,7 @@
                     artifactId: 'testArtifact',
                     dependencyExcludes: [
                       {webpackageId: 'exclude@1', artifactId: 'util1'},
-                      {webpackageId: 'exclude@2', artifactId: 'util2'}
+                      {webpackageId: 'exclude@2', artifactId: 'util2', endpointId: 'main'}
                     ]
                   }
                 ]
@@ -294,24 +318,106 @@
           it('should return the given DepReference instance', function () {
             expect(depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest)).to.eql(depRefItem);
           });
-          it('should throw an TypeError if first given parameter is not an instance of DepReference', function () {
-            try {
-              depMgr._checkAndAddExcludesToDepReference({}, manifest);
-            } catch (error) {
-              error.should.be.instanceOf(TypeError);
-            }
-          });
-          it('should throw an TypeError if second given parameter is not an object', function () {
-            try {
-              depMgr._checkAndAddExcludesToDepReference(depRefItem, 123);
-            } catch (error) {
-              error.should.be.instanceOf(TypeError);
-            }
-          });
           it('should add all dependencyExlcudes defined in given manifest for corresponding artifact to given DepReference', function () {
             depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest);
             depRefItem.should.have.ownProperty('dependencyExcludes');
             depRefItem.dependencyExcludes.should.be.eql(manifest.artifacts.utilities[0].dependencyExcludes);
+          });
+          describe('Error handling', function () {
+            it('should throw an TypeError if first given parameter is not an instance of DepReference', function () {
+              try {
+                depMgr._checkAndAddExcludesToDepReference({}, manifest);
+              } catch (error) {
+                error.should.be.an.instanceOf(TypeError);
+              }
+            });
+            it('should throw an TypeError if second given parameter is not an object', function () {
+              try {
+                depMgr._checkAndAddExcludesToDepReference(depRefItem, 123);
+              } catch (error) {
+                error.should.be.an.instanceOf(TypeError);
+              }
+            });
+          });
+        });
+        describe('#_checkDepTreeForExcludes()', function () {
+          var baseUrl;
+          var depTree;
+          beforeEach(function () {
+            CubxNamespaceManager.resetNamespace(CRC);
+            window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
+            depMgr = CRC.getDependencyMgr();
+            depMgr.init();
+            baseUrl = depMgr._baseUrl;
+
+            /**
+             * Build the following tree:
+             *
+             *               package1@1.0.0/util1
+             *                    /       \
+             *                   /         \
+             *    package3@1.0.0/util3    package4@1.0.0/util4
+             *            |
+             *            |
+             *    package5@1.0.0/util5
+             */
+            depTree = new DependencyTree();
+            var root = new DependencyTree.Node();
+            root.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+            depTree.insertNode(root);
+            var childA = new DependencyTree.Node();
+            childA.data = new DepMgr.DepReference({
+              webpackageId: 'package3@1.0.0',
+              artifactId: 'util3',
+              referrer: {
+                webpackageId: 'pacakage1@1.0.0',
+                artifactId: 'util1'
+              }
+            });
+            depTree.insertNode(childA, root);
+            var childB = new DependencyTree.Node();
+            childB.data = new DepMgr.DepReference({
+              webpackageId: 'package4@1.0.0',
+              artifactId: 'util4',
+              referrer: {
+                webpackageId: 'package1@1.0.0',
+                artifactId: 'util1'
+              }
+            });
+            depTree.insertNode(childB, root);
+            var childA1 = new DependencyTree.Node();
+            childA1.data = new DepMgr.DepReference({
+              webpackageId: 'package5@1.0.0',
+              artifactId: 'util5',
+              referrer: {
+                webpackageId: 'package4@1.0.0',
+                artifactId: 'util4'
+              }
+            });
+            depTree.insertNode(childA, childA1);
+          });
+          it('should call _checkAndAddExcludesToDepReference() for each Node in DependencyTree and assign dependencyExcludes if there are any', function () {
+            return depMgr._checkDepTreeForExcludes(depTree, baseUrl).then(function () {
+
+            }, function () {
+
+            });
+          });
+          describe('Error handling', function () {
+            it('should throw an TypeError if first parameter is not an instance of DependencyMgr.DependencyTree', function () {
+              try {
+                depMgr._checkDepTreeForExcludes({}, 'http://www.example.de/test');
+              } catch (error) {
+                error.should.be.an.instanceOf(TypeError);
+              }
+            });
+            it('should throw an TypeError if second parameter is not a string', function () {
+              try {
+                depMgr._checkDepTreeForExcludes(new DependencyTree(), 123);
+              } catch (error) {
+                error.should.be.an.instanceOf(TypeError);
+              }
+            });
           });
         });
       });
