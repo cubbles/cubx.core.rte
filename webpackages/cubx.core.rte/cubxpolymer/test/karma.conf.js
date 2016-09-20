@@ -17,18 +17,8 @@ module.exports = function (config) {
       'test/vendor/mocha-config.js',
       'test/mock/*.js',
       '../webcomponents/webcomponents-lite.js',
-      {
-        pattern: 'https://webblebase.net/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
-        included: false,
-        watched: true,
-        served: true
-      },
-      {
-        pattern: 'https://webblebase.net/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
-        included: false,
-        watched: true,
-        served: true
-      },
+      'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
+      'https://cubbles.world/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
       '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../guid-utility/js/guid.js',
       '../cif/classes/dynamicConnection.js',
