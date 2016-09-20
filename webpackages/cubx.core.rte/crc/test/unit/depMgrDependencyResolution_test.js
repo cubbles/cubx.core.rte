@@ -1,4 +1,4 @@
-/*globals describe, before, beforeEach, it, after, sinon, expect */
+/*globals describe, before, beforeEach, it, after, afterEach, sinon, expect */
 window.cubx.amd.define([ 'CRC',
     'dependencyManager',
     'jqueryLoader',
@@ -612,7 +612,7 @@ window.cubx.amd.define([ 'CRC',
         });
       });
 
-      describe('#_fetchManifest', function () {
+      describe('#_fetchManifest()', function () {
         var depMgr;
         var axiosStub;
         before(function () {
@@ -637,6 +637,91 @@ window.cubx.amd.define([ 'CRC',
         });
         after(function () {
           axiosStub.restore();
+        });
+      });
+
+      describe('#_getManifestForDepReference()', function () {
+        var baseUrl;
+        var depRefItem;
+        var fetchManifestStub;
+        var getItemFromCacheSpy;
+
+        beforeEach(function () {
+          depMgr.init();
+          baseUrl = 'http://www.example.de/';
+          depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+          fetchManifestStub = sinon.stub(Object.getPrototypeOf(depMgr), '_fetchManifest', function (url) {
+            return new Promise(function (resolve, reject) {
+              window.setTimeout(function () {
+                if (url.indexOf('package1@1.0.0') >= 0) {
+                  resolve({data: JSON.parse(pkg1)});
+                } else {
+                  reject({response: {status: 'timeout'}});
+                }
+              }, 200);
+            });
+          });
+          getItemFromCacheSpy = sinon.spy(depMgr._responseCache, 'get');
+          depMgr._responseCache.invalidate();
+        });
+        afterEach(function () {
+          fetchManifestStub.restore();
+          getItemFromCacheSpy.restore();
+          depMgr._responseCache.invalidate();
+        });
+        it('should return a promise', function () {
+          expect(depMgr._getManifestForDepReference(depRefItem, baseUrl)).to.be.an.instanceOf(Promise);
+        });
+        it('should resolve returned promise with manifest from responseCache if there is one', function () {
+          // put a manifest in responseCache
+          depMgr._responseCache.addItem('package1@1.0.0', JSON.parse(pkg1));
+          return depMgr._getManifestForDepReference(depRefItem).then(function (result) {
+            result.should.be.eql(JSON.parse(pkg1));
+            expect(getItemFromCacheSpy.calledOnce);
+            expect(fetchManifestStub.callCount).to.be.equal(0);
+          });
+        });
+        it('should resolve returned promise with inline manifest from depReference is there is one ' +
+          'and no manifest was found in responseCache', function () {
+          depRefItem.manifest = JSON.parse(pkg1);
+          return depMgr._getManifestForDepReference(depRefItem).then(function (result) {
+            result.should.be.eql(depRefItem.manifest);
+            expect(getItemFromCacheSpy.callCount).to.be.equal(0);
+            expect(fetchManifestStub.callCount).to.be.equal(0);
+          });
+        });
+        it('should resolve returned promise with requested manifest from baseUrls if there is ' +
+          'neighter a manifest in responseCache nor in inline manifest', function () {
+          return depMgr._getManifestForDepReference(depRefItem, baseUrl).then(function (result) {
+            result.should.be.eql(JSON.parse(pkg1));
+            expect(getItemFromCacheSpy.callCount).to.be.equal(0);
+            expect(fetchManifestStub.calledOnce);
+            expect(fetchManifestStub.calledWith(baseUrl + 'package1@1.0.0/webpackage.manifest'));
+          });
+        });
+        describe('Error handling', function () {
+          it('should reject returned promise if there is an error while fetching manifest', function () {
+            return depMgr._getManifestForDepReference(depRefItem, baseUrl).then(function (resolved) {
+              throw new Error('Promise was unexpectedly fulfilled: ', resolved);
+            }, function (rejected) {
+              rejected.should.have.property('response');
+              rejected.response.should.eql({status: 'timeout'});
+            });
+          });
+          it('should throw a TypeError if first given paramter is not an instanceOf DepReference', function () {
+            try {
+              depMgr._getManifestForDepReference({});
+            } catch (e) {
+              expect(e).to.be.instanceOf(TypeError);
+            }
+          });
+          it('should throw a TypeError if baseUrl is not given when fetching manifest needs to be called', function () {
+            try {
+              depMgr._getManifestForDepReference(depRefItem, 123);
+            } catch (e) {
+              expect(e).to.be.instanceOf(TypeError);
+            }
+          });
         });
       });
     });

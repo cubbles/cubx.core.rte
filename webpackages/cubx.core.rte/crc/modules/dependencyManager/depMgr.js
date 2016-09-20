@@ -451,7 +451,7 @@ window.cubx.amd.define(
      */
     DependencyMgr.prototype._checkDepTreeForExcludes = function (depTree, baseUrl) {
       // make some type checking
-      if (!depTree  instanceof DependencyTree) {
+      if (!depTree instanceof DependencyTree) {
         throw new TypeError('parameter \'depTree\' needs to be an instance of DependencyMgr.DependencyTree');
       }
       if (typeof baseUrl !== 'string') {
@@ -459,7 +459,7 @@ window.cubx.amd.define(
       }
 
       return new Promise(function (resolve, reject) {
-        // TODO: traverse through tree an request manifest for each node used for adding dependencyExcludes, if there are any.
+        // traverse through tree and request manifest for each node used for adding dependencyExcludes, if there are any.
         var nodes = [];
         var promises = [];
         depTree.traverseBF(function (node) {
@@ -472,11 +472,12 @@ window.cubx.amd.define(
             try {
               this._checkAndAddExcludesToDepReference(nodes[index].data, manifest);
             } catch (e) {
-              // TODO: add some error hnadling
+              reject(e);
             }
+            resolve();
           }.bind(this));
         }.bind(this), function (error) {
-          // TODO: add some error handling
+          reject(error);
         });
       }.bind(this));
     };
@@ -491,12 +492,12 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._checkAndAddExcludesToDepReference = function (depReference, manifest) {
-      // make some paramter type checking
+      // make some parameter type checking
       if (!depReference instanceof DependencyMgr.DepReference) {
         throw new TypeError('parameter \'depReference\' needs to be an instance of DependencyMgr.DepReference');
       }
       if (typeof manifest !== 'object') {
-        throw new TypeError('paramter \'manifest\' needs to be a an object representing a webpackage.manifest');
+        throw new TypeError('parameter \'manifest\' needs to be a an object representing a webpackage.manifest');
       }
 
       // find artifact in given manifest that corresponds with given depReference

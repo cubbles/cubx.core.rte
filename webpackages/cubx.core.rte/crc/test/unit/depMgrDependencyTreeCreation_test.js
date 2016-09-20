@@ -343,12 +343,56 @@
         describe('#_checkDepTreeForExcludes()', function () {
           var baseUrl;
           var depTree;
+          var spy;
+          var stub;
+
           beforeEach(function () {
             CubxNamespaceManager.resetNamespace(CRC);
             window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
             depMgr = CRC.getDependencyMgr();
             depMgr.init();
             baseUrl = depMgr._baseUrl;
+
+            // spy _checkAndAddExcludesToDepReference()
+            spy = sinon.spy(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesToDepReference');
+
+            // stub _getManifestForDepReference()
+            stub = sinon.stub(Object.getPrototypeOf(depMgr), '_getManifestForDepReference', function (depRefItem, baseUrl) {
+              var manifest;
+              switch (depRefItem.webpackageId) {
+                case 'package1@1.0.0':
+                  manifest = JSON.parse(pkg1);
+                  break;
+                case 'package3@1.0.0':
+                  manifest = JSON.parse(pkg3);
+                  // add some excludes
+                  manifest.artifacts.utilities[0].dependencyExcludes = [
+                    {
+                      webpackageId: 'packageToExclude',
+                      artifactId: 'artifactToExclude'
+                    },
+                    {
+                      webpackageId: 'packageToExclude_2',
+                      artifactId: 'artifactToExclude_2'
+                    }
+                  ];
+                  break;
+                case 'package4@1.0.0':
+                  manifest = JSON.parse(pkg4);
+                  break;
+                case 'package5@1.0.0':
+                  manifest = JSON.parse(pkg5);
+              }
+              return new Promise(function (resolve, reject) {
+                window.setTimeout(function () {
+                  if (manifest) {
+                    resolve(manifest);
+                  } else {
+                    reject();
+                  }
+                }, 200);
+              });
+            });
 
             /**
              * Build the following tree:
@@ -370,7 +414,7 @@
               webpackageId: 'package3@1.0.0',
               artifactId: 'util3',
               referrer: {
-                webpackageId: 'pacakage1@1.0.0',
+                webpackageId: 'package1@1.0.0',
                 artifactId: 'util1'
               }
             });
@@ -394,13 +438,32 @@
                 artifactId: 'util4'
               }
             });
-            depTree.insertNode(childA, childA1);
+            depTree.insertNode(childA1, childA);
+          });
+          afterEach(function () {
+            spy.restore();
+            stub.restore();
+            CubxNamespaceManager.resetNamespace(CRC);
           });
           it('should call _checkAndAddExcludesToDepReference() for each Node in DependencyTree and assign dependencyExcludes if there are any', function () {
             return depMgr._checkDepTreeForExcludes(depTree, baseUrl).then(function () {
-
-            }, function () {
-
+              expect(spy.callCount).to.eql(4);
+              expect(spy.getCall(0).args[0].getId()).to.equal('package1@1.0.0/util1');
+              expect(spy.getCall(1).args[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(spy.getCall(2).args[0].getId()).to.equal('package4@1.0.0/util4');
+              expect(spy.getCall(3).args[0].getId()).to.equal('package5@1.0.0/util5');
+              depTree._rootNodes[0].children[0].data.should.have.ownProperty('dependencyExcludes');
+              depTree._rootNodes[0].children[0].data.dependencyExcludes.should.eql([
+                {
+                  webpackageId: 'packageToExclude',
+                  artifactId: 'artifactToExclude'
+                },
+                {
+                  webpackageId: 'packageToExclude_2',
+                  artifactId: 'artifactToExclude_2'
+                }
+              ]);
+              console.log(depTree);
             });
           });
           describe('Error handling', function () {
