@@ -708,7 +708,7 @@ window.cubx.amd.define([ 'CRC',
               rejected.response.should.eql({status: 'timeout'});
             });
           });
-          it('should throw a TypeError if first given paramter is not an instanceOf DepReference', function () {
+          it('should throw a TypeError if first given parameter is not an instanceOf DepReference', function () {
             try {
               depMgr._getManifestForDepReference({});
             } catch (e) {
