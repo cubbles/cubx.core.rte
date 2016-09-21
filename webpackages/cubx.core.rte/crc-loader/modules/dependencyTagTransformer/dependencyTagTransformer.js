@@ -31,7 +31,7 @@ cubx.amd.define([ 'polyfills' ], function () {
   DependencyTagTransformer.prototype.addDependenciesAndExcludesToRootdependencies = function (crcLoader) {
     if (!cubx || !cubx.CRCInit || !cubx.CRCInit.rootDependencies || cubx.CRCInit.rootDependencies.length === 0) {
       if (window.cubx.CRCInit.runtimeMode === 'dev') {
-        console.warn('No dependencies for any components defined. It will be not for "cubx-dependencies" or "cubx-depenedency-excludes" searched.');
+        console.warn('No dependencies for any components defined. It won\'t be searched for "cubx-dependencies" or "cubx-depenedency-excludes".');
       }
       return;
     }
@@ -89,7 +89,7 @@ cubx.amd.define([ 'polyfills' ], function () {
    * @param element base Html element
    * @param {string} childElementName the elementName, wich should be filtered
    * @memberOf DependencyTagTransformer
-   * @returns {HTMLElment[]}
+   * @returns {HTMLElement[]}
    * @private
    */
   DependencyTagTransformer.prototype._filterChildElements = function (element, childElementName) {
