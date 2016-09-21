@@ -681,26 +681,27 @@ window.cubx.amd.define([ 'CRC',
             expect(fetchManifestStub.callCount).to.be.equal(0);
           });
         });
-        it('should resolve returned promise with inline manifest from depReference is there is one ' +
+        it('should resolve returned promise with inline manifest from depReference if there is one ' +
           'and no manifest was found in responseCache', function () {
           depRefItem.manifest = JSON.parse(pkg1);
           return depMgr._getManifestForDepReference(depRefItem).then(function (result) {
             result.should.be.eql(depRefItem.manifest);
-            expect(getItemFromCacheSpy.callCount).to.be.equal(0);
+            expect(getItemFromCacheSpy.callCount.calledOnce);
             expect(fetchManifestStub.callCount).to.be.equal(0);
           });
         });
-        it('should resolve returned promise with requested manifest from baseUrls if there is ' +
-          'neighter a manifest in responseCache nor in inline manifest', function () {
+        it('should resolve returned promise with requested manifest from baseUrl if there is ' +
+          'neither a manifest in responseCache nor in inline manifest', function () {
           return depMgr._getManifestForDepReference(depRefItem, baseUrl).then(function (result) {
             result.should.be.eql(JSON.parse(pkg1));
-            expect(getItemFromCacheSpy.callCount).to.be.equal(0);
+            expect(getItemFromCacheSpy.calledOnce);
             expect(fetchManifestStub.calledOnce);
             expect(fetchManifestStub.calledWith(baseUrl + 'package1@1.0.0/webpackage.manifest'));
           });
         });
         describe('Error handling', function () {
           it('should reject returned promise if there is an error while fetching manifest', function () {
+            depRefItem.webpackageId = 'timeout';
             return depMgr._getManifestForDepReference(depRefItem, baseUrl).then(function (resolved) {
               throw new Error('Promise was unexpectedly fulfilled: ', resolved);
             }, function (rejected) {
@@ -708,18 +709,22 @@ window.cubx.amd.define([ 'CRC',
               rejected.response.should.eql({status: 'timeout'});
             });
           });
+          it('should reject returned promise if baseUrl is not given when fetching manifest needs to be called', function () {
+            return depMgr._getManifestForDepReference(depRefItem).then(function (resolved) {
+              throw new Error('Promise was unexpectedly fulfilled: ', resolved);
+            }, function (rejected) {
+              rejected.should.be.an.instanceof(TypeError);
+            });
+          });
           it('should throw a TypeError if first given parameter is not an instanceOf DepReference', function () {
+            var errorThrown = false;
             try {
               depMgr._getManifestForDepReference({});
             } catch (e) {
+              errorThrown = true;
               expect(e).to.be.instanceOf(TypeError);
-            }
-          });
-          it('should throw a TypeError if baseUrl is not given when fetching manifest needs to be called', function () {
-            try {
-              depMgr._getManifestForDepReference(depRefItem, 123);
-            } catch (e) {
-              expect(e).to.be.instanceOf(TypeError);
+            } finally {
+              errorThrown.should.be.true;
             }
           });
         });

@@ -140,6 +140,27 @@ window.cubx.amd.define(
     };
 
     /**
+     * Calculate and inject dependencies using DependencyTree. This Method will replace old run method above
+     * @memberOf DependencyMgr
+     */
+    DependencyMgr.prototype.run_new = function () {
+      var get = window.cubx.utils.get;
+      var rootDependencies = get(window, 'cubx.CRCInit.rootDependencies') || [];
+      this._buildRawDependencyTree(this._createDepReferenceListFromArtifactDependencies(rootDependencies, null), this._baseUrl)
+        .then(function (depTree) {
+          // this._depTree = depTree;
+          console.log(depTree);
+          return this._checkDepTreeForExcludes(depTree, this._baseUrl);
+        }.bind(this))
+        .then(function (depTree) {
+          console.log(depTree);
+          this._depTree = depTree;
+        }.bind(this), function (error) {
+          console.error('Error while building and processing DependencyTree: ', error);
+        });
+    };
+
+    /**
      * calculate list of all references (as URLs) that need to be injected
      * @memberOf DependencyMgr
      * @private
@@ -451,7 +472,7 @@ window.cubx.amd.define(
      */
     DependencyMgr.prototype._checkDepTreeForExcludes = function (depTree, baseUrl) {
       // make some type checking
-      if (!depTree instanceof DependencyTree) {
+      if (!(depTree instanceof DependencyTree)) {
         throw new TypeError('parameter \'depTree\' needs to be an instance of DependencyMgr.DependencyTree');
       }
       if (typeof baseUrl !== 'string') {
@@ -474,7 +495,7 @@ window.cubx.amd.define(
             } catch (e) {
               reject(e);
             }
-            resolve();
+            resolve(depTree);
           }.bind(this));
         }.bind(this), function (error) {
           reject(error);
@@ -493,7 +514,7 @@ window.cubx.amd.define(
      */
     DependencyMgr.prototype._checkAndAddExcludesToDepReference = function (depReference, manifest) {
       // make some parameter type checking
-      if (!depReference instanceof DependencyMgr.DepReference) {
+      if (!(depReference instanceof DependencyMgr.DepReference)) {
         throw new TypeError('parameter \'depReference\' needs to be an instance of DependencyMgr.DepReference');
       }
       if (typeof manifest !== 'object') {
@@ -752,7 +773,7 @@ window.cubx.amd.define(
     };
 
     /**
-     * Get manifest for given DepReference item. The lookahead is in following order:
+     * Get manifest for given DepReference item. The lookup is in following order:
      * 1. If there is an inline manifest assigned to given depReference return this one
      * 2. If there is already a manifest in responseCache for corresponding webpackageId return this one
      * 3. Request the manifest from Base using given baseUrl
@@ -764,9 +785,29 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._getManifestForDepReference = function (depReference, baseUrl) {
+      // make some type checking
+      if (!(depReference instanceof DependencyMgr.DepReference)) {
+        throw new TypeError('parameter \'depReference\' needs to be an instance of DependencyMgr.DepReference');
+      }
+
       return new Promise(function (resolve, reject) {
-        // TODO: implement me!
-      });
+        var webpackageId = depReference.webpackageId;
+        if (this._responseCache.get(webpackageId) != null) {
+          resolve(this._responseCache.get(webpackageId));
+        } else if (depReference.manifest != null) {
+          resolve(depReference.manifest);
+        } else if (typeof baseUrl === 'string') {
+          // append / to baseUrl if necessary
+          var url = baseUrl.lastIndexOf('/') !== baseUrl.length - 1 ? baseUrl + '/' : baseUrl;
+          this._fetchManifest(url + webpackageId + '/manifest.webpackage').then(function (result) {
+            resolve(result.data);
+          }, function (error) {
+            reject(error);
+          });
+        } else {
+          reject(new TypeError('parameter \'baseUrl\' needs to be a valid url'));
+        }
+      }.bind(this));
     };
 
     /**

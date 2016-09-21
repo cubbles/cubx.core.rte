@@ -325,17 +325,25 @@
           });
           describe('Error handling', function () {
             it('should throw an TypeError if first given parameter is not an instance of DepReference', function () {
+              var errorThrown = false;
               try {
                 depMgr._checkAndAddExcludesToDepReference({}, manifest);
               } catch (error) {
+                errorThrown = true;
                 error.should.be.an.instanceOf(TypeError);
+              } finally {
+                errorThrown.should.be.true;
               }
             });
             it('should throw an TypeError if second given parameter is not an object', function () {
+              var errorThrown = false;
               try {
                 depMgr._checkAndAddExcludesToDepReference(depRefItem, 123);
               } catch (error) {
+                errorThrown = true;
                 error.should.be.an.instanceOf(TypeError);
+              } finally {
+                errorThrown.should.be.true;
               }
             });
           });
@@ -445,6 +453,13 @@
             stub.restore();
             CubxNamespaceManager.resetNamespace(CRC);
           });
+          it('should return promise which will be resolved with given DependencyTree', function () {
+            var promise = depMgr._checkDepTreeForExcludes(depTree, baseUrl);
+            expect(promise).to.be.an.instanceOf(Promise);
+            return promise.then(function (result) {
+              result.should.be.an.instanceof(DependencyTree);
+            });
+          });
           it('should call _checkAndAddExcludesToDepReference() for each Node in DependencyTree and assign dependencyExcludes if there are any', function () {
             return depMgr._checkDepTreeForExcludes(depTree, baseUrl).then(function () {
               expect(spy.callCount).to.eql(4);
@@ -463,22 +478,30 @@
                   artifactId: 'artifactToExclude_2'
                 }
               ]);
-              console.log(depTree);
+              // console.log(depTree);
             });
           });
           describe('Error handling', function () {
             it('should throw an TypeError if first parameter is not an instance of DependencyMgr.DependencyTree', function () {
+              var errorThrown = false;
               try {
                 depMgr._checkDepTreeForExcludes({}, 'http://www.example.de/test');
               } catch (error) {
+                errorThrown = true;
                 error.should.be.an.instanceOf(TypeError);
+              } finally {
+                expect(errorThrown).to.be.true;
               }
             });
             it('should throw an TypeError if second parameter is not a string', function () {
+              var errorThrown = false;
               try {
                 depMgr._checkDepTreeForExcludes(new DependencyTree(), 123);
               } catch (error) {
+                errorThrown = true;
                 error.should.be.an.instanceOf(TypeError);
+              } finally {
+                expect(errorThrown).to.be.true;
               }
             });
           });
