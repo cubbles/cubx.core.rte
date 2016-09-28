@@ -56,8 +56,8 @@ cubx.amd.define([ 'require',
       // keep origin length of cubx.CRCInit.rootDependencyExcludes
       self._cubxCRCInitRootDependencyExludesOriginLength = cubx.CRCInit.rootDependencyExcludes ? cubx.CRCInit.rootDependencyExcludes.length : 0;
       self._checkRootDependencies();
-      self._addComponentDependenciesToRootdependencies();
-      self._addDependenciesAndExcludesToRootdependencies();
+      self._addComponentDependenciesToRootDependencies();
+      self._addDependenciesAndExcludesToRootRependencies();
       self._load();
     };
     if (cubx.CRCInit.startEventArrived) {
@@ -134,7 +134,7 @@ cubx.amd.define([ 'require',
    * @private
    * @memberOf CRCLoader
    */
-  CRCLoader.prototype._addComponentDependenciesToRootdependencies = function () {
+  CRCLoader.prototype._addComponentDependenciesToRootDependencies = function () {
     var elements = this._crcRoot.querySelectorAll('[cubx-webpackage-id]');
     if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
       cubx.CRCInit.rootDependencies = [];
@@ -157,8 +157,8 @@ cubx.amd.define([ 'require',
    * @private
    * @memberOf CRCLoader
    */
-  CRCLoader.prototype._addDependenciesAndExcludesToRootdependencies = function () {
-    dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(this);
+  CRCLoader.prototype._addDependenciesAndExcludesToRootRependencies = function () {
+    dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(this);
   };
 
   /**
@@ -242,6 +242,7 @@ cubx.amd.define([ 'require',
     if (window.cubx.CRCInit.runtimeMode === 'dev') {
       console.log('CRCLoader: including application main-script');
     }
+
     // get defined main js file from webpackage and execute it (if given)
     var crcMain = $('[data-crc-main]').data('crcMain');
     if (typeof crcMain !== 'undefined') {
@@ -258,6 +259,14 @@ cubx.amd.define([ 'require',
     helperScript.async = false;
     helperScript.src = this._crcLoaderResourcesBaseUrl + '/js/afterMainScriptHook.js';
     document.getElementsByTagName('head')[ 0 ].appendChild(helperScript);
+
+    // TODO: use this snippet to fire crcDepMgrReady event!!!! This should solve problems with asynchronous execution time od dynamically included html import
+    // TODO: and the after main script hook :-D
+    // var blob = new window.Blob(['<script>(function(){"use strict";window.cubx.CRC.fireReadyEvent();})();</script>'], {type: 'text/html'});
+    // var htmlImport = document.createElement('link');
+    // htmlImport.setAttribute('href', window.URL.createObjectURL(blob));
+    // htmlImport.setAttribute('rel', 'import');
+    // document.getElementsByTagName('head')[ 0 ].appendChild(htmlImport);
   };
 
   /**

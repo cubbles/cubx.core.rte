@@ -2,7 +2,7 @@
 /*globals cubx*/
 /**
  * Defines the DependencyTagTransformer RequireJS Module.
- * This modul takes responsibility for the following tasks
+ * This module takes responsibility for the following tasks
  * Parse to <cubx-dependenciesA and cubx-dependency-excludes> tags and
  * add the interpreted dependencies and excludes to
  * cubx.CCRCInti.rootDependencies and cubx.CCRCInti.rootDependencyExludes.
@@ -28,7 +28,7 @@ cubx.amd.define([ 'polyfills' ], function () {
    * @memberOf DependencyTagTransformer
    * @public
    */
-  DependencyTagTransformer.prototype.addDependenciesAndExcludesToRootdependencies = function (crcLoader) {
+  DependencyTagTransformer.prototype.addDependenciesAndExcludesToRootDependencies = function (crcLoader) {
     if (!cubx || !cubx.CRCInit || !cubx.CRCInit.rootDependencies || cubx.CRCInit.rootDependencies.length === 0) {
       if (window.cubx.CRCInit.runtimeMode === 'dev') {
         console.warn('No dependencies for any components defined. It won\'t be searched for "cubx-dependencies" or "cubx-depenedency-excludes".');
@@ -49,8 +49,9 @@ cubx.amd.define([ 'polyfills' ], function () {
     for (i = 0; i < len; i++) {
       var element = artifactElements[ i ];
       var foundling = this._findDependenciesAndExcludesInElement(element);
-      this._addToCubxCRCInit(foundling.dependencies, element, 'rootDependencies', crcLoader._cubxCRCInitRootDependenciesOriginLength);
-      this._addToCubxCRCInit(foundling.excludes, element, 'rootDependencyExcludes', crcLoader._cubxCRCInitRootDependencyExcludesOriginLength);
+      // this._addToCubxCRCInit(foundling.dependencies, element, 'rootDependencies', crcLoader._cubxCRCInitRootDependenciesOriginLength);
+      // this._addToCubxCRCInit(foundling.excludes, element, 'rootDependencyExcludes', crcLoader._cubxCRCInitRootDependencyExcludesOriginLength);
+      this._addToCubxCRCInit(foundling, element, crcLoader._cubxCRCInitRootDependenciesOriginLength);
     }
   };
   // -----------------------------------------------------------------------------------
@@ -107,28 +108,45 @@ cubx.amd.define([ 'polyfills' ], function () {
   };
 
   /**
-   * Add for all elements in elementArray a dependency to cubx.CRCInit[propertyName]
-   * @param {HTMLElement[]} elementArray Array of Elements which represents a dependency
+   * Add for all elements in deps a dependency to cubx.CRCInit.rootDependencies
+   * @param {object} deps Object containing dependencies and excludes arrays holding <cubx-dependency> and <cubx-dependency-exclude> elements as items.
    * @param {HTMLElement} artifactElement parent cubbles element
-   * @param {string} propertyName property name in cubx.CRCInit. Push dependency to this property
    * @memberOf DependencyTagTransformer
    * @private
    */
-  DependencyTagTransformer.prototype._addToCubxCRCInit = function (elementArray, artifactElement, propertyName, originLength) {
-    elementArray.forEach(function (elem) {
+  DependencyTagTransformer.prototype._addToCubxCRCInit = function (deps, artifactElement, originLength) {
+    // first insert all dependencies into rootDependencies array by prepending them.
+    deps.dependencies.forEach(function (elem) {
       var artifactId = elem.getAttribute('artifact-id');
       if (!artifactId) {
         console.error('Missing artifactId: The artifact-id attribute is mandatory for each "' + elem.tagName.toLowerCase() + '" element. This element will be ignored:', elem);
       } else {
-        if (!cubx.CRCInit[ propertyName ]) {
-          cubx.CRCInit[ propertyName ] = [];
+        if (!cubx.CRCInit.rootDependencies) {
+          cubx.CRCInit.rootDependencies = [];
         }
-        var dep = this._createDependency(elem, artifactElement, cubx.CRCInit[ propertyName ]);
+        var dep = this._createDependency(elem, artifactElement);
         if (originLength > 0) {
-          cubx.CRCInit[ propertyName ].splice(cubx.CRCInit[ propertyName ].length - originLength, 0, dep);
+          cubx.CRCInit.rootDependencies.splice(cubx.CRCInit.rootDependencies.length - originLength, 0, dep);
         } else {
-          cubx.CRCInit[ propertyName ].push(dep);
+          cubx.CRCInit.rootDependencies.push(dep);
         }
+      }
+    }.bind(this));
+
+    // search dependency from rootDependencies array for artifactElement
+    var artifactDep = window.cubx.CRCInit.rootDependencies.find(function (dep) {
+      return dep.artifactId === artifactElement.tagName.toLowerCase();
+    });
+
+    // assign all dependencyExcludes to corresponding dependency from rootDependencies array
+    deps.excludes.forEach(function (elem) {
+      var artifactId = elem.getAttribute('artifact-id');
+      if (!artifactId) {
+        console.error('Missing artifactId: The artifact-id attribute is mandatory for each "' + elem.tagName.toLowerCase() + '" element. This element will be ignored:', elem);
+      } else {
+        var depExclude = this._createDependency(elem, artifactElement);
+        artifactDep.dependencyExcludes = artifactDep.dependencyExcludes || [];
+        artifactDep.dependencyExcludes.push(depExclude);
       }
     }.bind(this));
   };
@@ -138,12 +156,11 @@ cubx.amd.define([ 'polyfills' ], function () {
    * artifacts dependency.
    * @param {HTMLElement} element the element to change to a dependency object
    * @param {HTMLElement} artifactElement parent cubbles element
-   * @param {object[]} depArray dependencyArray - used for search for default value of webpackageId for the artifactElem
    * @memberOf DependencyTagTransformer
    * @returns {{artifactId: *}}
    * @private
    */
-  DependencyTagTransformer.prototype._createDependency = function (element, artifactElement, depArray) {
+  DependencyTagTransformer.prototype._createDependency = function (element, artifactElement) {
     var webpackageId = element.getAttribute('webpackage-id');
     var endpointId = element.getAttribute('endpoint-id');
     var artifactId = element.getAttribute('artifact-id');
@@ -160,10 +177,7 @@ cubx.amd.define([ 'polyfills' ], function () {
         return dep.artifactId === artifactElement.tagName.toLowerCase();
       });
       if (artifactDep && artifactDep.webpackageId) {
-        // use founded webpackageId of parent artifact for webpackageId
-        if (artifactDep.webpackageId) {
-          dependency.webpackageId = artifactDep.webpackageId;
-        }
+        dependency.webpackageId = artifactDep.webpackageId;
       }
     }
 

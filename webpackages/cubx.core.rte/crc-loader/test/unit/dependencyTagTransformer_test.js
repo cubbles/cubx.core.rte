@@ -4,7 +4,7 @@ window.cubx = window.cubx || {};
 window.cubx.amd = window.cubx.amd || {};
 window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (crcLoader, dependencyTagTransformer) {
   describe('dependencyTagTransformer', function () {
-    describe('#addDependenciesAndExcludesToRootdependencies', function () {
+    describe('#addDependenciesAndExcludesToRootDependencies', function () {
       var element;
       var elementName;
       var webpackageId;
@@ -57,14 +57,11 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
       });
       describe('crc root contains one cubbles element', function () {
         beforeEach(function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
         });
         it('cubx.CRCInit.rootDependencies should have length = 3', function () {
           window.cubx.CRCInit.rootDependencies.should.have.length(3);
         });
-        // it('cubx.CRCInit.rootDependencyExludes should have length = 2', function () {
-        //   window.cubx.CRCInit.rootDependencyExcludes.should.have.length(2);
-        // });
         it('cubx.CRCInit.rootDependencies second element should be created from the first cubx-dependency element', function () {
           var dep = window.cubx.CRCInit.rootDependencies[ 1 ];
           dep.should.have.property('webpackageId', 'webpackage2@1.2.3');
@@ -75,16 +72,6 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           dep.should.have.property('webpackageId', 'webpackage3@1.2.3');
           dep.should.have.property('artifactId', 'artifact-3');
         });
-        // it('cubx.CRCInit.rootDependencyExcludes first element should be created from the first cubx-dependency-exclude element', function () {
-        //   var dep = window.cubx.CRCInit.rootDependencyExcludes[ 0 ];
-        //   dep.should.have.property('webpackageId', 'webpackage0@1.2.3');
-        //   dep.should.have.property('artifactId', 'artifact-0');
-        // });
-        // it('cubx.CRCInit.rootDependencyExcludes second element should be created from the second cubx-dependency-exclude element', function () {
-        //   var dep = window.cubx.CRCInit.rootDependencyExcludes[ 1 ];
-        //   dep.should.have.property('webpackageId', 'webpackage1@1.2.3');
-        //   dep.should.have.property('artifactId', 'artifact-1');
-        // });
         it('should create and assign dependencyExcludes to rootDependencies based on existing cubx-dependency-excludes', function () {
           var dep = window.cubx.CRCInit.rootDependencies[ 0 ];
           dep.should.have.property('dependencyExcludes');
@@ -123,7 +110,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           cubxDepsElement.appendChild(document.createElement('br'));
           // index = 7
           cubxDepsElement.appendChild(createDepElement('cubx-dependency', 7));
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
         });
         afterEach(function () {
           crcLoader._crcRoot.removeChild(element2);
@@ -132,9 +119,6 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
         it('cubx.CRCInit.rootDependencies should have length = 6', function () {
           window.cubx.CRCInit.rootDependencies.should.have.length(6);
         });
-        // it('cubx.CRCInit.rootDependencyExludes should have length = 4', function () {
-        //   window.cubx.CRCInit.rootDependencyExcludes.should.have.length(4);
-        // });
         it('cubx.CRCInit.rootDependencies third element should be created from the first cubx-dependency element', function () {
           var dep = window.cubx.CRCInit.rootDependencies[ 2 ];
           dep.should.have.property('webpackageId', 'webpackage2@1.2.3');
@@ -155,30 +139,15 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           dep.should.have.property('webpackageId', 'webpackage7@1.2.3');
           dep.should.have.property('artifactId', 'artifact-7');
         });
-        // it('cubx.CRCInit.rootDependencyExcludes first element should be created from the first cubx-dependency-exclude element', function () {
-        //   var dep = window.cubx.CRCInit.rootDependencyExcludes[ 0 ];
-        //   dep.should.have.property('webpackageId', 'webpackage0@1.2.3');
-        //   dep.should.have.property('artifactId', 'artifact-0');
-        // });
-        // it('cubx.CRCInit.rootDependencyExcludes second element should be created from the second cubx-dependency-exclude element', function () {
-        //   var dep = window.cubx.CRCInit.rootDependencyExcludes[ 1 ];
-        //   dep.should.have.property('webpackageId', 'webpackage1@1.2.3');
-        //   dep.should.have.property('artifactId', 'artifact-1');
-        // });
-        // it('cubx.CRCInit.rootDependencyExcludes first element should be created from the third cubx-dependency-exclude element', function () {
-        //   var dep = window.cubx.CRCInit.rootDependencyExcludes[ 2 ];
-        //   dep.should.have.property('webpackageId', 'webpackage4@1.2.3');
-        //   dep.should.have.property('artifactId', 'artifact-4');
-        // });
-        // it('cubx.CRCInit.rootDependencyExcludes second element should be created from the forth cubx-dependency-exclude element', function () {
-        //   var dep = window.cubx.CRCInit.rootDependencyExcludes[ 3 ];
-        //   dep.should.have.property('webpackageId', 'webpackage5@1.2.3');
-        //   dep.should.have.property('artifactId', 'artifact-5');
-        // });
         it('should create and assign dependencyExcludes to rootDependencies based on existing cubx-dependency-excludes', function () {
           var dep = window.cubx.CRCInit.rootDependencies[ 0 ];
           dep.should.have.property('dependencyExcludes');
-          // TODO: finish dependencyExcludes checking!
+          dep.dependencyExcludes[ 0 ].should.be.eql({webpackageId: 'webpackage0@1.2.3', artifactId: 'artifact-0'});
+          dep.dependencyExcludes[ 1 ].should.be.eql({webpackageId: 'webpackage1@1.2.3', artifactId: 'artifact-1'});
+          dep = window.cubx.CRCInit.rootDependencies[ 1 ];
+          dep.should.have.property('dependencyExcludes');
+          dep.dependencyExcludes[ 0 ].should.be.eql({webpackageId: 'webpackage4@1.2.3', artifactId: 'artifact-4'});
+          dep.dependencyExcludes[ 1 ].should.be.eql({webpackageId: 'webpackage5@1.2.3', artifactId: 'artifact-5'});
         });
       });
       describe('crc root contains two cubbles elements, but rootDependencies is empty', function () {
@@ -217,20 +186,20 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           console.warn.restore();
         });
         it('cubx.CRCInit.rootDependencies should have not exists', function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           window.cubx.CRCInit.should.have.not.property('rootDependencies');
         });
         it('cubx.CRCInit.rootDependencyExludes should not exist', function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           window.cubx.CRCInit.should.have.not.property('rootDependencyExcludes');
         });
         it('should be not logged a warning if runtimeMode = prod (default)', function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           spy.should.be.not.called;
         });
         it('should be logged a warning if runtimeMode = dev', function () {
           window.cubx.CRCInit.runtimeMode = 'dev';
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           spy.should.be.calledOnce;
           window.cubx.CRCInit.runtimeMode = 'prod';
         });
@@ -438,7 +407,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
                 }
               );
               var originLength = 2;
-              dependencyTagTransformer._addToCubxCRCInit([ element ], artifactElement, 'rootDependencies', originLength);
+              dependencyTagTransformer._addToCubxCRCInit({dependencies: [ element ], excludes: []}, artifactElement, originLength);
             });
             afterEach(function () {
               delete window.cubx.CRCInit.rootDependencies;
@@ -466,7 +435,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           });
           describe('<cubx-dependency> element has attributes webpackageId, artifactId', function () {
             beforeEach(function () {
-              dependencyTagTransformer._addToCubxCRCInit([ element ], artifactElement, 'rootDependencies', 0);
+              dependencyTagTransformer._addToCubxCRCInit({dependencies: [ element ], excludes: []}, artifactElement, 0);
             });
             it('the length of rootDependencies should be 4', function () {
               window.cubx.CRCInit.rootDependencies.should.have.length(2);
@@ -488,7 +457,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
               element2.setAttribute('webpackage-id', webpackageId2);
               element2.setAttribute('artifact-id', artifactId2);
 
-              dependencyTagTransformer._addToCubxCRCInit([ element, element2 ], artifactElement, 'rootDependencies', 0);
+              dependencyTagTransformer._addToCubxCRCInit({dependencies: [ element, element2 ], excludes: []}, artifactElement, 0);
             });
             afterEach(function () {
               element2 = null;
@@ -516,7 +485,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
               element2 = document.createElement(elementName);
               element2.setAttribute('artifact-id', artifactId2);
 
-              dependencyTagTransformer._addToCubxCRCInit([ element2 ], artifactElement, 'rootDependencies', 0);
+              dependencyTagTransformer._addToCubxCRCInit({dependencies: [ element2 ], excludes: []}, artifactElement, 0);
             });
             afterEach(function () {
               element2 = null;
@@ -537,7 +506,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
             beforeEach(function () {
               element2 = document.createElement(elementName);
               spyWarn = sinon.spy(console, 'warn');
-              dependencyTagTransformer._addToCubxCRCInit([ element2 ], artifactElement, 'rootDependencies', 0);
+              dependencyTagTransformer._addToCubxCRCInit({dependencies: [ element2 ], excludes: []}, artifactElement, 0);
             });
             afterEach(function () {
               element2 = null;
@@ -545,175 +514,6 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
             });
             it('the length of rootDependencies should be 1', function () {
               window.cubx.CRCInit.rootDependencies.should.have.length(1);
-            });
-
-            it('it should be log a warning', function () {
-              spyWarn.should.be.calledOne;
-            });
-          });
-        });
-      });
-      describe('add to rootDependencyExcludes', function () {
-        var element;
-        var webpackageId;
-        var artifactWebpackageId;
-        var artifactId;
-        var artifactElement;
-        var elementName;
-        var artifactElementName;
-        beforeEach(function () {
-          webpackageId = 'example@234';
-          artifactId = 'example-component';
-          artifactWebpackageId = 'xyz@345';
-          elementName = 'cubx-dependency-exclude';
-          artifactElementName = 'root-artifact';
-
-          element = document.createElement(elementName);
-          element.setAttribute('webpackage-id', webpackageId);
-          element.setAttribute('artifact-id', artifactId);
-
-          artifactElement = document.createElement(artifactElementName);
-          artifactElement.setAttribute('cubx-webpackage-id', artifactWebpackageId);
-        });
-        afterEach(function () {
-          element = null;
-          artifactElement = null;
-        });
-        describe('rootDependencies has origin elements', function () {
-          describe('<cubx-dependency-exlude> element has attributes webpackageId, artifactId', function () {
-            beforeEach(function () {
-              window.cubx.CRCInit = { rootDependencies: [] };
-              window.cubx.CRCInit.rootDependencyExcludes = [];
-              // parent cubbles dependency
-              window.cubx.CRCInit.rootDependencies.push({
-                artifactId: artifactElement.tagName.toLowerCase(),
-                webpackageId: artifactWebpackageId
-              });
-              // origin dependencies
-              window.cubx.CRCInit.rootDependencyExcludes.push(
-                {
-                  webpackageId: 'one@1.2.3',
-                  artifactId: 'one-element'
-                }
-              );
-              window.cubx.CRCInit.rootDependencyExcludes.push(
-                {
-                  webpackageId: 'two@1.2.3',
-                  artifactId: 'two-element'
-                }
-              );
-              var originLength = 2;
-              dependencyTagTransformer._addToCubxCRCInit([ element ], artifactElement, 'rootDependencyExcludes', originLength);
-            });
-            afterEach(function () {
-              delete window.cubx.CRCInit.rootDependencies;
-              delete window.cubx.CRCInit.rootDependencyExcludes;
-            });
-            it('the length of rootDependencyExcludes should be 3', function () {
-              window.cubx.CRCInit.rootDependencyExcludes.should.have.length(3);
-            });
-            it('the first element of rootDependencyExcludes should be the added dependency', function () {
-              // Added dependency is the second element (origin dependencies on the end of the rootdependencies, parent cubbles dependency is the first)
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('webpackageId', webpackageId);
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('artifactId', artifactId);
-            });
-          });
-        });
-        describe('rootDependencyExcludes has not origin elements', function () {
-          beforeEach(function () {
-            window.cubx.CRCInit = { rootDependencies: [] };
-            window.cubx.CRCInit.rootDependencyExcludes = [];
-            window.cubx.CRCInit.rootDependencies.push({
-              artifactId: artifactElement.tagName.toLowerCase(),
-              webpackageId: artifactWebpackageId
-            });
-          });
-          afterEach(function () {
-            delete window.cubx.CRCInit.rootDependencies;
-            delete window.cubx.CRCInit.rootDependencyExcludes;
-          });
-          describe('<cubx-dependency> element has attributes webpackageId, artifactId', function () {
-            beforeEach(function () {
-              dependencyTagTransformer._addToCubxCRCInit([ element ], artifactElement, 'rootDependencyExcludes', 0);
-            });
-            it('the length of rootDependencyExcludes should be 1', function () {
-              window.cubx.CRCInit.rootDependencyExcludes.should.have.length(1);
-            });
-            it('the first element of rootDependencyExcludes should be the added dependency', function () {
-              // Added dependency is the second element (origin dependencies on the end of the rootdependencies, parent cubbles dependency is the first)
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('webpackageId', webpackageId);
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('artifactId', artifactId);
-            });
-          });
-          describe('add 2 <cubx-dependency-excludes> elements', function () {
-            var element2;
-            var webpackageId2;
-            var artifactId2;
-            beforeEach(function () {
-              webpackageId2 = 'example@345';
-              artifactId2 = 'example-component-2';
-              element2 = document.createElement(elementName);
-              element2.setAttribute('webpackage-id', webpackageId2);
-              element2.setAttribute('artifact-id', artifactId2);
-
-              dependencyTagTransformer._addToCubxCRCInit([ element,
-                element2 ], artifactElement, 'rootDependencyExcludes', 0);
-            });
-            afterEach(function () {
-              element2 = null;
-            });
-            it('the length of rootDependencyExcludes should be 2', function () {
-              window.cubx.CRCInit.rootDependencyExcludes.should.have.length(2);
-            });
-
-            it('the added first dependency should be the first element', function () {
-              // Added dependency is the second element (origin dependencies on the end of the rootdependencies, parent cubbles dependency is the first)
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('webpackageId', webpackageId);
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('artifactId', artifactId);
-            });
-            it('the added second dependency should be the second element', function () {
-              // Added dependency is the second element (origin dependencies on the end of the rootdependencies, parent cubbles dependency is the first)
-              window.cubx.CRCInit.rootDependencyExcludes[ 1 ].should.have.property('webpackageId', webpackageId2);
-              window.cubx.CRCInit.rootDependencyExcludes[ 1 ].should.have.property('artifactId', artifactId2);
-            });
-          });
-          describe('<cubx-dependency-exclude> element has just attribute artifactId', function () {
-            var element2;
-            var artifactId2;
-            beforeEach(function () {
-              artifactId2 = 'example-component-2';
-              element2 = document.createElement(elementName);
-              element2.setAttribute('artifact-id', artifactId2);
-
-              dependencyTagTransformer._addToCubxCRCInit([ element2 ], artifactElement, 'rootDependencyExcludes', 0);
-            });
-            afterEach(function () {
-              element2 = null;
-            });
-            it('the length of rootDependencyExcludes should be 1', function () {
-              window.cubx.CRCInit.rootDependencies.should.have.length(1);
-            });
-
-            it('the added first dependency should be the second element, with webpackageId of parent cubbles element', function () {
-              // Added dependency is the second element (origin dependencies on the end of the rootdependencies, parent cubbles dependency is the first)
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('webpackageId', artifactWebpackageId);
-              window.cubx.CRCInit.rootDependencyExcludes[ 0 ].should.have.property('artifactId', artifactId2);
-            });
-          });
-          describe('<cubx-dependency-exclude> element has no attribute artifactId', function () {
-            var element2;
-            var spyWarn;
-            beforeEach(function () {
-              element2 = document.createElement(elementName);
-              spyWarn = sinon.spy(console, 'warn');
-              dependencyTagTransformer._addToCubxCRCInit([ element2 ], artifactElement, 'rootDependencyExcludes', 0);
-            });
-            afterEach(function () {
-              element2 = null;
-              console.warn.restore();
-            });
-            it('the length of rootDependencyExcludes should be 0', function () {
-              window.cubx.CRCInit.rootDependencyExcludes.should.have.length(0);
             });
 
             it('it should be log a warning', function () {
