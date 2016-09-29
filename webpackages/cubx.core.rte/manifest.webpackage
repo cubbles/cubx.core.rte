@@ -153,17 +153,6 @@
             "endpointId": "html-import"
           }
         ]
-      },
-      {
-        "artifactId": "es6-promise",
-        "description": "es6-pomise library version 3.2.1",
-        "resources": [
-          {
-            "dev": "html-import.html",
-            "prod": "html-import.min.html"
-          }
-        ],
-        "dependencies": [ ]
       }
     ],
     "compoundComponents": [ ],

@@ -19,6 +19,7 @@ module.exports.tasks = {
       src: [
         '<%= param.src %>/**/*.js',
         '!<%= param.src %>/**/vendor/**',
+        '!<%= param.src %>/**/es6-promise-polyfill.js',
         '!<%= param.src %>/**/test-results/**',
         '!<%= param.src %>/**/bower_components/**',
         '!<%= param.src %>/**/jquery-1.11.1.min.js',

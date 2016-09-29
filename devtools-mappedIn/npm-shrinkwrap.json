@@ -6026,9 +6026,9 @@
       "resolved": "git+https://pmt.incowia.de/webble/r/client/utilities/cubx-karma-requirejs.git#201a91b03e57cf34d4f1a679eadadaf4d698eacf",
       "dependencies": {
         "cubx-requirejs": {
-          "version": "1.0.0",
-          "from": "https://npm.webblebase.net:444/cubx-requirejs/-/cubx-requirejs-1.0.0.tgz",
-          "resolved": "https://npm.webblebase.net:444/cubx-requirejs/-/cubx-requirejs-1.0.0.tgz"
+          "version": "1.1.2",
+          "from": "https://registry.npmjs.org/cubx-requirejs/-/cubx-requirejs-1.1.2.tgz",
+          "resolved": "https://registry.npmjs.org/cubx-requirejs/-/cubx-requirejs-1.1.2.tgz"
         },
         "karma": {
           "version": "0.13.9",

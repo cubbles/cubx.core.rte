@@ -117,15 +117,6 @@ window.cubx.amd.define(['jqueryLoader', 'utils', 'responseCache', 'manifestConve
       });
     }
 
-    // load es6-promise polyfill if necessary
-    if (get(window, 'cubx.CRCInit.polyfillPromise') === true) {
-      console.log('Pushing es6-promise (polyfill) into the dependencies ...');
-      rootDependencies.unshift({
-        artifactId: 'es6-promise',
-        webpackageId: get(window, 'cubx.CRCInit.rteWebpackageId')
-      });
-    }
-
     // remove endpointId properties from rootDependencies and append endpointId to artifactId using separator '#'
     // needed for backwards compatibility to modelVersion 8.x
     this._removeEndpointIdFromRootDependencies(rootDependencies);
