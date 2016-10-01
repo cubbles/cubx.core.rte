@@ -2,8 +2,9 @@
 
 window.cubx = window.cubx || {};
 window.cubx.amd = window.cubx.amd || {};
-window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (crcLoader, dependencyTagTransformer) {
+window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (crcLoader, DependencyTagTransformer) {
   describe('dependencyTagTransformer', function () {
+    var dependencyTagTransformer = new DependencyTagTransformer();
     describe('#addDependenciesAndExcludesToRootDependencies', function () {
       var element;
       var elementName;

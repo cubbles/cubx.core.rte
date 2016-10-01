@@ -6,7 +6,7 @@
  * @version 1.0.0
  * @module StorageManager_Module
  */
-window.cubx.amd.define([ 'jqueryLoader' ], function ($) {
+window.cubx.amd.define([], function () {
   'use strict';
 
   /**

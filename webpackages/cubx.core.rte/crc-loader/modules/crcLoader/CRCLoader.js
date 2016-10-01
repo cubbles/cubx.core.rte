@@ -5,10 +5,11 @@
  *
  * @module CRCLoader_Module
  */
-cubx.amd.define([ 'require',
-  'jqueryLoader',
+cubx.amd.define([
   'dependencyTagTransformer',
-  'polyfills' ], function (require, $, dependencyTagTransformer) {
+  'crc',
+  'polyfills'
+], function (DependencyTagTransformer, crc) {
   /**
    * The CRC Loader takes care about getting the suitable CRC Version from Server depending on the requested
    * WebPackage.
@@ -58,7 +59,7 @@ cubx.amd.define([ 'require',
       self._checkRootDependencies();
       self._addComponentDependenciesToRootDependencies();
       self._addDependenciesAndExcludesToRootRependencies();
-      self._load();
+      self._bootstrapCRC();
     };
     if (cubx.CRCInit.startEventArrived) {
       action();
@@ -158,6 +159,7 @@ cubx.amd.define([ 'require',
    * @memberOf CRCLoader
    */
   CRCLoader.prototype._addDependenciesAndExcludesToRootRependencies = function () {
+    var dependencyTagTransformer = new DependencyTagTransformer();
     dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(this);
   };
 
@@ -203,34 +205,24 @@ cubx.amd.define([ 'require',
       element.ambiguousWebpackageId = true;
       console.warn('Ambiguous webpackageId definition for artifact "' +
         element.tagName.toLowerCase() + '" The defined webpackageId (' + webpackageId +
-        ') is inconsistent with an erlier definition of webpackageId (' + foundling.webpackagageId +
+        ') is inconsistent with an earlier definition of webpackageId (' + foundling.webpackagageId +
         '). Use the dependency with webpackageId "' + foundling.webpackageId + '" ignore webpackageId "' + webpackageId + '".');
     }
     return typeof foundling !== 'undefined';
   };
 
   /**
-   * load CRC
-   * @private
+   * Bootstrap CRC
    * @memberOf CRCLoader
    */
-  CRCLoader.prototype._load = function () {
-    var crcLoader = this;
-    var crcModuleName = crcLoader._crcBaseUrl + '/modules/crc/CRC.js';
-    var me = this;
-    // get CRC
-    $.getScript(crcLoader._crcBaseUrl + '/js/main.js', function () {
-      require([ crcModuleName ], function (crc) {
-        window.cubx.CRC = crc;
-
-        // select crcRoot element and init crc on it
-        window.cubx.CRC.init(me._crcRoot);
-        // now run resolve the dependencies
-        var depMgr = crc.getDependencyMgr();
-        depMgr.init();
-        depMgr.run();
-      });
-    });
+  CRCLoader.prototype._bootstrapCRC = function () {
+    window.cubx.CRC = crc;
+    // select crcRoot element and init crc on it
+    window.cubx.CRC.init(this._crcRoot);
+    // now run resolve the dependencies
+    var depMgr = crc.getDependencyMgr();
+    depMgr.init();
+    depMgr.run();
   };
 
   /**
@@ -244,11 +236,11 @@ cubx.amd.define([ 'require',
     }
 
     // get defined main js file from webpackage and execute it (if given)
-    var crcMain = $('[data-crc-main]').data('crcMain');
-    if (typeof crcMain !== 'undefined') {
+    var crcMain = document.querySelector('[data-crc-main]');
+    if (crcMain !== null) {
       var script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = crcMain;
+      script.src = crcMain.getAttribute('data-crc-main');
       script.async = false;
       document.getElementsByTagName('head')[ 0 ].appendChild(script);
     }
