@@ -28,7 +28,7 @@ cubx.amd.define([], function () {
    * @memberOf DependencyTagTransformer
    * @public
    */
-  DependencyTagTransformer.prototype.addDependenciesAndExcludesToRootdependencies = function (crcLoader) {
+  DependencyTagTransformer.prototype.addDependenciesAndExcludesToRootDependencies = function (crcLoader) {
     if (!cubx || !cubx.CRCInit || !cubx.CRCInit.rootDependencies || cubx.CRCInit.rootDependencies.length === 0) {
       if (window.cubx.CRCInit.runtimeMode === 'dev') {
         console.warn('No dependencies for any components defined. It will be not for "cubx-dependencies" or "cubx-depenedency-excludes" searched.');

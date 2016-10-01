@@ -58,7 +58,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
       });
       describe('crc root contains one cubbles element', function () {
         beforeEach(function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
         });
         it('cubx.CRCInit.rootDependencies should have length = 3', function () {
           window.cubx.CRCInit.rootDependencies.should.have.length(3);
@@ -118,7 +118,7 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           cubxDepsElement.appendChild(document.createElement('br'));
           // index = 7
           cubxDepsElement.appendChild(createDepElement('cubx-dependency', 7));
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
         });
         afterEach(function () {
           crcLoader._crcRoot.removeChild(element2);
@@ -207,20 +207,20 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           console.warn.restore();
         });
         it('cubx.CRCInit.rootDependencies should have not exists', function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           window.cubx.CRCInit.should.have.not.property('rootDependencies');
         });
         it('cubx.CRCInit.rootDependencyExludes should not exist', function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           window.cubx.CRCInit.should.have.not.property('rootDependencyExcludes');
         });
         it('should be not logged a warning if runtimeMode = prod (default)', function () {
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           spy.should.be.not.called;
         });
         it('should be logged a warning if runtimeMode = dev', function () {
           window.cubx.CRCInit.runtimeMode = 'dev';
-          dependencyTagTransformer.addDependenciesAndExcludesToRootdependencies(crcLoader);
+          dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(crcLoader);
           spy.should.be.calledOnce;
           window.cubx.CRCInit.runtimeMode = 'prod';
         });

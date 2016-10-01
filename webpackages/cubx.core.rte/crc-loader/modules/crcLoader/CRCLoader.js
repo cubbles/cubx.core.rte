@@ -135,7 +135,7 @@ cubx.amd.define([
    * @private
    * @memberOf CRCLoader
    */
-  CRCLoader.prototype._addComponentDependenciesToRootdependencies = function () {
+  CRCLoader.prototype._addComponentDependenciesToRootDependencies = function () {
     var elements = this._crcRoot.querySelectorAll('[cubx-webpackage-id]');
     if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
       cubx.CRCInit.rootDependencies = [];

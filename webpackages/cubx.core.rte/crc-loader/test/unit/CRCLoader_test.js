@@ -27,7 +27,7 @@ window.cubx.amd.define([ 'crcLoader',
         });
       });
 
-      describe('#_addComponentDependenciesToRootdependencies()', function () {
+      describe('#_addComponentDependenciesToRootDependencies()', function () {
         before(function () {
           crcLoader._crcRoot = document.body;
         });
@@ -60,7 +60,7 @@ window.cubx.amd.define([ 'crcLoader',
             beforeEach(function () {
               webpackageId = 'example@1.3.4';
               element.setAttribute('cubx-webpackage-id', webpackageId);
-              crcLoader._addComponentDependenciesToRootdependencies();
+              crcLoader._addComponentDependenciesToRootDependencies();
             });
             it('cubx.CRCInit.rootDependencies created', function () {
               window.cubx.CRCInit.should.have.property('rootDependencies');
@@ -79,7 +79,7 @@ window.cubx.amd.define([ 'crcLoader',
             beforeEach(function () {
               webpackageId = 'this';
               element.setAttribute('cubx-webpackage-id', webpackageId);
-              crcLoader._addComponentDependenciesToRootdependencies();
+              crcLoader._addComponentDependenciesToRootDependencies();
             });
             it('cubx.CRCInit.rootDependencies created', function () {
               window.cubx.CRCInit.should.have.property('rootDependencies');
@@ -100,7 +100,7 @@ window.cubx.amd.define([ 'crcLoader',
               endpointId = 'main';
               element.setAttribute('cubx-webpackage-id', webpackageId);
               element.setAttribute('cubx-endpoint-id', endpointId);
-              crcLoader._addComponentDependenciesToRootdependencies();
+              crcLoader._addComponentDependenciesToRootDependencies();
             });
             it('cubx.CRCInit.rootDependencies created', function () {
               window.cubx.CRCInit.should.have.property('rootDependencies');
@@ -128,7 +128,7 @@ window.cubx.amd.define([ 'crcLoader',
                   artifactId: elementName
                 });
                 spyWarn = sinon.spy(console, 'warn');
-                crcLoader._addComponentDependenciesToRootdependencies();
+                crcLoader._addComponentDependenciesToRootDependencies();
               });
               afterEach(function () {
                 console.warn.restore();
@@ -150,7 +150,7 @@ window.cubx.amd.define([ 'crcLoader',
                   artifactId: elementName
                 });
                 spyWarn = sinon.spy(console, 'warn');
-                crcLoader._addComponentDependenciesToRootdependencies();
+                crcLoader._addComponentDependenciesToRootDependencies();
               });
               afterEach(function () {
                 console.warn.restore();
@@ -186,7 +186,7 @@ window.cubx.amd.define([ 'crcLoader',
             describe('dependency exists with the same webpackageId', function () {
               beforeEach(function () {
                 element.setAttribute('cubx-webpackage-id', webpackageId);
-                crcLoader._addComponentDependenciesToRootdependencies();
+                crcLoader._addComponentDependenciesToRootDependencies();
               });
 
               it('rootDependencies should have length=1', function () {
@@ -204,7 +204,7 @@ window.cubx.amd.define([ 'crcLoader',
           beforeEach(function () {
             webpackageId = 'example@1.3.4';
             element.setAttribute('cubx-webpackage-id', webpackageId);
-            crcLoader._addComponentDependenciesToRootdependencies();
+            crcLoader._addComponentDependenciesToRootDependencies();
           });
           afterEach(function () {
             delete window.cubx.CRCInit.rootDependencies;
