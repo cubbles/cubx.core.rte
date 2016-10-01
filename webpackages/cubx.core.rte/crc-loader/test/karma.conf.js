@@ -29,6 +29,7 @@ module.exports = function (config) {
       // 'test/beforetest.js',
       { pattern: 'test/unit/**/*', included: false },
       { pattern: 'modules/**/*', included: false },
+      { pattern: 'test/mocks/**', included: false },
       'test/vendor/mocha-config.js',
       'test/requirejs_config/karma.js',
       { pattern: 'test/vendor/text/text.js', included: false },

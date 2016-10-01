@@ -9,7 +9,7 @@
  *
  * @module DependencyTagTransformer_Module
  */
-cubx.amd.define([ 'polyfills' ], function () {
+cubx.amd.define([], function () {
   /**
    * Empty constructor.
    * @global
@@ -172,5 +172,5 @@ cubx.amd.define([ 'polyfills' ], function () {
     }
     return dependency;
   };
-  return new DependencyTagTransformer();
+  return DependencyTagTransformer;
 });

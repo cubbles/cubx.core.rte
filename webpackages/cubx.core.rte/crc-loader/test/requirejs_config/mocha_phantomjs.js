@@ -9,11 +9,11 @@
     baseUrl: '../',
     paths: {
       'crcLoader': 'modules/crcLoader/CRCLoader',
+      'crc': 'test/mocks/crcMock',
       'jqueryLoader': 'modules/jqueryLoader/jqueryLoader',
       'jquery': 'modules/jqueryLoader/jquery-1.11.1.min',
       'dependencyTagTransformer': 'modules/dependencyTagTransformer/dependencyTagTransformer',
       'polyfills': 'modules/polyfills/polyfills',
-      'es6promise': 'modules/ES6Promise/es6-promise-polyfill',
       // text plugin only needed for tests right now
       'text': 'test/vendor/text/text',
       // unit tests

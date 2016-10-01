@@ -4,17 +4,16 @@
  *
  * @version 1.0.0
  * @module CRC_Module
- * @requires StorageManager_Module
  */
-window.cubx.amd.define([ 'require',
-    'jqueryLoader',
-    'storageManager',
-    'dependencyManager',
-    'cache',
-    'componentResolver',
-    'utils',
-    'eventFactory'],
-  function (require, $, storageMgr, DepMgr, Cache, ComponentResolver, utils, eventFactory) {
+window.cubx.amd.define([
+  'storageManager',
+  'dependencyManager',
+  'cache',
+  'componentResolver',
+  'utils',
+  'eventFactory'
+],
+  function (storageMgr, DepMgr, Cache, ComponentResolver, utils, eventFactory) {
     'use strict';
 
     /**
@@ -190,16 +189,6 @@ window.cubx.amd.define([ 'require',
      */
     CRC.prototype.getComponentResolver = function () {
       return this._componentResolver;
-    };
-
-    /**
-     * Get the CRC dom node as jQuery object. Returns null if {@link CRC#init|init()} was not called before
-     * @returns {Object} jQuery Object containing the CRC dom node or null
-     * @memberOf CRC
-     * @deprecated
-     */
-    CRC.prototype.getCRCEl = function () {
-      return $('[data-crc-id="' + this._crcElId + '"]');
     };
 
     /**
