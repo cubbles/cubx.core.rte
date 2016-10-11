@@ -10,7 +10,13 @@
     },
     {
         "artifactId": "util3",
-        "webpackageId": "cubx.core.test.crc-loader-test"
+        "webpackageId": "cubx.core.test.crc-loader-test",
+        "dependencyExcludes": [
+            {
+                "webpackageId": "excludedPackage",
+                "artifactId": "excludedArtifact"
+            }
+        ]
     }
 ]
 

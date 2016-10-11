@@ -73,16 +73,19 @@ window.cubx.amd.define(
           item.artifactId.should.equal('util1');
           item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
           item.referrer[0].should.eql(referrer);
+          item.dependencyExcludes.should.eql([]);
 
           item = depList[1];
           item.artifactId.should.equal('util2');
           item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
           item.referrer[0].should.eql(referrer);
+          item.dependencyExcludes.should.eql([]);
 
           item = depList[2];
           item.artifactId.should.equal('util3');
           item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
           item.referrer[0].should.eql(referrer);
+          item.dependencyExcludes.should.eql([{ webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' }]);
         });
         it('should set referrer to "root" if param referrer is set to null', function () {
           var item = depMgr._createDepReferenceListFromArtifactDependencies(dependencies, null)[0];

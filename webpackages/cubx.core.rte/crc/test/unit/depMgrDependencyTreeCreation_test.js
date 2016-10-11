@@ -314,14 +314,19 @@
               }
             };
             depRefItem = new DepMgr.DepReference({webpackageId: 'com.test.testPackage@1.0.0', artifactId: 'testArtifact', referrer: null});
+            depRefItem.dependencyExcludes = [ { webpackageId: 'exludedPackage', artifactId: 'excludedArtifact' } ];
           });
           it('should return the given DepReference instance', function () {
             expect(depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest)).to.eql(depRefItem);
           });
-          it('should add all dependencyExlcudes defined in given manifest for corresponding artifact to given DepReference', function () {
+          it('should append all dependencyExcludes defined in given manifest for corresponding artifact to excludes of given DepReference', function () {
             depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest);
             depRefItem.should.have.ownProperty('dependencyExcludes');
-            depRefItem.dependencyExcludes.should.be.eql(manifest.artifacts.utilities[0].dependencyExcludes);
+            depRefItem.dependencyExcludes.should.be.eql([
+              { webpackageId: 'exludedPackage', artifactId: 'excludedArtifact' },
+              { webpackageId: 'exclude@1', artifactId: 'util1' },
+              { webpackageId: 'exclude@2', artifactId: 'util2', endpointId: 'main' }
+            ]);
           });
           describe('Error handling', function () {
             it('should throw an TypeError if first given parameter is not an instance of DepReference', function () {
@@ -352,11 +357,16 @@
           var baseUrl;
           var depTree;
           var spy;
+          var spy2;
           var stub;
 
           beforeEach(function () {
             CubxNamespaceManager.resetNamespace(CRC);
             window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
+            // add an dependencyExclude to rootDependencies
+            window.cubx.CRCInit.rootDependencies[0].dependencyExcludes = [
+              { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }
+            ];
             depMgr = CRC.getDependencyMgr();
             depMgr.init();
             baseUrl = depMgr._baseUrl;
@@ -364,25 +374,26 @@
             // spy _checkAndAddExcludesToDepReference()
             spy = sinon.spy(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesToDepReference');
 
+            // spy _checkAndAddExcludesForRootDependencies()
+            spy2 = sinon.spy(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesForRootDependencies');
+
             // stub _getManifestForDepReference()
             stub = sinon.stub(Object.getPrototypeOf(depMgr), '_getManifestForDepReference', function (depRefItem, baseUrl) {
               var manifest;
               switch (depRefItem.webpackageId) {
                 case 'package1@1.0.0':
                   manifest = JSON.parse(pkg1);
+                  // add some excludes
+                  manifest.artifacts.utilities[0].dependencyExcludes = [
+                    { webpackageId: 'anotherPackageExclude', artifactId: 'anotherArtifactExclude' }
+                  ];
                   break;
                 case 'package3@1.0.0':
                   manifest = JSON.parse(pkg3);
                   // add some excludes
                   manifest.artifacts.utilities[0].dependencyExcludes = [
-                    {
-                      webpackageId: 'packageToExclude',
-                      artifactId: 'artifactToExclude'
-                    },
-                    {
-                      webpackageId: 'packageToExclude_2',
-                      artifactId: 'artifactToExclude_2'
-                    }
+                    { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' },
+                    { webpackageId: 'packageToExclude_2', artifactId: 'artifactToExclude_2' }
                   ];
                   break;
                 case 'package4@1.0.0':
@@ -421,35 +432,27 @@
             childA.data = new DepMgr.DepReference({
               webpackageId: 'package3@1.0.0',
               artifactId: 'util3',
-              referrer: {
-                webpackageId: 'package1@1.0.0',
-                artifactId: 'util1'
-              }
+              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
             });
             depTree.insertNode(childA, root);
             var childB = new DependencyTree.Node();
             childB.data = new DepMgr.DepReference({
               webpackageId: 'package4@1.0.0',
               artifactId: 'util4',
-              referrer: {
-                webpackageId: 'package1@1.0.0',
-                artifactId: 'util1'
-              }
+              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
             });
             depTree.insertNode(childB, root);
             var childA1 = new DependencyTree.Node();
             childA1.data = new DepMgr.DepReference({
               webpackageId: 'package5@1.0.0',
               artifactId: 'util5',
-              referrer: {
-                webpackageId: 'package4@1.0.0',
-                artifactId: 'util4'
-              }
+              referrer: { webpackageId: 'package4@1.0.0', artifactId: 'util4' }
             });
             depTree.insertNode(childA1, childA);
           });
           afterEach(function () {
             spy.restore();
+            spy2.restore();
             stub.restore();
             CubxNamespaceManager.resetNamespace(CRC);
           });
@@ -467,18 +470,23 @@
               expect(spy.getCall(1).args[0].getId()).to.equal('package3@1.0.0/util3');
               expect(spy.getCall(2).args[0].getId()).to.equal('package4@1.0.0/util4');
               expect(spy.getCall(3).args[0].getId()).to.equal('package5@1.0.0/util5');
+              depTree._rootNodes[0].data.should.have.ownProperty('dependencyExcludes');
+              depTree._rootNodes[0].data.dependencyExcludes.should.eql([
+                { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' },
+                { webpackageId: 'anotherPackageExclude', artifactId: 'anotherArtifactExclude' }
+              ]);
               depTree._rootNodes[0].children[0].data.should.have.ownProperty('dependencyExcludes');
               depTree._rootNodes[0].children[0].data.dependencyExcludes.should.eql([
-                {
-                  webpackageId: 'packageToExclude',
-                  artifactId: 'artifactToExclude'
-                },
-                {
-                  webpackageId: 'packageToExclude_2',
-                  artifactId: 'artifactToExclude_2'
-                }
+                { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' },
+                { webpackageId: 'packageToExclude_2', artifactId: 'artifactToExclude_2' }
               ]);
               // console.log(depTree);
+            });
+          });
+          it('should call _checkAndAddExcludesForRootDependencies() for each rootNode in DependencyTree', function () {
+            return depMgr._checkDepTreeForExcludes(depTree, baseUrl).then(function () {
+              expect(spy2.callCount).to.eql(1);
+              expect(spy2.getCall(0).args[0]).to.equal(depTree._rootNodes[0]);
             });
           });
           describe('Error handling', function () {
@@ -497,6 +505,42 @@
               var errorThrown = false;
               try {
                 depMgr._checkDepTreeForExcludes(new DependencyTree(), 123);
+              } catch (error) {
+                errorThrown = true;
+                error.should.be.an.instanceOf(TypeError);
+              } finally {
+                expect(errorThrown).to.be.true;
+              }
+            });
+          });
+        });
+        describe('#_checkAndAddExcludesForRootDependencies', function () {
+          var node;
+          beforeEach(function () {
+            CubxNamespaceManager.resetNamespace(CRC);
+            window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
+            // add an dependencyExclude to rootDependencies
+            window.cubx.CRCInit.rootDependencies[0].dependencyExcludes = [
+              { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }
+            ];
+            depMgr = CRC.getDependencyMgr();
+            depMgr.init();
+            node = new DependencyTree.Node();
+            node.data = new DepMgr.DepReference({ artifactId: 'util1', webpackageId: 'package1@1.0.0', referrer: null });
+          });
+          it('should return given DependencyTree.Node', function () {
+            var result = depMgr._checkAndAddExcludesForRootDependencies(node);
+            result.should.equal(node);
+          });
+          it('should add dependencyExcludes from corresponding rootDependency to given node', function () {
+            depMgr._checkAndAddExcludesForRootDependencies(node);
+            node.data.dependencyExcludes.should.eql([{ webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }]);
+          });
+          describe('Error handling', function () {
+            it('should throw an TypeError if given parameter is not of type DependencyTree.Node', function () {
+              var errorThrown = false;
+              try {
+                depMgr._checkAndAddExcludesForRootDependencies({});
               } catch (error) {
                 errorThrown = true;
                 error.should.be.an.instanceOf(TypeError);

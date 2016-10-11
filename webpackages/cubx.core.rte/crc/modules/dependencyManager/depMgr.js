@@ -462,7 +462,7 @@ window.cubx.amd.define(
     };
 
     /**
-     * Iterate over a given DependencyTree and check each node if there are dependecyExcludes defined in coressponding
+     * Iterate over a given DependencyTree and check each node if there are dependecyExcludes defined in corresponding
      * manifest. If so these dependencyExcludes will be added.
      * @memberOf DependencyMgr
      * @param {object} depTree A DependencyTree instance
@@ -483,8 +483,13 @@ window.cubx.amd.define(
         // traverse through tree and request manifest for each node used for adding dependencyExcludes, if there are any.
         var nodes = [];
         var promises = [];
+
         depTree.traverseBF(function (node) {
           nodes.push(node);
+          // if given node is a rootNode check global rootDependencies for existing excludes.
+          if (node.parent == null) {
+            this._checkAndAddExcludesForRootDependencies(node);
+          };
           promises.push(this._getManifestForDepReference(node.data, baseUrl));
         }.bind(this));
 
@@ -501,6 +506,33 @@ window.cubx.amd.define(
           reject(error);
         });
       }.bind(this));
+    };
+
+    /**
+     * If given node represents a rootDependency this method checks if there are any dependency excludes defined in
+     * global rootDependencies array for given node. If so these excludes will be added to DepReference item that given
+     * nodes references.
+     * @memberOf DependencyMgr
+     * @param {object} node A DependencyTree.Node holding a DepReference item for property node.data
+     * @return {object} The given node
+     * @private
+     */
+    DependencyMgr.prototype._checkAndAddExcludesForRootDependencies = function (node) {
+      // make some type checking of param node
+      if (!(node instanceof DependencyTree.Node)) {
+        throw new TypeError('parameter \'node\' needs to be an instance of DependencyTree.Node');
+      }
+
+      var rootDependencies = window.cubx.utils.get(window, 'cubx.CRCInit.rootDependencies') || [];
+      rootDependencies = this._createDepReferenceListFromArtifactDependencies(rootDependencies, null);
+      var rootDep = rootDependencies.find(function (dep) {
+        return node.data.artifactId === dep.artifactId && node.data.webpackageId === dep.webpackageId;
+      });
+
+      if (rootDep.hasOwnProperty('dependencyExcludes')) {
+        node.data.dependencyExcludes = rootDep.dependencyExcludes;
+      }
+      return node;
     };
 
     /**
@@ -524,7 +556,7 @@ window.cubx.amd.define(
       // find artifact in given manifest that corresponds with given depReference
       var artifact = this._extractArtifact(depReference, manifest);
       if (artifact.hasOwnProperty('dependencyExcludes') && artifact.dependencyExcludes.length > 0) {
-        depReference.dependencyExcludes = JSON.parse(JSON.stringify(artifact.dependencyExcludes));
+        depReference.dependencyExcludes = depReference.dependencyExcludes.concat(JSON.parse(JSON.stringify(artifact.dependencyExcludes)));
       }
 
       return depReference;
@@ -604,8 +636,8 @@ window.cubx.amd.define(
           // if referrer is invalid set it to null. A referrer with value 'null' is interpreted as 'root'
           referrer = null;
         }
-
         // console.log(typeof dependencies)
+
         dependencies.forEach(function (dependency) {
           var valid = true; // just a flag used for skipping the processing of current dependency when it is invalid
 
@@ -633,7 +665,14 @@ window.cubx.amd.define(
               depReferenceInitObject.manifest = manifestConverter.convert(dependency.manifest);
             }
 
-            depList.push(new DependencyMgr.DepReference(depReferenceInitObject));
+            var depRef = new DependencyMgr.DepReference(depReferenceInitObject);
+
+            // dependencyExcludes if available
+            if (dependency.hasOwnProperty('dependencyExcludes')) {
+              depRef.dependencyExcludes = dependency.dependencyExcludes;
+            };
+
+            depList.push(depRef);
           }
         });
         return depList;
@@ -822,6 +861,7 @@ window.cubx.amd.define(
         if (dependency.hasOwnProperty('endpointId') && typeof dependency.endpointId === 'string') {
           dependency.artifactId = dependency.artifactId + manifestConverter.endpointSeparator + dependency.endpointId;
           delete dependency.endpointId;
+          // TODO: remove endpointIds also from dependencyExcludes if present
         }
       });
     };
