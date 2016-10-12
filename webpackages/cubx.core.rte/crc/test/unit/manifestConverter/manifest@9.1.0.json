@@ -63,6 +63,17 @@
                         "endpointId": "main"
                     }
                 ],
+                "dependencyExcludes": [
+                    {
+                        "artifactId": "my-exclude1",
+                        "webpackageId": "com.package.exclude1",
+                        "endpointId": "main"
+                    },
+                    {
+                        "artifactId": "my-exclude2",
+                        "webpackageId": "com.package.exclude2"
+                    }
+                ],
                 "slots": [
                     {
                         "slotId": "slot1",

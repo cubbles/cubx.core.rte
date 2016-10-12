@@ -1,3 +1,4 @@
+/* globals before, describe, it, beforeEach, after */
 window.cubx.amd.define(
   [
     'manifestConverter',
@@ -178,6 +179,31 @@ window.cubx.amd.define(
             expect(convertedManifest.artifacts.elementaryComponents[0].dependencies).to.eql(expectedManifest.artifacts.elementaryComponents[0].dependencies);
             expect(convertedManifest.artifacts.utilities[1].dependencies).to.eql(expectedManifest.artifacts.utilities[1].dependencies);
             expect(convertedManifest.artifacts.utilities[2].dependencies).to.eql(expectedManifest.artifacts.utilities[2].dependencies);
+          });
+        });
+        describe('#_removeEndpointsFromDependencyExcludeItems()', function () {
+          var convertedManifest;
+          beforeEach(function () {
+            convertedManifest = JSON.parse(manifest910);
+          });
+          it('should remove \'endpointId\' properties from each dependencyExclude if there is such a property', function () {
+            manifestConverter._removeEndpointsFromDependencyExcludeItems(convertedManifest);
+            Object.keys(convertedManifest.artifacts).forEach(function (artifactType) {
+              convertedManifest.artifacts[artifactType].forEach(function (artifact) {
+                if (artifact.hasOwnProperty('dependencyExclude') && artifact.dependencyExcludes.length > 0) {
+                  artifact.dependencyExcludes.forEach(function (exclude) {
+                    exclude.should.not.have.ownProperty('endpointId');
+                  });
+                }
+              });
+            });
+          });
+          it('should append \'endpointId\' value to corresponding artifactId using separator \'#\'', function () {
+            manifestConverter._removeEndpointsFromDependencyExcludeItems(convertedManifest);
+            convertedManifest.artifacts.compoundComponents[0].dependencyExcludes.should.eql([
+              { artifactId: 'my-exclude1#main', webpackageId: 'com.package.exclude1' },
+              { artifactId: 'my-exclude2', webpackageId: 'com.package.exclude2' }
+            ]);
           });
         });
       });

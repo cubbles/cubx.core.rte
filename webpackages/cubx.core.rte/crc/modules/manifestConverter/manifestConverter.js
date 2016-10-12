@@ -26,7 +26,8 @@ window.cubx.amd.define([], function () {
         '_convertComponentIdToArtifactIdInMembers'
       ],
       '9.1.0': [
-        '_removeEndpointsFromDependencyItems'
+        '_removeEndpointsFromDependencyItems',
+        '_removeEndpointsFromDependencyExcludeItems'
       ]
     };
 
@@ -123,10 +124,34 @@ window.cubx.amd.define([], function () {
     Object.keys(manifest.artifacts).forEach(function (artifactType) {
       manifest.artifacts[artifactType].forEach(function (artifact) {
         if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
-          artifact.dependencies.forEach(function (dependency, index, dependencies) {
+          artifact.dependencies.forEach(function (dependency, index) {
             if (typeof dependency === 'object' && dependency.hasOwnProperty('endpointId')) {
               dependency.artifactId = dependency.artifactId + self.endpointSeparator + dependency.endpointId;
               delete dependency.endpointId;
+            };
+          });
+        }
+      });
+    });
+  };
+
+  /**
+   * Convert each dependencyExcludeItem by removing endpointId property (if available) and append it's value to artifactId
+   * using separator '#'.
+   * Note: The changes will be made directly on the given manifest object.
+   * @memberOf ManifestConverter
+   * @param {object} manifest A valid manifest object
+   * @private
+   */
+  ManifestConverter.prototype._removeEndpointsFromDependencyExcludeItems = function (manifest) {
+    var self = this;
+    Object.keys(manifest.artifacts).forEach(function (artifactType) {
+      manifest.artifacts[artifactType].forEach(function (artifact) {
+        if (artifact.hasOwnProperty('dependencyExcludes') && artifact.dependencyExcludes.length > 0) {
+          artifact.dependencyExcludes.forEach(function (exclude, index) {
+            if (typeof exclude === 'object' && exclude.hasOwnProperty('endpointId')) {
+              exclude.artifactId = exclude.artifactId + self.endpointSeparator + exclude.endpointId;
+              delete exclude.endpointId;
             };
           });
         }
