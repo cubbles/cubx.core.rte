@@ -125,6 +125,25 @@
           childB2.usedBy.should.be.eql([childA1]);
         });
       });
+      describe('#applyExcludes()', function () {
+        it('should return the DependencyTree itself', function () {
+          
+        });
+        describe('should resolve the excludes using the following rules:', function () {
+          it('An exclude is only valid within the scope of it\'s own subtree', function () {
+
+          });
+          it('A dependency package1@1.0.0/util1 on level n always overwrites an exclude package1@1.0.0/util1 on level n + k (k >= 1) within the same subtree', function () {
+
+          });
+          it('If an artifact has directly defined a dependency and an exclude referencing the same artifact then the dependency will be ignored', function () {
+
+          });
+          it('An exclude allways will be ignored if the same artifact is referenced at least once in any of the other subtrees', function () {
+
+          });
+        });
+      });
     });
   });
 })();
