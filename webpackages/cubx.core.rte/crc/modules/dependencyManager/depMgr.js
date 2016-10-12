@@ -861,7 +861,14 @@ window.cubx.amd.define(
         if (dependency.hasOwnProperty('endpointId') && typeof dependency.endpointId === 'string') {
           dependency.artifactId = dependency.artifactId + manifestConverter.endpointSeparator + dependency.endpointId;
           delete dependency.endpointId;
-          // TODO: remove endpointIds also from dependencyExcludes if present
+        }
+        if (dependency.hasOwnProperty('dependencyExcludes') && dependency.dependencyExcludes.length > 0) {
+          dependency.dependencyExcludes.forEach(function (exclude) {
+            if (exclude.hasOwnProperty('endpointId') && typeof exclude.endpointId === 'string') {
+              exclude.artifactId = exclude.artifactId + manifestConverter.endpointSeparator + exclude.endpointId;
+              delete exclude.endpointId;
+            }
+          });
         }
       });
     };

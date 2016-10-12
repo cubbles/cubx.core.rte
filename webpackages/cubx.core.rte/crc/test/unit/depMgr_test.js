@@ -32,11 +32,21 @@ window.cubx.amd.define(
         it('should have the expected baseUrl', function () {
           expect(depMgr._baseUrl).to.eql('http://test.org');
         });
-        it('should remove "property" endpoints from each rootDependency if available and append it to artifactId', function () {
+        it('should remove property \'endpointId\' from each rootDependency if available and append it to artifactId', function () {
           var item = depMgr._depList[0];
           item.artifactId.should.equal('util1#main');
           item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
           item.should.not.have.ownProperty('endpointId');
+        });
+        it('should remove property \'endpointId\' from each dependencyExclude in rootDependencies and append it to artifactId', function () {
+          var item = depMgr._depList[2];
+          item.artifactId.should.equal('util3');
+          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
+          item.should.have.ownProperty('dependencyExcludes');
+          item.dependencyExcludes.should.eql([
+            { webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' },
+            { webpackageId: 'anotherExcludedPackage', artifactId: 'anotherExcludedArtifact#excludedEndpoint' }
+          ]);
         });
       });
 
@@ -85,7 +95,10 @@ window.cubx.amd.define(
           item.artifactId.should.equal('util3');
           item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
           item.referrer[0].should.eql(referrer);
-          item.dependencyExcludes.should.eql([{ webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' }]);
+          item.dependencyExcludes.should.eql([
+            { webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' },
+            { webpackageId: 'anotherExcludedPackage', artifactId: 'anotherExcludedArtifact', endpointId: 'excludedEndpoint' }
+          ]);
         });
         it('should set referrer to "root" if param referrer is set to null', function () {
           var item = depMgr._createDepReferenceListFromArtifactDependencies(dependencies, null)[0];
