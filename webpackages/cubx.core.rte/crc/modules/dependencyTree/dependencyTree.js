@@ -21,6 +21,17 @@
     };
 
     /**
+     * Check all excludes defined in the trees nodes and remove them by moving them from data.dependencyExcludes array
+     * into data._removedDependencyExcludes array.
+     * @memberOf DependencyTree
+     * @returns {object} The DependencyTree itself
+     * @private
+     */
+    DependencyTree.prototype._removeInvalidExcludes = function () {
+      return this;
+    };
+
+    /**
      * Check if the given node is in DependencyTree.
      * @memberOf DependencyTree
      * @param {object} node
@@ -209,6 +220,35 @@
         return;
       };
       var queue = this._rootNodes.length > 0 ? this._rootNodes.slice() : [];
+      while (queue.length > 0) {
+        var node = queue.shift();
+        if (node.children.length > 0) {
+          node.children.forEach(function (child) {
+            queue.push(child);
+          });
+        }
+        if (callback(node) === false) {
+          return;
+        };
+      }
+    };
+
+    /**
+     * Traverse a subtree within the DependencyTree starting from the given node.
+     * @memberOf DependencyTree
+     * @param {object} rootNode A DependencyTree.Node within the DependendyTree acting as root for the subtree traversal
+     * @param {function} callback Callback function that will be called for each visited node
+     */
+    DependencyTree.prototype.traverseSubtreeBF = function (rootNode, callback) {
+      if (!(rootNode instanceof DependencyTree.Node)) {
+        console.error('Parameter \'rootNode\' needs to be an instance of DependencyTree.Node');
+        return;
+      };
+      if (!callback || typeof callback !== 'function') {
+        console.error('Parameter \'callback\' needs to be of type function');
+        return;
+      };
+      var queue = [rootNode];
       while (queue.length > 0) {
         var node = queue.shift();
         if (node.children.length > 0) {

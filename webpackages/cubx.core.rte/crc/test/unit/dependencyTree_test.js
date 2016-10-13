@@ -130,6 +130,9 @@
           consoleStub.restore();
         });
       });
+      describe('#traverseSubtreeBF()', function () {
+        // TODO: implement tests...
+      });
       describe('#contains()', function () {
         it('should return true if given node is member of the DependencyTree', function () {
           expect(depTree.contains(childA)).to.be.true;
