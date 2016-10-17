@@ -10,7 +10,14 @@
       var childB;
       var childC;
       beforeEach(function () {
-        // init tree and put some nodes in it
+        /**
+         * init tree and put some nodes in it. Following tree will be created:
+         *
+         *           rootNode1          rootNode2
+         *              |                 /   \
+         *              |                /     \
+         *            childC         childA   childB
+         */
         depTree = new DependencyTree();
         rootNode1 = new DependencyTree.Node();
         rootNode1.data = {prop1: 'test', prop2: 1234};
@@ -131,7 +138,27 @@
         });
       });
       describe('#traverseSubtreeBF()', function () {
-        // TODO: implement tests...
+        it('should traverse subtree starting from given node in breadth first order and call callback for each visited node', function () {
+          var callbackStub = sinon.stub();
+          callbackStub.returns(true);
+          depTree.traverseSubtreeBF(rootNode2, callbackStub);
+          expect(callbackStub.getCall(0).calledWith(rootNode2)).to.be.true;
+          expect(callbackStub.getCall(1).calledWith(childA)).to.be.true;
+          expect(callbackStub.getCall(2).calledWith(childB)).to.be.true;
+          expect(callbackStub.callCount).to.equal(3);
+        });
+        it('should log an error if first parameter is not of type DependencyTree.Node', function () {
+          var consoleStub = sinon.stub(console, 'error');
+          depTree.traverseSubtreeBF('foo', function () {});
+          expect(consoleStub.called).to.be.true;
+          consoleStub.restore();
+        });
+        it('should log an error if second paramter is not of type function', function () {
+          var consoleStub = sinon.stub(console, 'error');
+          depTree.traverseSubtreeBF(rootNode2, 'foo');
+          expect(consoleStub.called).to.be.true;
+          consoleStub.restore();
+        });
       });
       describe('#contains()', function () {
         it('should return true if given node is member of the DependencyTree', function () {
