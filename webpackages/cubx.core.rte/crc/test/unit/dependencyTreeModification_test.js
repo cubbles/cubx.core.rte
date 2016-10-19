@@ -127,22 +127,33 @@
       });
       describe('#applyExcludes()', function () {
         it('should return the DependencyTree itself', function () {
+          // TODO: implement me!
+        });
+      });
+      describe('#_isValidExclude', function () {
+        it('should return true if exclude is valid', function () {
+          // TODO: implement me!
 
         });
-        describe('should resolve the excludes using the following rules:', function () {
-          it('An exclude is only valid within the scope of it\'s own subtree', function () {
+        it('should return false if exclude is invalid ', function () {
+          // TODO: implement me!
 
-          });
-          it('A dependency package1@1.0.0/util1 on level n always overwrites an exclude package1@1.0.0/util1 on level n + k (k >= 1) within the same subtree', function () {
-
-          });
-          it('If an artifact has directly defined a dependency and an exclude referencing the same artifact then the dependency will be ignored', function () {
-
-          });
-          it('An exclude always will be ignored if the same artifact is referenced at least once in any of the other subtrees', function () {
-
-          });
         });
+        it('should log warnings for invalid excludes on console if runtimeMode = \'dev\'', function () {
+          // TODO: implement me!
+
+        });
+        // describe('should resolve the excludes using the following rules:', function () {
+        //   it('A dependency package1@1.0.0/util1 on level n always overwrites an exclude package1@1.0.0/util1 on level n + k (k >= 1) within the same subtree', function () {
+        //     childA1.data.dependencyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+        //     childA2.data.dependencyExcludes = [{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }];
+        //     depTree._filterExcludesWithinSubtree(nodeA);
+        //     childA1.data.dependencyExcludes.should.eql([{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }]);
+        //     childA1.data.should.not.have.ownProperty('_removedDependencyExcludes');
+        //     childA2.data.dependencyExcludes.should.eql([]);
+        //     childA2.data._removedDependencyExcludes.should.eql([{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }]);
+        //   });
+        // });
       });
     });
   });

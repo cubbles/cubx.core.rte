@@ -21,13 +21,63 @@
     };
 
     /**
+     * Check if a certain exclude is referenced by any other artifact as dependency in the DependencyTree that is not
+     * a descendent of the node this exclude belongs to. This method needs to be called before removeDuplicates() is called!
+     * @memberOf DependencyTree
+     * @param {object} node The current node the exclude belongs to
+     * @param {object} exclude The exclude to check. Holds properties webpackageId and artifactId
+     * @private
+     */
+    DependencyTree.prototype._isValidExclude = function (node, exclude) { // TODO: Test me!
+      // this array holds all nodes that conflict with the given exclude meaning they reference the
+      // same artifact but are not an descendents of the node the exclude belongs to
+      var conflicts = [];
+
+      // we assume that duplicates are not removed yet from DependencyTree. That's why we need to make sure that
+      // duplicates of this nodes are ignored
+      this.traverseBF(function (currentNode) {
+        if (currentNode.data.artifactId === exclude.artifactId &&
+          currentNode.data.webpackageId === exclude.webpackageId &&
+          !currentNode.equalsArtifact(node) && !currentNode.isDescendent(node)) {
+          conflicts.push(currentNode);
+        }
+      });
+
+      if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+        conflicts.forEach(function (conflictedNode) {
+          console.warn('Exclude ' + exclude.webpackageId + '/' + exclude.artifactId + ' on artifact ' +
+            node.data.getId() + ' will be ignored because of dependency ' + conflictedNode.getPathAsString());
+        });
+      }
+
+      return conflicts.length === 0;
+    };
+
+    /**
      * Check all excludes defined in the trees nodes and remove them by moving them from data.dependencyExcludes array
      * into data._removedDependencyExcludes array.
      * @memberOf DependencyTree
      * @returns {object} The DependencyTree itself
      * @private
      */
-    DependencyTree.prototype._removeInvalidExcludes = function () {
+    DependencyTree.prototype._removeInvalidExcludes = function () { // TODO: Test me!
+      this.traverseBF(function (node) {
+        if (node.data.dependencyExcludes.length > 0) {
+          var validExcludes = [];
+          node.data.dependencyExcludes.forEach(function (exclude) {
+            if (this._isValidExclude(node, exclude)) {
+              // the exclude is valid, so we push it to the temporary validExcludes array
+              validExcludes.push(exclude);
+            } else {
+              // the exclude is not valid thus push it onto current.data._removedDependencyExcludes array
+              node.data._removedDependencyExcludes = node.data._removedDependencyExcludes || [];
+              node.data._removedDependencyExcludes.push(exclude);
+            }
+          }.bind(this));
+          node.data.dependencyExcludes = validExcludes;
+        }
+      }.bind(this));
+
       return this;
     };
 
@@ -38,7 +88,7 @@
      * @returns {boolean} True if Node is in DependencyTree, false otherwise.
      */
     DependencyTree.prototype.contains = function (node) {
-      // if we can reach any of the current rootNodes by using the parent reference node is member of DependencyTree
+      // if we can reach any of the current rootNodes by using the parent reference given node is a member of DependencyTree
       while (node.parent != null) {
         node = node.parent;
       };
@@ -310,6 +360,31 @@
     DependencyTree.Node.prototype.equals = function (node) {
       // for now only check if given node and this node represent the same instances
       return this === node;
+    };
+
+    /**
+     * Checks if the given node references the same artifact.
+     * @memberOf DependencyTree.Node
+     * @param {object} node DependencyTree.Node to compare to
+     * @returns {boolean} true if artifactId and webpackageId are equal, false otherwise
+     */
+    DependencyTree.Node.prototype.equalsArtifact = function (node) { // TODO: Test me!
+      return node.data.getId() === this.data.getId();
+    };
+
+    /**
+     * Return the path starting from root for this node as string.
+     * @memberOf DependencyTree.Node
+     * @return {string}
+     */
+    DependencyTree.Node.prototype.getPathAsString = function () { // TODO: test me!
+      var current = this;
+      var path = [current.data.getId()];
+      while (current.parent) {
+        current = current.parent;
+        path.splice(0, 0, current.data.getId());
+      }
+      return path.join(' > ');
     };
 
     return DependencyTree;
