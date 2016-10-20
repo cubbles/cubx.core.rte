@@ -21,61 +21,50 @@
     };
 
     /**
-     * Check if a certain exclude is referenced by any other artifact as dependency in the DependencyTree that is not
-     * a descendent of the node this exclude belongs to. This method needs to be called before removeDuplicates() is called!
+     * Mark all descendents of given node as excluded.
+     * @param {object} node A DependencyTree.Node whose descendents should be marked excluded
+     * @returns {object} the DependencyTree itself
      * @memberOf DependencyTree
-     * @param {object} node The current node the exclude belongs to
-     * @param {object} exclude The exclude to check. Holds properties webpackageId and artifactId
      * @private
      */
-    DependencyTree.prototype._isValidExclude = function (node, exclude) { // TODO: Test me!
-      // this array holds all nodes that conflict with the given exclude meaning they reference the
-      // same artifact but are not an descendents of the node the exclude belongs to
-      var conflicts = [];
-
-      // we assume that duplicates are not removed yet from DependencyTree. That's why we need to make sure that
-      // duplicates of this nodes are ignored
-      this.traverseBF(function (currentNode) {
-        if (currentNode.data.artifactId === exclude.artifactId &&
-          currentNode.data.webpackageId === exclude.webpackageId &&
-          !currentNode.equalsArtifact(node) && !currentNode.isDescendent(node)) {
-          conflicts.push(currentNode);
-        }
+    DependencyTree.prototype._markDescendentsAsExcluded = function (node) { // TODO: test me!
+      this.traverseSubtreeBF(node, function (currentNode) {
+        currentNode.excluded = true;
       });
-
-      if (window.cubx.CRC.getRuntimeMode() === 'dev') {
-        conflicts.forEach(function (conflictedNode) {
-          console.warn('Exclude ' + exclude.webpackageId + '/' + exclude.artifactId + ' on artifact ' +
-            node.data.getId() + ' will be ignored because of dependency ' + conflictedNode.getPathAsString());
-        });
-      }
-
-      return conflicts.length === 0;
+      return this;
     };
 
     /**
-     * Check all excludes defined in the trees nodes and remove them by moving them from data.dependencyExcludes array
-     * into data._removedDependencyExcludes array.
-     * @memberOf DependencyTree
-     * @returns {object} The DependencyTree itself
+     * Mark all excludes of given node in it's descendents.
      * @private
+     * @memberOf DependencyTree
+     * @return {object} DependencyTree
      */
-    DependencyTree.prototype._removeInvalidExcludes = function () { // TODO: Test me!
+    DependencyTree.prototype._markExcludedNodesInSubtree = function (node) { // TODO: test me!
+      var excludes = node.data.dependencyExcludes;
+
+      // mark all artifacts that are excluded explicitly
+      this.traverseSubtreeBF(node, function (currentNode) {
+        excludes.forEach(function (exclude) {
+          if (exclude.webpackageId === currentNode.data.webpackageId &&
+            exclude.artifactId === currentNode.data.artifactId) {
+            currentNode.excluded = true;
+            this._markDescendentsAsExcluded(currentNode);
+          }
+        }.bind(this));
+      }.bind(this));
+
+      return this;
+    };
+
+    /**
+     * Apply all excludes in DependencyTree. Note: this needs to be done before removeDuplicates() is called!
+     * @memberOf DependencyTree
+     * @returns {object} DependencyTree itself
+     */
+    DependencyTree.prototype.applyExcludes = function () {
       this.traverseBF(function (node) {
-        if (node.data.dependencyExcludes.length > 0) {
-          var validExcludes = [];
-          node.data.dependencyExcludes.forEach(function (exclude) {
-            if (this._isValidExclude(node, exclude)) {
-              // the exclude is valid, so we push it to the temporary validExcludes array
-              validExcludes.push(exclude);
-            } else {
-              // the exclude is not valid thus push it onto current.data._removedDependencyExcludes array
-              node.data._removedDependencyExcludes = node.data._removedDependencyExcludes || [];
-              node.data._removedDependencyExcludes.push(exclude);
-            }
-          }.bind(this));
-          node.data.dependencyExcludes = validExcludes;
-        }
+        if (node.data.dependencyExcludes.length > 0) this._markExcludedNodesInSubtree(node);
       }.bind(this));
 
       return this;
@@ -326,6 +315,12 @@
       this.data = null;
 
       /**
+       * True if node is excluded by any of it's ancestors
+       * @type {boolean}
+       */
+      this.excluded = false;
+
+      /**
        * References the parent node of this node.
        * @type {object}
        */
@@ -385,6 +380,24 @@
         path.splice(0, 0, current.data.getId());
       }
       return path.join(' > ');
+    };
+
+    /**
+     * Returns true if the node is a descendent of the given node. This also includes usedBy relations!
+     * @memberOf DependencyTree.Node
+     * @param {object} node A DependencyTree.Node
+     * @returns {boolean} true if the node is a descendent of the given node, false otherwise.
+     */
+    DependencyTree.Node.prototype.isDescendent = function (node) { // TODO: Test me!!
+      var parents = this.parent ? this.usedBy.concat(this.parent) : this.usedBy;
+
+      while (parents.length > 0) {
+        var current = parents.shift();
+        if (current.equals(node)) return true;
+        current.usedBy.forEach(function (item) { parents.push(item); });
+        if (current.parent != null) parents.push(current.parent);
+      }
+      return false;
     };
 
     return DependencyTree;

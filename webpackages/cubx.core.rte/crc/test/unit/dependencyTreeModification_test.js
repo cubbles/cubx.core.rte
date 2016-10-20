@@ -1,160 +1,173 @@
 /* globals describe, before, beforeEach, after, afterEach, it, expect*/
 'use strict';
 (function () {
-  window.cubx.amd.define(['dependencyTree', 'dependencyManager'], function (DependencyTree, DependencyMgr) {
-    var depTree;
-    var nodeA;
-    var nodeB;
-    var childA1;
-    var childA2;
-    var childB1;
-    var childB2;
-    var childA11;
-    var childB11;
-    var childB21;
-    var childA111;
-    var childB111;
-    var packages = {};
+  window.cubx.amd.define(['dependencyTree', 'dependencyManager', 'unit/utils/CubxNamespaceManager'],
+    function (DependencyTree, DependencyMgr, CubxNamespaceManager) {
+      var depTree;
+      var nodeA;
+      var nodeB;
+      var childA1;
+      var childA2;
+      var childB1;
+      var childB2;
+      var childA11;
+      var childB11;
+      var childB21;
+      var childA111;
+      var childB111;
+      var packages = {};
 
-    beforeEach(function () {
-      packages = {
-        pkg1: {webpackageId: 'package1@1.0.0', artifactId: 'util1'},
-        pkg2: {webpackageId: 'package2@1.0.0', artifactId: 'util2'},
-        pkg3: {webpackageId: 'package3@1.0.0', artifactId: 'util3'},
-        pkg4: {webpackageId: 'package4@1.0.0', artifactId: 'util4'},
-        pkg5: {webpackageId: 'package5@1.0.0', artifactId: 'util5'},
-        pkg6: {webpackageId: 'package6@1.0.0', artifactId: 'util6'}
-      };
-      /**
-       * build dependency tree that has the following structure:
-       *
-       *                  package1@1.0.0/util1                                package2@1.0.0/util2
-       *                     /         \                                           /         \
-       *                    /           \                                         /           \
-       *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5
-       *              |                                                       |                       |
-       *              |                                                       |                       |
-       *      package5@1.0.0/util5                                  package5@1.0.0/util5    package6@1.0.0/util6
-       *              |                                                       |
-       *              |                                                       |
-       *      package6@1.0.0/util6                                  package6@1.0.0/util6
-       */
-      depTree = new DependencyTree();
-      nodeA = new DependencyTree.Node();
-      nodeA.data = new DependencyMgr.DepReference({webpackageId: packages.pkg1.webpackageId, artifactId: packages.pkg1.artifactId, referrer: null});
-      nodeB = new DependencyTree.Node();
-      nodeB.data = new DependencyMgr.DepReference({webpackageId: packages.pkg2.webpackageId, artifactId: packages.pkg2.artifactId, referrer: null});
-      childA1 = new DependencyTree.Node();
-      childA1.data = new DependencyMgr.DepReference({webpackageId: packages.pkg3.webpackageId, artifactId: packages.pkg3.artifactId, referrer: packages.pkg1});
-      childA2 = new DependencyTree.Node();
-      childA2.data = new DependencyMgr.DepReference({webpackageId: packages.pkg4.webpackageId, artifactId: packages.pkg4.artifactId, referrer: packages.pkg1});
-      childB1 = new DependencyTree.Node();
-      childB1.data = new DependencyMgr.DepReference({webpackageId: packages.pkg3.webpackageId, artifactId: packages.pkg3.artifactId, referrer: packages.pkg2});
-      childB2 = new DependencyTree.Node();
-      childB2.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg2});
-      childA11 = new DependencyTree.Node();
-      childA11.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg3});
-      childB11 = new DependencyTree.Node();
-      childB11.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg3});
-      childB21 = new DependencyTree.Node();
-      childB21.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg5});
-      childA111 = new DependencyTree.Node();
-      childA111.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg5});
-      childB111 = new DependencyTree.Node();
-      childB111.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg5});
-      depTree.insertNode(nodeA);
-      depTree.insertNode(nodeB);
-      depTree.insertNode(childA1, nodeA);
-      depTree.insertNode(childA2, nodeA);
-      depTree.insertNode(childB1, nodeB);
-      depTree.insertNode(childB2, nodeB);
-      depTree.insertNode(childA11, childA1);
-      depTree.insertNode(childB11, childB1);
-      depTree.insertNode(childB21, childB2);
-      depTree.insertNode(childA111, childA11);
-      depTree.insertNode(childB111, childB11);
-    });
-    describe('DependencyTree Modification', function () {
-      describe('#removeDuplicates()', function () {
-        it('should return the DependencyTree itself', function () {
-          expect(depTree.removeDuplicates()).to.be.an.instanceOf(DependencyTree);
-        });
-        it('should remove all duplicated nodes from DependencyTree. Only the first one that is found using breadth-first traversal is kept.', function () {
-          depTree.removeDuplicates();
-          /**
-           * Check if cleaned dependency tree has the following structure:
-           *
-           *                  package1@1.0.0/util1                                package2@1.0.0/util2
-           *                     /         \                                           /
-           *                    /           \                                         /
-           *      package3@1.0.0/util3    package4@1.0.0/util4          package5@1.0.0/util5
-           *                                                                      |
-           *                                                                      |
-           *                                                            package6@1.0.0/util6
-           */
-          depTree._rootNodes.should.be.eql([nodeA, nodeB]);
-          depTree._rootNodes[0].children.should.be.eql([childA1, childA2]);
-          depTree._rootNodes[0].children[0].children.should.be.eql([]);
-          depTree._rootNodes[0].children[1].children.should.be.eql([]);
-          depTree._rootNodes[1].children.should.be.eql([childB2]);
-          depTree._rootNodes[1].children[0].children.should.be.eql([childB21]);
-        });
-        it('should return DependencyTree which contains each webpackage exactly once', function () {
-          // packageIds in breadth first order
-          var packageIds = [
-            'package1@1.0.0/util1',
-            'package2@1.0.0/util2',
-            'package3@1.0.0/util3',
-            'package4@1.0.0/util4',
-            'package5@1.0.0/util5',
-            'package6@1.0.0/util6'
-          ];
-          depTree.removeDuplicates();
-          var count = 0;
-          depTree.traverseBF(function (node) {
-            expect(packageIds[count]).to.eql(node.data.getId());
-            count++;
+      beforeEach(function () {
+        packages = {
+          pkg1: {webpackageId: 'package1@1.0.0', artifactId: 'util1'},
+          pkg2: {webpackageId: 'package2@1.0.0', artifactId: 'util2'},
+          pkg3: {webpackageId: 'package3@1.0.0', artifactId: 'util3'},
+          pkg4: {webpackageId: 'package4@1.0.0', artifactId: 'util4'},
+          pkg5: {webpackageId: 'package5@1.0.0', artifactId: 'util5'},
+          pkg6: {webpackageId: 'package6@1.0.0', artifactId: 'util6'}
+        };
+        /**
+         * build dependency tree that has the following structure:
+         *
+         *                  package1@1.0.0/util1                                package2@1.0.0/util2
+         *                     /         \                                           /         \
+         *                    /           \                                         /           \
+         *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5
+         *              |                                                       |                       |
+         *              |                                                       |                       |
+         *      package5@1.0.0/util5                                  package5@1.0.0/util5    package6@1.0.0/util6
+         *              |                                                       |
+         *              |                                                       |
+         *      package6@1.0.0/util6                                  package6@1.0.0/util6
+         */
+        depTree = new DependencyTree();
+        nodeA = new DependencyTree.Node();
+        nodeA.data = new DependencyMgr.DepReference({webpackageId: packages.pkg1.webpackageId, artifactId: packages.pkg1.artifactId, referrer: null});
+        nodeB = new DependencyTree.Node();
+        nodeB.data = new DependencyMgr.DepReference({webpackageId: packages.pkg2.webpackageId, artifactId: packages.pkg2.artifactId, referrer: null});
+        childA1 = new DependencyTree.Node();
+        childA1.data = new DependencyMgr.DepReference({webpackageId: packages.pkg3.webpackageId, artifactId: packages.pkg3.artifactId, referrer: packages.pkg1});
+        childA2 = new DependencyTree.Node();
+        childA2.data = new DependencyMgr.DepReference({webpackageId: packages.pkg4.webpackageId, artifactId: packages.pkg4.artifactId, referrer: packages.pkg1});
+        childB1 = new DependencyTree.Node();
+        childB1.data = new DependencyMgr.DepReference({webpackageId: packages.pkg3.webpackageId, artifactId: packages.pkg3.artifactId, referrer: packages.pkg2});
+        childB2 = new DependencyTree.Node();
+        childB2.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg2});
+        childA11 = new DependencyTree.Node();
+        childA11.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg3});
+        childB11 = new DependencyTree.Node();
+        childB11.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg3});
+        childB21 = new DependencyTree.Node();
+        childB21.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg5});
+        childA111 = new DependencyTree.Node();
+        childA111.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg5});
+        childB111 = new DependencyTree.Node();
+        childB111.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg5});
+        depTree.insertNode(nodeA);
+        depTree.insertNode(nodeB);
+        depTree.insertNode(childA1, nodeA);
+        depTree.insertNode(childA2, nodeA);
+        depTree.insertNode(childB1, nodeB);
+        depTree.insertNode(childB2, nodeB);
+        depTree.insertNode(childA11, childA1);
+        depTree.insertNode(childB11, childB1);
+        depTree.insertNode(childB21, childB2);
+        depTree.insertNode(childA111, childA11);
+        depTree.insertNode(childB111, childB11);
+      });
+      describe('DependencyTree Modification', function () {
+        describe('#removeDuplicates()', function () {
+          it('should return the DependencyTree itself', function () {
+            expect(depTree.removeDuplicates()).to.be.an.instanceOf(DependencyTree);
           });
-          count.should.be.eql(6);
+          it('should remove all duplicated nodes from DependencyTree. Only the first one that is found using breadth-first traversal is kept.', function () {
+            depTree.removeDuplicates();
+            /**
+             * Check if cleaned dependency tree has the following structure:
+             *
+             *                  package1@1.0.0/util1                                package2@1.0.0/util2
+             *                     /         \                                           /
+             *                    /           \                                         /
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package5@1.0.0/util5
+             *                                                                      |
+             *                                                                      |
+             *                                                            package6@1.0.0/util6
+             */
+            depTree._rootNodes.should.be.eql([nodeA, nodeB]);
+            depTree._rootNodes[0].children.should.be.eql([childA1, childA2]);
+            depTree._rootNodes[0].children[0].children.should.be.eql([]);
+            depTree._rootNodes[0].children[1].children.should.be.eql([]);
+            depTree._rootNodes[1].children.should.be.eql([childB2]);
+            depTree._rootNodes[1].children[0].children.should.be.eql([childB21]);
+          });
+          it('should return DependencyTree which contains each webpackage exactly once', function () {
+            // packageIds in breadth first order
+            var packageIds = [
+              'package1@1.0.0/util1',
+              'package2@1.0.0/util2',
+              'package3@1.0.0/util3',
+              'package4@1.0.0/util4',
+              'package5@1.0.0/util5',
+              'package6@1.0.0/util6'
+            ];
+            depTree.removeDuplicates();
+            var count = 0;
+            depTree.traverseBF(function (node) {
+              expect(packageIds[count]).to.eql(node.data.getId());
+              count++;
+            });
+            count.should.be.eql(6);
+          });
+          it('should create correct \'usedBy\' and \'usesExisting\' relations', function () {
+            depTree.removeDuplicates();
+            nodeB.usesExisting.should.be.eql([childA1]);
+            childA1.usedBy.should.be.eql([nodeB]);
+            childA1.usesExisting.should.be.eql([childB2]);
+            childB2.usedBy.should.be.eql([childA1]);
+          });
         });
-        it('should create correct \'usedBy\' and \'usesExisting\' relations', function () {
-          depTree.removeDuplicates();
-          nodeB.usesExisting.should.be.eql([childA1]);
-          childA1.usedBy.should.be.eql([nodeB]);
-          childA1.usesExisting.should.be.eql([childB2]);
-          childB2.usedBy.should.be.eql([childA1]);
-        });
-      });
-      describe('#applyExcludes()', function () {
-        it('should return the DependencyTree itself', function () {
-          // TODO: implement me!
-        });
-      });
-      describe('#_isValidExclude', function () {
-        it('should return true if exclude is valid', function () {
-          // TODO: implement me!
+        describe('#applyExcludes()', function () {
+          var childB3;
 
+          beforeEach(function () {
+            /**
+             * apply some excludes to given tree like follows (excludes in []). Add a child node package4 to invalidate exclude [package4]
+             *
+             *                  package1@1.0.0/util1 [package4]                           package2@1.0.0/util2 [package5]
+             *                     /         \                                           /         \          \_______________
+             *                    /           \                                         /           \                         \
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5   package4@1.0.0/util4
+             *              |   [package6]                                          |   [package6]          |
+             *              |                                                       |                       |
+             *      package5@1.0.0/util5                                  package5@1.0.0/util5    package6@1.0.0/util6
+             *              |                                                       |
+             *              |                                                       |
+             *      package6@1.0.0/util6                                  package6@1.0.0/util6
+             */
+            nodeA.data.dependencyExcludes = [{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }];
+            childA1.data.dependencyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+            nodeB.data.dependencyExcludes = [{ webpackageId: 'package5@1.0.0', artifactId: 'util5' }];
+            childB1.data.dependenyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+            childB3 = new DependencyTree.Node();
+            childB3.data = new DependencyMgr.DepReference({webpackageId: packages.pkg4.webpackageId, artifactId: packages.pkg4.artifactId, referrer: packages.pkg2});
+            depTree.insertNode(childB3, nodeB);
+          });
+          it('should mark all excluded Nodes', function () {
+            depTree.applyExcludes();
+            nodeA.excluded.should.be.false;
+            nodeB.excluded.should.be.false;
+            childA1.excluded.should.be.false;
+            childA2.excluded.should.be.true;
+            childB1.excluded.should.be.false;
+            childB2.excluded.should.be.true;
+            childB3.excluded.should.be.false;
+            childA11.excluded.should.be.false;
+            childA111.excluded.should.be.true;
+            childB11.excluded.should.be.true;
+            childB21.excluded.should.be.true;
+            childB111.excluded.should.be.true;
+          });
         });
-        it('should return false if exclude is invalid ', function () {
-          // TODO: implement me!
-
-        });
-        it('should log warnings for invalid excludes on console if runtimeMode = \'dev\'', function () {
-          // TODO: implement me!
-
-        });
-        // describe('should resolve the excludes using the following rules:', function () {
-        //   it('A dependency package1@1.0.0/util1 on level n always overwrites an exclude package1@1.0.0/util1 on level n + k (k >= 1) within the same subtree', function () {
-        //     childA1.data.dependencyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
-        //     childA2.data.dependencyExcludes = [{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }];
-        //     depTree._filterExcludesWithinSubtree(nodeA);
-        //     childA1.data.dependencyExcludes.should.eql([{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }]);
-        //     childA1.data.should.not.have.ownProperty('_removedDependencyExcludes');
-        //     childA2.data.dependencyExcludes.should.eql([]);
-        //     childA2.data._removedDependencyExcludes.should.eql([{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }]);
-        //   });
-        // });
       });
     });
-  });
 })();
