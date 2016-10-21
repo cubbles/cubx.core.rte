@@ -126,6 +126,9 @@
             childB2.usedBy.should.be.eql([childA1]);
           });
         });
+        describe('#_removeDuplicate()', function () {
+          // TODO: test correct calculation of valid excludes when removing a duplicated node!
+        });
         describe('#applyExcludes()', function () {
           var childB3;
 

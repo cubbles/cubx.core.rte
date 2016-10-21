@@ -58,6 +58,50 @@
     };
 
     /**
+     * Removes a duplicate from the DependencyTree. When removing duplicates the excludes of duplicated Node and duplicate Node
+     * are merged. Only nodes, which are excluded in both nodes or their descendants. It also will be checked if duplicated
+     * and duplicate node are excluded or not.
+     * @memberOf DependencyTree
+     * @param {object} duplicated DependencyTree.Node that is duplicated
+     * @param {object} duplicate DependencyTree.Node that duplicates the duplicated node
+     * @private
+     */
+    DependencyTree.prototype._removeDuplicate = function (duplicated, duplicate) { // TODO: test me!!
+      var nodesOfDuplicated = [];
+      var nodesOfDuplicate = [];
+
+      // If duplicated node is excluded but duplicate node is not excluded we need to make exclude of duplicated invalid
+      if (duplicated.excluded && !duplicate.excluded) duplicated.excluded = false;
+
+      // collect all nodes in subtree of duplicated node
+      this.traverseSubtreeBF(duplicated, function (node) {
+        nodesOfDuplicated.push(node);
+      });
+      // collect all nodes in subtree of duplicate node
+      this.traverseSubtreeBF(duplicate, function (node) {
+        nodesOfDuplicate.push(node);
+      });
+
+      // calculate the intersection of all excluded nodes. Only nodes that are excluded in both subtrees are removed
+      nodesOfDuplicated.forEach(function (node, idx) {
+        var duplicate = nodesOfDuplicate[idx];
+
+        // the exclude on duplicate node is invalid because the same node is not marked as excluded in duplicated subtree
+        if (!node.excluded && duplicate.excluded) duplicate.excluded = false;
+
+        // the exclude on duplicated node is invalid because the same node is not marked as excluded in duplicate subtree
+        if (node.excluded && !duplicate.excluded) node.excluded = false;
+      });
+
+      // if duplicate is not a root node we need to set usesExisting and usedBy of the duplicates parent
+      if (duplicate.parent != null) {
+        duplicate.parent.usesExisting.push(duplicated);
+        duplicated.usedBy.push(duplicate.parent);
+      }
+      this.removeNode(duplicate);
+    };
+
+    /**
      * Apply all excludes in DependencyTree. Note: this needs to be done before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} DependencyTree itself
@@ -167,12 +211,7 @@
 
       this.traverseBF(function (node) {
         if (this.contains(node) && nodesBF.hasOwnProperty(node.data.getId())) {
-          var existingNode = nodesBF[node.data.getId()];
-          if (node.parent != null) {
-            node.parent.usesExisting.push(existingNode);
-            existingNode.usedBy.push(node.parent);
-          }
-          this.removeNode(node);
+          this._removeDuplicate(nodesBF[node.data.getId()], node);
         } else {
           nodesBF[node.data.getId()] = node;
         }
@@ -309,6 +348,12 @@
      */
     DependencyTree.Node = function () {
       /**
+       * Holds a list of (ordered) children of the node.
+       * @type {Array}
+       */
+      this.children = [];
+
+      /**
        * Stores the data of the node. Normally this will be an instance of DependencyMgr.DepReference
        * @type {object|misc}
        */
@@ -327,10 +372,10 @@
       this.parent = null;
 
       /**
-       * Holds a list of (ordered) children of the node.
+       * Holds a list of all Nodes that references this node in their usesExisting property
        * @type {Array}
        */
-      this.children = [];
+      this.usedBy = [];
 
       /**
        * References other existing nodes from the DependencyTree. This is used to resolve redundant Dependency Nodes
@@ -338,12 +383,6 @@
        * @type {object}
        */
       this.usesExisting = [];
-
-      /**
-       * Holds a list of all Nodes that references this node in their usesExisting property
-       * @type {Array}
-       */
-      this.usedBy = [];
     };
 
     /**
