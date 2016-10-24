@@ -125,6 +125,39 @@
             childA1.usesExisting.should.be.eql([childB2]);
             childB2.usedBy.should.be.eql([childA1]);
           });
+          it('should set excludes value on each remaining node correctly', function () {
+            /**
+             * apply some excludes to given tree like follows (excludes in []). Add a child node package4 to invalidate exclude [package4]
+             *
+             *                  package1@1.0.0/util1 [package4]                           package2@1.0.0/util2 [package5]
+             *                     /         \                                           /         \          \_______________
+             *                    /           \                                         /           \                         \
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5   package4@1.0.0/util4
+             *              |   [package6]                                          |   [package6]          |
+             *              |                                                       |                       |
+             *      package5@1.0.0/util5                                  package5@1.0.0/util5    package6@1.0.0/util6
+             *              |                                                       |
+             *              |                                                       |
+             *      package6@1.0.0/util6                                  package6@1.0.0/util6
+             */
+            nodeA.data.dependencyExcludes = [{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }];
+            childA1.data.dependencyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+            nodeB.data.dependencyExcludes = [{ webpackageId: 'package5@1.0.0', artifactId: 'util5' }];
+            childB1.data.dependenyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+            var childB3 = new DependencyTree.Node();
+            childB3.data = new DependencyMgr.DepReference({webpackageId: packages.pkg4.webpackageId, artifactId: packages.pkg4.artifactId, referrer: packages.pkg2});
+            depTree.insertNode(childB3, nodeB);
+
+            depTree.applyExcludes();
+            depTree.removeDuplicates();
+
+            nodeA.excluded.should.be.false;
+            nodeB.excluded.should.be.false;
+            childA1.excluded.should.be.false;
+            childA2.excluded.should.be.false;
+            childB2.excluded.should.be.false;
+            childB21.excluded.should.be.true;
+          });
         });
         describe('#_removeDuplicate()', function () {
           it('should set excluded value of duplicated node to false if duplicate node has excluded value of false', function () {

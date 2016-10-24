@@ -148,12 +148,9 @@ window.cubx.amd.define(
       var rootDependencies = get(window, 'cubx.CRCInit.rootDependencies') || [];
       this._buildRawDependencyTree(this._createDepReferenceListFromArtifactDependencies(rootDependencies, null), this._baseUrl)
         .then(function (depTree) {
-          // this._depTree = depTree;
-          console.log(depTree);
           return this._checkDepTreeForExcludes(depTree, this._baseUrl);
         }.bind(this))
         .then(function (depTree) {
-          console.log(depTree);
           this._depTree = depTree;
         }.bind(this), function (error) {
           console.error('Error while building and processing DependencyTree: ', error);
