@@ -27,7 +27,7 @@
      * @memberOf DependencyTree
      * @private
      */
-    DependencyTree.prototype._markDescendentsAsExcluded = function (node) { // TODO: test me!
+    DependencyTree.prototype._markDescendentsAsExcluded = function (node) {
       this.traverseSubtreeBF(node, function (currentNode) {
         currentNode.excluded = true;
       });
@@ -40,7 +40,7 @@
      * @memberOf DependencyTree
      * @return {object} DependencyTree
      */
-    DependencyTree.prototype._markExcludedNodesInSubtree = function (node) { // TODO: test me!
+    DependencyTree.prototype._markExcludedNodesInSubtree = function (node) {
       var excludes = node.data.dependencyExcludes;
 
       // mark all artifacts that are excluded explicitly
@@ -66,7 +66,7 @@
      * @param {object} duplicate DependencyTree.Node that duplicates the duplicated node
      * @private
      */
-    DependencyTree.prototype._removeDuplicate = function (duplicated, duplicate) { // TODO: test me!!
+    DependencyTree.prototype._removeDuplicate = function (duplicated, duplicate) {
       var nodesOfDuplicated = [];
       var nodesOfDuplicate = [];
 
@@ -403,7 +403,7 @@
      * @param {object} node DependencyTree.Node to compare to
      * @returns {boolean} true if artifactId and webpackageId are equal, false otherwise
      */
-    DependencyTree.Node.prototype.equalsArtifact = function (node) { // TODO: Test me!
+    DependencyTree.Node.prototype.equalsArtifact = function (node) {
       return node.data.getId() === this.data.getId();
     };
 
@@ -412,7 +412,7 @@
      * @memberOf DependencyTree.Node
      * @return {string}
      */
-    DependencyTree.Node.prototype.getPathAsString = function () { // TODO: test me!
+    DependencyTree.Node.prototype.getPathAsString = function () {
       var current = this;
       var path = [current.data.getId()];
       while (current.parent) {
@@ -423,12 +423,12 @@
     };
 
     /**
-     * Returns true if the node is a descendent of the given node. This also includes usedBy relations!
+     * Returns true if the node is a descendant of the given node. This also includes usedBy relations!
      * @memberOf DependencyTree.Node
      * @param {object} node A DependencyTree.Node
      * @returns {boolean} true if the node is a descendent of the given node, false otherwise.
      */
-    DependencyTree.Node.prototype.isDescendent = function (node) { // TODO: Test me!!
+    DependencyTree.Node.prototype.isDescendantOf = function (node) {
       var parents = this.parent ? this.usedBy.concat(this.parent) : this.usedBy;
 
       while (parents.length > 0) {

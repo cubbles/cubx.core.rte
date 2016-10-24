@@ -1,7 +1,7 @@
 /* globals describe, before, beforeEach, after, afterEach, it, expect*/
 'use strict';
 (function () {
-  window.cubx.amd.define(['dependencyTree'], function (DependencyTree) {
+  window.cubx.amd.define(['dependencyTree', 'dependencyManager'], function (DependencyTree, DependencyMgr) {
     describe('DependencyTree', function () {
       var depTree;
       var rootNode1;
@@ -167,6 +167,87 @@
         it('should return false if given node is not member of the DependencyTree', function () {
           var node = new DependencyTree.Node();
           expect(depTree.contains(node)).to.be.false;
+        });
+      });
+    });
+    describe('DependencyTree.Node', function () {
+      var depTree;
+      var rootNode1;
+      var rootNode2;
+      var childA;
+      var childB;
+      var childC;
+      var childD;
+      var childE;
+      var childF;
+      var childG;
+      var childH;
+
+      beforeEach(function () {
+        /**
+         * init tree and put some nodes in it. Following tree will be created:
+         *
+         *           rootNode1          rootNode2
+         *              |                 /   \
+         *              |                /     \
+         *            childC         childA   childB
+         *            /   \            |       /   \
+         *           /     \           |      /     \
+         *      childD   childE    childF   childG   childH
+         */
+        depTree = new DependencyTree();
+        rootNode1 = new DependencyTree.Node();
+        rootNode1.data = {prop1: 'test', prop2: 1234};
+        childC = new DependencyTree.Node();
+        childC.parent = rootNode1;
+        rootNode1.children = [childC];
+        rootNode2 = new DependencyTree.Node();
+        rootNode2.data = {prop1: 'test2', prop2: 4321};
+        childA = new DependencyTree.Node();
+        childA.parent = rootNode2;
+        childB = new DependencyTree.Node();
+        childB.parent = rootNode2;
+        rootNode2.children = [childA, childB];
+        depTree._rootNodes = [rootNode1, rootNode2];
+        childD = new DependencyTree.Node();
+        childD.parent = childC;
+        childE = new DependencyTree.Node();
+        childE.parent = childC;
+        childC.children = [childD, childE];
+        childF = new DependencyTree.Node();
+        childF.parent = childA;
+        childA.children = [childF];
+        childG = new DependencyTree.Node();
+        childG.parent = childB;
+        childH = new DependencyTree.Node();
+        childH.parent = childB;
+        childB.children = [childG, childH];
+      });
+      describe('#equalsArtifcat()', function () {
+        it('should return true if given node references same artifact (based on artifactId and webpackageId)', function () {
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
+          expect(childA.equalsArtifact(childB)).to.be.true;
+        });
+        it('should return false if given node references a different artifact', function () {
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgB', artifactId: 'artifactB', referrer: null});
+          expect(childA.equalsArtifact(childB)).to.be.false;
+        });
+      });
+      describe('#getPathAsString()', function () {
+        it('should return a string containing the path from root down to node using [webpackageId]/[artifactId] as node names', function () {
+          rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
+          childC.data = new DependencyMgr.DepReference({webpackageId: 'pkgC', artifactId: 'artifactC', referrer: null});
+          childD.data = new DependencyMgr.DepReference({webpackageId: 'pkgD', artifactId: 'artifactD', referrer: null});
+          var path = childD.getPathAsString();
+          path.should.equal('pkgA/artifactA > pkgC/artifactC > pkgD/artifactD');
+        });
+      });
+      describe('#isDescendantOf()', function () {
+        it('should return true if node is a descendant of given node', function () {
+          expect(childD.isDescendantOf(rootNode1)).to.be.true;
+          expect(childD.isDescendantOf(rootNode2)).to.be.false;
         });
       });
     });
