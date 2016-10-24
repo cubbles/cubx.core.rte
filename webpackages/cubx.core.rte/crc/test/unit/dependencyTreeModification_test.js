@@ -125,7 +125,7 @@
             childA1.usesExisting.should.be.eql([childB2]);
             childB2.usedBy.should.be.eql([childA1]);
           });
-          it('should set excludes value on each remaining node correctly', function () {
+          it('should set excluded value on each remaining node correctly', function () {
             /**
              * apply some excludes to given tree like follows (excludes in []). Add a child node package4 to invalidate exclude [package4]
              *
@@ -252,6 +252,27 @@
             childB11.excluded.should.be.true;
             childB21.excluded.should.be.true;
             childB111.excluded.should.be.true;
+          });
+        });
+        describe('#applyGlobalExclude()', function () {
+          it('should return the DependencyTree itself', function () {
+            // depTree.applyGlobalExclude('')
+          });
+          it('should set exclude value to true for all appearances of given artifact', function () {
+            depTree.applyGlobalExclude(packages.pkg3.webpackageId, packages.pkg3.artifactId);
+            childA1.excluded.should.be.true;
+            childA11.excluded.should.be.true;
+            childA111.excluded.should.be.true;
+            childB1.excluded.should.be.true;
+            childB11.excluded.should.be.true;
+            childB111.excluded.should.be.true;
+
+            // for each other node excluded should be set to false
+            nodeA.excluded.should.be.false;
+            nodeB.excluded.should.be.false;
+            childA2.excluded.should.be.false;
+            childB2.excluded.should.be.false;
+            childB21.excluded.should.be.false;
           });
         });
       });

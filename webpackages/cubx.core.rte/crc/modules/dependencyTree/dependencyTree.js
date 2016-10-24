@@ -115,6 +115,25 @@
     };
 
     /**
+     * Mark all appearances of given artifact in DependencyTree as excluded. This should be done before removeDuplicates()
+     * is called.
+     * @memberOf DependencyTree
+     * @param {string} webpackageId
+     * @param {string} artifactId
+     * @returns {object} DependencyTree itself
+     */
+    DependencyTree.prototype.applyGlobalExclude = function (webpackageId, artifactId) {
+      this.traverseBF(function (node) {
+        if (node.data.artifactId === artifactId && node.data.webpackageId === webpackageId) {
+          node.excluded = true;
+          this._markDescendentsAsExcluded(node);
+        }
+      }.bind(this));
+
+      return this;
+    };
+
+    /**
      * Check if the given node is in DependencyTree.
      * @memberOf DependencyTree
      * @param {object} node
