@@ -127,7 +127,57 @@
           });
         });
         describe('#_removeDuplicate()', function () {
-          // TODO: test correct calculation of valid excludes when removing a duplicated node!
+          it('should set excluded value of duplicated node to false if duplicate node has excluded value of false', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = true;
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB1.excluded = false;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.false;
+          });
+          it('should keep excluded value true of duplicated node if duplicate node has excluded value of true as well', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = true;
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB1.excluded = true;
+            childB11.excluded = true;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.true;
+          });
+          it('should keep excluded value false of duplicated node if duplicate node has excluded value of false as well', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = false;
+            childB1.excluded = false;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.false;
+          });
+          it('should keep excluded value false of duplicated node if duplicate node has excluded value of true', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = false;
+            childB1.excluded = true;
+            childB11.excluded = true;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.false;
+          });
+          it('should only mark nodes as excluded if they are excluded in subtree of duplicated node as well as in ' +
+            'subtree of duplicate node', function () {
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB11.excluded = false;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA11.excluded = false;
+            childA111.excluded = true;
+          });
         });
         describe('#applyExcludes()', function () {
           var childB3;

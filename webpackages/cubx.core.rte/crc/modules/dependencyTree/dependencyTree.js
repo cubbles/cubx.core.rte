@@ -70,7 +70,7 @@
       var nodesOfDuplicated = [];
       var nodesOfDuplicate = [];
 
-      // If duplicated node is excluded but duplicate node is not excluded we need to make exclude of duplicated invalid
+      // If duplicated node is excluded but duplicate node is not excluded we need to make exclude of duplicated node invalid
       if (duplicated.excluded && !duplicate.excluded) duplicated.excluded = false;
 
       // collect all nodes in subtree of duplicated node
@@ -203,6 +203,7 @@
     /**
      * Remove all duplicate Dependencies from DependencyTree. Nodes are considered equal if the assigned webpackageId
      * and artifactId is equal.
+     * Note: applyExcludes() needs to be called before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} The DependencyTree without duplicates
      */
