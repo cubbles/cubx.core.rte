@@ -62,7 +62,9 @@
                     requestedPkg = JSON.parse(pkg6);
                 }
                 if (requestedPkg) {
-                  window.setTimeout(function () { resolve(dependencies); }, 200);
+                  window.setTimeout(function () {
+                    resolve({dependencies: dependencies, resources: requestedPkg.artifacts.utilities[0].resources});
+                  }, 200);
                 } else if (!(dep instanceof DepMgr.DepReference)) {
                   throw new TypeError();
                 } else {
@@ -212,36 +214,39 @@
           it('should return a promise', function () {
             expect(depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl)).to.be.an.instanceOf(Promise);
           });
-          it('should resolve the returned promise with an array containing the dependencies of given dependency', function () {
+          it('should resolve the returned promise with an object containing an array of the dependencies of given depRef item and all the resources for the given depRefItem', function () {
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              result.should.be.an.instanceOf(Array);
-              result.should.have.lengthOf(2);
-              result[0].should.be.an.instanceOf(DepMgr.DepReference);
-              result[1].should.be.an.instanceOf(DepMgr.DepReference);
-              expect(result[0].getId()).to.equal('package3@1.0.0/util3');
-              expect(result[1].getId()).to.equal('package4@1.0.0/util4');
+              result.should.be.an.instanceOf(Object);
+              result.should.have.property('resources');
+              result.should.have.property('dependencies');
+              result.resources.should.eql([ 'js/pack1.js', 'css/pack1.css' ]);
+              result.dependencies.should.have.lengthOf(2);
+              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
             });
           });
           it('should use inline manifest from given dependency if there is any', function () {
             depRefItem.manifest = JSON.parse(pkg1);
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
               expect(stub.callCount).to.equal(0);
-              result.should.have.lengthOf(2);
-              result[0].should.be.an.instanceOf(DepMgr.DepReference);
-              result[1].should.be.an.instanceOf(DepMgr.DepReference);
-              expect(result[0].getId()).to.equal('package3@1.0.0/util3');
-              expect(result[1].getId()).to.equal('package4@1.0.0/util4');
+              result.dependencies.should.have.lengthOf(2);
+              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
             });
           });
           it('should use manifest from responseCache if there is already one for given webpackageId', function () {
             depMgr._responseCache.addItem(depRefItem.webpackageId, JSON.parse(pkg1));
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
               expect(stub.callCount).to.equal(0);
-              result.should.have.lengthOf(2);
-              result[0].should.be.an.instanceOf(DepMgr.DepReference);
-              result[1].should.be.an.instanceOf(DepMgr.DepReference);
-              expect(result[0].getId()).to.equal('package3@1.0.0/util3');
-              expect(result[1].getId()).to.equal('package4@1.0.0/util4');
+              result.dependencies.should.have.lengthOf(2);
+              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
             });
           });
           it('should add inline or requested manifest to response cache if there is no entry for corresponding webpackageId', function () {

@@ -151,7 +151,15 @@ window.cubx.amd.define(
           return this._checkDepTreeForExcludes(depTree, this._baseUrl);
         }.bind(this))
         .then(function (depTree) {
-          this._depTree = depTree;
+          depTree.applyExcludes();
+          depTree.removeDuplicates();
+          depTree.removeExcludes();
+
+          console.log(depTree);
+          var allDependencies = this._getDependencyListFromTree(depTree);
+          var resourceList = this._calculateResourceList(allDependencies);
+          // this._injectDependenciesToDom(resourceList);
+          console.log(resourceList);
         }.bind(this), function (error) {
           console.error('Error while building and processing DependencyTree: ', error);
         });
@@ -176,6 +184,21 @@ window.cubx.amd.define(
       } else {
         throw new TypeError('parameter "next" needs to be a function');
       }
+    };
+
+    /**
+     * @memberOf DependencyMgr
+     * @private
+     * @param {object} depTree a DependencyTree instance
+     * @returns {object} Array representing a list of depReference items.
+     */
+    DependencyMgr.prototype._getDependencyListFromTree = function (depTree) { // TODO: Test me!
+      var depList = [];
+      depTree.traverseBF(function (node) {
+        depList.push(node.data);
+      });
+      depList.reverse();
+      return depList;
     };
 
     /**
@@ -436,7 +459,8 @@ window.cubx.amd.define(
             // create and insert node in DependencyTree for each resolved dependency
             results.forEach(function (result, index) {
               var parentNode = parentNodes[index];
-              result.forEach(function (depRefItem) {
+              parentNode.data.resources = result.resources;
+              result.dependencies.forEach(function (depRefItem) {
                 var node = new DependencyTree.Node();
                 node.data = depRefItem;
                 depTree.insertNode(node, parentNode);
@@ -563,7 +587,8 @@ window.cubx.amd.define(
      * Helper for resolving all Dependencies of a given DepReference item for creating the DependencyTree. In contrast
      * to method _resolveDepReference() there will be no caching of resolved artifacts. Only the response cache will be
      * used to avoid requesting the same manifest multiple times. The returned promise is resolved with an array of
-     * DepReference items representing the Dependencies for the given depReference.
+     * DepReference items representing the Dependencies for the given depReference. In addition the assigned resources for
+     * the given depReference will be returned.
      * @memberOf DependencyMgr
      * @param {object} depReference A DepReference item
      * @param {string} baseUrl The URL from which the manifest.webpackage files should be requested.
@@ -590,7 +615,11 @@ window.cubx.amd.define(
           if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
             dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
           }
-          resolve(dependencies);
+          // resolve(dependencies);
+          resolve({
+            resources: artifact.resources || [],
+            dependencies: dependencies
+          });
         }.bind(this);
 
         // append '/' to baseUrl if not present
@@ -643,7 +672,7 @@ window.cubx.amd.define(
             console.error('Expected parameter to be an object containing at least string property "artifactId": ', dependency);
             valid = false;
           }
-          // check if depdencies manifest property is of type object (in case there is a manifest property)
+          // check if dependencies manifest property is of type object (in case there is a manifest property)
           if (dependency.hasOwnProperty('manifest') && typeof dependency.manifest !== 'object') {
             console.error('Expected parameter to be an object containing at least string property "artifactId": ', dependency);
             valid = false;
