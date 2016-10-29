@@ -79,6 +79,18 @@
           var node = depTree.removeNode(childA);
           expect(node).to.eql(childA);
         });
+        it('should remove given node from usesExisting array of all nodes inside given nodes usedBy array', function () {
+          childA.usesExisting = [childC];
+          childC.usedBy = [childA];
+          depTree.removeNode(childC);
+          childA.usesExisting.should.have.lengthOf(0);
+        });
+        it('should log an error if given parameter is not a DependencyTree.Node instance', function () {
+          var spy = sinon.spy(console, 'error');
+          depTree.removeNode({});
+          expect(spy.calledOnce);
+          spy.restore();
+        });
       });
       describe('#traverseDF()', function () {
         it('should traverse the tree in depth first pre-order and call the given callback with each visited node', function () {

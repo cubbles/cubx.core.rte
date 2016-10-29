@@ -354,7 +354,12 @@
         if (index >= 0) {
           node.parent = null;
           children.splice(index, 1);
-          // TODO: we need to remove node also in usesExisting array of all nodes referenced in node's usedBy array
+          // remove node also in usesExisting array of all nodes referenced in node's usedBy array
+          node.usedBy.forEach(function (current) {
+            current.usesExisting = current.usesExisting.filter(function (element) {
+              return !node.equals(element);
+            });
+          });
           return node;
         } else {
           return null;
