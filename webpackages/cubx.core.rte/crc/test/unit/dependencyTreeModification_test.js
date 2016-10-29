@@ -214,7 +214,6 @@
         });
         describe('#applyExcludes()', function () {
           var childB3;
-
           beforeEach(function () {
             /**
              * apply some excludes to given tree like follows (excludes in []). Add a child node package4 to invalidate exclude [package4]
@@ -273,6 +272,54 @@
             childA2.excluded.should.be.false;
             childB2.excluded.should.be.false;
             childB21.excluded.should.be.false;
+          });
+        });
+        describe('#removeExcludes()', function () {
+          beforeEach(function () {
+            /**
+             * mark some nodes as [excluded] in original dependency tree
+             *
+             *                  package1@1.0.0/util1                                package2@1.0.0/util2
+             *                     /         \                                           /         \
+             *                    /           \                                         /           \
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    [package5@1.0.0/util5]
+             *              |                                                       |                       |
+             *              |                                                       |                       |
+             *      [package5@1.0.0/util5]                                [package5@1.0.0/util5]  [package6@1.0.0/util6]
+             *              |                                                       |
+             *              |                                                       |
+             *      [package6@1.0.0/util6]                                [package6@1.0.0/util6]
+             */
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB11.excluded = true;
+            childB111.excluded = true;
+            childB2.excluded = true;
+            childB21.excluded = true;
+            depTree.removeDuplicates();
+          });
+          it('should remove all nodes which have property excludes set to true', function () {
+            /**
+             * After removing excluded nodes tree should look like following
+             *
+             *                  package1@1.0.0/util1                                package2@1.0.0/util2
+             *                     /         \
+             *                    /           \
+             *      package3@1.0.0/util3    package4@1.0.0/util4
+             */
+            depTree.removeExcludes();
+            depTree._rootNodes.should.have.lengthOf(2);
+            depTree._rootNodes[0].should.equal(nodeA);
+            depTree._rootNodes[0].children.should.have.lengthOf(2);
+            depTree._rootNodes[0].children[0].should.equal(childA1);
+            depTree._rootNodes[0].children[1].should.equal(childA2);
+            childA1.children.should.have.lengthOf(0);
+            childA2.children.should.have.lengthOf(0);
+            depTree._rootNodes[1].should.equal(nodeB);
+            nodeB.children.should.have.lengthOf(0);
+          });
+          it('should return the DependencyTree itself', function () {
+            expect(depTree.removeExcludes()).to.equal(depTree);
           });
         });
         describe('#getListOfConflictedNodes()', function () {

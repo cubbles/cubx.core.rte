@@ -67,24 +67,24 @@
      * @private
      */
     DependencyTree.prototype._removeDuplicate = function (duplicated, duplicate) {
-      var nodesOfDuplicated = [];
-      var nodesOfDuplicate = [];
+      var descendantsOfDuplicated = [];
+      var descendantsOfDuplicate = [];
 
       // If duplicated node is excluded but duplicate node is not excluded we need to make exclude of duplicated node invalid
       if (duplicated.excluded && !duplicate.excluded) duplicated.excluded = false;
 
       // collect all nodes in subtree of duplicated node
       this.traverseSubtreeBF(duplicated, function (node) {
-        nodesOfDuplicated.push(node);
+        descendantsOfDuplicated.push(node);
       });
       // collect all nodes in subtree of duplicate node
       this.traverseSubtreeBF(duplicate, function (node) {
-        nodesOfDuplicate.push(node);
+        descendantsOfDuplicate.push(node);
       });
 
       // calculate the intersection of all excluded nodes. Only nodes that are excluded in both subtrees are removed
-      nodesOfDuplicated.forEach(function (node, idx) {
-        var duplicate = nodesOfDuplicate[idx];
+      descendantsOfDuplicated.forEach(function (node, idx) {
+        var duplicate = descendantsOfDuplicate[idx];
 
         // the exclude on duplicate node is invalid because the same node is not marked as excluded in duplicated subtree
         if (!node.excluded && duplicate.excluded) duplicate.excluded = false;
@@ -157,7 +157,7 @@
      * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
      * @returns {object} conflicts Array of found conflicts
      */
-    DependencyTree.prototype.getListOfConflictedNodes = function (node) { // TODO: implement me
+    DependencyTree.prototype.getListOfConflictedNodes = function (node) {
       if (node && !(node instanceof DependencyTree.Node)) {
         console.error('Parameter \'node\' needs to be an instance of DependencyTree.Node');
         return;
@@ -306,8 +306,18 @@
       return this;
     };
 
+    /**
+     * Removes all nodes which are marked as excluded. Note: if a node is marked as excluded then it will be removed including all it's descandants!
+     * This should be called after excludes are applied (local and global ones) and duplicates are removed.
+     *
+     * @memberOf DependencyTree
+     * @returns {object} DependencyTree itself
+     */
     DependencyTree.prototype.removeExcludes = function () {
-
+      this.traverseBF(function (node) {
+        if (node.excluded) this.removeNode(node);
+      }.bind(this));
+      return this;
     };
 
     /**
@@ -344,6 +354,7 @@
         if (index >= 0) {
           node.parent = null;
           children.splice(index, 1);
+          // TODO: we need to remove node also in usesExisting array of all nodes referenced in node's usedBy array
           return node;
         } else {
           return null;
