@@ -275,6 +275,75 @@
             childB21.excluded.should.be.false;
           });
         });
+        describe('#getListOfConflictedNodes()', function () {
+          var childA21;
+          var childA211;
+          beforeEach(function () {
+            /**
+             * Adjust depTree to contain two conflicts. Adjusted tree will have the following structure:
+             *
+             *                  package1@1.0.0/util1                                package2@1.0.0/util2
+             *                     /         \                                           /         \
+             *                    /           \                                         /           \
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5
+             *              |                       |                               |                       |
+             *              |                       |                               |                       |
+             *      package5@1.0.0/util5    package5@2.0.0/util5          package5@1.0.0/util5    package6@1.0.0/util6
+             *              |                       |                               |
+             *              |                       |                               |
+             *      package6@1.0.0/util6    package6@2.0.0/util6          package6@1.0.0/util6
+             *
+             */
+            var pkg5Conflict = {webpackageId: 'package5@2.0.0', artifactId: 'util5'};
+            var pkg6Conflict = {webpackageId: 'package6@2.0.0', artifactId: 'util6'};
+            childA21 = new DependencyTree.Node();
+            childA21.data = new DependencyMgr.DepReference({ webpackageId: pkg5Conflict.webpackageId, artifactId: pkg5Conflict.artifactId, referrer: packages.pkg4 });
+            childA211 = new DependencyTree.Node();
+            childA211.data = new DependencyMgr.DepReference({ webpackageId: pkg6Conflict.webpackageId, artifactId: pkg6Conflict.artifactId, referrer: pkg5Conflict });
+            depTree.insertNode(childA21, childA2);
+            depTree.insertNode(childA211, childA21);
+          });
+          it('should log an error when given parameter is not a node from within the current DependencyTree instance', function () {
+            var spy = sinon.spy(console, 'error');
+            depTree.getListOfConflictedNodes({});
+            expect(spy.calledOnce).to.be.true;
+            var node = new DependencyTree.Node();
+            spy.reset();
+            depTree.getListOfConflictedNodes(node);
+            expect(spy.calledOnce).to.be.true;
+          });
+          it('should return an array containing a list of all conflicts found in DependencyTree (using level order traversal)', function () {
+            var conflicts = depTree.getListOfConflictedNodes();
+            conflicts.should.be.instanceof(Array);
+            conflicts.should.have.lengthOf(2);
+            conflicts[0].should.have.property('artifactId', 'util5');
+            conflicts[0].should.have.property('nodes');
+            conflicts[0].nodes[0].should.equal(childB2);
+            conflicts[0].nodes[1].should.equal(childA21);
+            conflicts[1].should.have.property('artifactId', 'util6');
+            conflicts[1].should.have.property('nodes');
+            conflicts[1].nodes[0].should.equal(childB21);
+            conflicts[1].nodes[1].should.equal(childA211);
+          });
+          it('should return an array containing a list of all conflicts found in subtree of given node (using level order traversal)', function () {
+            var conflicts = depTree.getListOfConflictedNodes(nodeA);
+            conflicts.should.be.instanceof(Array);
+            conflicts.should.have.lengthOf(2);
+            conflicts[0].should.have.property('artifactId', 'util5');
+            conflicts[0].should.have.property('nodes');
+            conflicts[0].nodes[0].should.equal(childA11);
+            conflicts[0].nodes[1].should.equal(childA21);
+            conflicts[1].should.have.property('artifactId', 'util6');
+            conflicts[1].should.have.property('nodes');
+            conflicts[1].nodes[0].should.equal(childA111);
+            conflicts[1].nodes[1].should.equal(childA211);
+          });
+          it('should return an empty array if there are no conflicts in subtree of given nodes', function () {
+            var conflicts = depTree.getListOfConflictedNodes(nodeB);
+            conflicts.should.be.instanceof(Array);
+            conflicts.should.have.lengthOf(0);
+          });
+        });
       });
     });
 })();

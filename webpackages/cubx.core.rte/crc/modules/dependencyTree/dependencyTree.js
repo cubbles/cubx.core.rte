@@ -21,13 +21,13 @@
     };
 
     /**
-     * Mark all descendents of given node as excluded.
-     * @param {object} node A DependencyTree.Node whose descendents should be marked excluded
+     * Mark all descendants of given node as excluded.
+     * @param {object} node A DependencyTree.Node whose descendants should be marked excluded
      * @returns {object} the DependencyTree itself
      * @memberOf DependencyTree
      * @private
      */
-    DependencyTree.prototype._markDescendentsAsExcluded = function (node) {
+    DependencyTree.prototype._markDescendantsAsExcluded = function (node) {
       this.traverseSubtreeBF(node, function (currentNode) {
         currentNode.excluded = true;
       });
@@ -49,7 +49,7 @@
           if (exclude.webpackageId === currentNode.data.webpackageId &&
             exclude.artifactId === currentNode.data.artifactId) {
             currentNode.excluded = true;
-            this._markDescendentsAsExcluded(currentNode);
+            this._markDescendantsAsExcluded(currentNode);
           }
         }.bind(this));
       }.bind(this));
@@ -126,7 +126,7 @@
       this.traverseBF(function (node) {
         if (node.data.artifactId === artifactId && node.data.webpackageId === webpackageId) {
           node.excluded = true;
-          this._markDescendentsAsExcluded(node);
+          this._markDescendantsAsExcluded(node);
         }
       }.bind(this));
 
@@ -148,6 +148,72 @@
       return this._rootNodes.some(function (rootNode) {
         return rootNode.equals(node);
       });
+    };
+
+    /**
+     * Get a list of all conflicted nodes. Each item is an object containg the artifactId for the certain conflict and
+     * a list of nodes representing all artifacts that share the same artifactId but a different webpackageId.
+     * @memberOf DependencyTree
+     * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
+     * @returns {object} conflicts Array of found conflicts
+     */
+    DependencyTree.prototype.getListOfConflictedNodes = function (node) { // TODO: implement me
+      if (node && !(node instanceof DependencyTree.Node)) {
+        console.error('Parameter \'node\' needs to be an instance of DependencyTree.Node');
+        return;
+      }
+      if (node && !this.contains(node)) {
+        console.error('Given node is not member of DependencyTree');
+        return [];
+      }
+
+      var artifacts = {};
+      var conflicts = [];
+
+      // search only in subtree of given node for conflicts
+      if (node) {
+        this.traverseSubtreeBF(node, function (currentNode) {
+          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
+            artifacts[currentNode.data.artifactId].push(currentNode);
+          } else {
+            artifacts[currentNode.data.artifactId] = [currentNode];
+          }
+        });
+      } else { // search whole tree for conflicts
+        this.traverseBF(function (currentNode) {
+          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
+            artifacts[currentNode.data.artifactId].push(currentNode);
+          } else {
+            artifacts[currentNode.data.artifactId] = [currentNode];
+          }
+        });
+      }
+
+      // identify all conflicts
+      Object.keys(artifacts).forEach(function (artifactId) {
+        var nodes = artifacts[artifactId];
+        var webpackageId = nodes[0].data.webpackageId;
+        var conflictedNodes = [];
+        if (nodes.length > 1) {
+          conflictedNodes.push(nodes[0]);
+
+          nodes.forEach(function (currentNode) {
+            if (webpackageId !== currentNode.data.webpackageId) {
+              conflictedNodes.push(currentNode);
+            }
+          });
+
+          if (conflictedNodes.length > 1) {
+            var conflict = {
+              artifactId: artifactId,
+              nodes: conflictedNodes
+            };
+            conflicts.push(conflict);
+          }
+        }
+      });
+
+      return conflicts;
     };
 
     /**
@@ -238,6 +304,10 @@
       }.bind(this));
 
       return this;
+    };
+
+    DependencyTree.prototype.removeExcludes = function () {
+
     };
 
     /**
