@@ -136,7 +136,8 @@ window.cubx.amd.define(
      * @memberOf DependencyMgr
      */
     DependencyMgr.prototype.run = function () {
-      this._calculateDependencyList(this._injectDependenciesToDom);
+      // this._calculateDependencyList(this._injectDependenciesToDom);
+      this.run_new();
     };
 
     /**
@@ -157,9 +158,11 @@ window.cubx.amd.define(
 
           console.log(depTree);
           var allDependencies = this._getDependencyListFromTree(depTree);
+          this._depList = allDependencies; // TODO: Do we still need to set global _depList property?
           var resourceList = this._calculateResourceList(allDependencies);
           // this._injectDependenciesToDom(resourceList);
           console.log(resourceList);
+          this._injectDependenciesToDom(resourceList);
         }.bind(this), function (error) {
           console.error('Error while building and processing DependencyTree: ', error);
         });
@@ -193,11 +196,23 @@ window.cubx.amd.define(
      * @returns {object} Array representing a list of depReference items.
      */
     DependencyMgr.prototype._getDependencyListFromTree = function (depTree) { // TODO: Test me!
+      var nodeList = [];
       var depList = [];
       depTree.traverseBF(function (node) {
-        depList.push(node.data);
+        nodeList.push(node);
       });
-      depList.reverse();
+      nodeList.sort(function (a, b) {
+        if (a.isDescendantOf(b)) {
+          return -1;
+        } else if (b.isDescendantOf(a)) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      depList = nodeList.map(function (node) {
+        return node.data;
+      });
       return depList;
     };
 

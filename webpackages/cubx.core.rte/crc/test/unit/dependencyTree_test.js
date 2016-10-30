@@ -257,9 +257,16 @@
         });
       });
       describe('#isDescendantOf()', function () {
-        it('should return true if node is a descendant of given node', function () {
+        beforeEach(function () {
+          childA.usesExisting = [childC];
+          childC.usedBy = [childA];
+        });
+        it('should return true if node is a descendant of given node checking also paths for nodes in usedBy array', function () {
           expect(childD.isDescendantOf(rootNode1)).to.be.true;
-          expect(childD.isDescendantOf(rootNode2)).to.be.false;
+          expect(childD.isDescendantOf(rootNode2)).to.be.true;
+          expect(childC.isDescendantOf(childA)).to.be.true;
+          expect(childC.isDescendantOf(rootNode2)).to.be.true;
+          expect(childF.isDescendantOf(rootNode1)).to.be.false;
         });
       });
     });
