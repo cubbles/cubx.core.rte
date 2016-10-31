@@ -201,18 +201,11 @@ window.cubx.amd.define(
       depTree.traverseBF(function (node) {
         nodeList.push(node);
       });
-      nodeList.sort(function (a, b) {
-        if (a.isDescendantOf(b)) {
-          return -1;
-        } else if (b.isDescendantOf(a)) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+
       depList = nodeList.map(function (node) {
         return node.data;
       });
+      depList.reverse();
       return depList;
     };
 

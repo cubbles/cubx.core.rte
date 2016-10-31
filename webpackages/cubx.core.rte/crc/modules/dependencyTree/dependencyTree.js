@@ -528,6 +528,35 @@
     };
 
     /**
+     * Check if the given node is an ancestor of this node.
+     * Note: Edges defined by usesExisting arrays are also take into consideration!
+     * @memberOf DependencyTree.Node
+     * @param {object} node A DependencyTree.Node instance within te same tree
+     * @returns {boolean} true if given node is an ancestor of this node. False otherwise
+     */
+    DependencyTree.Node.prototype.isAncestorOf = function (node) {
+      var isAncestor = false;
+      var children = this.children.concat(this.usesExisting);
+
+      while (children.length > 0) {
+        var current = children.shift();
+        if (current.equals(node)) {
+          isAncestor = true;
+          break;
+        } else {
+          current.children.some(function (child) {
+            children.push(child);
+          });
+          current.usesExisting.some(function (child) {
+            children.push(child);
+          });
+        }
+      }
+
+      return isAncestor;
+    };
+
+    /**
      * Returns true if the node is a descendant of the given node. This also includes usedBy relations!
      * @memberOf DependencyTree.Node
      * @param {object} node A DependencyTree.Node

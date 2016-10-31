@@ -269,6 +269,19 @@
           expect(childF.isDescendantOf(rootNode1)).to.be.false;
         });
       });
+      describe('#isAncestorOf()', function () {
+        beforeEach(function () {
+          childF.usesExisting = [childC];
+          childC.usedBy = [childF];
+        });
+        it('should return true if node is an ancestor of given node checking also paths defined by usesExisting array', function () {
+          expect(childF.isAncestorOf(childD)).to.be.true;
+          expect(rootNode1.isAncestorOf(childD)).to.be.true;
+          expect(rootNode1.isAncestorOf(childF)).to.be.false;
+          expect(rootNode2.isAncestorOf(childF)).to.be.true;
+          expect(rootNode2.isAncestorOf(childE)).to.be.true;
+        });
+      });
     });
   });
 })();
