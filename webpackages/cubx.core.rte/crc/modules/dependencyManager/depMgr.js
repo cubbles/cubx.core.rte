@@ -147,21 +147,24 @@ window.cubx.amd.define(
     DependencyMgr.prototype.run_new = function () {
       var get = window.cubx.utils.get;
       var rootDependencies = get(window, 'cubx.CRCInit.rootDependencies') || [];
+      var rootDependencyExcludes = get(window, 'cubx.CRCInit.rootDependencyExcludes') || [];
       this._buildRawDependencyTree(this._createDepReferenceListFromArtifactDependencies(rootDependencies, null), this._baseUrl)
         .then(function (depTree) {
           return this._checkDepTreeForExcludes(depTree, this._baseUrl);
         }.bind(this))
         .then(function (depTree) {
+          rootDependencyExcludes.forEach(function (exclude) {
+            depTree.applyGlobalExclude(exclude.webpackageId, exclude.artifactId);
+          });
           depTree.applyExcludes();
           depTree.removeDuplicates();
           depTree.removeExcludes();
 
-          console.log(depTree);
+          // console.log(depTree);
           var allDependencies = this._getDependencyListFromTree(depTree);
           this._depList = allDependencies; // TODO: Do we still need to set global _depList property?
           var resourceList = this._calculateResourceList(allDependencies);
-          // this._injectDependenciesToDom(resourceList);
-          console.log(resourceList);
+          // console.log(resourceList);
           this._injectDependenciesToDom(resourceList);
         }.bind(this), function (error) {
           console.error('Error while building and processing DependencyTree: ', error);
@@ -198,14 +201,29 @@ window.cubx.amd.define(
     DependencyMgr.prototype._getDependencyListFromTree = function (depTree) { // TODO: Test me!
       var nodeList = [];
       var depList = [];
-      depTree.traverseBF(function (node) {
-        nodeList.push(node);
+      depTree.traverseBF(function (nodeToInsert) {
+        // find index of first node in nodeList, which is an ancestor for given node
+        var index = -1;
+        nodeList.some(function (element, currentIndex) {
+          if (element.isAncestorOf(nodeToInsert)) {
+            index = currentIndex;
+            return true;
+          }
+        });
+
+        // we need to insert node before all ancestors of this node to make sure all of it's ancestors can use node
+        // as dependency. We ensure this by just inserting the node right before the first ancestor found in current nodeList
+        if (index > -1) {
+          nodeList.splice(index, 0, nodeToInsert);
+        } else {
+          // if there is no ancestor of node in current nodeList yet we can just push node to current nodeList
+          nodeList.push(nodeToInsert);
+        }
       });
 
       depList = nodeList.map(function (node) {
         return node.data;
       });
-      depList.reverse();
       return depList;
     };
 
@@ -623,7 +641,7 @@ window.cubx.amd.define(
           if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
             dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
           }
-          // resolve(dependencies);
+          this._storeManifestFiles(manifest, artifact.artifactId);
           resolve({
             resources: artifact.resources || [],
             dependencies: dependencies
