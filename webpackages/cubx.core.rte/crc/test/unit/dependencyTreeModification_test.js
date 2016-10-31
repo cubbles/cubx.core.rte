@@ -358,6 +358,7 @@
             spy.reset();
             depTree.getListOfConflictedNodes(node);
             expect(spy.calledOnce).to.be.true;
+            spy.restore();
           });
           it('should return an array containing a list of all conflicts found in DependencyTree (using level order traversal)', function () {
             var conflicts = depTree.getListOfConflictedNodes();
