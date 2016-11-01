@@ -52,7 +52,6 @@
       },
       {
         "artifactId": "cif",
-
         "resources": [
           "cif.html"
         ],
@@ -108,7 +107,7 @@
         "artifactId": "webcomponents-lite",
         "description": "The origin polyfill library version 0.7.18.",
         "resources": [
-            "webcomponents-lite.min.js"
+          "webcomponents-lite.min.js"
         ]
       },
       {
@@ -117,7 +116,7 @@
         "resources": [
           "guid-html-import.html"
         ],
-        "dependencies": [ ]
+        "dependencies": []
       },
       {
         "artifactId": "dom-tree-utilities",
@@ -125,7 +124,7 @@
         "resources": [
           "dom-tree-utils.html"
         ],
-        "dependencies": [ ]
+        "dependencies": []
       },
       {
         "artifactId": "dynamic-connection-utils",
@@ -142,7 +141,6 @@
       {
         "artifactId": "cubx-component-mixin",
         "description": "Basic (access) methods for cubbles components",
-
         "resources": [
           "html-import.html"
         ],
@@ -163,10 +161,23 @@
             "prod": "html-import.min.html"
           }
         ],
-        "dependencies": [ ]
+        "dependencies": []
       }
     ],
-    "compoundComponents": [ ],
-    "elementaryComponents": [ ]
+    "compoundComponents": [],
+    "elementaryComponents": [],
+    "apps": [
+      {
+        "artifactId": "component-viewer",
+        "description": "App to display a component given its webpackage-id and artifact-id",
+        "runnables": [
+          {
+            "name": "Component viewer App",
+            "path": "/index.html",
+            "description": "Call this app to display a component."
+          }
+        ]
+      }
+    ]
   }
 }

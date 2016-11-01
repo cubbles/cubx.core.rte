@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Component Viewer</title>
+
+    <script src="../../cubx.core.rte@2.0.1/webcomponents-lite/webcomponents-lite.js"></script>
+
+    <!--
+        Refer to the crc-loader artifact from a Cubbles-Base.
+        Take care: All other dependencies are expected to be available within the same Base!
+
+        Want to add a 'main' -script to be executed after the dependencies have been loaded?
+        If yes, add the following attribute: data-crc-main="js/my-script.js"
+    -->
+    <script src="../../cubx.core.rte@2.0.1/crc-loader/js/main.js"
+            data-crcinit-loadcif="true"
+            data-cubx-startevent="componentReady">
+    </script>
+
+</head>
+<body>
+<script src="index.js"></script>
+</body>
+</html>
