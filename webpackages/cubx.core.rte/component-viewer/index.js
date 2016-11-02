@@ -2,6 +2,33 @@
   'use strict';
 
   /**
+   * Create a 'cubx-core-slot-init' to define a slot initialization
+   * @param {string} slotName - Name of the slot to be initialized
+   * @param {object} slotValue - Value of the slot
+   * @returns {Element} 'cubx-core-slot-init' element to initialize a component's slot
+   */
+  var createCoreSlotInitElement = function (slotName, slotValue) {
+    var coreSlotInit = document.createElement('cubx-core-slot-init');
+    coreSlotInit.setAttribute('slot', slotName);
+    coreSlotInit.textContent = JSON.stringify(slotValue);
+    return coreSlotInit;
+  };
+
+  /**
+   * Create a 'cubx-core-init' html element using a JSON
+   * @param {object} inits - Object defining the slots' inits
+   * @returns {Element} 'cubx-core-init' element to initialize a component
+   */
+  var createCoreInitElement = function (inits) {
+    var coreInit = document.createElement('cubx-core-init');
+    coreInit.style.display = 'none';
+    for (var key in inits) {
+      coreInit.appendChild(createCoreSlotInitElement(key, inits[key]));
+    }
+    return coreInit;
+  };
+
+  /**
    * Dispatch 'componentReady' event so that the CRC starts working
    */
   var dispatchComponentReadyEvent = function () {
@@ -15,11 +42,14 @@
    * @param {string} webpackageId - webpackage-id of the component (e.g. my.package@1.0)
    * @param {string} artifactId - artifact-id of the component (e.g. my-component)
    */
-  var appendComponent = function (webpackageId, artifactId) {
-    var componentContainer = document.querySelector('body');
+  var appendComponent = function (webpackageId, artifactId, inits) {
     var component = document.createElement(artifactId);
     component.setAttribute('cubx-webpackage-id', webpackageId);
-    componentContainer.appendChild(component);
+    if (inits) {
+      component.appendChild(createCoreInitElement(inits));
+    }
+    document.querySelector('body').appendChild(component);
+
     dispatchComponentReadyEvent();
   };
 
@@ -45,9 +75,10 @@
 
   var webpackageId = $_GET('webpackage-id');
   var artifactId = $_GET('artifact-id');
+  var inits = $_GET('inits');
 
   if (webpackageId && artifactId) {
-    appendComponent(webpackageId, artifactId);
+    appendComponent(webpackageId, artifactId, JSON.parse(decodeURIComponent(inits)));
   }
 
 }());
