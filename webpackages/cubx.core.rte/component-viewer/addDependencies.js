@@ -45,4 +45,5 @@
     window.cubx =  { CRCInit : { rootDependencies: createRootDependencies(JSON.parse(decodeURIComponent(dependencies)))}};
   }
 
+  // TODO: use bootstrap to make something
 }());
