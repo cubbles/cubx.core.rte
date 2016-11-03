@@ -41,6 +41,7 @@
    * Create and append associated html element for a component
    * @param {string} webpackageId - webpackage-id of the component (e.g. my.package@1.0)
    * @param {string} artifactId - artifact-id of the component (e.g. my-component)
+   * @param {array} inits - Array containing initializations of the component's slots
    */
   var appendComponent = function (webpackageId, artifactId, inits) {
     var component = document.createElement(artifactId);
@@ -49,7 +50,6 @@
       component.appendChild(createCoreInitElement(inits));
     }
     document.querySelector('body').appendChild(component);
-
     dispatchComponentReadyEvent();
   };
 
@@ -75,10 +75,13 @@
 
   var webpackageId = $_GET('webpackage-id');
   var artifactId = $_GET('artifact-id');
-  var inits = $_GET('inits');
 
   if (webpackageId && artifactId) {
-    appendComponent(webpackageId, artifactId, JSON.parse(decodeURIComponent(inits)));
+    appendComponent(
+      webpackageId,
+      artifactId,
+      JSON.parse(decodeURIComponent($_GET('inits')))
+    );
   }
 
 }());
