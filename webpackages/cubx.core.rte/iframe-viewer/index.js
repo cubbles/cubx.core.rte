@@ -77,15 +77,28 @@
   var artifactId = $_GET('artifact-id');
 
   if (webpackageId && artifactId) {
+    var validParameters = true;
     var inits = decodeURIComponent($_GET('inits'));
     if (inits.indexOf('\'') >= 0) {
       inits = inits.replace(/'/gi, '"');
     };
-    appendComponent(
-      webpackageId,
-      artifactId,
-      JSON.parse(inits)
-    );
+    var pattern = new RegExp("^([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*)(\\.([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*))*[@](\\d+)(\\.[\\d]+)*(-SNAPSHOT)?");
+    if (!pattern.test(webpackageId)) {
+      console.error('The webpackage-id is invalid. It should follow the pattern "webpackageName@webpackageVersion, eg. my-webpackage@3.1.1-SNAPSHOT');
+      validParameters = false;
+    }
+    pattern = new RegExp("^[a-z0-9]+(-[a-z0-9]+)+$");
+    if (!pattern.test(artifactId)) {
+      console.error('The artifact-id is invalid. It should be lowercase and dash separated, eg. my-component');
+      validParameters = false;
+    }
+    if (validParameters) {
+      appendComponent(
+        webpackageId,
+        artifactId,
+        JSON.parse(inits)
+      );
+    }
   }
 
 }());
