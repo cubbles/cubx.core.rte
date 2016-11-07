@@ -9,6 +9,11 @@
             "url": "https://cubbles.world/core",
             "proxy": "",
             "debug": false
-        }
+        },
+      "sandbox": {
+        "url": "https://cubbles.world/sandbox",
+        "proxy": "",
+        "debug": false
+      }
     }
 }

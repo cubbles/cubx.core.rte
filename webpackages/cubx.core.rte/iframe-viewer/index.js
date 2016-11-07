@@ -77,10 +77,15 @@
   var artifactId = $_GET('artifact-id');
 
   if (webpackageId && artifactId) {
+    var inits = decodeURIComponent($_GET('inits'));
+    if (inits.indexOf('\'') >= 0) {
+      inits = inits.replace(/'/gi, '"');
+    };
+    console.log(inits);
     appendComponent(
       webpackageId,
       artifactId,
-      JSON.parse(decodeURIComponent($_GET('inits')))
+      JSON.parse(inits)
     );
   }
 
