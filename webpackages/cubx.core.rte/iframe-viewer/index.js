@@ -81,7 +81,6 @@
     if (inits.indexOf('\'') >= 0) {
       inits = inits.replace(/'/gi, '"');
     };
-    console.log(inits);
     appendComponent(
       webpackageId,
       artifactId,
