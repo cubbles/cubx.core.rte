@@ -49,8 +49,6 @@ cubx.amd.define([], function () {
     for (i = 0; i < len; i++) {
       var element = artifactElements[ i ];
       var foundling = this._findDependenciesAndExcludesInElement(element);
-      // this._addToCubxCRCInit(foundling.dependencies, element, 'rootDependencies', crcLoader._cubxCRCInitRootDependenciesOriginLength);
-      // this._addToCubxCRCInit(foundling.excludes, element, 'rootDependencyExcludes', crcLoader._cubxCRCInitRootDependencyExcludesOriginLength);
       this._addToCubxCRCInit(foundling, element, crcLoader._cubxCRCInitRootDependenciesOriginLength);
     }
   };
@@ -125,6 +123,7 @@ cubx.amd.define([], function () {
           cubx.CRCInit.rootDependencies = [];
         }
         var dep = this._createDependency(elem, artifactElement);
+        // TODO: RTE-3: Just append dependencies to existing rootDependencies array instead of prepending them
         if (originLength > 0) {
           cubx.CRCInit.rootDependencies.splice(cubx.CRCInit.rootDependencies.length - originLength, 0, dep);
         } else {
