@@ -74,6 +74,19 @@
     return vars;
   };
 
+  /**
+   * Post a message to the iframe parent containing the offsetHeight of the iframe content
+   */
+  var postIframeHeight = function () {
+    window.parent.postMessage(
+      {
+        iframeHeight: document.querySelector('body').offsetHeight,
+        id: $_GET('iframe-id')
+      },
+      document.location.origin
+    );
+  };
+
   var webpackageId = $_GET('webpackage-id');
   var artifactId = $_GET('artifact-id');
 
@@ -101,4 +114,8 @@
       );
     }
   }
+
+  document.addEventListener('cifReady', function () {
+    postIframeHeight();
+  });
 }());
