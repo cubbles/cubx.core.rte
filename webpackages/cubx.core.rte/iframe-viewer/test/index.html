@@ -3,11 +3,13 @@
 <head>
     <meta charset='UTF-8'>
     <title>Component Viewer App Test</title>
+    <script src="../../iframe-resizer/resize.js"></script>
 </head>
 <body>
 <h1>Component Viewer App Test</h1>
 
-<iframe src="../../iframe-viewer/index.html?webpackage-id=com.incowia.lib.chart-library@0.2.0-SNAPSHOT&artifact-id=line-chart&inits={'dataColumns':[['Product A',1000,500,1500,1100],['Product B',300,400,700,500]],'xLabels':['January','February','March','April']}&dependencies=[{'webpackage-id':'bootstrap-3.3.5@1.1.0','artifact-id':'bootstrap'}]"/>
+<iframe id="chartIframe"
+        src="../../iframe-viewer/index.html?webpackage-id=com.incowia.lib.chart-library@0.2.0-SNAPSHOT&artifact-id=line-chart&inits={'dataColumns':[['Product A',1000,500,1500,1100],['Product B',300,400,700,500]],'xLabels':['January','February','March','April']}&dependencies=[{'webpackage-id':'bootstrap-3.3.5@1.1.0','artifact-id':'bootstrap'}]&iframe-id=chartIframe"/>
 
 </body>
 </html>
