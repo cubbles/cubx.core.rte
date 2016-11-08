@@ -81,10 +81,10 @@
     var inits = decodeURIComponent($_GET('inits'));
     if (inits.indexOf('\'') >= 0) {
       inits = inits.replace(/'/gi, '"');
-    };
+    }
     var pattern = new RegExp("^([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*)(\\.([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*))*[@](\\d+)(\\.[\\d]+)*(-SNAPSHOT)?");
     if (!pattern.test(webpackageId)) {
-      console.error('The webpackage-id is invalid. It should follow the pattern "webpackageName@webpackageVersion, eg. my-webpackage@3.1.1-SNAPSHOT');
+      console.error('The webpackage-id is invalid. It should follow the pattern "webpackageName@webpackageVersion", eg. my-webpackage@3.1.1-SNAPSHOT');
       validParameters = false;
     }
     pattern = new RegExp("^[a-z0-9]+(-[a-z0-9]+)+$");
