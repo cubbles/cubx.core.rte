@@ -109,6 +109,7 @@ window.cubx.amd.define(
       this._runtimeMode = get(window, 'cubx.CRCInit.runtimeMode');
       this._crc = get(window, 'cubx.CRC');
       var rootDependencies = get(window, 'cubx.CRCInit.rootDependencies') || [];
+      var rootDependencyExcludes = get(window, 'cubx.CRCInit.rootDependencyExcludes') || [];
 
       // load cif, if it is not excluded by config
       if (get(window, 'cubx.CRCInit.loadCIF') === 'true') {
@@ -119,9 +120,11 @@ window.cubx.amd.define(
         });
       }
 
-      // remove endpointId properties from rootDependencies and append endpointId to artifactId using separator '#'
+      // remove endpointId properties from rootDependencies and rootDependencyExcludes and append endpointId to artifactId using separator '#'
       // needed for backwards compatibility to modelVersion 8.x
-      this._removeEndpointIdFromRootDependencies(rootDependencies);
+      this._removeEndpointIdFromDependencyItems(rootDependencies);
+      this._removeEndpointIdFromDependencyItems(rootDependencyExcludes);
+      if (rootDependencyExcludes.length > 0) window.cubx.CRCInit.rootDependencyExcludes = rootDependencyExcludes;
 
       // we need to ensure that each rootDependency has a valid webpackageId as this will be used to build path for
       // requesting associated mannifest.webpackage files
@@ -902,14 +905,14 @@ window.cubx.amd.define(
     };
 
     /**
-     * Internal helper method for removing endpointId property from all rootDependencies having this property. The
+     * Internal helper method for removing endpointId property from all dependencies having this property. The
      * value of the endpointId property is appended to the artifactId used endpointSeparator from ManifestConverter.
      * @memberOf DependencyMgr
-     * @param {object} rootDependencies
+     * @param {object} dependencies
      * @private
      */
-    DependencyMgr.prototype._removeEndpointIdFromRootDependencies = function (rootDependencies) {
-      rootDependencies.forEach(function (dependency) {
+    DependencyMgr.prototype._removeEndpointIdFromDependencyItems = function (dependencies) {
+      dependencies.forEach(function (dependency) {
         if (dependency.hasOwnProperty('endpointId') && typeof dependency.endpointId === 'string') {
           dependency.artifactId = dependency.artifactId + manifestConverter.endpointSeparator + dependency.endpointId;
           delete dependency.endpointId;
