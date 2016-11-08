@@ -1,19 +1,19 @@
 {
-    "uploadConfigs": {
-        "dev": {
-            "url": "http://cubbles-base-local/core",
-            "proxy": "",
-            "debug": false
-        },
-        "release": {
-            "url": "https://cubbles.world/core",
-            "proxy": "",
-            "debug": false
-        },
-      "sandbox": {
-        "url": "https://cubbles.world/sandbox",
-        "proxy": "",
-        "debug": false
-      }
+  "uploadConfigs": {
+    "dev": {
+      "url": "http://cubbles-base-local/core",
+      "proxy": "",
+      "debug": false
+    },
+    "release": {
+      "url": "https://cubbles.world/core",
+      "proxy": "",
+      "debug": false
+    },
+    "sandbox": {
+      "url": "https://cubbles.world/sandbox",
+      "proxy": "",
+      "debug": false
     }
+  }
 }

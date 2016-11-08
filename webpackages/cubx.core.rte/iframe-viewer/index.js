@@ -1,3 +1,4 @@
+/*global location*/
 (function () {
   'use strict';
 
@@ -61,13 +62,13 @@
    */
   var $_GET = function (param) {
     var vars = {};
-    window.location.href.replace( location.hash, '' ).replace(
+    window.location.href.replace(location.hash, '').replace(
       /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
-      function( m, key, value ) { // callback
+      function (m, key, value) { // callback
         vars[key] = value !== undefined ? value : '';
       }
     );
-    if ( param ) {
+    if (param) {
       return vars[param] ? vars[param] : null;
     }
     return vars;
@@ -82,12 +83,12 @@
     if (inits.indexOf('\'') >= 0) {
       inits = inits.replace(/'/gi, '"');
     }
-    var pattern = new RegExp("^([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*)(\\.([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*))*[@](\\d+)(\\.[\\d]+)*(-SNAPSHOT)?");
+    var pattern = new RegExp('^([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*)(\\.([a-z0-9]+||([a-z0-9]+[a-z0-9-][a-z0-9]+)*))*[@](\\d+)(\\.[\\d]+)*(-SNAPSHOT)?');
     if (!pattern.test(webpackageId)) {
       console.error('The webpackage-id is invalid. It should follow the pattern "webpackageName@webpackageVersion", eg. my-webpackage@3.1.1-SNAPSHOT');
       validParameters = false;
     }
-    pattern = new RegExp("^[a-z0-9]+(-[a-z0-9]+)+$");
+    pattern = new RegExp('^[a-z0-9]+(-[a-z0-9]+)+$');
     if (!pattern.test(artifactId)) {
       console.error('The artifact-id is invalid. It should be lowercase and dash separated, eg. my-component');
       validParameters = false;
@@ -100,5 +101,4 @@
       );
     }
   }
-
 }());

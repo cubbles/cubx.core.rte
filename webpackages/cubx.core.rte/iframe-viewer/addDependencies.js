@@ -1,3 +1,4 @@
+/*global location*/
 (function () {
   'use strict';
 
@@ -6,13 +7,13 @@
    * @param {Array} dependencies - Dependencies to be loaded, e.g. [{"webpackageId":"bootstrap-3.3.5@1.1.0","artifactId":"bootstrap"}]
    * @returns {Array} 'rootDependencies' array according to CRCInit definition
    */
-  var createRootDependencies = function (dependencies){
+  var createRootDependencies = function (dependencies) {
     var rootDependencies = [];
     for (var i = 0; i < dependencies.length; i++) {
       rootDependencies.push(
         {
-          webpackageId : dependencies[i]['webpackage-id'],
-          artifactId : dependencies[i]['artifact-id']
+          webpackageId: dependencies[i]['webpackage-id'],
+          artifactId: dependencies[i]['artifact-id']
         }
       );
     }
@@ -27,13 +28,13 @@
    */
   var $_GET = function (param) {
     var vars = {};
-    window.location.href.replace( location.hash, '' ).replace(
+    window.location.href.replace(location.hash, '').replace(
       /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
-      function( m, key, value ) { // callback
+      function (m, key, value) { // callback
         vars[key] = value !== undefined ? value : '';
       }
     );
-    if ( param ) {
+    if (param) {
       return vars[param] ? vars[param] : null;
     }
     return vars;
@@ -45,6 +46,6 @@
     dependencies = dependencies.replace(/'/gi, '"');
   };
   if (dependencies) {
-    window.cubx =  { CRCInit : { rootDependencies: createRootDependencies(JSON.parse(dependencies))}};
+    window.cubx = {CRCInit: {rootDependencies: createRootDependencies(JSON.parse(dependencies))}};
   }
 }());
