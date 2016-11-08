@@ -162,6 +162,14 @@
           }
         ],
         "dependencies": []
+      },
+      {
+        "artifactId": "iframe-resizer",
+        "description": "Utility to resize an iframe according to its content size.",
+        "resources": [
+          "html-import.html"
+        ],
+        "dependencies": []
       }
     ],
     "compoundComponents": [],
