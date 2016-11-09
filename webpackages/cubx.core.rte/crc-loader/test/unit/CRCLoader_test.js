@@ -189,12 +189,12 @@ window.cubx.amd.define([ 'crcLoader',
                 crcLoader._addComponentDependenciesToRootDependencies();
               });
 
-              it('rootDependencies should have length=1', function () {
+              it('rootDependencies should have length=3', function () {
                 window.cubx.CRCInit.rootDependencies.should.have.length(3);
               });
-              it('added dependency should be the first element of the array', function () {
-                window.cubx.CRCInit.rootDependencies[ 0 ].should.have.property('webpackageId', webpackageId);
-                window.cubx.CRCInit.rootDependencies[ 0 ].should.have.property('artifactId', elementName);
+              it('added dependency should be the last element of the array', function () {
+                window.cubx.CRCInit.rootDependencies[ 2 ].should.have.property('webpackageId', webpackageId);
+                window.cubx.CRCInit.rootDependencies[ 2 ].should.have.property('artifactId', elementName);
               });
             });
           });

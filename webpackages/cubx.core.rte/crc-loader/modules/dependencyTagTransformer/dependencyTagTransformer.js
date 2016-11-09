@@ -113,8 +113,9 @@ cubx.amd.define([], function () {
    * @private
    */
   DependencyTagTransformer.prototype._addToCubxCRCInit = function (deps, artifactElement, originLength) {
+    originLength = originLength || 0;
     // first insert all dependencies into rootDependencies array by prepending them.
-    deps.dependencies.forEach(function (elem) {
+    deps.dependencies.forEach(function (elem, index) {
       var artifactId = elem.getAttribute('artifact-id');
       if (!artifactId) {
         console.error('Missing artifactId: The artifact-id attribute is mandatory for each "' + elem.tagName.toLowerCase() + '" element. This element will be ignored:', elem);
@@ -123,12 +124,7 @@ cubx.amd.define([], function () {
           cubx.CRCInit.rootDependencies = [];
         }
         var dep = this._createDependency(elem, artifactElement);
-        // TODO: RTE-3: Just append dependencies to existing rootDependencies array instead of prepending them
-        if (originLength > 0) {
-          cubx.CRCInit.rootDependencies.splice(cubx.CRCInit.rootDependencies.length - originLength, 0, dep);
-        } else {
-          cubx.CRCInit.rootDependencies.push(dep);
-        }
+        cubx.CRCInit.rootDependencies.splice(cubx.CRCInit.rootDependencies.length - originLength, 0, dep);
       }
     }.bind(this));
 
