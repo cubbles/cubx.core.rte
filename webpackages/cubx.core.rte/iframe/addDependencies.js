@@ -41,11 +41,12 @@
   };
 
   // Add dependencies to 'window.cubx.CRCInit' object
-  var dependencies = decodeURIComponent($_GET('dependencies'));
-  if (dependencies.indexOf('\'') >= 0) {
-    dependencies = dependencies.replace(/'/gi, '"');
-  };
+  var dependencies = $_GET('dependencies');
   if (dependencies) {
+    dependencies = decodeURIComponent(dependencies);
+    if (dependencies.indexOf('\'') >= 0) {
+      dependencies = dependencies.replace(/'/gi, '"');
+    };
     window.cubx = {CRCInit: {rootDependencies: createRootDependencies(JSON.parse(dependencies))}};
   }
 }());
