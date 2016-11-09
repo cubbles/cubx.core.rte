@@ -29,9 +29,16 @@ cubx.amd.define([
     this._crcRoot = null;
     /**
      * origin length of cubx.CRCInit.rootDependencies
+     * @type {number}
+     * @private
      */
-    this._cubxCRCInitRootDependenciesOriginLength;
-    this._cubxCRCInitRootDependencyExludesOriginLength;
+    this._cubxCRCInitRootDependenciesOriginLength = 0;
+    /**
+     * origin length of cubx.CRCInit.rootDependencyExcludes
+     * @type {number}
+     * @private
+     */
+    this._cubxCRCInitRootDependencyExludesOriginLength = 0;
   };
 
   // -----------------------------------------------------------------------------------------------------------
@@ -50,17 +57,16 @@ cubx.amd.define([
       crcContainer = document.body;
     }
     this._crcRoot = crcContainer;
-    var self = this;
     var action = function () {
+      this._checkRootDependencies();
       // keep origin length of cubx.CRCInit.rootDependencies
-      self._cubxCRCInitRootDependenciesOriginLength = cubx.CRCInit.rootDependencies ? cubx.CRCInit.rootDependencies.length : 0;
+      this._cubxCRCInitRootDependenciesOriginLength = cubx.CRCInit.rootDependencies ? cubx.CRCInit.rootDependencies.length : 0;
       // keep origin length of cubx.CRCInit.rootDependencyExcludes
-      self._cubxCRCInitRootDependencyExludesOriginLength = cubx.CRCInit.rootDependencyExcludes ? cubx.CRCInit.rootDependencyExcludes.length : 0;
-      self._checkRootDependencies();
-      self._addComponentDependenciesToRootDependencies();
-      self._addDependenciesAndExcludesToRootRependencies();
-      self._bootstrapCRC();
-    };
+      this._cubxCRCInitRootDependencyExludesOriginLength = cubx.CRCInit.rootDependencyExcludes ? cubx.CRCInit.rootDependencyExcludes.length : 0;
+      this._cubxCRCInitRootDependenciesOriginLength += this._addComponentDependenciesToRootDependencies();
+      this._addDependenciesAndExcludesToRootDependencies();
+      this._bootstrapCRC();
+    }.bind(this);
     if (cubx.CRCInit.startEventArrived) {
       action();
     } else {
@@ -133,9 +139,11 @@ cubx.amd.define([
    * Parse and add the dependencies from dom tree to the cubx.CRCInit.rootDependencies.
    * The dependencieas are  through cubx-webpackage-id and tagName as artifactId defined.
    * @private
+   * @return {number} Number of dependencies that where added to rootDependencies array
    * @memberOf CRCLoader
    */
   CRCLoader.prototype._addComponentDependenciesToRootDependencies = function () {
+    var count = 0;
     var elements = this._crcRoot.querySelectorAll('[cubx-webpackage-id]');
     if (elements.length > 0 && (!cubx.CRCInit.hasOwnProperty('rootDependencies') || typeof cubx.CRCInit.rootDependencies === 'undefined')) {
       cubx.CRCInit.rootDependencies = [];
@@ -144,13 +152,11 @@ cubx.amd.define([
       var element = elements[ i ];
       if (!this._isDependencyInRootDependencies(element)) { // check if the dependency  already exists
         var dep = this._createDependency(element);
-        if (this._cubxCRCInitRootDependenciesOriginLength > 0) {
-          cubx.CRCInit.rootDependencies.splice(cubx.CRCInit.rootDependencies.length - this._cubxCRCInitRootDependenciesOriginLength, 0, dep);
-        } else {
-          cubx.CRCInit.rootDependencies.push(dep);
-        }
+        cubx.CRCInit.rootDependencies.push(dep);
+        count++;
       }
     }
+    return count;
   };
 
   /**
@@ -158,7 +164,7 @@ cubx.amd.define([
    * @private
    * @memberOf CRCLoader
    */
-  CRCLoader.prototype._addDependenciesAndExcludesToRootRependencies = function () {
+  CRCLoader.prototype._addDependenciesAndExcludesToRootDependencies = function () {
     var dependencyTagTransformer = new DependencyTagTransformer();
     dependencyTagTransformer.addDependenciesAndExcludesToRootDependencies(this);
   };
