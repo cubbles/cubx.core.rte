@@ -180,11 +180,11 @@
     "elementaryComponents": [],
     "apps": [
       {
-        "artifactId": "iframe-viewer",
+        "artifactId": "iframe",
         "description": "App to display a component given its webpackage-id and artifact-id as url parameters",
         "runnables": [
           {
-            "name": "iFrame viewer App",
+            "name": "iframe App",
             "path": "/index.html",
             "description": "Call this app to display a component using its webpackage-id and artifact-id as url parameters."
           },
