@@ -21,6 +21,10 @@ window.cubx.amd.define(
         before(function () {
           var depListObj = JSON.parse(depList);
           window.cubx.CRCInit.rootDependencies = depListObj;
+          window.cubx.CRCInit.rootDependencyExcludes = [
+            {webpackageId: 'exclude1@1.2.3', artifactId: 'artifact1'},
+            {webpackageId: 'exclude2@1.2.3', artifactId: 'artifact2', endpointId: 'main'}
+          ];
           window.cubx.CRCInit.webpackageBaseUrl = 'http://test.org';
           depMgr = CRC.getDependencyMgr();
           depMgr.init();
@@ -46,6 +50,13 @@ window.cubx.amd.define(
           item.dependencyExcludes.should.eql([
             { webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' },
             { webpackageId: 'anotherExcludedPackage', artifactId: 'anotherExcludedArtifact#excludedEndpoint' }
+          ]);
+        });
+        it('should remove property \'endpointId\' from each rootDependencyExclude if available and append it to artifactId', function () {
+          var rootDependencyExcludes = window.cubx.CRCInit.rootDependencyExcludes;
+          rootDependencyExcludes.should.eql([
+            {webpackageId: 'exclude1@1.2.3', artifactId: 'artifact1'},
+            {webpackageId: 'exclude2@1.2.3', artifactId: 'artifact2#main'}
           ]);
         });
       });
