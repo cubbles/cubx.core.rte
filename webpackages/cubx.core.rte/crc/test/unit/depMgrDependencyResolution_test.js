@@ -1,7 +1,7 @@
 /*globals describe, before, beforeEach, it, after, afterEach, sinon, expect */
 window.cubx.amd.define([ 'CRC',
     'dependencyManager',
-    'jqueryLoader',
+    'dependencyTree',
     'text!unit/dependencyResolution/rootDependencies.json',
     'text!unit/dependencyResolution/dependencyPackage1.json',
     'text!unit/dependencyResolution/dependencyPackage2.json',
@@ -11,7 +11,7 @@ window.cubx.amd.define([ 'CRC',
     'text!unit/dependencyResolution/dependencyPackage6.json',
     'unit/utils/CubxNamespaceManager'
   ],
-  function (CRC, DepMgr, $, rootDependencies, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, CubxNamespaceManager) {
+  function (CRC, DepMgr, DependencyTree, rootDependencies, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, CubxNamespaceManager) {
     'use strict';
 
     var depMgr;
@@ -24,6 +24,86 @@ window.cubx.amd.define([ 'CRC',
       });
       after(function () {
         CubxNamespaceManager.resetNamespace();
+      });
+      describe('#_calculateResourceList()', function () {
+        var internalDepList = [];
+        var item1;
+        var item2;
+        var item3;
+        before(function () {
+          window.cubx.CRCInit.runtimeMode = 'prod';
+          depMgr.init();
+        });
+        beforeEach(function () {
+          var testReferrer = {
+            webpackageId: 'testWebpackage',
+            artifactId: 'testArtifactId'
+          };
+          var items = depMgr._createDepReferenceListFromArtifactDependencies([
+            {webpackageId: 'package1@1.0.0', artifactId: 'generic1'},
+            {webpackageId: 'package2@1.0.0', artifactId: 'generic2'},
+            {webpackageId: 'package3@1.0.0', artifactId: 'util#main'}
+          ], testReferrer);
+
+          item1 = items[ 0 ];
+          item2 = items[ 1 ];
+          item3 = items[ 2 ];
+          item1.resources = [
+            'test1_1.js',
+            {
+              prod: 'test1_2.min.css',
+              dev: 'test1_2.css'
+            },
+            'test1_3.html'
+          ];
+          item2.resources = [
+            {
+              prod: 'test2_1.min.js',
+              dev: 'test2_1.js'
+            },
+            'test2_2.js',
+            'test2_3.html'
+          ];
+          item3.resources = [
+            'test3-1.js'
+          ];
+          internalDepList.push(item1);
+          internalDepList.push(item2);
+          internalDepList.push(item3);
+        });
+        it('should return a list of all resources in correct order for given list of DepReference items',
+          function () {
+            depMgr._runtimeMode.should.be.eql('prod');
+            var resourceList = depMgr._calculateResourceList(internalDepList);
+            // console.log(resourceList);
+            resourceList.should.have.length(7);
+            resourceList[ 0 ].should.have.property('path',
+              depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' + item1.resources[ 0 ]);
+            resourceList[ 1 ].should.have.property('path',
+              depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' +
+              item1.resources[ 1 ].prod);
+            resourceList[ 2 ].should.have.property('path',
+              depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' + item1.resources[ 2 ]);
+            resourceList[ 3 ].should.have.property('path',
+              depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' +
+              item2.resources[ 0 ].prod);
+            resourceList[ 4 ].should.have.property('path',
+              depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' + item2.resources[ 1 ]);
+            resourceList[ 5 ].should.have.property('path',
+              depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' + item2.resources[ 2 ]);
+          });
+        it('should ignore endpointId appendix on artifacts that where converted by the manifestConverter', function () {
+          depMgr._runtimeMode.should.be.eql('prod');
+          var resourceList = depMgr._calculateResourceList(internalDepList);
+          resourceList[ 6 ].should.have.property('path',
+            depMgr._baseUrl + item3.webpackageId + '/util/' + item3.resources[ 0 ]);
+        });
+        afterEach(function () {
+          internalDepList = [];
+        });
+        after(function () {
+          depMgr._depJson = null;
+        });
       });
       describe('#_createResourceFromItem()', function () {
         var item = {
@@ -201,112 +281,6 @@ window.cubx.amd.define([ 'CRC',
           erg.fileName.should.equal('blob:http://xxxxxx?yyy');
         });
       });
-      describe('#_getIndexOfDepReferenceItem()', function () {
-        var artifactDependencies;
-        var testReferrer = {
-          webpackageId: 'testWebpackage',
-          artifactId: 'testArtifactId'
-        };
-        before(function () {
-          depMgr._depList = null;
-          artifactDependencies = JSON.parse(rootDependencies);
-          depMgr.init();
-        });
-        it('should return index of DepReference item in internal depList', function () {
-          var depReferences = depMgr._createDepReferenceListFromArtifactDependencies(artifactDependencies, testReferrer);
-          depMgr._depList = depReferences;
-          expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, depReferences[ 0 ])).to.equal(0);
-        });
-        it('should return -1, as given item is not in internal depList', function () {
-          var items = depMgr._createDepReferenceListFromArtifactDependencies([
-            {webpackageId: 'test-1.2.3', artifactId: 'generic'}
-          ], testReferrer);
-          expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, items[ 0 ])).to.equal(-1);
-        });
-        after(function () {
-          depMgr._depList = null;
-        });
-      });
-      describe('#_calculateResourceList()', function () {
-        var internalDepList = [];
-        var item1;
-        var item2;
-        var item3;
-        before(function () {
-          window.cubx.CRCInit.runtimeMode = 'prod';
-          depMgr.init();
-        });
-        beforeEach(function () {
-          var testReferrer = {
-            webpackageId: 'testWebpackage',
-            artifactId: 'testArtifactId'
-          };
-          var items = depMgr._createDepReferenceListFromArtifactDependencies([
-            {webpackageId: 'package1@1.0.0', artifactId: 'generic1'},
-            {webpackageId: 'package2@1.0.0', artifactId: 'generic2'},
-            {webpackageId: 'package3@1.0.0', artifactId: 'util#main'}
-          ], testReferrer);
-
-          item1 = items[ 0 ];
-          item2 = items[ 1 ];
-          item3 = items[ 2 ];
-          item1.resources = [
-            'test1_1.js',
-            {
-              prod: 'test1_2.min.css',
-              dev: 'test1_2.css'
-            },
-            'test1_3.html'
-          ];
-          item2.resources = [
-            {
-              prod: 'test2_1.min.js',
-              dev: 'test2_1.js'
-            },
-            'test2_2.js',
-            'test2_3.html'
-          ];
-          item3.resources = [
-            'test3-1.js'
-          ];
-          internalDepList.push(item1);
-          internalDepList.push(item2);
-          internalDepList.push(item3);
-        });
-        it('should return a list of all resources in correct order for given list of DepReference items',
-          function () {
-            depMgr._runtimeMode.should.be.eql('prod');
-            var resourceList = depMgr._calculateResourceList(internalDepList);
-            // console.log(resourceList);
-            resourceList.should.have.length(7);
-            resourceList[ 0 ].should.have.property('path',
-              depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' + item1.resources[ 0 ]);
-            resourceList[ 1 ].should.have.property('path',
-              depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' +
-              item1.resources[ 1 ].prod);
-            resourceList[ 2 ].should.have.property('path',
-              depMgr._baseUrl + item1.webpackageId + '/' + item1.artifactId + '/' + item1.resources[ 2 ]);
-            resourceList[ 3 ].should.have.property('path',
-              depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' +
-              item2.resources[ 0 ].prod);
-            resourceList[ 4 ].should.have.property('path',
-              depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' + item2.resources[ 1 ]);
-            resourceList[ 5 ].should.have.property('path',
-              depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' + item2.resources[ 2 ]);
-          });
-        it('should ignore endpointId appendix on artifacts that where converted by the manifestConverter', function () {
-          depMgr._runtimeMode.should.be.eql('prod');
-          var resourceList = depMgr._calculateResourceList(internalDepList);
-          resourceList[ 6 ].should.have.property('path',
-            depMgr._baseUrl + item3.webpackageId + '/util/' + item3.resources[ 0 ]);
-        });
-        afterEach(function () {
-          internalDepList = [];
-        });
-        after(function () {
-          depMgr._depJson = null;
-        });
-      });
       describe('#_fetchManifest()', function () {
         var depMgr;
         var axiosStub;
@@ -332,6 +306,92 @@ window.cubx.amd.define([ 'CRC',
         });
         after(function () {
           axiosStub.restore();
+        });
+      });
+      describe('#_getDependencyListFromTree', function () {
+        var depTree;
+        var dep1;
+        var dep2;
+        var dep3;
+        var dep4;
+        var dep5;
+        var dep6;
+        beforeEach(function () {
+          // we need to provide a valid dependencyTree which has already excludes and duplicates removed
+          depTree = new DependencyTree();
+          dep1 = new DependencyTree.Node();
+          dep1.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+          dep2 = new DependencyTree.Node();
+          dep2.data = new DepMgr.DepReference({webpackageId: 'package2@1.0.0', artifactId: 'util2', referrer: null});
+          dep3 = new DependencyTree.Node();
+          dep3.data = new DepMgr.DepReference({webpackageId: 'package3@1.0.0', artifactId: 'util3',
+            referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}});
+          dep4 = new DependencyTree.Node();
+          dep4.data = new DepMgr.DepReference({webpackageId: 'package4@1.0.0', artifactId: 'util4',
+            referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}});
+          dep5 = new DependencyTree.Node();
+          dep5.data = new DepMgr.DepReference({webpackageId: 'package5@1.0.0', artifactId: 'util5',
+            referrer: {webpackageId: 'package2@1.0.0', artifactId: 'util2'}});
+          dep6 = new DependencyTree.Node();
+          dep6.data = new DepMgr.DepReference({webpackageId: 'package6@1.0.0', artifactId: 'util6',
+            referrer: {webpackageId: 'package5@1.0.0', artifactId: 'util5'}});
+          // build dependency tree structure
+          depTree.insertNode(dep1);
+          depTree.insertNode(dep2);
+          depTree.insertNode(dep3, dep1);
+          depTree.insertNode(dep4, dep1);
+          depTree.insertNode(dep5, dep2);
+          depTree.insertNode(dep6, dep5);
+          dep2.usesExisting = [dep3];
+          dep3.usedBy = [dep2];
+          dep3.usesExisting = [dep5];
+          dep5.usedBy = [dep3];
+        });
+        it('should return an array of DepReference items', function () {
+          var list = depMgr._getDependencyListFromTree(depTree);
+          list.should.be.an.instanceof(Array);
+          list.forEach(function (item) { item.should.be.an.instanceOf(DepMgr.DepReference); });
+        });
+        it('should order the items in the returned array so that all dependencies of an item have a lower index the item itself', function () {
+          var list = depMgr._getDependencyListFromTree(depTree);
+          list[0].webpackageId.should.equal('package6@1.0.0');
+          list[0].artifactId.should.equal('util6');
+          list[1].webpackageId.should.equal('package5@1.0.0');
+          list[1].artifactId.should.equal('util5');
+          list[2].webpackageId.should.equal('package3@1.0.0');
+          list[2].artifactId.should.equal('util3');
+          list[3].webpackageId.should.equal('package4@1.0.0');
+          list[3].artifactId.should.equal('util4');
+          list[4].webpackageId.should.equal('package1@1.0.0');
+          list[4].artifactId.should.equal('util1');
+          list[5].webpackageId.should.equal('package2@1.0.0');
+          list[5].artifactId.should.equal('util2');
+        });
+      });
+      describe('#_getIndexOfDepReferenceItem()', function () {
+        var artifactDependencies;
+        var testReferrer = {
+          webpackageId: 'testWebpackage',
+          artifactId: 'testArtifactId'
+        };
+        before(function () {
+          depMgr._depList = null;
+          artifactDependencies = JSON.parse(rootDependencies);
+          depMgr.init();
+        });
+        it('should return index of DepReference item in internal depList', function () {
+          var depReferences = depMgr._createDepReferenceListFromArtifactDependencies(artifactDependencies, testReferrer);
+          depMgr._depList = depReferences;
+          expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, depReferences[ 0 ])).to.equal(0);
+        });
+        it('should return -1, as given item is not in internal depList', function () {
+          var items = depMgr._createDepReferenceListFromArtifactDependencies([
+            {webpackageId: 'test-1.2.3', artifactId: 'generic'}
+          ], testReferrer);
+          expect(depMgr._getIndexOfDepReferenceItem(depMgr._depList, items[ 0 ])).to.equal(-1);
+        });
+        after(function () {
+          depMgr._depList = null;
         });
       });
       describe('#_getManifestForDepReference()', function () {

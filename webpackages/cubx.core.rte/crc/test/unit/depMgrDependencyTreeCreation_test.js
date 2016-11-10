@@ -172,122 +172,39 @@
             });
           });
         });
-        describe('#_resolveDepReferenceDependencies()', function () {
-          var stub;
-          var depRefItem;
-          var baseUrl;
-
-          before(function () {
+        describe('#_checkAndAddExcludesForRootDependencies', function () {
+          var node;
+          beforeEach(function () {
             CubxNamespaceManager.resetNamespace(CRC);
             window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
+            // add an dependencyExclude to rootDependencies
+            window.cubx.CRCInit.rootDependencies[0].dependencyExcludes = [
+              { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }
+            ];
             depMgr = CRC.getDependencyMgr();
             depMgr.init();
-            baseUrl = depMgr._baseUrl;
-
-            // mock _fetchManifest method
-            stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
-              return new Promise(function (resolve, reject) {
-                var response = {};
-                if (url.indexOf('package1@1.0.0') >= 0) { response.data = JSON.parse(pkg1); }
-                if (url.indexOf('package2@1.0.0') >= 0) { response.data = JSON.parse(pkg2); }
-                if (url.indexOf('package3@1.0.0') >= 0) { response.data = JSON.parse(pkg3); }
-                if (url.indexOf('package4@1.0.0') >= 0) { response.data = JSON.parse(pkg4); }
-                if (url.indexOf('package5@1.0.0') >= 0) { response.data = JSON.parse(pkg5); }
-                if (url.indexOf('package6@1.0.0') >= 0) { response.data = JSON.parse(pkg6); }
-                if (response.hasOwnProperty('data')) {
-                  window.setTimeout(function () { resolve(response); }, 200);
-                } else {
-                  window.setTimeout(function () { reject({message: 'Error while requesting ' + url}); }, 100);
-                }
-              });
-            });
+            node = new DependencyTree.Node();
+            node.data = new DepMgr.DepReference({ artifactId: 'util1', webpackageId: 'package1@1.0.0', referrer: null });
           });
-          beforeEach(function () {
-            depMgr._responseCache.invalidate();
-            depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
-            stub.reset();
+          it('should return given DependencyTree.Node', function () {
+            var result = depMgr._checkAndAddExcludesForRootDependencies(node);
+            result.should.equal(node);
           });
-          after(function () {
-            stub.restore();
-            CubxNamespaceManager.resetNamespace(CRC);
-          });
-          it('should return a promise', function () {
-            expect(depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl)).to.be.an.instanceOf(Promise);
-          });
-          it('should resolve the returned promise with an object containing an array of the dependencies of given depRef item and all the resources for the given depRefItem', function () {
-            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              result.should.be.an.instanceOf(Object);
-              result.should.have.property('resources');
-              result.should.have.property('dependencies');
-              result.resources.should.eql([ 'js/pack1.js', 'css/pack1.css' ]);
-              result.dependencies.should.have.lengthOf(2);
-              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
-              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
-              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
-              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
-            });
-          });
-          it('should use inline manifest from given dependency if there is any', function () {
-            depRefItem.manifest = JSON.parse(pkg1);
-            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.callCount).to.equal(0);
-              result.dependencies.should.have.lengthOf(2);
-              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
-              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
-              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
-              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
-            });
-          });
-          it('should use manifest from responseCache if there is already one for given webpackageId', function () {
-            depMgr._responseCache.addItem(depRefItem.webpackageId, JSON.parse(pkg1));
-            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.callCount).to.equal(0);
-              result.dependencies.should.have.lengthOf(2);
-              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
-              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
-              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
-              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
-            });
-          });
-          it('should add inline or requested manifest to response cache if there is no entry for corresponding webpackageId', function () {
-            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(depMgr._responseCache.get(depRefItem.webpackageId)).to.eql(JSON.parse(pkg1));
-            });
-          });
-          it('should request manifest files from given baseUrl', function () {
-            var baseUrl = 'https://www.example.test/';
-            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.calledWith(baseUrl + depRefItem.webpackageId + '/manifest.webpackage'));
-            });
-          });
-          it('should append \'/\' to baseUrl if not present', function () {
-            var baseUrl = 'https://www.example.test';
-            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.calledWith(baseUrl + '/' + depRefItem.webpackageId + '/manifest.webpackage'));
-            });
+          it('should add dependencyExcludes from corresponding rootDependency to given node', function () {
+            depMgr._checkAndAddExcludesForRootDependencies(node);
+            node.data.dependencyExcludes.should.eql([{ webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }]);
           });
           describe('Error handling', function () {
-            it('should throw an TypeError if parameter baseUrl is not given or a not of type string', function () {
+            it('should throw an TypeError if given parameter is not of type DependencyTree.Node', function () {
+              var errorThrown = false;
               try {
-                depMgr._resolveDepReferenceDependencies(depRefItem, {});
+                depMgr._checkAndAddExcludesForRootDependencies({});
               } catch (error) {
-                expect(error).to.be.an.instanceOf(TypeError);
+                errorThrown = true;
+                error.should.be.an.instanceOf(TypeError);
+              } finally {
+                expect(errorThrown).to.be.true;
               }
-            });
-            it('should throw an TypeError if parameter depReference is not an instance of DependencyMgr.DepReference', function () {
-              try {
-                depMgr._resolveDepReferenceDependencies({}, baseUrl);
-              } catch (error) {
-                expect(error).to.be.an.instanceOf(TypeError);
-              }
-            });
-            it('should reject returned promise if there is an error while fetching the manifest', function () {
-              depRefItem.webpackageId = 'error';
-              return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-                throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
-              }, function (error) {
-                error.should.have.ownProperty('message');
-              });
             });
           });
         });
@@ -519,39 +436,122 @@
             });
           });
         });
-        describe('#_checkAndAddExcludesForRootDependencies', function () {
-          var node;
-          beforeEach(function () {
+        describe('#_resolveDepReferenceDependencies()', function () {
+          var stub;
+          var depRefItem;
+          var baseUrl;
+
+          before(function () {
             CubxNamespaceManager.resetNamespace(CRC);
             window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
-            // add an dependencyExclude to rootDependencies
-            window.cubx.CRCInit.rootDependencies[0].dependencyExcludes = [
-              { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }
-            ];
             depMgr = CRC.getDependencyMgr();
             depMgr.init();
-            node = new DependencyTree.Node();
-            node.data = new DepMgr.DepReference({ artifactId: 'util1', webpackageId: 'package1@1.0.0', referrer: null });
+            baseUrl = depMgr._baseUrl;
+
+            // mock _fetchManifest method
+            stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
+              return new Promise(function (resolve, reject) {
+                var response = {};
+                if (url.indexOf('package1@1.0.0') >= 0) { response.data = JSON.parse(pkg1); }
+                if (url.indexOf('package2@1.0.0') >= 0) { response.data = JSON.parse(pkg2); }
+                if (url.indexOf('package3@1.0.0') >= 0) { response.data = JSON.parse(pkg3); }
+                if (url.indexOf('package4@1.0.0') >= 0) { response.data = JSON.parse(pkg4); }
+                if (url.indexOf('package5@1.0.0') >= 0) { response.data = JSON.parse(pkg5); }
+                if (url.indexOf('package6@1.0.0') >= 0) { response.data = JSON.parse(pkg6); }
+                if (response.hasOwnProperty('data')) {
+                  window.setTimeout(function () { resolve(response); }, 200);
+                } else {
+                  window.setTimeout(function () { reject({message: 'Error while requesting ' + url}); }, 100);
+                }
+              });
+            });
           });
-          it('should return given DependencyTree.Node', function () {
-            var result = depMgr._checkAndAddExcludesForRootDependencies(node);
-            result.should.equal(node);
+          beforeEach(function () {
+            depMgr._responseCache.invalidate();
+            depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+            stub.reset();
           });
-          it('should add dependencyExcludes from corresponding rootDependency to given node', function () {
-            depMgr._checkAndAddExcludesForRootDependencies(node);
-            node.data.dependencyExcludes.should.eql([{ webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }]);
+          after(function () {
+            stub.restore();
+            CubxNamespaceManager.resetNamespace(CRC);
+          });
+          it('should return a promise', function () {
+            expect(depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl)).to.be.an.instanceOf(Promise);
+          });
+          it('should resolve the returned promise with an object containing an array of the dependencies of given depRef item and all the resources for the given depRefItem', function () {
+            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+              result.should.be.an.instanceOf(Object);
+              result.should.have.property('resources');
+              result.should.have.property('dependencies');
+              result.resources.should.eql([ 'js/pack1.js', 'css/pack1.css' ]);
+              result.dependencies.should.have.lengthOf(2);
+              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
+            });
+          });
+          it('should use inline manifest from given dependency if there is any', function () {
+            depRefItem.manifest = JSON.parse(pkg1);
+            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+              expect(stub.callCount).to.equal(0);
+              result.dependencies.should.have.lengthOf(2);
+              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
+            });
+          });
+          it('should use manifest from responseCache if there is already one for given webpackageId', function () {
+            depMgr._responseCache.addItem(depRefItem.webpackageId, JSON.parse(pkg1));
+            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+              expect(stub.callCount).to.equal(0);
+              result.dependencies.should.have.lengthOf(2);
+              result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
+              result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
+              expect(result.dependencies[0].getId()).to.equal('package3@1.0.0/util3');
+              expect(result.dependencies[1].getId()).to.equal('package4@1.0.0/util4');
+            });
+          });
+          it('should add inline or requested manifest to response cache if there is no entry for corresponding webpackageId', function () {
+            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+              expect(depMgr._responseCache.get(depRefItem.webpackageId)).to.eql(JSON.parse(pkg1));
+            });
+          });
+          it('should request manifest files from given baseUrl', function () {
+            var baseUrl = 'https://www.example.test/';
+            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+              expect(stub.calledWith(baseUrl + depRefItem.webpackageId + '/manifest.webpackage'));
+            });
+          });
+          it('should append \'/\' to baseUrl if not present', function () {
+            var baseUrl = 'https://www.example.test';
+            return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+              expect(stub.calledWith(baseUrl + '/' + depRefItem.webpackageId + '/manifest.webpackage'));
+            });
           });
           describe('Error handling', function () {
-            it('should throw an TypeError if given parameter is not of type DependencyTree.Node', function () {
-              var errorThrown = false;
+            it('should throw an TypeError if parameter baseUrl is not given or a not of type string', function () {
               try {
-                depMgr._checkAndAddExcludesForRootDependencies({});
+                depMgr._resolveDepReferenceDependencies(depRefItem, {});
               } catch (error) {
-                errorThrown = true;
-                error.should.be.an.instanceOf(TypeError);
-              } finally {
-                expect(errorThrown).to.be.true;
+                expect(error).to.be.an.instanceOf(TypeError);
               }
+            });
+            it('should throw an TypeError if parameter depReference is not an instance of DependencyMgr.DepReference', function () {
+              try {
+                depMgr._resolveDepReferenceDependencies({}, baseUrl);
+              } catch (error) {
+                expect(error).to.be.an.instanceOf(TypeError);
+              }
+            });
+            it('should reject returned promise if there is an error while fetching the manifest', function () {
+              depRefItem.webpackageId = 'error';
+              return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
+                throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
+              }, function (error) {
+                error.should.have.ownProperty('message');
+              });
             });
           });
         });

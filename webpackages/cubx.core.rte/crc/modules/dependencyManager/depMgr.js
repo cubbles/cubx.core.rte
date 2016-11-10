@@ -166,6 +166,8 @@ window.cubx.amd.define(
     };
 
     /**
+     * Create a list of Dependencies each represented by a DepReference item. The returned list is ordered in that way
+     * that all dependencies of item at index n have an index < n.
      * @memberOf DependencyMgr
      * @private
      * @param {object} depTree a DependencyTree instance
@@ -174,6 +176,7 @@ window.cubx.amd.define(
     DependencyMgr.prototype._getDependencyListFromTree = function (depTree) { // TODO: Test me!
       var nodeList = [];
       var depList = [];
+
       depTree.traverseBF(function (nodeToInsert) {
         // find index of first node in nodeList, which is an ancestor for given node
         var index = -1;
@@ -183,7 +186,6 @@ window.cubx.amd.define(
             return true;
           }
         });
-
         // we need to insert node before all ancestors of this node to make sure all of it's ancestors can use node
         // as dependency. We ensure this by just inserting the node right before the first ancestor found in current nodeList
         if (index > -1) {
