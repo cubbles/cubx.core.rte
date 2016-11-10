@@ -37,47 +37,5 @@ window.cubx.amd.define([ 'CRC',
       after(function () {
         CubxNamespaceManager.resetNamespace(CRC, 'DepMgr.addToCache.after');
       });
-      describe('#_resolveDepReference()', function () {
-        var depReferenceItem;
-        var cache;
-
-        before(function () {
-          cache = CRC.getCache();
-          cache.clean();
-          depReferenceItem = {
-            webpackageId: 'package-1@1.0.0',
-            artifactId: 'my-component-1',
-            getArtifactId: function () {
-              return this.artifactId;
-            }
-          };
-          var data = documents[ 'org.example.package-1@1.0.0' ];
-          sinon.stub(crcDepMgr, '_fetchManifest').returns(new Promise(function (resolve, reject) {
-            setTimeout(function () {
-              resolve({data: data});
-            }, 500);
-          }));
-        });
-        after(function () {
-          crcDepMgr._fetchManifest.restore();
-        });
-        beforeEach(function () {
-          cache.clean();
-        });
-        afterEach(function () {
-          cache.clean();
-        });
-
-        it('should cause a cache entry each time _resolveDepReference() is called', function (done) {
-          var promise = crcDepMgr._resolveDepReference(depReferenceItem);
-          promise.then(function () {
-            var cache = crcDepMgr._crc.getCache();
-            var erg = cache.getComponentCacheEntry('my-component-1');
-            erg.should.be.not.empty;
-            erg.should.be.an('object');
-            done();
-          });
-        });
-      });
     });
   });

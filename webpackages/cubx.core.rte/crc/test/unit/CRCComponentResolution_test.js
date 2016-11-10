@@ -31,38 +31,8 @@ window.cubx.amd.define([ 'CRC',
       after(function () {
         CubxNamespaceManager.resetNamespace(undefined, 'CRCComponentResolution.after');
       });
-      /**
-       *
-       */
       describe('#getResolvedComponent', function () {
         describe('build resolvedComponent, if initial not in cache', function () {
-          /* eslint-disable no-unused-vars */
-          var stub;
-          var item;
-          /* eslint-enable no-unused-vars */
-
-          before(function () {
-            item = {
-              webpackageId: 'test.compound-A@1.0.0',
-              artifactId: 'compound-A'
-            };
-            stub = sinon.stub(depMgr, '_resolveDepReference', function (item) {
-              var deferred = $.Deferred();
-              var data = {
-                item: item
-              };
-              depMgr._storeManifestFiles(documents[ item.webpackageId ], item.artifactId);
-              if (item.hasOwnProperty('webpackageId')) {
-                data.data = depMgr._extractArtifact(item, documents[ item.webpackageId ]);
-              }
-              deferred.resolve(data);
-              return deferred.promise();
-            });
-          });
-          after(function () {
-            depMgr._resolveDepReference.restore();
-          });
-
           beforeEach(function () {
             depMgr._storeManifestFiles(documents[ 'test.compound-A@1.0.0' ], 'compound-A');
             depMgr._storeManifestFiles(documents[ 'test.compound-B@1.0.0' ], 'compound-B');
@@ -102,7 +72,6 @@ window.cubx.amd.define([ 'CRC',
               CRC.getResolvedComponent('compound-A');
               expect(spy.calledOnce).to.be.true;
             });
-
             it('resolvedComponent should be stored in cache ', function () {
               CRC.getResolvedComponent('compound-A');
               cache._resolvedComponents.should.be.have.property('compound-A');
@@ -121,7 +90,6 @@ window.cubx.amd.define([ 'CRC',
               afterEach(function () {
                 CRC._resolveComponent.restore();
               });
-
               it('should be equals with an expected document ',
                 function () {
                   var processedErg = CRC.getResolvedComponent('compound-A');

@@ -3,8 +3,8 @@
  */
 
 window.cubx.amd.define(
-  ['jqueryLoader', 'utils', 'responseCache', 'manifestConverter', 'axios', 'dependencyTree'],
-  function ($, utils, responseCache, manifestConverter, axios, DependencyTree) {
+  ['utils', 'responseCache', 'manifestConverter', 'axios', 'dependencyTree'],
+  function (utils, responseCache, manifestConverter, axios, DependencyTree) {
     'use strict';
 
     /**
@@ -135,19 +135,10 @@ window.cubx.amd.define(
     };
 
     /**
-     * Calculate and inject dependencies
-     * @memberOf DependencyMgr
-     */
-    DependencyMgr.prototype.run = function () {
-      // this._calculateDependencyList(this._injectDependenciesToDom);
-      this.run_new();
-    };
-
-    /**
      * Calculate and inject dependencies using DependencyTree. This Method will replace old run method above
      * @memberOf DependencyMgr
      */
-    DependencyMgr.prototype.run_new = function () {
+    DependencyMgr.prototype.run = function () {
       var get = window.cubx.utils.get;
       var rootDependencies = get(window, 'cubx.CRCInit.rootDependencies') || [];
       var rootDependencyExcludes = get(window, 'cubx.CRCInit.rootDependencyExcludes') || [];
@@ -172,27 +163,6 @@ window.cubx.amd.define(
         }.bind(this), function (error) {
           console.error('Error while building and processing DependencyTree: ', error);
         });
-    };
-
-    /**
-     * calculate list of all references (as URLs) that need to be injected
-     * @memberOf DependencyMgr
-     * @private
-     * @param {function} next Callback to be called when dependency list calculation is done. The list of all needed
-     *                        resources is provided as the callback parameter
-     */
-    DependencyMgr.prototype._calculateDependencyList = function (next) {
-      var self = this;
-      if (typeof next === 'function') {
-        this._resolveDependencies(function (allDependencies) {
-          // add all needed resource items to resource list and call next()
-          var resourceList = self._calculateResourceList(allDependencies);
-          self._depList = allDependencies;
-          next(resourceList);
-        }, self._depList);
-      } else {
-        throw new TypeError('parameter "next" needs to be a function');
-      }
     };
 
     /**
@@ -228,94 +198,6 @@ window.cubx.amd.define(
         return node.data;
       });
       return depList;
-    };
-
-    /**
-     * This method gets all direct and indirect dependencies by fetching manifest.webpackage files from all of them.
-     * It will iterate over the artifact-dependencies and fetch non resolved dependency as long as there are any.
-     * At the end the depList will be passed to the function passed with the 'next' -parameter.
-     * Note: the list items will <b>not</b> contain the needed files!
-     * @memberOf DependencyMgr
-     * @param {function} next Callback to be called after dependency list calculation is complete
-     * @param {Array} depList dependency list
-     * @private
-     */
-    DependencyMgr.prototype._resolveDependencies = function (next, depList) {
-      var self = this;
-      var resolveOutstandingDependencies = function (depList) {
-        var deferredDepReferenceResolutions = [];
-        // create list of DepReferenceItems
-        for (var j = 0; j < depList.length; j++) {
-          var depRef = depList[ j ];
-          if (depRef.resolved) {
-            continue;
-          }
-          // as the DepReference item is now going to be processed, mark it as not outstanding
-          depRef.resolved = true;
-          deferredDepReferenceResolutions.push(self._resolveDepReference(depRef));
-        }
-
-        // get all outstanding direct dependencies
-        $.when.apply(window, deferredDepReferenceResolutions).done(function () {
-          // keep current number of DepReference items in depList, to decide recursive call at the end
-          var oldLength = depList.length;
-          // process each promise from ajax requests (each request belongs to one promise)
-          for (var i = 0; i < deferredDepReferenceResolutions.length; i++) {
-            // current DepReference item for which the dependencies where requested
-            var currentDepReference = arguments[ i ].item;
-            var currentArtifact = arguments[ i ].data;
-            if (!currentArtifact) {
-              console.error('Artifact ' + arguments[ i ].item.webpackageId + '/' + arguments[ i ].item.artifactId + ' not found.');
-            }
-            // attach all the resources to DepReference item if there are any
-            if (currentArtifact.hasOwnProperty('resources') && currentArtifact.resources.length > 0) {
-              currentDepReference.resources = currentArtifact.resources;
-            }
-
-            // if there are dependencies, create new DepReference Items
-            if (currentArtifact.hasOwnProperty('dependencies') && currentArtifact.dependencies.length > 0) {
-              // all the dependencies of current artifactObject
-              var referredDepReferences =
-                self._createDepReferenceListFromArtifactDependencies(currentArtifact.dependencies,
-                  {webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
-              referredDepReferences.forEach(function (referredDepReferenceItem) {
-                var indexOfCurrentDepReferenceItem = self._getIndexOfDepReferenceItem(depList,
-                  currentDepReference);
-                var indexOfReferredDepReferenceItem = self._getIndexOfDepReferenceItem(depList,
-                  referredDepReferenceItem);
-                if (indexOfReferredDepReferenceItem === -1) {
-                  // insert a new DepReference item if this one is not in depList yet.
-                  // Note: insert the new DepReference item *before* the dependent DepReference item!
-                  utils.Array.insertBefore(depList, referredDepReferenceItem, currentDepReference);
-                } else if (indexOfReferredDepReferenceItem > indexOfCurrentDepReferenceItem) {
-                  // if the DepReference item is already in the list and it's position is greater than
-                  // the position of the current dependent DepReference move it
-                  (function () {
-                    var existingDepReferenceItem = depList[ indexOfReferredDepReferenceItem ];
-                    utils.Array.removeItemFromArray(depList, existingDepReferenceItem);
-                    utils.Array.insertBefore(depList, existingDepReferenceItem, currentDepReference);
-                    existingDepReferenceItem.referrer.push({webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
-                  }());
-                } else {
-                  (function () {
-                    var existingDepReferenceItem = depList[ indexOfReferredDepReferenceItem ];
-                    existingDepReferenceItem.referrer.push({webpackageId: currentDepReference.webpackageId, artifactId: currentDepReference.artifactId});
-                  }());
-                }
-              });
-            }
-          }
-          // if there where new DepReference Items added, check their manifest files
-          if (oldLength < depList.length) {
-            resolveOutstandingDependencies(depList);
-          } else if (typeof next === 'function') {
-            // if all dependencies have been fetched continue with next callback
-            next(depList);
-          }
-        });
-      };
-
-      resolveOutstandingDependencies(depList);
     };
 
     /**
@@ -427,13 +309,6 @@ window.cubx.amd.define(
       var manifest = manifestConverter.convert(data);
       return manifest;
     };
-
-    /**
-     * Alias for jQuery's ajax() method
-     * @type {function}
-     * @memberOf DependencyMgr
-     */
-    DependencyMgr.ajax = $.ajax;
 
     // ---------------------------------------------------------------------------------------------------------------
     // --------------------------------                 Private Methods              ---------------------------------
@@ -926,73 +801,6 @@ window.cubx.amd.define(
           });
         }
       });
-    };
-
-    /**
-     * Resolve and return the artifact object, described by the argument.
-     * @param {DepReference} depReference Object containing a reference to an artifact
-     * @private
-     * @memberOf DependencyMgr
-     * @returns {object} promise JQuery promise object
-     */
-    DependencyMgr.prototype._resolveDepReference = function (depReference) {
-      var deferred = $.Deferred();
-      var self = this;
-      var url = null; // holds the url for requesting the manifest.webpackage. Will be null if there is a manifest object given in depReference.
-
-      // check if there is already an item in the ResponseCache for given webpackageId
-      if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) {
-        var cachedManifest = this._responseCache.get(depReference.webpackageId);
-        this._storeManifestFiles(cachedManifest, depReference.getArtifactId());
-        deferred.resolve({
-          item: depReference,
-          data: this._extractArtifact(depReference, this._responseCache.get(depReference.webpackageId))
-        });
-      }
-
-      // skip further processing if deferred is already resolved and thus we do have already a manifest from ResponseCache
-      if (deferred.state() === 'resolved') {
-        return deferred.promise();
-      }
-
-      // use inline manifest from depReference, if there is any
-      if (depReference.manifest && typeof depReference.manifest === 'object') {
-        // resolve deferred with manifest object from depReference
-        // Note: There is no built in validation of given object against our manifest schema!
-        this._storeManifestFiles(depReference.manifest, depReference.getArtifactId());
-        this._responseCache.addItem(depReference.webpackageId, depReference.manifest);
-        deferred.resolve({
-          item: depReference,
-          data: this._extractArtifact(depReference, depReference.manifest)
-        });
-      } else {
-        // refer to the manifest.webpackage -file as this is also available if we don't use a couchdb based backend
-        url = this._baseUrl + depReference.webpackageId + '/manifest.webpackage';
-      }
-
-      // skip further processing if deferred is already resolved and thus we do have already a manifest from depReference item
-      if (deferred.state() === 'resolved') {
-        return deferred.promise();
-      }
-
-      // only make ajax request if there is a url given
-      if (url) {
-        this._fetchManifest(url).then(function (response) {
-          self._storeManifestFiles(response.data, depReference.getArtifactId());
-          self._responseCache.addItem(depReference.webpackageId, response.data);
-          deferred.resolve({
-            item: depReference,
-            data: self._extractArtifact(depReference, response.data)
-          });
-        }, function (error) {
-          deferred.reject({
-            status: error.response.status,
-            error: error
-          });
-        });
-      }
-
-      return deferred.promise();
     };
 
     /**

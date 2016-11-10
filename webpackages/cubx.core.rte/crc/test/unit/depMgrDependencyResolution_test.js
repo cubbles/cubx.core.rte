@@ -25,50 +25,6 @@ window.cubx.amd.define([ 'CRC',
       after(function () {
         CubxNamespaceManager.resetNamespace();
       });
-      describe('#_calculateDependencyList()', function () {
-        var resourceList;
-        before(function () {
-          resourceList = [
-            {
-              path: 'test1.min.js',
-              type: 'javascript'
-            },
-            {
-              path: 'test2.css',
-              type: 'stylesheet'
-            },
-            {
-              path: 'test3.min.css',
-              type: 'stylesheet'
-            },
-            {
-              path: 'test4.html',
-              type: 'htmlImport'
-            }
-          ];
-
-          sinon.stub(depMgr, '_calculateResourceList').returns(resourceList);
-        });
-
-        it('should call given callback with resourceList as first parameter', function (done) {
-          depMgr._calculateDependencyList(function (list) {
-            expect(list).to.eql(resourceList);
-            done();
-          });
-        });
-
-        it('should throw an TypeError if no callback is provided', function () {
-          expect(function () {
-            depMgr._calculateDependencyList();
-          }).to.throw(TypeError);
-        });
-        after(function () {
-          // depMgr._resolveDependencies.restore();
-          depMgr._calculateResourceList.restore();
-          // depMgr._getManifestFiles_ret.restore();
-        });
-      });
-
       describe('#_createResourceFromItem()', function () {
         var item = {
           prod: 'test.min.js',
@@ -189,7 +145,6 @@ window.cubx.amd.define([ 'CRC',
           });
         });
       });
-
       describe('#_determineResourceType()', function () {
         it('should associate fileEnding ".js" with type "javascript"', function () {
           var fileName = 'test.min.js';
@@ -246,261 +201,6 @@ window.cubx.amd.define([ 'CRC',
           erg.fileName.should.equal('blob:http://xxxxxx?yyy');
         });
       });
-
-      describe('#_resolveDependencies()', function () {
-        var expectedDepList = [
-          'package6@1.0.0',
-          'package5@1.0.0',
-          'package3@1.0.0',
-          'package4@1.0.0',
-          'package1@1.0.0',
-          'package2@1.0.0'
-        ];
-        before(function () {
-          // mock Dependency Json fetching
-          sinon.stub(depMgr, '_resolveDepReference', function (depReference) {
-            var deferred = $.Deferred();
-            var data = {
-              item: depReference
-            };
-            if (depReference.webpackageId === 'package1@1.0.0') {
-              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg1));
-            } else if (depReference.webpackageId === 'package2@1.0.0') {
-              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg2));
-            } else if (depReference.webpackageId === 'package3@1.0.0') {
-              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg3));
-            } else if (depReference.webpackageId === 'package4@1.0.0') {
-              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg4));
-            } else if (depReference.webpackageId === 'package5@1.0.0') {
-              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg5));
-            } else if (depReference.webpackageId === 'package6@1.0.0') {
-              data.data = depMgr._extractArtifact(depReference, JSON.parse(pkg6));
-            }
-            // console.log(depReference.webpackageId + ': ' + JSON.stringify(data.data))
-            // simulate a request duration of 500 ms for each request
-            window.setTimeout(function () {
-              deferred.resolve(data);
-            }, 50);
-            return deferred.promise();
-          });
-        });
-        beforeEach(function () {
-          var depListObj = JSON.parse(rootDependencies);
-          window.cubx.CRCInit.rootDependencies = depListObj;
-          window.cubx.CRCInit.webpackageBaseUrl = 'http://test.org';
-          depMgr.init();
-        });
-
-        it('should return list of all dependencies', function (done) {
-          var rootDepReferences = depMgr._depList;
-          depMgr._resolveDependencies(function (resolvedDependencies) {
-            for (var i = 0; i < expectedDepList.length; i++) {
-              resolvedDependencies[ i ].should.have.property('webpackageId', expectedDepList[ i ]);
-            }
-            done();
-          }, rootDepReferences);
-        });
-        it('should set resources array to each created DepReference item', function (done) {
-          var rootDepReferences = depMgr._depList;
-          depMgr._resolveDependencies(function (resolvedDependencies) {
-            // console.log(depMgr._depList);
-            resolvedDependencies[ 0 ].should.have.property('resources');
-            resolvedDependencies[ 0 ].resources.should.eql(JSON.parse(pkg6).artifacts.utilities[ 0 ].resources);
-            resolvedDependencies[ 1 ].should.have.property('resources');
-            resolvedDependencies[ 1 ].resources.should.eql(JSON.parse(pkg5).artifacts.utilities[ 0 ].resources);
-            resolvedDependencies[ 2 ].should.have.property('resources');
-            resolvedDependencies[ 2 ].resources.should.eql(JSON.parse(pkg3).artifacts.utilities[ 0 ].resources);
-            resolvedDependencies[ 3 ].should.have.property('resources');
-            resolvedDependencies[ 3 ].resources.should.eql(JSON.parse(pkg4).artifacts.utilities[ 0 ].resources);
-            resolvedDependencies[ 4 ].should.have.property('resources');
-            resolvedDependencies[ 4 ].resources.should.eql(JSON.parse(pkg1).artifacts.utilities[ 0 ].resources);
-            resolvedDependencies[ 5 ].should.have.property('resources');
-            resolvedDependencies[ 5 ].resources.should.eql(JSON.parse(pkg2).artifacts.utilities[ 0 ].resources);
-            done();
-          }, rootDepReferences);
-        });
-        it('should set referrers correctly to each created and resolved DepReference item', function (done) {
-          var rootDependencies = depMgr._depList;
-          depMgr._resolveDependencies(function (resolvedDependencies) {
-            resolvedDependencies.some(function (dep) {
-              dep.should.have.property('referrer');
-            });
-            expect(resolvedDependencies[0].referrer).to.deep.include({webpackageId: 'package5@1.0.0', artifactId: 'util5'});
-            expect(resolvedDependencies[0].referrer).to.have.lengthOf(1);
-            expect(resolvedDependencies[1].referrer).to.deep.include({webpackageId: 'package3@1.0.0', artifactId: 'util3'});
-            expect(resolvedDependencies[1].referrer).to.deep.include({webpackageId: 'package2@1.0.0', artifactId: 'util2'});
-            expect(resolvedDependencies[1].referrer).to.have.lengthOf(2);
-            expect(resolvedDependencies[2].referrer).to.deep.include({webpackageId: 'package1@1.0.0', artifactId: 'util1'});
-            expect(resolvedDependencies[2].referrer).to.deep.include({webpackageId: 'package2@1.0.0', artifactId: 'util2'});
-            expect(resolvedDependencies[2].referrer).to.have.lengthOf(2);
-            expect(resolvedDependencies[3].referrer).to.deep.include({webpackageId: 'package1@1.0.0', artifactId: 'util1'});
-            expect(resolvedDependencies[3].referrer).to.have.lengthOf(1);
-            expect(resolvedDependencies[4].referrer).to.include('root');
-            expect(resolvedDependencies[4].referrer).to.have.lengthOf(1);
-            expect(resolvedDependencies[5].referrer).to.include('root');
-            expect(resolvedDependencies[5].referrer).to.have.lengthOf(1);
-            done();
-          }, rootDependencies);
-        });
-        afterEach(function () {
-          depMgr._depList = null;
-        });
-        after(function () {
-          depMgr._resolveDepReference.restore();
-          depMgr._depJson = null;
-        });
-      });
-
-      /*
-       *
-       */
-      describe('#_resolveDepReference()', function () {
-        var stub;
-        var data = {};
-        before(function () {
-          window.cubx.CRCInit.rootDependencies = JSON.parse(rootDependencies);
-          window.cubx.CRCInit.webpackageBaseUrl = 'http://test.org';
-          depMgr.init();
-
-          // fake data response for mocked ajax request
-          data = JSON.parse(pkg1);
-
-          // Mock _fetchManifest method to return promise
-          stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
-            return new Promise(function (resolve, reject) {
-              window.setTimeout(function () {
-                resolve({data: data});
-              }, 1000);
-            });
-          });
-        });
-        beforeEach(function () {
-          stub.reset();
-          depMgr._responseCache.invalidate();
-        });
-
-        it('should return the requested artifact data', function (done) {
-          var promise = depMgr._resolveDepReference({
-            webpackageId: 'package1@1.0.0',
-            artifactId: 'util1',
-            getArtifactId: function () {
-              return this.artifactId;
-            }
-          });
-          promise.then(function (result) {
-            // console.log('done:' + JSON.stringify(result.data))
-            expect(result.data).to.eql(data.artifacts.utilities[ 0 ]);
-            done();
-          });
-        });
-
-        it('should request the manifest.webpackage by using the correct url', function (done) {
-          depMgr._resolveDepReference({
-            webpackageId: 'package1@1.0.0',
-            artifactId: 'util1',
-            getArtifactId: function () {
-              return this.artifactId;
-            }
-          });
-          expect(stub.calledWithMatch(depMgr._baseUrl + 'package1@1.0.0/manifest.webpackage')).to.be.true;
-          done();
-        });
-
-        after(function () {
-          depMgr._fetchManifest.restore();
-        });
-      });
-
-      describe('#_resolveDepReference()', function () {
-        var customManifest = {
-          version: '0.0.1-SNAPSHOT',
-          name: 'custom-manifest',
-          author: 'John Doe',
-          docType: 'webpackage',
-          artifacts: {
-            utilities: [
-              {
-                artifactId: 'artifact1',
-                description: 'artifact for testing purposes...',
-                resources: [ 'js/test1.js', 'css/test1.css' ],
-                dependencies: [{webpackageId: 'pack1@1.0.0', artifactId: 'util'}, {webpackageId: 'pack2@1.0.0', artifactId: 'main'}]
-              }
-            ]
-          }
-        };
-        var depReferenceItem = {
-          webpackageId: 'package1@1.0.0',
-          manifest: customManifest,
-          artifactId: 'artifact1',
-          getArtifactId: function () {
-            return this.artifactId;
-          }
-        };
-        var fetchManifestSpy;
-        before(function () {
-          fetchManifestSpy = sinon.spy(depMgr, '_fetchManifest');
-        });
-        beforeEach(function () {
-          depMgr._responseCache.invalidate();
-          fetchManifestSpy.reset();
-        });
-        it('should return manifest object, if there is one', function (done) {
-          var promise = depMgr._resolveDepReference(depReferenceItem);
-          promise.then(function (result) {
-            sinon.assert.notCalled(fetchManifestSpy);
-            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ]);
-            done();
-          });
-        });
-        it('should return manifest from cache, if there is one for requested webpackage', function (done) {
-          depMgr._responseCache.addItem(depReferenceItem.webpackageId, depReferenceItem.manifest);
-          var promise = depMgr._resolveDepReference(depReferenceItem);
-          promise.then(function (result) {
-            sinon.assert.notCalled(fetchManifestSpy);
-            expect(result.data).to.eql(customManifest.artifacts.utilities[ 0 ]);
-            done();
-          });
-        });
-        after(function () {
-          depMgr._responseCache.invalidate();
-          depMgr._fetchManifest.restore();
-        });
-      });
-
-      describe('#_resolveDepReference() error handling', function () {
-        var stub;
-        before(function () {
-          depMgr._baseUrl = 'http://www.base.test/webpacke-store/';
-          stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
-            // simulating a 500ms timeout
-            return new Promise(function (resolve, reject) {
-              setTimeout(function () {
-                reject({response: {status: 'timeout'}});
-              }, 500);
-            });
-          });
-        });
-        beforeEach(function () {
-          stub.reset();
-        });
-        it('should reject the returned promise if ajax request fails', function (done) {
-          var depRef = {
-            id: 'package_2-1.0.0'
-          };
-          var promise = depMgr._resolveDepReference(depRef);
-          promise.fail(function (status) {
-            expect(status).to.have.property('status', 'timeout');
-            done();
-          });
-        });
-        after(function () {
-          depMgr._fetchManifest.restore();
-          depMgr._baseUrl = '';
-        });
-      });
-      /**
-       * Find index of given DepReference item in internal depList.
-       */
       describe('#_getIndexOfDepReferenceItem()', function () {
         var artifactDependencies;
         var testReferrer = {
@@ -527,10 +227,6 @@ window.cubx.amd.define([ 'CRC',
           depMgr._depList = null;
         });
       });
-
-      /**
-       * The resource-list will be injected into the dom.
-       */
       describe('#_calculateResourceList()', function () {
         var internalDepList = [];
         var item1;
@@ -611,7 +307,6 @@ window.cubx.amd.define([ 'CRC',
           depMgr._depJson = null;
         });
       });
-
       describe('#_fetchManifest()', function () {
         var depMgr;
         var axiosStub;
@@ -639,7 +334,6 @@ window.cubx.amd.define([ 'CRC',
           axiosStub.restore();
         });
       });
-
       describe('#_getManifestForDepReference()', function () {
         var baseUrl;
         var depRefItem;
