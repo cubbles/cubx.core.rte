@@ -2,6 +2,7 @@
 window.cubx.amd.define([ 'CRC',
     'dependencyManager',
     'dependencyTree',
+    'manifestConverter',
     'text!unit/dependencyResolution/rootDependencies.json',
     'text!unit/dependencyResolution/dependencyPackage1.json',
     'text!unit/dependencyResolution/dependencyPackage2.json',
@@ -11,7 +12,7 @@ window.cubx.amd.define([ 'CRC',
     'text!unit/dependencyResolution/dependencyPackage6.json',
     'unit/utils/CubxNamespaceManager'
   ],
-  function (CRC, DepMgr, DependencyTree, rootDependencies, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, CubxNamespaceManager) {
+  function (CRC, DepMgr, DependencyTree, manifestConverter, rootDependencies, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, CubxNamespaceManager) {
     'use strict';
 
     var depMgr;
@@ -481,6 +482,26 @@ window.cubx.amd.define([ 'CRC',
               errorThrown.should.be.true;
             }
           });
+        });
+      });
+      describe('#_prepareResponseData()', function () {
+        var stub;
+        var convertedManifest;
+        before(function () {
+          convertedManifest = {};
+          // stub convert method from ManifestConverter
+          stub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert', function () { return convertedManifest; });
+        });
+        beforeEach(function () {
+          stub.reset();
+        });
+        after(function () {
+          stub.restore();
+        });
+        it('should return the converted manifest using manifestConverter.convert method', function () {
+          var result = DepMgr._prepareResponseData({version: '1.2.3', name: 'exampleManifest'});
+          result.should.be.equal(convertedManifest);
+          expect(stub.callCount).to.equal(1);
         });
       });
     });
