@@ -173,7 +173,7 @@ window.cubx.amd.define(
      * @param {object} depTree a DependencyTree instance
      * @returns {object} Array representing a list of depReference items.
      */
-    DependencyMgr.prototype._getDependencyListFromTree = function (depTree) { // TODO: Test me!
+    DependencyMgr.prototype._getDependencyListFromTree = function (depTree) {
       var nodeList = [];
       var depList = [];
 
@@ -231,12 +231,12 @@ window.cubx.amd.define(
     /**
      * Write Resource-References for Dependencies in DOM.
      * @memberOf DependencyMgr
-     * @param {array} depList Array containing references to all needed resources
+     * @param {array} resourceList Array containing references to all needed resources
      */
-    DependencyMgr.prototype._injectDependenciesToDom = function (depList) {
+    DependencyMgr.prototype._injectDependenciesToDom = function (resourceList) {
       // var element = document.getElementsByTagName('head')[0].firstElementChild;
-      for (var i = 0; i < depList.length; i++) {
-        var current = depList[ i ];
+      for (var i = 0; i < resourceList.length; i++) {
+        var current = resourceList[ i ];
         var currentReferrer = [];
         current.referrer.some(function (referrer, index) {
           currentReferrer[index] = typeof referrer === 'string'
@@ -659,7 +659,7 @@ window.cubx.amd.define(
         console.warn('The following resource will be ignored, because the type of the resource is unkown. It should be "js", "html" or "css". (' + item[ runtimeMode ] + ')');
         return;
       }
-      return new Resource(resMetaObj.fileName, resMetaObj.fileType.name, referrer);
+      return new DependencyMgr.Resource(resMetaObj.fileName, resMetaObj.fileType.name, referrer);
     };
 
     /**
@@ -883,7 +883,7 @@ window.cubx.amd.define(
     /* ----------------------------------------------------------------------------------------------------------------*/
 
     /**
-     * Class for representing a dependency item in a dependency list. Each dependency is in fact a reference to an
+     * Internal Class for representing a dependency item in a dependency list. Each dependency is in fact a reference to an
      * artifact within a webpackage.
      * @global
      * @constructor
@@ -963,13 +963,14 @@ window.cubx.amd.define(
     /* ----------------------------------------------------------------------------------------------------------------*/
 
     /**
+     * Internal Class representing a Resource.
      * @global
      * @constructor
      * @param {string} path The resource path
      * @param {string} type The resource type
      * @param {array} referrer list
      */
-    var Resource = function (path, type, referrer) {
+    DependencyMgr.Resource = function (path, type, referrer) {
       if (path === null || typeof path !== 'string' || path.length === 0) {
         throw new TypeError('parameter "path" needs to be of type string');
       }
