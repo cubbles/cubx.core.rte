@@ -8,35 +8,35 @@
    * @param {object} slotValue - Value of the slot
    * @returns {Element} 'cubx-core-slot-init' element to initialize a component's slot
    */
-  var createCoreSlotInitElement = function (slotName, slotValue) {
+  function createCoreSlotInitElement (slotName, slotValue) {
     var coreSlotInit = document.createElement('cubx-core-slot-init');
     coreSlotInit.setAttribute('slot', slotName);
     coreSlotInit.textContent = JSON.stringify(slotValue);
     return coreSlotInit;
-  };
+  }
 
   /**
    * Create a 'cubx-core-init' html element using a JSON
    * @param {object} inits - Object defining the slots' inits
    * @returns {Element} 'cubx-core-init' element to initialize a component
    */
-  var createCoreInitElement = function (inits) {
+  function createCoreInitElement (inits) {
     var coreInit = document.createElement('cubx-core-init');
     coreInit.style.display = 'none';
     for (var key in inits) {
       coreInit.appendChild(createCoreSlotInitElement(key, inits[key]));
     }
     return coreInit;
-  };
+  }
 
   /**
    * Dispatch 'componentReady' event so that the CRC starts working
    */
-  var dispatchComponentReadyEvent = function () {
+  function dispatchComponentReadyEvent () {
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent('componentReady', true, true, {});
     document.dispatchEvent(event);
-  };
+  }
 
   /**
    * Create and append associated html element for a component
@@ -44,7 +44,7 @@
    * @param {string} artifactId - artifact-id of the component (e.g. my-component)
    * @param {array} inits - Array containing initializations of the component's slots
    */
-  var appendComponent = function (webpackageId, artifactId, inits) {
+  function appendComponent (webpackageId, artifactId, inits) {
     var component = document.createElement(artifactId);
     component.setAttribute('cubx-webpackage-id', webpackageId);
     if (inits) {
@@ -52,7 +52,7 @@
     }
     document.querySelector('body').appendChild(component);
     dispatchComponentReadyEvent();
-  };
+  }
 
   /**
    * Read url get parameters, similar to PHP.
@@ -60,7 +60,7 @@
    * @param {string} param name of the parameter to read
    * @returns {*} the value of the parameter or an empty object if the parameter was not in the url
    */
-  var $_GET = function (param) {
+  function $_GET (param) {
     var vars = {};
     window.location.href.replace(location.hash, '').replace(
       /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
@@ -72,12 +72,12 @@
       return vars[param] ? vars[param] : null;
     }
     return vars;
-  };
+  }
 
   /**
    * Post a message to the iframe parent containing the offsetHeight of the iframe content
    */
-  var postIframeHeight = function () {
+  function postIframeHeight () {
     window.parent.postMessage(
       {
         iframeHeight: document.querySelector('body').offsetHeight,
@@ -85,7 +85,7 @@
       },
       document.location.origin
     );
-  };
+  }
 
   var webpackageId = $_GET('webpackage-id');
   var artifactId = $_GET('artifact-id');

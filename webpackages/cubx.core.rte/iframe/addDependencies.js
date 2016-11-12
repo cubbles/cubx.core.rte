@@ -7,7 +7,7 @@
    * @param {Array} dependencies - Dependencies to be loaded, e.g. [{"webpackageId":"bootstrap-3.3.5@1.1.0","artifactId":"bootstrap"}]
    * @returns {Array} 'rootDependencies' array according to CRCInit definition
    */
-  var createRootDependencies = function (dependencies) {
+  function createRootDependencies (dependencies) {
     var rootDependencies = [];
     for (var i = 0; i < dependencies.length; i++) {
       rootDependencies.push(
@@ -18,7 +18,7 @@
       );
     }
     return rootDependencies;
-  };
+  }
 
   /**
    * Read url get parameters, similar to PHP.
@@ -26,7 +26,7 @@
    * @param {string} param name of the parameter to read
    * @returns {*} the value of the parameter or an empty object if the parameter was not in the url
    */
-  var $_GET = function (param) {
+  function $_GET (param) {
     var vars = {};
     window.location.href.replace(location.hash, '').replace(
       /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
@@ -38,7 +38,7 @@
       return vars[param] ? vars[param] : null;
     }
     return vars;
-  };
+  }
 
   // Add dependencies to 'window.cubx.CRCInit' object
   var dependencies = $_GET('dependencies');
@@ -46,7 +46,7 @@
     dependencies = decodeURIComponent(dependencies);
     if (dependencies.indexOf('\'') >= 0) {
       dependencies = dependencies.replace(/'/gi, '"');
-    };
+    }
     window.cubx = {CRCInit: {rootDependencies: createRootDependencies(JSON.parse(dependencies))}};
   }
 }());
