@@ -1,6 +1,11 @@
-/*global location*/
+/*global location, MutationObserver*/
 (function () {
   'use strict';
+
+  var lastHeight = 0;
+  var iframeId = $_GET('iframe-id');
+  var webpackageId = $_GET('webpackage-id');
+  var artifactId = $_GET('artifact-id');
 
   /**
    * Create a 'cubx-core-slot-init' to define a slot initialization
@@ -78,17 +83,33 @@
    * Post a message to the iframe parent containing the offsetHeight of the iframe content
    */
   function postIframeHeight () {
-    window.parent.postMessage(
-      {
-        iframeHeight: document.querySelector('body').offsetHeight,
-        id: $_GET('iframe-id')
-      },
-      document.location.origin
-    );
+    var newHeight = document.querySelector('body').scrollHeight;
+    if (newHeight !== lastHeight) {
+      window.parent.postMessage(
+        {
+          iframeHeight: newHeight,
+          id: iframeId
+        },
+        document.location.origin
+      );
+      lastHeight = newHeight;
+    }
   }
 
-  var webpackageId = $_GET('webpackage-id');
-  var artifactId = $_GET('artifact-id');
+  /**
+   * Add a MutationObserver to call the 'postIframeHeight' method when new nodes are added to the
+   * body or when the body data changes.
+   */
+  function addMutationObserver () {
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        postIframeHeight();
+      });
+    });
+
+    var targetNode = document.body;
+    observer.observe(targetNode, { childList: true, characterData: true, subtree: true });
+  }
 
   if (webpackageId && artifactId) {
     var validParameters = true;
@@ -107,15 +128,10 @@
       validParameters = false;
     }
     if (validParameters) {
-      appendComponent(
-        webpackageId,
-        artifactId,
-        JSON.parse(inits)
-      );
+      appendComponent(webpackageId, artifactId, JSON.parse(inits));
+      if (iframeId) {
+        addMutationObserver();
+      }
     }
   }
-
-  document.addEventListener('cifReady', function () {
-    postIframeHeight();
-  });
 }());
