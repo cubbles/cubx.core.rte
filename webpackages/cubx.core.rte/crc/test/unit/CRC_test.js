@@ -5,10 +5,9 @@
 
 window.cubx.amd.define([
   'CRC',
-  'jqueryLoader',
   'dependencyManager',
   'unit/utils/CubxNamespaceManager'
-], function (crc, $, DepMgr, CubxNamespaceManager) {
+], function (crc, DepMgr, CubxNamespaceManager) {
   'use strict';
 
   // var crc = new CRC();

@@ -2,7 +2,6 @@
 window.cubx.amd.define([
   'CRC',
   // 'componentResolver',
-  'jqueryLoader',
   'text!unit/componentResolution/webpackageDocument1.json',
   'text!unit/componentResolution/webpackageDocument2.json',
   'text!unit/componentResolution/webpackageDocument3.json',
@@ -11,7 +10,7 @@ window.cubx.amd.define([
   'text!unit/componentResolution/resolvedComponent.json',
   'unit/utils/CubxNamespaceManager'
 ],
-  function (CRC, $, doc1, doc2, doc3, doc4, doc5, resolvedComponent, CubxNamespaceManager) {
+  function (CRC, doc1, doc2, doc3, doc4, doc5, resolvedComponent, CubxNamespaceManager) {
     'use strict';
 
     var resolver;

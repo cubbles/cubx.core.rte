@@ -137,7 +137,7 @@ window.cubx.amd.define([
     /**
      * Initiate CRC as direct child of given root dom node.
 
-     * @param {Object} root jQuery Object which contains the dom node for appending the CRC to.
+     * @param {Object} root element which contains the dom node for appending the CRC to.
      * @memberOf CRC
      */
     CRC.prototype.init = function (root) {

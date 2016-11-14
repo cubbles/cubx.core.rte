@@ -202,9 +202,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     paths: {
       'crcLoader': crcLoaderBaseUrl + '/modules/crcLoader/CRCLoader',
       'dependencyTagTransformer': crcLoaderBaseUrl + '/modules/dependencyTagTransformer/dependencyTagTransformer',
-      'jqueryLoader': crcLoaderBaseUrl + '/modules/jqueryLoader/jqueryLoader',
       'polyfills': crcLoaderBaseUrl + '/modules/polyfills/polyfills',
-      'jquery': crcLoaderBaseUrl + '/modules/jqueryLoader/jquery-1.11.1.min',
       // crc modules definition block starts here
       'crc': crcLoaderBaseUrl + '/../crc/modules/crc/CRC',
       'storageManager': crcLoaderBaseUrl + '/../crc/modules/storageManager/storageManager',

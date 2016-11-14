@@ -3,7 +3,6 @@
  */
 window.cubx.amd.define([ 'CRC',
     'dependencyManager',
-    'jqueryLoader',
     'text!unit/addToCache/webpackageDocument.json',
     'text!unit/addToCache/webpackageDocument1.json',
     'text!unit/addToCache/webpackageDocument2.json',
@@ -14,7 +13,7 @@ window.cubx.amd.define([ 'CRC',
     'text!unit/addToCache/webpackageDocument7.json',
     'unit/utils/CubxNamespaceManager'
   ],
-  function (CRC, DepMgr, $, pkg, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, pkg7, CubxNamespaceManager) {
+  function (CRC, DepMgr, pkg, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, pkg7, CubxNamespaceManager) {
     'use strict';
     var crcDepMgr;
 
