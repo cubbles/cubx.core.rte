@@ -208,8 +208,12 @@
             childB111.excluded = true;
 
             depTree._removeDuplicate(childA1, childB1);
-            childA11.excluded = false;
-            childA111.excluded = true;
+            childA11.excluded.should.be.false;
+            childA111.excluded.should.be.true;
+          });
+          it('should append referrer of removed duplicate node to referrer of duplicated nodes', function () {
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.data.referrer.should.eql([ packages.pkg1, packages.pkg2 ]);
           });
         });
         describe('#applyExcludes()', function () {

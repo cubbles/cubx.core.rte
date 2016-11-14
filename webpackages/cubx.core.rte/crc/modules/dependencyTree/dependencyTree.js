@@ -98,6 +98,7 @@
         duplicate.parent.usesExisting.push(duplicated);
         duplicated.usedBy.push(duplicate.parent);
       }
+      duplicated.data.referrer = duplicated.data.referrer.concat(duplicate.data.referrer);
       this.removeNode(duplicate);
     };
 
