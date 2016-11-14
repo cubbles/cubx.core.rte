@@ -106,13 +106,13 @@ window.cubx.amd.define(
          * Append a new script tag to DOM tree for including external JS file
          * @memberOf Utils.DOM
          * @param {string} src The value for the src attribute
-         * @param {string} referrer referrer this script
+         * @param {array} [referrer] referrer of this script
          */
         appendScriptTagToHead: function (src, referrer) {
           var element = document.createElement('script');
           element.setAttribute('src', src);
           element.async = false;
-          element.setAttribute('data-referrer', referrer.join(','));
+          if (referrer) element.setAttribute('data-referrer', referrer.join(','));
           document.head.appendChild(element);
         },
 
@@ -120,13 +120,13 @@ window.cubx.amd.define(
          * Append a new link tag with rel="stylesheet" to head for given href value
          * @memberOf Utils.DOM
          * @param {string} href The link to the stylesheet to be included
-         * @param {string} referrer referrer this sylesheet
+         * @param {array} [referrer] referrer of this sylesheet
          */
         appendStylesheetToHead: function (href, referrer) {
           var element = document.createElement('link');
           element.setAttribute('rel', 'stylesheet');
           element.setAttribute('href', href);
-          element.setAttribute('data-referrer', referrer.join(','));
+          if (referrer) element.setAttribute('data-referrer', referrer.join(','));
           document.head.appendChild(element);
         },
 
@@ -134,13 +134,13 @@ window.cubx.amd.define(
          * Append a new link tag with rel="import" to head for given href value
          * @memberOf Utils.DOM
          * @param {string} href The link to the htmlImport to be included
-         * @param {string} referrer referrer this html import
+         * @param {array} [referrer] referrer of this html import
          */
         appendHtmlImportToHead: function (href, referrer) {
           var element = document.createElement('link');
           element.setAttribute('rel', 'import');
           element.setAttribute('href', href);
-          element.setAttribute('data-referrer', referrer.join(','));
+          if (referrer) element.setAttribute('data-referrer', referrer.join(','));
           element.async = false;
           document.head.appendChild(element);
         },
