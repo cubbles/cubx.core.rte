@@ -1,34 +1,71 @@
 # Webpackage cubx.core.rte
-(Cubbles core Runtime Enviroment)
+This webpackage contains certain artifacts presenting the [Cubbles Runtime Environment (RTE)](https://cubbles.atlassian.net/wiki/display/RTE/Intro):
+* [cif (component interaction framework)](#cif)
+* [crc (client runtime container)](#crc)
+* [crc-loader](#crc-loader)
+* [cubx-component-mixin](#cubx-component-mixin)
+* [cubxpolymer](#cubxpolymer)
+* [dom-tree-utils](#dom-tree-utils)
+* [dynamic-connection-utils](#dynamic-connection-utils)
+* [es6-promise](#es6-promise)
+* [guid-utility](#guid-utility)
+* [iframe](#iframe)
+* [iframe-resizer](#iframe-resizer)
+* [webcomponents](#webcomponents)
+* [webcomponents-lite](#webcomponents-lite)
+
+
+## CIF
 
 ## CRC
-(Client Runtime Container)
 
-This utility provides the Runtime of a WebApp.
+## CRC-Loader
 
-### Module
-#### CRC
-The Client Runtime Container is needed to provide the runtime of an App (represented by a Webpackage).
+## cubx-component-mixin
 
-#### DependencyManager
-The Dependency Manager resolves the required dependencies and includes them into the document. The requester is attached to the data-referrer attribute.
+## cubxpolymer
 
-#### Cache
+## dom-tree-utils
+
+## dynamic-connection-utils
+
+## es6-promise
+
+## guid-utility
+
+## iframe
+
+## iframe-resizer
+
+## webcomponents
+
+## webcomponents-lite
+
+
+## Moduls
+### CRC
+The Client Runtime Container is needed to provide the browser based runtime for Cubbles components on any arbitrary web page.
+
+### DependencyManager
+The DependencyManager resolves the required dependencies and includes them into the document. The requester is attached to the data-referrer attribute.
+
+### DependencyTree
+Used by the DependencyManager to resolve and handle dependencies. Includes capabilities for handling duplicates und excludes.
+
+### Cache
 The Cache holds all referenced components. The key to access a component is its artifactId.
 Furthermore, the cache stores the resolvedComponent object, once it is built. The key to access the resolvedComponent is the artifactId of the original component.
 
-#### ComponentResolver
+### ComponentResolver
 Add the referenced components recursively to the original compound component manifest. So that the whole hierarchy of the compound component is available.
 
-#### StorageManager
+### StorageManager
 Provide the data persistence . (TODO)
 
-#### EventFactory
+### EventFactory
 Manage EventTypes and provide utility methods (e.g. to create CustomEvents, etc.).
 
-#### Utils
-
-## CRCLoader
+### CRCLoader
 (Client-Runtime-Container-Loader)
 
 This utility loads the CRC (Client Runtime Container).
@@ -181,7 +218,7 @@ The dependency can be defined as an object with the attributes manifest and endp
 * The Cubbles component (slots) can be connected by means of the Cubbles-HTML-API
 * The Cubbles component (slots) can be initialized by means of the Cubbles-HTML-API
 
-### Cubbles-HTML-API
+### Cubbles-TAG-API
 #### Definition of connections between Cubbles components
 
 The connections between components can be defined as follows:
