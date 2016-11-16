@@ -1,8 +1,8 @@
 # Webpackage cubx.core.rte
 This webpackage contains certain artifacts presenting the [Cubbles Runtime Environment (RTE)](https://cubbles.atlassian.net/wiki/display/RTE/Intro):
-* [cif (component interaction framework)](#cif)
-* [crc (client runtime container)](#crc)
 * [crc-loader](#crc-loader)
+* [crc (client runtime container)](#crc)
+* [cif (component interaction framework)](#cif)
 * [cubx-component-mixin](#cubx-component-mixin)
 * [cubxpolymer](#cubxpolymer)
 * [dom-tree-utils](#dom-tree-utils)
@@ -15,18 +15,163 @@ This webpackage contains certain artifacts presenting the [Cubbles Runtime Envir
 * [webcomponents-lite](#webcomponents-lite)
 
 
+## CRC-Loader
+The CRC-Loader is responsible for getting the **C**lient **R**untime **C**ontainer (CRC). To integrate the Cubbles runtime into your web app you need to include the CRC-Loader via script tag:
+
+    <head>
+    ...
+    
+    <!--  
+        Replace "https://cubbles.world/core" with the url of the Cubbles Base Store you would like to use.   
+        Include webcomopnents polyfill. This is needed to enable HTML5 Features in IE11 and Firefox.  
+    --> 
+    <script src="https://cubbles.world/core/webcomponents-lite/webcomponents-lite.min.js"></script>
+    
+    <script src="https://cubbles.world/core/cubx.core.rte@2.1.0/crc-loader/js/main.js"></script>
+    ...
+    </head>
+
+## CRC
+The **C**lient **R**untime **C**ontainer provides the basic runtime for Cubbles components including:
+ * identify Cubbles components used in the web app
+ * resolving the resources needed for instantiating the used components
+ * make your browser download the needed resources (JS, CSS, HTML Imports etc.)
+
 ## CIF
 The **C**omponent **I**nteraction **F**ramework takes care of rendering Cubbles components at runtime inside the DOM tree and 
 establishing and managing data propagation between these Cubbles components based on their declared connections.
-
 Furthermore the CIF provides the [Cubbles TAG API](#the-cubbles-tag-api).
 
+Enable the CIF inside your web app by including the [crc-loader](#crc-loader) script with attribute `data-crcinit-loadcif = true`.
+
 ### The Cubbles TAG API
+A detailed description of the Cubbles TAG API can be found in our [Cubbles Confluence Wiki](https://cubbles.atlassian.net/wiki/x/K4Cc).
 
+#### Create a Cubble
+Instantiate a Cubble Component by adding a custom html tag where the tag name is equal to the name of the component (so called `artifactId` of the component). The mandatory attribute `cubx-webpackage-id` points to the webpackage in which the component resides.
 
-## CRC
+***Note:** The webpackage you are requesting the component from using* `cubx-wepackage-id` *needs to be located in the same store like the one where the RTE is requested from.*
 
-## CRC-Loader
+    <body>
+    ...
+    <first-demo-component cubx-webpackage-id="demo-package@1.0"></first-demo-component>
+    ...
+    </body>
+
+If you want to create a Cubble that is located in a webpackage with `webpackage.modelVersion  < 9` you additionally need to provide an endpointId:
+
+    <first-demo-component cubx-webpackage-id="demo-package@1.0" cubx-endpoint-id="main"></first-demo-component>
+    
+#### Slot Initializations
+In many cases you want to set initial values for the input slots the created Cubble provides. This can be done using the `<cubx-core-init>` and `<cubx-core-slot-init>` tags.
+
+***Note:** Setting* `style="display:none;"` *on the* `<cubx-core-init>` *tag prevents the browser from displaying the innerHtml values of each* `<cubx-core-slot-init>` * before CIF is loaded and bootstraped.* 
+ 
+    <first-demo-component cubx-webpackage-id="demo-package@1.0">
+        <cubx-core-init style="display:none;">
+            <cubx-core-slot-init slot="message">"Hello World!"</cubx-core-slot-init>
+            <cubx-core-slot-init slot="count">5</cubx-core-slot-init>
+            <cubx-core-slot-init slot="on">true</cubx-core-slot-init>
+            <cubx-core-slot-init slot="config">{"label":"Name","value":"Max Musternamm"}</cubx-core-slot-init>
+        </cubx-core-init>
+    </first-demo-component>
+    
+Each `<cubx-core-slot-init>` needs to have the attribute `slot` holding the name of the slot for which to set the value. The inner html inside the `<cubx-core-slot-init>` tag is the value which should be set. This value needs to be valid json. 
+Depending on the type of value the slot expects you can set `boolean`, `string`, `number` or `object` values. The slot initializations are proceeded by the CIF in the same order there where declared inside the `<cubx.core.init>` tag. 
+
+#### Connection Declaration
+If you create more then one Cubbles inside your web page it is possible to define connections between them (respectively their provided slots). This can be done using the `<cubx-core-connections>` and `<cubx-core-connection>` tags.
+
+    <first-demo-component cubx-webpackage-id="demo-package@1.0">
+        <cubx-core-init style="display:none;">
+            <cubx-core-slot-init slot="message">"Hello World!"<cubx-core-slot-init>
+        </cubx-core-init>
+        <cubx-core-connections>
+            <cubx-core-connection connection-id="connection1" source="message" destination="second:textInput"></cubx-core-connection>
+        </cubx-core-connections>
+    </first-demo-component>
+    ...
+    <second-demo-component id="second" cubx-webpackage-id=""demo-package@1.0"></second-demo-component>
+    
+Each `<cubx-core-connection>` needs attributes
+1. `conection-id` for setting a unique connection id
+2. `source` for setting the output slot name acting as source for this connection
+3. `destination` for setting the target of this connection using `[id-of-target]:[name-of-input-slot]`
+ 
+The above example establishes a connection between output slot `message` of Cubble `<first-demo-component>` and input slot `textInput` of Cubble `<second-demo-component>` with `id=second`. 
+Each time the value of slot `message` changes the CIF takes care of propagating the new value to slot `textInput`. Assuming slot `message` is output and input slot after initialisation the value `"Hello Wolrd!` is immediately propagated
+to slot `textInput`.
+
+There are additional options available for each `<cubx-core-connection>`:
+
+##### repeated-value (default = false)
+In case the value of an output slot is renewed without changing the value itself the value ist NOT propagated to the connected slots. This is the default behaviour.
+If attribute `repeated-value` is set to `true` the connection is propagated each time the value for source slot is set also when the value itself is unchanged.
+
+    <cubx-core-connection ... repeated-value="true"></cubx-core-connection>
+ 
+##### copy-value (default = true)
+By default the destination slot of a connection will receive a copy of the propagated value. This isolates the models of different Cubbles of each other. In most cases this is the expected behaviour.
+If attribute `copy-value` is set to `false` the propagated value is not copied. This only is useful if the propagated value is of type `object`. Depending on the size of the propagated object it is much faster to not copy the value. 
+
+    <cubx-core-connection ... copy-value="false"></cubx-core-connection>
+
+##### hook-function
+It's possible to declare a hook function that is called with propagated value each time the connection triggers. This can be useful if you need to do some data transformation to fit the target slots expected structure.
+The hook function will be called with the propagated value and a next callback. The continue the propagation of the connection you have to call the next callback with the value the propagation should be continued:
+
+    function (value, next) {
+        // do your data transformation based on value
+        var newValue = value * 2;
+        
+        // call next callback with transformed value
+        next(newValue);
+    }
+    
+To apply such a hook function to a connection just add the `hook-function` attribute as follows:
+  
+Either provide the function string inline 
+
+    <cubx-core-connection ... hook-function="function (value, next){ var newValue = value; next(newValue); }"></cubx-core-connection>
+
+or provide the name of a function available in global `window` scope
+
+    <cubx-core-connection ... hook-function="myHookFunction"></cubx-core-connection>
+
+#### Adding dependencies
+Use the `<cubx-dependencies>` and `<cubx-dependency>` tags to add additional dependencies. This can be useful if you have only permission to edit certain parts of the DOM tree e.g. when you are a page editor using a cms like Wordpress
+and want to add dependencies. Otherwise it's also possible to add dependencies using the global `window.cubx.CRCInit.rootDependencies` property.
+
+    <first-demo-component cubx-webpackage-id="demo-package@1.0">
+        <cubx-dependencies>
+            <cubx-dependency artifact-id="third-party-utility" webpackage-id="third-party-pkg@1.0"></cubx-dependency>
+        </cubx-dependencies>
+    </first-demo-component>
+
+Each `<cubx-dependencies>` tag can have an arbitrary number of `<cubx-dependency>` children. Each `<cubx-dependency>` tag needs attributes
+
+1. `artifact-id` sets the artifactId (= component name) of the dependency to add
+2. `webpackage-id` (optional) sets the webpackage-id in which the given artifact should is located. If this attribute is omitted the artifact will be searched in the same webpackage like the parent Cubble.
+3. `endpoint-id` (optional) sets the endpoint-id of the dependency to add. This is only needed if you reference a webpackage with `webpackage.modelVersion < 9`
+
+#### Exlcuding dependencies
+Analogous to adding dependencies it is also possible to exclude certain dependencies. Use the `<cubx-dependency-excludes>` and `<cubx-dependency-exclude>` tags to do so.
+
+    <first-demo-component cubx-webpackage-id="demo-package@1.0">
+        <cubx-dependency-excludes>
+            <cubx-dependency-exclude artifact-id="third-party-utility" webpackage-id="third-party-pkg@1.0"></cubx-dependency-exclude>
+        </cubx-dependency-excludes>
+    </first-demo-component>
+    
+Each `<cubx-dependency-excludes>` tag can have an arbitrary number of `<cubx-dependency-excludes>` children. Each `<cubx-dependency-exclude>` tag needs attributes
+
+1. `artifact-id` sets the artifactId (= component name) of the dependency to exclude
+2. `webpackage-id` (optional) sets the webpackage-id in which the given artifact is located. If this attribute is omitted the artifact will be searched in the same webpackage like the parent Cubble.
+3. `endpoint-id` (optional) sets the endpoint-id of the dependency to exclude. This is only needed if you reference a webpackage with `webpackage.modelVersion < 9`
+
+***Note:** When you exclude a dependency that is needed by other Cubbles in your DOM tree this exclude will be ignored. In such a case you have to make sure to exclude this specific dependency for each Cubble that uses the dependency.*
+
+To make sure a dependency is always excluded you can add it to the global `window.cubx.CRCInit.rootDependencyExclucdes` array.
 
 ## cubx-component-mixin
 
@@ -47,390 +192,3 @@ Furthermore the CIF provides the [Cubbles TAG API](#the-cubbles-tag-api).
 ## webcomponents
 
 ## webcomponents-lite
-
-
-## Moduls
-### CRC
-The Client Runtime Container is needed to provide the browser based runtime for Cubbles components on any arbitrary web page.
-
-### DependencyManager
-The DependencyManager resolves the required dependencies and includes them into the document. The requester is attached to the data-referrer attribute.
-
-### DependencyTree
-Used by the DependencyManager to resolve and handle dependencies. Includes capabilities for handling duplicates und excludes.
-
-### Cache
-The Cache holds all referenced components. The key to access a component is its artifactId.
-Furthermore, the cache stores the resolvedComponent object, once it is built. The key to access the resolvedComponent is the artifactId of the original component.
-
-### ComponentResolver
-Add the referenced components recursively to the original compound component manifest. So that the whole hierarchy of the compound component is available.
-
-### StorageManager
-Provide the data persistence . (TODO)
-
-### EventFactory
-Manage EventTypes and provide utility methods (e.g. to create CustomEvents, etc.).
-
-### CRCLoader
-(Client-Runtime-Container-Loader)
-
-This utility loads the CRC (Client Runtime Container).
-
-### Parameter:
-#### loadCIF (default == 'true')
-Should the CIF be loaded?
-
-**Posible values:**  'true' | 'false'
-
-**Configuration through**
-
-* The attribute of the CRCLoader Script-Tag: `data-crcinit-loadcif="false"'
-* The global property:
-
-        <script>
-            window.cubx = {
-                "CRCInit": {
-                        loadCIF="false"
-                    }
-                }
-        </script>
-
-**Note:** the attribute overwrites the property.
-
-#### runtimeMode (default == 'prod')
-An application can be started in different runtime modes.
-
-**Posible values:** 'dev' | 'prod'
-
-
-**Configuration through**
-
-* The URL parameter `runtimeMode=dev`
-
-### Attributes:
-#### data-cubx-startevent (default DOMContentEvent)
-Event which is triggered to indicate that the the CRC has loaded.
-
-#### allow-absolute-resource-urls
-If is allow-absolute-resource-urls==true, allow usage of absolut resource urls. Default value is false.
-
-... or set direct in CRCInit object...
-
-    <script>
-        window.cubx = {
-            "CRCInit": {
-                "allowAbsoluteResourceUrls": true
-            }
-        }
-    </script>
-    
-### Root Dependencies
-The configuration of the root dependencies can be defined through an initial global configuration object. This object is the only way to load dependencies that are not part of the Cubbles platform
-
-*Example: artifacts from the own webpackage*  
-If the dependency is defined in the same webpackage, the webpackageId must not be defined.
- 
-    <script>
-        window.cubx = {
-            "CRCInit": {
-                "rootDependencies": [
-                     {
-                        "artifactId": "util1"
-                     }
-                ]
-            }
-        }
-    </script>
-
-*Example: artifacts from an other webpackage*  
-For modelVersion >= 9.0 must be just the webpackageId and the artifactId defined. 
- 
-    <script>
-        window.cubx = {
-            "CRCInit": {
-                "rootDependencies": [
-                     {
-                        "webpackageId": "com.incowia.demos.demo5@1.0.0"
-                        "artifactId": "util1"
-                     }
-                ]
-            }
-        }
-    </script>
-    
-*Example: artifacts from an other webpackage with modelVersion <=8.3.0*  
-For modelVersion < 9.0 must be the webpackageId, artifactId and the endpointId defined. 
-
-    <script>
-        window.cubx = {
-            "CRCInit": {
-                "rootDependencies": [
-                     {
-                        "webpackageId": "com.incowia.demos.demo1@1.0.0"
-                        "artifactId": "util1",
-                        "endpoint": "main"
-                     }
-                ]
-            }
-        }
-    </script>
-
-The dependencies of a Cubbles component can be defined using the the attribute ``cubx-webpackage-id`` within its HTML tag. The ``artifactId`` is defined through the tagname of the element. (It is ``my-example-compound``in the below examples.)
-
-*Example: artifacts from the own webpackage*  
-If the dependency is defined in the same webpackage, the key word 'this' can be used instead of the webpackageId :
-
-    <my-example-component cubx-webpackage-id="this"></my-example-component>
-
-*Example: artifacts from an other webpackage*  
-If the dependency is defined in an other webpackage, it must be in ``cubx-webpackage-id`` attribute the webpackageId (i.e. '[groupId.]webpackageName@version') defined.
-
-    <my-example-component cubx-webpackge-id="examples@0.1-SNAPSHOT"></my-example-component >
-
-*Example: artifacts from an other webpackage with modelVersion <= 8.3.0*  
-If the dependency is defined in a webpacakge with an older modelVersion (modelVersion <= 8.3.0), it must be an additional attribute ´´cubx-endpint-id`` defined.
-    
-    <my-example-component cubx-webpackage-id="examples@0.1-SNAPSHOT/" cubx-endpoint-id="main"></my-example-component >
-    
-#### Inline manifest definition:
-
-The dependency can be defined as an object with the attributes manifest and endpoint:
-
-    <script>
-        window.cubx = {
-            "CRCInit": {"rootDependencies": [
-               {
-                   "endpoint": "this/util1/main",
-                   "manifest": {
-                       "name": "my-webpackage-name",
-                       "groupId": "com.example",
-                       "version": "0.1.0",
-                       //.... Put your manifest here. Note: this needs to be a full valid webpackage.manifest regarding to document api
-                      // for more details see: https://github.com/cubbles/cubx-webpackage-document-api/wiki
-                   }
-               }
-            ]
-        }
-    </script>
-
-
-
-## CIF
-(Component Integration Framework)
-
-* The Framework generates the HTML/Javascript code for the Cubbles components. At the same time all members, connections and initializations  defined in the manifest.webpackage are initialized. A subtree will be generated for compound components.
-* The Cubbles components can be mixed with HTML tags.
-* The Cubbles components can exist within deep levels of Dom hierarchy
-* The Cubbles component (slots) can be connected by means of the Cubbles-HTML-API
-* The Cubbles component (slots) can be initialized by means of the Cubbles-HTML-API
-
-### Cubbles-TAG-API
-#### Definition of connections between Cubbles components
-
-The connections between components can be defined as follows:
-
-    <cubx-core-connections>
-      <cubx-core-connection source="message", destination="myMemeber2:textInput" connectionId="connection1"></cubx-core-connection>
-      <cubx-core-connection source="switchOn", destination="myMemeber3:switch" connectionId="connection2"></cubx-core-connection>
-    </cubx-core-connections>
-
-  * All connections are defined only within the content of the source elements. The `<cubx-core-connections>` tag should be child of the Cubbles component. Additionally, each `<cubx-core-slot-init>` tag is direct child of the  `<cubx-core-connections>` tag.
-  * Each `<cubx-core-slot-init>` tag should be defined by means of the `source`, `destination`, and `connection-id` attributes.
-   * `connection-id`: id for the connection that is unique within a context.
-   * `source`: name of the source slot
-   * `destination`: id of the target component and name of the target slot divided by ":".
-  * The connections are applied or resolved during runtime in the same order in which they were defined.
-
-Example:
-
-    <my-first-cubbles id="first">
-      <cubx-core-connections>
-            <cubx-core-connection source="message", destination="second:textInput" connectionId="connection1"></cubx-core-connection>
-      </cubx-core-connections>
-    </my-first-cubbles>
-    ...
-    <my-second-cubbles id="second"></my-second-cubbles>
-
-#### Definition of the slots initialization
-
-The slots initialization can be defined as follows:
-
-    <cubx-core-init>
-      <cubx-core-slot-init slot="message">"HalloWorld!"</cubx-core-slot-init>
-      <cubx-core-slot-init slot="count">5</cubx-core-slot-init>
-      <cubx-core-slot-init slot="on">true</cubx-core-slot-init>
-      <cubx-core-slot-init slot="config">{ "label": "Name", "value" : "Max Musternamm"}</cubx-core-slot-init>
-    </cubx-core-init>
-
-* The initialization of the slots should be defined by means of the `<cubx-core-init>`. The `<cubx-core-init>` is a child of the Cubble component.
-* Each slot is defined using the `<cubx-core-slot-init>` tag as child of `<cubx-core-init>`.
- * The `slot` attribute indicates the name of the slot that will be initilized.
- * The text content of the `<cubx-core-slot-init>` indicates the initial value of the slot as JSON.
-* The initialization of each slot is carried out in the same order in which they were defined.
-
-Example:
-
-        <my-first-cubbles id="first">
-         <cubx-core-init>
-              <cubx-core-slot-init slot="message">"HalloWorld!"</cubx-core-slot-init>
-         </cubx-core-init>
-         <cubx-core-connections>
-               <cubx-core-connection source="message", destination="second:textInput" connectionId="connection1"></cubx-core-connection>
-         </cubx-core-connections>
-        </my-first-cubbles>
-        ...
-        <my-second-cubbles id="second">
-         <cubx-core-init>
-                      <cubx-core-slot-init slot="config">{
-                        "data": {
-                          "title": "Greeting"
-                        }</cubx-core-slot-init>
-                 </cubx-core-init>
-         </my-second-cubbles>
-
-## HTML representation of components
-The whole DOM tree is generated based on the component description (manifest.component). At the same time, the HTML tags that represent connections, the elementary components and the compound components are generated.
-
-The attributes of components are:
-
-* `cubx-dependency`: dependency that contains the code needed by the component (`<webpackageId>/<artifactId>/<endpoint>`).
-* `cubx-component-id`: id of the component (`<webpackageId>/<artifactId>`)
-* `runtime-id`: unique id within the application - it consists of its parent component runtime-id (in case it exists) and its own cubx-component-id, as well as its member-id
-* `member-id`: (optional) id attribute of the member component (source:  manifest.webpackage -> membera[x].memberId) (It is used as identifier of sibling components)
-
-Example:
-
-    Root-Tag (compound):
-    <cif-test-compound-outer cubx-component-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT">
-
-    member (compound):
-    <cif-test-compound cubx-component-id="com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT:com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT.member2" member-id="member2"/>
-
-    member (elementary):
-    <cif-test-a cubx-component-id="com.incowia.jtrs.cif-test-a-0.1.0-SNAPSHOT" runtime-id="com.incowia.jtrs.cif-test-compound-outer-0.1.0-SNAPSHOT:com.incowia.jtrs.cif-test-compound-0.1.0-SNAPSHOT.2:com.incowia.jtrs.cif-test-a-0.1.0-SNAPSHOT.member1" member-id="member1">
-
-### Components
-The manifest.webpackage holds the generated components with their attributes, e.g. `runtime-id`.
-
-### Compound components - Context
-Each compound component has its own Context object. Within this context the propagation from slots is performed.
-
-#### Compound component HTML templates
-The integration of member components in a compound component can be defined by means of a HTML template. The following is an example of a template for `my-compound` component (my-compound-template.html):
-
-    <template id="my-compound">
-         <div>
-             <h1>My awsome compound…</h1>
-             <div class="row">
-                <div class="col-xs-6">
-                    <my-comp1 member-id-ref="m1"/>
-                </div>
-                <div class="col-xs-6">
-                    <my-comp2 member-id-ref="m2" />
-                </div>
-              </div>
-          <div>
-    </template>
-
-It is important that the id attribute of the template references the artifactId of the component. The member components are added as tags whose `member-id-ref` attribute references its `memberId` in the manifest.webpackage.
-
-For the HTML template to be available, it should be added as resource in the endpoint of the component.
-
-If no template is provided, the member components are added in the same order in which they are defined in the manifest.webpackage.
-
-### Connections
-The connection information is described in the HTML custom tags "cubx-connections" and "cubx-connection".
-
-After the generation of the HTML tags, the Dom tree is parsed. The connection list is hold by the connection tag, this list manages the slots propagation.
-
-    <cubx-connections style="display: none;">
-        <cubx-connection source="slota" destination="2:slotaa"></cubx-connection>
-        <cubx-connection source="slotb" destination="2:slotbb" copy-value="false"></cubx-connection>
-        <cubx-connection source="slotb" destination="2:slotbb" copy-value="false"></cubx-connection>
-         <cubx-connection source="slotb" destination="parent:slotxx" copy-value="false"></cubx-connection>
-    </cubx-connections>
-
-
-### Events
-
-* `cifStart` - indicates when the CIF starts to complete its tasks.
-* `cifReady`  - indicates that the CIF initial process (elements generation, connections registration and slots initialization) is completed.
-* `cifInitStart` - triggered when the slots initialization starts
-* `cifInitReady` - triggered when the slots initialization finishes
-* `cifComponentReady`-  triggered by each component and listened by the CIF. When the `cifComponentReady` of all components generated by the CIF are triggered, the `cifAllComponentsReady` event is triggered.
-* `cifAllComponentsReady` - indicates that all the components generated by the CIF are ready. After this event is triggered, the connections and inits definitions are applied.
-
-
-## CubxPolymer
-(Cubbles Wrapper for Polymer 1.x Elements)
-
-The CubxPolymer represents a wrapper for the Polymer object. The object is added to the _CubblesComponent-API_ by the wrapper.
-
-It represents the addition of:
-
-1.  a so called _model_,
-2. the methods for the external interaction with the model (espacially used by the CIF) and
-3. the methods for the internal interaction with the model (inside the component)
-
-## Webcomponents
-(3th-party webcomponents library)
-
-The webcomponent.js polyfills enable Web Components in (evergreen) browsers that lack native support.
-
-
-## How to do it...
-
-### Use of  _hookFunction_
-From modelVersion 8.2 it is possible to define a `hookFunction` in each connection. This function will be executed:
-* when the connection data is propagated and
-* before the propagated data is transferred to the target component and slot
-
-#### Configuration
-The attribute `hookFunction` can contain an anonyme function (as string) or the function name of an existing global function (incl. namespace).
-
-The following is an example of a connection with a anonyme `hookFunction`:
-
-    {
-        "connectionId": "member-a:c-member-b:c",
-        "source": {
-          "memberIdRef": "member-a",
-          "slot": "c"
-        },
-        "destination": {
-          "memberIdRef": "member-b",
-          "slot": "c"
-        },
-        "hookFunction": "function(value, next) { var newValue = {}; newValue.name = value.firstname ? value.firstname + ' ' : ''; newValue.name += value.name; next(newValue);};"
-      }
-
-And the following is an example of a connection with a global `hookFunction`, indicating using its name and namespace:
-
-    {
-        "connectionId": "member-a:a-member-b:a",
-        "source": {
-          "memberIdRef": "member-a",
-          "slot": "a"
-        },
-        "destination": {
-          "memberIdRef": "member-b",
-          "slot": "a"
-        },
-        "hookFunction": "cubx.hookFunctions.multiply10"
-      }
-
-The global function in the example above (cubx.hookFunctions.multiply10) can be defined for example by means of an Artifact of type Utility. In this example the function is defined in the `window.cubx.hookFunctions`  namespace, as follows:
-
-    window.cubx.hookFunctions.multiply10 = function(value, next) {
-        value = Number(value) * 10;
-        next(value);
-    };
-
-The following two parameters are passed to the _hookFunction_ (_cubx.hookFunctions.multiply10_ in the example):
-
-* `value`: represents the propagate data
-* `next`: a function that will further process the of data propagation. It should be called after the modification of the value. This function received the modified value as parameter.
-
-If the `hookFunction`  is employed to validate the propagated date, it can abort the propagation by **not** calling the `next` function.
-
-[![Build Status](https://travis-ci.org/cubbles/cubx.core.rte.svg?branch=master)](https://travis-ci.org/cubbles/cubx.core.rte)

@@ -127,6 +127,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
    * Set option 'loadCIF' (default == 'true')
    */
   (function () {
+    // fow backwards compatibility also test for attribute "data-CRCInit.loadCIF"
     var attributeName = 'data-CRCInit.loadCIF';
     var loadCIFAttr = crcLoaderElement.getAttribute(attributeName);
     attributeName = 'data-crcinit-loadcif';
