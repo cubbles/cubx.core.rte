@@ -16,6 +16,13 @@ This webpackage contains certain artifacts presenting the [Cubbles Runtime Envir
 
 
 ## CIF
+The **C**omponent **I**nteraction **F**ramework takes care of rendering Cubbles components at runtime inside the DOM tree and 
+establishing and managing data propagation between these Cubbles components based on their declared connections.
+
+Furthermore the CIF provides the [Cubbles TAG API](#the-cubbles-tag-api).
+
+### The Cubbles TAG API
+
 
 ## CRC
 
