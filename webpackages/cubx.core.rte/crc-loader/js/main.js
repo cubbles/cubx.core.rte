@@ -150,7 +150,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     var attributeName = 'data-cubx-startevent';
     var startEventName = crcLoaderElement.getAttribute(attributeName);
     var defaultValue = 'DOMContentLoaded';
-    cubx.CRCInit.startEvent = startEventName || defaultValue;
+    cubx.CRCInit.startEvent = startEventName || defaultValue; // TODO: startEvent should also be make configurable using CRCInit object directly
     document.addEventListener(cubx.CRCInit.startEvent, function () {
       cubx.CRCInit.startEventArrived = true;
     });
@@ -163,7 +163,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     if (cubx.CRCInit.allowAbsoluteResourceUrls) {
       return;
     }
-    var attributeName = 'allow-absolute-resource-urls';
+    var attributeName = 'allow-absolute-resource-urls'; // TODO: add "data-" prefix for attribute name
     var allowAbsoluteResourceUrls = crcLoaderElement.getAttribute(attributeName);
     var defaultValue = false;
     cubx.CRCInit.allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || defaultValue;

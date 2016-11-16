@@ -1,4 +1,4 @@
-# Webpackage cubx.core.rte
+# Webpackage cubx.core.rte [![Build Status](https://travis-ci.org/cubbles/cubx.core.rte.svg?branch=master)](https://travis-ci.org/cubbles/cubx.core.rte)
 This webpackage contains certain artifacts presenting the [Cubbles Runtime Environment (RTE)](https://cubbles.atlassian.net/wiki/display/RTE/Intro):
 * [crc-loader](#crc-loader)
 * [crc (client runtime container)](#crc)
@@ -30,6 +30,50 @@ The CRC-Loader is responsible for getting the **C**lient **R**untime **C**ontain
     <script src="https://cubbles.world/core/cubx.core.rte@2.1.0/crc-loader/js/main.js"></script>
     ...
     </head>
+    
+### Configuration options
+There are several options for configuring the CRC-Loader respectively the loaded CRC:
+
+#### loadCIF (default = true)
+If true the CIF is loaded. Set this to false to prevent CRC from loading the CIF. This can be set using attribute `data-crcinit-loadcif="true|false"` on the `<script>` tag of the CRC-Loader.
+Alternatively you can use global `window.cubx.CRCInit` object:
+
+    <script>
+        window.cubx = {
+            CRCInit: {
+                loadCIF: true|false
+            }
+        }
+    </script>
+
+#### runtimeMode (default = "prod")
+Declare the runtimeMode that is used. Each artifact can have an arbitrary number of resources defined (JS, HTML Imports, CSS). Each of those resource can have properties `dev` and `prod` holding the filename
+used for the corresponding runtime mode. If runtime mode is set to `prod` the file given from property `prod` is used. If runtime mode is set to `dev` the file given for property `dev`is used instead.
+
+Set runtime mode using URL-Search parameter `?runtimeMode=dev|prod` or global `windwo.cubx.CRCInit` object: 
+
+    <script>
+        window.cubx = {
+            CRCInit: {
+                runtimeMode: "dev|prod"
+            }
+        }
+    </script>
+
+#### allowAbsoluteResourceUrls (default = false)
+If set to true it is possible to use absolute urls for resources. Set it using `allow-absolute-resource-urls="true|false"` on the `<script>` tag of the CRC-Loader.
+Alternatively you can use global `window.cubx.CRCInit` object:
+
+    <script>
+        window.cubx = {
+            CRCInit: {
+                allowAbsoluteResourceUrls: true|false
+            }
+        }
+    </script>
+
+#### data-cubx-startevent (default = "DOMContentLoaded")
+Set a custom event name to trigger RTE bootstrap process using `data-cubx-startevent="[eventName]"` on the `<script>` tag of the CRC-Loader. The listener for this event will be attached to `document`.
 
 ## CRC
 The **C**lient **R**untime **C**ontainer provides the basic runtime for Cubbles components including:
@@ -42,7 +86,7 @@ The **C**omponent **I**nteraction **F**ramework takes care of rendering Cubbles 
 establishing and managing data propagation between these Cubbles components based on their declared connections.
 Furthermore the CIF provides the [Cubbles TAG API](#the-cubbles-tag-api).
 
-Enable the CIF inside your web app by including the [crc-loader](#crc-loader) script with attribute `data-crcinit-loadcif = true`.
+Enable the CIF inside your web app by including the [crc-loader](#crc-loader) script with attribute `data-crcinit-loadcif="true"`.
 
 ### The Cubbles TAG API
 A detailed description of the Cubbles TAG API can be found in our [Cubbles Confluence Wiki](https://cubbles.atlassian.net/wiki/x/K4Cc).
@@ -50,7 +94,7 @@ A detailed description of the Cubbles TAG API can be found in our [Cubbles Confl
 #### Create a Cubble
 Instantiate a Cubble Component by adding a custom html tag where the tag name is equal to the name of the component (so called `artifactId` of the component). The mandatory attribute `cubx-webpackage-id` points to the webpackage in which the component resides.
 
-***Note:** The webpackage you are requesting the component from using* `cubx-wepackage-id` *needs to be located in the same store like the one where the RTE is requested from.*
+*Note: The webpackage you are requesting the component from using* `cubx-wepackage-id` *needs to be located in the same store like the one where the RTE is requested from.*
 
     <body>
     ...
@@ -65,7 +109,7 @@ If you want to create a Cubble that is located in a webpackage with `webpackage.
 #### Slot Initializations
 In many cases you want to set initial values for the input slots the created Cubble provides. This can be done using the `<cubx-core-init>` and `<cubx-core-slot-init>` tags.
 
-***Note:** Setting* `style="display:none;"` *on the* `<cubx-core-init>` *tag prevents the browser from displaying the innerHtml values of each* `<cubx-core-slot-init>` * before CIF is loaded and bootstraped.* 
+*Note: Setting* `style="display:none;"` *on the* `<cubx-core-init>` *tag prevents the browser from displaying the innerHtml values of each* `<cubx-core-slot-init>` * before CIF is loaded and bootstraped.* 
  
     <first-demo-component cubx-webpackage-id="demo-package@1.0">
         <cubx-core-init style="display:none;">
@@ -169,26 +213,37 @@ Each `<cubx-dependency-excludes>` tag can have an arbitrary number of `<cubx-dep
 2. `webpackage-id` (optional) sets the webpackage-id in which the given artifact is located. If this attribute is omitted the artifact will be searched in the same webpackage like the parent Cubble.
 3. `endpoint-id` (optional) sets the endpoint-id of the dependency to exclude. This is only needed if you reference a webpackage with `webpackage.modelVersion < 9`
 
-***Note:** When you exclude a dependency that is needed by other Cubbles in your DOM tree this exclude will be ignored. In such a case you have to make sure to exclude this specific dependency for each Cubble that uses the dependency.*
+*Note: When you exclude a dependency that is needed by other Cubbles in your DOM tree this exclude will be ignored. In such a case you have to make sure to exclude this specific dependency for each Cubble that uses the dependency.*
 
 To make sure a dependency is always excluded you can add it to the global `window.cubx.CRCInit.rootDependencyExclucdes` array.
 
 ## cubx-component-mixin
+// TODO
 
 ## cubxpolymer
+// TODO
 
 ## dom-tree-utils
+// TODO
 
 ## dynamic-connection-utils
+// TODO
 
 ## es6-promise
+// TODO
 
 ## guid-utility
+// TODO
 
 ## iframe
+// TODO
 
 ## iframe-resizer
+// TODO
 
 ## webcomponents
+// TODO
 
 ## webcomponents-lite
+// TODO
+                     
