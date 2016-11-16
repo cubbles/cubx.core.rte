@@ -1,5 +1,5 @@
 # Webpackage cubx.core.rte [![Build Status](https://travis-ci.org/cubbles/cubx.core.rte.svg?branch=master)](https://travis-ci.org/cubbles/cubx.core.rte)
-This webpackage contains certain artifacts presenting the [Cubbles Runtime Environment (RTE)](https://cubbles.atlassian.net/wiki/display/RTE/Intro):
+This webpackage contains certain artifacts representing the [Cubbles Runtime Environment (RTE)](https://cubbles.atlassian.net/wiki/display/RTE/Intro):
 * [crc-loader](#crc-loader)
 * [crc (client runtime container)](#crc)
 * [cif (component interaction framework)](#cif)
