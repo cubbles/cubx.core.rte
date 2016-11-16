@@ -109,7 +109,7 @@ If you want to create a Cubble that is located in a webpackage with `webpackage.
 #### Slot Initializations
 In many cases you want to set initial values for the input slots the created Cubble provides. This can be done using the `<cubx-core-init>` and `<cubx-core-slot-init>` tags.
 
-*Note: Setting* `style="display:none;"` *on the* `<cubx-core-init>` *tag prevents the browser from displaying the innerHtml values of each* `<cubx-core-slot-init>` * before CIF is loaded and bootstraped.* 
+*Note: Setting* `style="display:none;"` *on the* `<cubx-core-init>` *tag prevents the browser from displaying the innerHtml values of each* `<cubx-core-slot-init>` *before CIF is loaded and bootstraped.* 
  
     <first-demo-component cubx-webpackage-id="demo-package@1.0">
         <cubx-core-init style="display:none;">
