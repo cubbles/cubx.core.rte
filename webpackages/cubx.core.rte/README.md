@@ -268,32 +268,50 @@ Each `<cubx-dependency-excludes>` tag can have an arbitrary number of `<cubx-dep
 To make sure a dependency is always excluded you can add it to the global `window.cubx.CRCInit.rootDependencyExclucdes` array (see [rootDependencyExcludes](#rootdependencyexcludes)).
 
 ## cubx-component-mixin
-This artifact contains a collection of instance methods which each Cubble provides no matter if it is a compound Cubble or an elementary Cubble.
+A collection of instance methods which each Cubble provides no matter if it is a compound Cubble or an elementary Cubble.
 
 ## cubxpolymer
-// TODO
+Provides the global `CubxPolymer()` function used for registering a new Cubble component. This basically extends the gobal `Polymer()` function that comes with Polymer we use for implement elementary Cubbles components. 
+For more details see [Polymer Project](https://www.polymer-project.org/1.0/).
 
 ## dom-tree-utils
-// TODO
+Some helpers for DOM tree manipulation.
 
 ## dynamic-connection-utils
-// TODO
+A set of instance methods which each Cubble provides for handling dynamic connections.
 
 ## es6-promise
-// TODO
+Polyfill to get global `Promise` support in IE. For more details see [es6-promise](https://github.com/stefanpenner/es6-promise).
 
 ## guid-utility
-// TODO
+Small utility for generation a guid.
 
 ## iframe
-// TODO
+A small app artifact which you can use to render an arbitrary component given by url search parameter inside an iframe. This can be useful if you want to include a Cubble inside your web app
+but there is no RTE available on the page. For example if you are only allowed to add standard html when editing a page in a cms like wordpress. 
+
+Include component into your page using iframe:
+
+    <iframe src='https://cubbles.world/sandbox/cubx.core.rte@2.1.0/iframe/index.html?webpackage-id=demo-package@1.0&artifact-id=first-demo-component'/>
+
+You can also init the slots of the component rendered within the iframe:
+
+    <iframe src='https://cubbles.world/sandbox/cubx.core.rte@2.1.0/iframe/index.html?webpackage-id=demo-package@1.0&artifact-id=first-demo-component
+                 &inits={"message":"Hello World!","config":{"label":"Name","value":"Max Musternamm"}}'/>
+
+And finally add additional dependencies:
+
+    <iframe src='https://cubbles.world/sandbox/cubx.core.rte@2.1.0/iframe/index.html?webpackage-id=demo-package@1.0&artifact-id=first-demo-component
+                 &inits={"message":"Hello World!","config":{"label":"Name","value":"Max Musternamm"}}
+                 &dependencies=[{"webpackage-id":"third-party-pkg@1.0","artifact-id":"third-party-utility"}]'/>
 
 ## iframe-resizer
 // TODO
 
 ## webcomponents
-// TODO
+Webcomponents polyfill. This needs to be included before the crc-loader script. It is sufficient to use [webcompents-lite](#webcomponents-lite) 
 
 ## webcomponents-lite
-// TODO
+Webcomponents polyfill. This needs to be included before the crc-loader script (see [crc-loader](#crc-loader) section).
+For more details see [webcomponents.org](http://webcomponents.org/polyfills/)
                      

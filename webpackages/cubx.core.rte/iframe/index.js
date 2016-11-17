@@ -183,7 +183,7 @@
   }
 
   /**
-   * Add the dependencies provided as url parameter to the windows.cubx object
+   * Add the dependencies provided as url parameter to the window.cubx object
    */
   function addRootDependencies () {
     if (dependencies) {
@@ -226,4 +226,4 @@
   appendComponent();
   addRootDependencies();
   injectHeadScripts();
-}());
+})();
