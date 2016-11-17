@@ -76,8 +76,50 @@ Alternatively you can use global `window.cubx.CRCInit` object:
 Set a custom event name to trigger RTE bootstrap process using `data-cubx-startevent="[eventName]"` on the `<script>` tag of the CRC-Loader. The listener for this event will be attached to `document`.
 
 #### rootDependencies
+Set dependencies which should be resolved by CRC during bootstrap. Use global `window.cubx.CRCInit.rootDependencies` array to set.
 
-#### rootDependencyExclude
+    <script>
+        window.cubx = {
+            CRCInit: {
+                rootDependencies: [
+                    {
+                        artifactId: 'first-demo-component'
+                        webpackageId: 'demo-package@1.0',
+                        
+                        // optional properties
+                        endpointId: 'main-endpoint', // needed when referenced webpackage uses modelVersion < 9
+                        manifest: {
+                            //.... Put your manifest here. Note: this needs to be a full valid webpackage.manifest regarding to document api
+                           // for more details see: https://github.com/cubbles/cubx-webpackage-document-api/wiki
+                        }
+                    }
+                ]
+            }
+        }
+    </script>
+  
+This will add artifact `first-demo-component` from webpackage `demo-package@1.0`.
+  
+#### rootDependencyExcludes
+Set dependencies which should excluded during dependency resolution process. Use global `window.cubx.CRCInit.rootDepenencyExcludes` array to set.
+    
+    <script>
+            window.cubx = {
+                CRCInit: {
+                    rootDependencyExcludes: [
+                        {
+                            artifactId: 'first-demo-component'
+                            webpackageId: 'demo-package@1.0',
+                            
+                            // optional properties
+                            endpointId: 'main-endpoint', // needed when referenced webpackage uses modelVersion < 9
+                        }
+                    ]
+                }
+            }
+        </script>
+
+This will exclude artifact `first-demo-component` from webpackage `demo-package@1.0`.
 
 ## CRC
 The **C**lient **R**untime **C**ontainer provides the basic runtime for Cubbles components including:
@@ -110,6 +152,8 @@ If you want to create a Cubble that is located in a webpackage with `webpackage.
 
     <first-demo-component cubx-webpackage-id="demo-package@1.0" cubx-endpoint-id="main"></first-demo-component>
     
+The corresponding dependency needed for instantiating the `first-demo-component` will be automatically added to `window.cubx.CRCInit.rootDependencies` array (if it is not already there).
+
 #### Slot Initializations
 In many cases you want to set initial values for the input slots the created Cubble provides. This can be done using the `<cubx-core-init>` and `<cubx-core-slot-init>` tags.
 
@@ -188,7 +232,7 @@ or provide the name of a function available in global `window` scope
 
 #### Adding dependencies
 Use the `<cubx-dependencies>` and `<cubx-dependency>` tags to add additional dependencies. This can be useful if you have only permission to edit certain parts of the DOM tree e.g. when you are a page editor using a cms like Wordpress
-and want to add dependencies. Otherwise it's also possible to add dependencies using the global `window.cubx.CRCInit.rootDependencies` property.
+and want to add dependencies. Otherwise it's also possible to add dependencies using the global `window.cubx.CRCInit.rootDependencies` property (see [rootDependencies](#rootdependencies)).
 
     <first-demo-component cubx-webpackage-id="demo-package@1.0">
         <cubx-dependencies>
@@ -219,10 +263,9 @@ Each `<cubx-dependency-excludes>` tag can have an arbitrary number of `<cubx-dep
 
 *Note: When you exclude a dependency that is needed by other Cubbles in your DOM tree this exclude will be ignored. In such a case you have to make sure to exclude this specific dependency for each Cubble that uses the dependency.*
 
-To make sure a dependency is always excluded you can add it to the global `window.cubx.CRCInit.rootDependencyExclucdes` array.
+To make sure a dependency is always excluded you can add it to the global `window.cubx.CRCInit.rootDependencyExclucdes` array (see [rootDependencyExcludes](#rootdependencyexcludes)).
 
 ## cubx-component-mixin
-// TODO
 
 ## cubxpolymer
 // TODO
