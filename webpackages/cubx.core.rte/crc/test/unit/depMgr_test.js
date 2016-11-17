@@ -132,8 +132,8 @@ window.cubx.amd.define(
         });
         it('should append all html import resources of given resource list into DOM using utils.DOM api including all referrers of each resource', function () {
           depMgr._injectDependenciesToDom(resourceList);
-          expect(appendHtmlImportStub.callCount).to.equal(1);
-          expect(appendHtmlImportStub.calledWith('test.html', [ 'referrer1/artifact1', 'referrer2/artifact2' ])).to.be.true;
+          expect(appendHtmlImportStub.callCount).to.equal(2);
+          expect(appendHtmlImportStub.firstCall.calledWith('test.html', [ 'referrer1/artifact1', 'referrer2/artifact2' ])).to.be.true;
         });
         it('should append all css resources of given resource list into DOM using utils.DOM api including all referrers of each resource', function () {
           depMgr._injectDependenciesToDom(resourceList);
@@ -147,7 +147,9 @@ window.cubx.amd.define(
         });
         it('should keep order of resources when injecting them into DOM', function () {
           depMgr._injectDependenciesToDom(resourceList);
-          injectedResources.should.be.eql([ 'test.html', 'test.css', 'test.js' ]);
+          injectedResources[ 0 ].should.be.equal('test.html');
+          injectedResources[ 1 ].should.be.equal('test.css');
+          injectedResources[ 2 ].should.be.equal('test.js');
         });
       });
       describe('#_isValidResourceType()', function () {

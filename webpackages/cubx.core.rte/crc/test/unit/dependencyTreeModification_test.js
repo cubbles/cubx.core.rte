@@ -76,6 +76,195 @@
         depTree.insertNode(childB111, childB11);
       });
       describe('DependencyTree Modification', function () {
+        describe('#_removeDuplicate()', function () {
+          it('should set excluded value of duplicated node to false if duplicate node has excluded value of false', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = true;
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB1.excluded = false;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.false;
+          });
+          it('should keep excluded value true of duplicated node if duplicate node has excluded value of true as well', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = true;
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB1.excluded = true;
+            childB11.excluded = true;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.true;
+          });
+          it('should keep excluded value false of duplicated node if duplicate node has excluded value of false as well', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = false;
+            childB1.excluded = false;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.false;
+          });
+          it('should keep excluded value false of duplicated node if duplicate node has excluded value of true', function () {
+            // set excluded flag for several nodes
+            childA1.excluded = false;
+            childB1.excluded = true;
+            childB11.excluded = true;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.excluded.should.be.false;
+          });
+          it('should only mark nodes as excluded if they are excluded in subtree of duplicated node as well as in ' +
+            'subtree of duplicate node', function () {
+            childA11.excluded = true;
+            childA111.excluded = true;
+            childB11.excluded = false;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA1, childB1);
+            childA11.excluded.should.be.false;
+            childA111.excluded.should.be.true;
+          });
+          it('should append referrer of removed duplicate node to referrer of duplicated nodes', function () {
+            depTree._removeDuplicate(childA1, childB1);
+            childA1.data.referrer.should.eql([ packages.pkg1, packages.pkg2 ]);
+          });
+        });
+        describe('#applyExcludes()', function () {
+          var childB3;
+          beforeEach(function () {
+            /**
+             * apply some excludes to given tree like follows (excludes in []). Add a child node package4 to invalidate exclude [package4]
+             *
+             *                  package1@1.0.0/util1 [package4]                           package2@1.0.0/util2 [package5]
+             *                     /         \                                           /         \          \_______________
+             *                    /           \                                         /           \                         \
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5   package4@1.0.0/util4
+             *              |   [package6]                                          |   [package6]          |
+             *              |                                                       |                       |
+             *      package5@1.0.0/util5                                  package5@1.0.0/util5    package6@1.0.0/util6
+             *              |                                                       |
+             *              |                                                       |
+             *      package6@1.0.0/util6                                  package6@1.0.0/util6
+             */
+            nodeA.data.dependencyExcludes = [{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }];
+            childA1.data.dependencyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+            nodeB.data.dependencyExcludes = [{ webpackageId: 'package5@1.0.0', artifactId: 'util5' }];
+            childB1.data.dependenyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
+            childB3 = new DependencyTree.Node();
+            childB3.data = new DependencyMgr.DepReference({webpackageId: packages.pkg4.webpackageId, artifactId: packages.pkg4.artifactId, referrer: packages.pkg2});
+            depTree.insertNode(childB3, nodeB);
+          });
+          it('should mark all excluded Nodes', function () {
+            depTree.applyExcludes();
+            nodeA.excluded.should.be.false;
+            nodeB.excluded.should.be.false;
+            childA1.excluded.should.be.false;
+            childA2.excluded.should.be.true;
+            childB1.excluded.should.be.false;
+            childB2.excluded.should.be.true;
+            childB3.excluded.should.be.false;
+            childA11.excluded.should.be.false;
+            childA111.excluded.should.be.true;
+            childB11.excluded.should.be.true;
+            childB21.excluded.should.be.true;
+            childB111.excluded.should.be.true;
+          });
+        });
+        describe('#applyGlobalExclude()', function () {
+          it('should return the DependencyTree itself', function () {
+            // depTree.applyGlobalExclude('')
+          });
+          it('should set exclude value to true for all appearances of given artifact', function () {
+            depTree.applyGlobalExclude(packages.pkg3.webpackageId, packages.pkg3.artifactId);
+            childA1.excluded.should.be.true;
+            childA11.excluded.should.be.true;
+            childA111.excluded.should.be.true;
+            childB1.excluded.should.be.true;
+            childB11.excluded.should.be.true;
+            childB111.excluded.should.be.true;
+
+            // for each other node excluded should be set to false
+            nodeA.excluded.should.be.false;
+            nodeB.excluded.should.be.false;
+            childA2.excluded.should.be.false;
+            childB2.excluded.should.be.false;
+            childB21.excluded.should.be.false;
+          });
+        });
+        describe('#getListOfConflictedNodes()', function () {
+          var childA21;
+          var childA211;
+          beforeEach(function () {
+            /**
+             * Adjust depTree to contain two conflicts. Adjusted tree will have the following structure:
+             *
+             *                  package1@1.0.0/util1                                package2@1.0.0/util2
+             *                     /         \                                           /         \
+             *                    /           \                                         /           \
+             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5
+             *              |                       |                               |                       |
+             *              |                       |                               |                       |
+             *      package5@1.0.0/util5    package5@2.0.0/util5          package5@1.0.0/util5    package6@1.0.0/util6
+             *              |                       |                               |
+             *              |                       |                               |
+             *      package6@1.0.0/util6    package6@2.0.0/util6          package6@1.0.0/util6
+             *
+             */
+            var pkg5Conflict = {webpackageId: 'package5@2.0.0', artifactId: 'util5'};
+            var pkg6Conflict = {webpackageId: 'package6@2.0.0', artifactId: 'util6'};
+            childA21 = new DependencyTree.Node();
+            childA21.data = new DependencyMgr.DepReference({ webpackageId: pkg5Conflict.webpackageId, artifactId: pkg5Conflict.artifactId, referrer: packages.pkg4 });
+            childA211 = new DependencyTree.Node();
+            childA211.data = new DependencyMgr.DepReference({ webpackageId: pkg6Conflict.webpackageId, artifactId: pkg6Conflict.artifactId, referrer: pkg5Conflict });
+            depTree.insertNode(childA21, childA2);
+            depTree.insertNode(childA211, childA21);
+          });
+          it('should log an error when given parameter is not a node from within the current DependencyTree instance', function () {
+            var spy = sinon.spy(console, 'error');
+            depTree.getListOfConflictedNodes({});
+            expect(spy.calledOnce).to.be.true;
+            var node = new DependencyTree.Node();
+            spy.reset();
+            depTree.getListOfConflictedNodes(node);
+            expect(spy.calledOnce).to.be.true;
+            spy.restore();
+          });
+          it('should return an array containing a list of all conflicts found in DependencyTree (using level order traversal)', function () {
+            var conflicts = depTree.getListOfConflictedNodes();
+            conflicts.should.be.instanceof(Array);
+            conflicts.should.have.lengthOf(2);
+            conflicts[0].should.have.property('artifactId', 'util5');
+            conflicts[0].should.have.property('nodes');
+            conflicts[0].nodes[0].should.equal(childB2);
+            conflicts[0].nodes[1].should.equal(childA21);
+            conflicts[1].should.have.property('artifactId', 'util6');
+            conflicts[1].should.have.property('nodes');
+            conflicts[1].nodes[0].should.equal(childB21);
+            conflicts[1].nodes[1].should.equal(childA211);
+          });
+          it('should return an array containing a list of all conflicts found in subtree of given node (using level order traversal)', function () {
+            var conflicts = depTree.getListOfConflictedNodes(nodeA);
+            conflicts.should.be.instanceof(Array);
+            conflicts.should.have.lengthOf(2);
+            conflicts[0].should.have.property('artifactId', 'util5');
+            conflicts[0].should.have.property('nodes');
+            conflicts[0].nodes[0].should.equal(childA11);
+            conflicts[0].nodes[1].should.equal(childA21);
+            conflicts[1].should.have.property('artifactId', 'util6');
+            conflicts[1].should.have.property('nodes');
+            conflicts[1].nodes[0].should.equal(childA111);
+            conflicts[1].nodes[1].should.equal(childA211);
+          });
+          it('should return an empty array if there are no conflicts in subtree of given nodes', function () {
+            var conflicts = depTree.getListOfConflictedNodes(nodeB);
+            conflicts.should.be.instanceof(Array);
+            conflicts.should.have.lengthOf(0);
+          });
+        });
         describe('#removeDuplicates()', function () {
           it('should return the DependencyTree itself', function () {
             expect(depTree.removeDuplicates()).to.be.an.instanceOf(DependencyTree);
@@ -159,121 +348,6 @@
             childB21.excluded.should.be.true;
           });
         });
-        describe('#_removeDuplicate()', function () {
-          it('should set excluded value of duplicated node to false if duplicate node has excluded value of false', function () {
-            // set excluded flag for several nodes
-            childA1.excluded = true;
-            childA11.excluded = true;
-            childA111.excluded = true;
-            childB1.excluded = false;
-
-            depTree._removeDuplicate(childA1, childB1);
-            childA1.excluded.should.be.false;
-          });
-          it('should keep excluded value true of duplicated node if duplicate node has excluded value of true as well', function () {
-            // set excluded flag for several nodes
-            childA1.excluded = true;
-            childA11.excluded = true;
-            childA111.excluded = true;
-            childB1.excluded = true;
-            childB11.excluded = true;
-            childB111.excluded = true;
-
-            depTree._removeDuplicate(childA1, childB1);
-            childA1.excluded.should.be.true;
-          });
-          it('should keep excluded value false of duplicated node if duplicate node has excluded value of false as well', function () {
-            // set excluded flag for several nodes
-            childA1.excluded = false;
-            childB1.excluded = false;
-
-            depTree._removeDuplicate(childA1, childB1);
-            childA1.excluded.should.be.false;
-          });
-          it('should keep excluded value false of duplicated node if duplicate node has excluded value of true', function () {
-            // set excluded flag for several nodes
-            childA1.excluded = false;
-            childB1.excluded = true;
-            childB11.excluded = true;
-            childB111.excluded = true;
-
-            depTree._removeDuplicate(childA1, childB1);
-            childA1.excluded.should.be.false;
-          });
-          it('should only mark nodes as excluded if they are excluded in subtree of duplicated node as well as in ' +
-            'subtree of duplicate node', function () {
-            childA11.excluded = true;
-            childA111.excluded = true;
-            childB11.excluded = false;
-            childB111.excluded = true;
-
-            depTree._removeDuplicate(childA1, childB1);
-            childA11.excluded = false;
-            childA111.excluded = true;
-          });
-        });
-        describe('#applyExcludes()', function () {
-          var childB3;
-          beforeEach(function () {
-            /**
-             * apply some excludes to given tree like follows (excludes in []). Add a child node package4 to invalidate exclude [package4]
-             *
-             *                  package1@1.0.0/util1 [package4]                           package2@1.0.0/util2 [package5]
-             *                     /         \                                           /         \          \_______________
-             *                    /           \                                         /           \                         \
-             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5   package4@1.0.0/util4
-             *              |   [package6]                                          |   [package6]          |
-             *              |                                                       |                       |
-             *      package5@1.0.0/util5                                  package5@1.0.0/util5    package6@1.0.0/util6
-             *              |                                                       |
-             *              |                                                       |
-             *      package6@1.0.0/util6                                  package6@1.0.0/util6
-             */
-            nodeA.data.dependencyExcludes = [{ webpackageId: 'package4@1.0.0', artifactId: 'util4' }];
-            childA1.data.dependencyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
-            nodeB.data.dependencyExcludes = [{ webpackageId: 'package5@1.0.0', artifactId: 'util5' }];
-            childB1.data.dependenyExcludes = [{ webpackageId: 'package6@1.0.0', artifactId: 'util6' }];
-            childB3 = new DependencyTree.Node();
-            childB3.data = new DependencyMgr.DepReference({webpackageId: packages.pkg4.webpackageId, artifactId: packages.pkg4.artifactId, referrer: packages.pkg2});
-            depTree.insertNode(childB3, nodeB);
-          });
-          it('should mark all excluded Nodes', function () {
-            depTree.applyExcludes();
-            nodeA.excluded.should.be.false;
-            nodeB.excluded.should.be.false;
-            childA1.excluded.should.be.false;
-            childA2.excluded.should.be.true;
-            childB1.excluded.should.be.false;
-            childB2.excluded.should.be.true;
-            childB3.excluded.should.be.false;
-            childA11.excluded.should.be.false;
-            childA111.excluded.should.be.true;
-            childB11.excluded.should.be.true;
-            childB21.excluded.should.be.true;
-            childB111.excluded.should.be.true;
-          });
-        });
-        describe('#applyGlobalExclude()', function () {
-          it('should return the DependencyTree itself', function () {
-            // depTree.applyGlobalExclude('')
-          });
-          it('should set exclude value to true for all appearances of given artifact', function () {
-            depTree.applyGlobalExclude(packages.pkg3.webpackageId, packages.pkg3.artifactId);
-            childA1.excluded.should.be.true;
-            childA11.excluded.should.be.true;
-            childA111.excluded.should.be.true;
-            childB1.excluded.should.be.true;
-            childB11.excluded.should.be.true;
-            childB111.excluded.should.be.true;
-
-            // for each other node excluded should be set to false
-            nodeA.excluded.should.be.false;
-            nodeB.excluded.should.be.false;
-            childA2.excluded.should.be.false;
-            childB2.excluded.should.be.false;
-            childB21.excluded.should.be.false;
-          });
-        });
         describe('#removeExcludes()', function () {
           beforeEach(function () {
             /**
@@ -320,76 +394,6 @@
           });
           it('should return the DependencyTree itself', function () {
             expect(depTree.removeExcludes()).to.equal(depTree);
-          });
-        });
-        describe('#getListOfConflictedNodes()', function () {
-          var childA21;
-          var childA211;
-          beforeEach(function () {
-            /**
-             * Adjust depTree to contain two conflicts. Adjusted tree will have the following structure:
-             *
-             *                  package1@1.0.0/util1                                package2@1.0.0/util2
-             *                     /         \                                           /         \
-             *                    /           \                                         /           \
-             *      package3@1.0.0/util3    package4@1.0.0/util4          package3@1.0.0/util3    package5@1.0.0/util5
-             *              |                       |                               |                       |
-             *              |                       |                               |                       |
-             *      package5@1.0.0/util5    package5@2.0.0/util5          package5@1.0.0/util5    package6@1.0.0/util6
-             *              |                       |                               |
-             *              |                       |                               |
-             *      package6@1.0.0/util6    package6@2.0.0/util6          package6@1.0.0/util6
-             *
-             */
-            var pkg5Conflict = {webpackageId: 'package5@2.0.0', artifactId: 'util5'};
-            var pkg6Conflict = {webpackageId: 'package6@2.0.0', artifactId: 'util6'};
-            childA21 = new DependencyTree.Node();
-            childA21.data = new DependencyMgr.DepReference({ webpackageId: pkg5Conflict.webpackageId, artifactId: pkg5Conflict.artifactId, referrer: packages.pkg4 });
-            childA211 = new DependencyTree.Node();
-            childA211.data = new DependencyMgr.DepReference({ webpackageId: pkg6Conflict.webpackageId, artifactId: pkg6Conflict.artifactId, referrer: pkg5Conflict });
-            depTree.insertNode(childA21, childA2);
-            depTree.insertNode(childA211, childA21);
-          });
-          it('should log an error when given parameter is not a node from within the current DependencyTree instance', function () {
-            var spy = sinon.spy(console, 'error');
-            depTree.getListOfConflictedNodes({});
-            expect(spy.calledOnce).to.be.true;
-            var node = new DependencyTree.Node();
-            spy.reset();
-            depTree.getListOfConflictedNodes(node);
-            expect(spy.calledOnce).to.be.true;
-            spy.restore();
-          });
-          it('should return an array containing a list of all conflicts found in DependencyTree (using level order traversal)', function () {
-            var conflicts = depTree.getListOfConflictedNodes();
-            conflicts.should.be.instanceof(Array);
-            conflicts.should.have.lengthOf(2);
-            conflicts[0].should.have.property('artifactId', 'util5');
-            conflicts[0].should.have.property('nodes');
-            conflicts[0].nodes[0].should.equal(childB2);
-            conflicts[0].nodes[1].should.equal(childA21);
-            conflicts[1].should.have.property('artifactId', 'util6');
-            conflicts[1].should.have.property('nodes');
-            conflicts[1].nodes[0].should.equal(childB21);
-            conflicts[1].nodes[1].should.equal(childA211);
-          });
-          it('should return an array containing a list of all conflicts found in subtree of given node (using level order traversal)', function () {
-            var conflicts = depTree.getListOfConflictedNodes(nodeA);
-            conflicts.should.be.instanceof(Array);
-            conflicts.should.have.lengthOf(2);
-            conflicts[0].should.have.property('artifactId', 'util5');
-            conflicts[0].should.have.property('nodes');
-            conflicts[0].nodes[0].should.equal(childA11);
-            conflicts[0].nodes[1].should.equal(childA21);
-            conflicts[1].should.have.property('artifactId', 'util6');
-            conflicts[1].should.have.property('nodes');
-            conflicts[1].nodes[0].should.equal(childA111);
-            conflicts[1].nodes[1].should.equal(childA211);
-          });
-          it('should return an empty array if there are no conflicts in subtree of given nodes', function () {
-            var conflicts = depTree.getListOfConflictedNodes(nodeB);
-            conflicts.should.be.instanceof(Array);
-            conflicts.should.have.lengthOf(0);
           });
         });
       });

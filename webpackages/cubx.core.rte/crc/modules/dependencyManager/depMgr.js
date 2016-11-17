@@ -1,7 +1,7 @@
 /**
  * Created by pwr on 13.02.2015.
  */
-
+/* globals URL, Blob */
 window.cubx.amd.define(
   ['utils', 'responseCache', 'manifestConverter', 'axios', 'dependencyTree'],
   function (utils, responseCache, manifestConverter, axios, DependencyTree) {
@@ -245,19 +245,19 @@ window.cubx.amd.define(
         });
         switch (current.type) {
           case DependencyMgr._types.stylesheet.name :
-            // utils.DOM.prependStylesheetToHead(current.path, element);
             utils.DOM.appendStylesheetToHead(current.path, currentReferrer);
             break;
           case DependencyMgr._types.htmlImport.name :
-            // utils.DOM.prependHtmlImportToHead(current.path, element);
             utils.DOM.appendHtmlImportToHead(current.path, currentReferrer);
             break;
           case DependencyMgr._types.javascript.name :
-            // utils.DOM.prependScriptTagToHead(current.path, element);
             utils.DOM.appendScriptTagToHead(current.path, currentReferrer);
         }
       }
-      window.cubx.CRC.fireDepMgrReadyEvent();
+      // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
+      var blob = new Blob(['<script>window.cubx.CRC.fireDepMgrReadyEvent();</script>'], {type: 'text/html'});
+      var url = URL.createObjectURL(blob);
+      utils.DOM.appendHtmlImportToHead(url);
     };
 
     /**

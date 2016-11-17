@@ -1,8 +1,7 @@
 'use strict';
 window.cubx = window.cubx || {};
 window.cubx.amd = window.cubx.amd || {};
-window.cubx.amd.define([ 'crcLoader',
-    'jqueryLoader' ],
+window.cubx.amd.define([ 'crcLoader' ],
   function (crcLoader) {
     describe('CRCLoader (helpers)', function () {
       describe('#_createDependency', function () {

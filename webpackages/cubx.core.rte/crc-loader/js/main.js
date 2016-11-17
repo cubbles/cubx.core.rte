@@ -127,6 +127,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
    * Set option 'loadCIF' (default == 'true')
    */
   (function () {
+    // fow backwards compatibility also test for attribute "data-CRCInit.loadCIF"
     var attributeName = 'data-CRCInit.loadCIF';
     var loadCIFAttr = crcLoaderElement.getAttribute(attributeName);
     attributeName = 'data-crcinit-loadcif';
@@ -149,7 +150,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     var attributeName = 'data-cubx-startevent';
     var startEventName = crcLoaderElement.getAttribute(attributeName);
     var defaultValue = 'DOMContentLoaded';
-    cubx.CRCInit.startEvent = startEventName || defaultValue;
+    cubx.CRCInit.startEvent = startEventName || defaultValue; // TODO: startEvent should also be make configurable using CRCInit object directly
     document.addEventListener(cubx.CRCInit.startEvent, function () {
       cubx.CRCInit.startEventArrived = true;
     });
@@ -162,7 +163,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     if (cubx.CRCInit.allowAbsoluteResourceUrls) {
       return;
     }
-    var attributeName = 'allow-absolute-resource-urls';
+    var attributeName = 'allow-absolute-resource-urls'; // TODO: add "data-" prefix for attribute name
     var allowAbsoluteResourceUrls = crcLoaderElement.getAttribute(attributeName);
     var defaultValue = false;
     cubx.CRCInit.allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || defaultValue;
@@ -202,9 +203,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     paths: {
       'crcLoader': crcLoaderBaseUrl + '/modules/crcLoader/CRCLoader',
       'dependencyTagTransformer': crcLoaderBaseUrl + '/modules/dependencyTagTransformer/dependencyTagTransformer',
-      'jqueryLoader': crcLoaderBaseUrl + '/modules/jqueryLoader/jqueryLoader',
       'polyfills': crcLoaderBaseUrl + '/modules/polyfills/polyfills',
-      'jquery': crcLoaderBaseUrl + '/modules/jqueryLoader/jquery-1.11.1.min',
       // crc modules definition block starts here
       'crc': crcLoaderBaseUrl + '/../crc/modules/crc/CRC',
       'storageManager': crcLoaderBaseUrl + '/../crc/modules/storageManager/storageManager',

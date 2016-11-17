@@ -5,9 +5,8 @@
 
 window.cubx = window.cubx || {};
 window.cubx.amd = window.cubx.amd || {};
-window.cubx.amd.define([ 'crcLoader',
-    'jqueryLoader' ],
-  function (crcLoader, $) {
+window.cubx.amd.define([ 'crcLoader' ],
+  function (crcLoader) {
     describe('CRCLoader', function () {
       /*
        * Testcases
