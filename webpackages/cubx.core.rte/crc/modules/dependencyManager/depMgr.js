@@ -534,7 +534,8 @@ window.cubx.amd.define(
         if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) { // use manifest from responseCache if available
           processManifest(this._responseCache.get(depReference.webpackageId), false);
         } else if (typeof depReference.manifest === 'object') { // use inline manifest from depReference if set
-          processManifest(depReference.manifest, true);
+          // TODO: transform manifest to ensure backwards compatibility with modelVersion > < 9
+          processManifest(manifestConverter.convert(depReference.manifest), true);
         } else { // default case: request manifest using ajax
           var url = baseUrl + depReference.webpackageId + '/manifest.webpackage';
           this._fetchManifest(url).then(

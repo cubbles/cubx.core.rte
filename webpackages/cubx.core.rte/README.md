@@ -75,6 +75,10 @@ Alternatively you can use global `window.cubx.CRCInit` object:
 #### data-cubx-startevent (default = "DOMContentLoaded")
 Set a custom event name to trigger RTE bootstrap process using `data-cubx-startevent="[eventName]"` on the `<script>` tag of the CRC-Loader. The listener for this event will be attached to `document`.
 
+#### rootDependencies
+
+#### rootDependencyExclude
+
 ## CRC
 The **C**lient **R**untime **C**ontainer provides the basic runtime for Cubbles components including:
  * identify Cubbles components used in the web app
