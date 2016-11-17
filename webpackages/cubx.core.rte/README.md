@@ -1,8 +1,10 @@
 # Webpackage cubx.core.rte [![Build Status](https://travis-ci.org/cubbles/cubx.core.rte.svg?branch=master)](https://travis-ci.org/cubbles/cubx.core.rte)
 This webpackage contains certain artifacts representing the [Cubbles Runtime Environment (RTE)](https://cubbles.atlassian.net/wiki/display/RTE/Intro):
 * [crc-loader](#crc-loader)
+  * [configuration options](#configuration-options)
 * [crc (client runtime container)](#crc)
 * [cif (component interaction framework)](#cif)
+  * [Cubbles TAG API](#the-cubbles-tag-api)
 * [cubx-component-mixin](#cubx-component-mixin)
 * [cubxpolymer](#cubxpolymer)
 * [dom-tree-utils](#dom-tree-utils)
@@ -266,6 +268,7 @@ Each `<cubx-dependency-excludes>` tag can have an arbitrary number of `<cubx-dep
 To make sure a dependency is always excluded you can add it to the global `window.cubx.CRCInit.rootDependencyExclucdes` array (see [rootDependencyExcludes](#rootdependencyexcludes)).
 
 ## cubx-component-mixin
+This artifact contains a collection of instance methods which each Cubble provides no matter if it is a compound Cubble or an elementary Cubble.
 
 ## cubxpolymer
 // TODO
