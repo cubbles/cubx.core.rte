@@ -103,7 +103,7 @@ Set dependencies which should be resolved by CRC during bootstrap. Use global `w
 This will add artifact `first-demo-component` from webpackage `demo-package@1.0`.
   
 #### rootDependencyExcludes
-Set dependencies which should excluded during dependency resolution process. Use global `window.cubx.CRCInit.rootDepenencyExcludes` array to set.
+Set dependencies which should be excluded during dependency resolution process. Use global `window.cubx.CRCInit.rootDepenencyExcludes` array to set.
     
     <script>
             window.cubx = {
