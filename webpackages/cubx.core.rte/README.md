@@ -156,7 +156,7 @@ If you want to create a Cubble that is located in a webpackage with `webpackage.
     
 The corresponding dependency needed for instantiating the `first-demo-component` will be automatically added to `window.cubx.CRCInit.rootDependencies` array (if it is not already there).
 
-#### Slot Initializations
+#### Slot initializations
 In many cases you want to set initial values for the input slots the created Cubble provides. This can be done using the `<cubx-core-init>` and `<cubx-core-slot-init>` tags.
 
 *Note: Setting* `style="display:none;"` *on the* `<cubx-core-init>` *tag prevents the browser from displaying the innerHtml values of each* `<cubx-core-slot-init>` *before CIF is loaded and bootstraped.* 
@@ -173,7 +173,7 @@ In many cases you want to set initial values for the input slots the created Cub
 Each `<cubx-core-slot-init>` needs to have the attribute `slot` holding the name of the slot for which to set the value. The inner html inside the `<cubx-core-slot-init>` tag is the value which should be set. This value needs to be valid json. 
 Depending on the type of value the slot expects you can set `boolean`, `string`, `number` or `object` values. The slot initializations are proceeded by the CIF in the same order there where declared inside the `<cubx.core.init>` tag. 
 
-#### Connection Declaration
+#### Connection ceclaration
 If you create more then one Cubbles inside your web page it is possible to define connections between them (respectively their provided slots). This can be done using the `<cubx-core-connections>` and `<cubx-core-connection>` tags.
 
     <first-demo-component cubx-webpackage-id="demo-package@1.0">
@@ -290,11 +290,11 @@ Small utility for generation a guid.
 A small app artifact which you can use to render an arbitrary component given by url search parameter inside an iframe. This can be useful if you want to include a Cubble inside your web app
 but there is no RTE available on the page. For example if you are only allowed to add standard html when editing a page in a cms like wordpress. 
 
-Include component into your page using iframe:
+Include component `first-demo-component` from webpackage `demo-package@1.0` into your page using iframe:
 
     <iframe src='https://cubbles.world/sandbox/cubx.core.rte@2.1.0/iframe/index.html?webpackage-id=demo-package@1.0&artifact-id=first-demo-component'/>
 
-You can also init the slots of the component rendered within the iframe:
+You can also init slots of the component rendered within the iframe:
 
     <iframe src='https://cubbles.world/sandbox/cubx.core.rte@2.1.0/iframe/index.html?webpackage-id=demo-package@1.0&artifact-id=first-demo-component
                  &inits={"message":"Hello World!","config":{"label":"Name","value":"Max Musternamm"}}'/>
@@ -309,9 +309,9 @@ And finally add additional dependencies:
 // TODO
 
 ## webcomponents
-Webcomponents polyfill. This needs to be included before the crc-loader script. It is sufficient to use [webcompents-lite](#webcomponents-lite) 
+Webcomponents polyfill. This needs to be included before the crc-loader script. It is sufficient to use [webcompents-lite](#webcomponents-lite). 
 
 ## webcomponents-lite
 Webcomponents polyfill. This needs to be included before the crc-loader script (see [crc-loader](#crc-loader) section).
-For more details see [webcomponents.org](http://webcomponents.org/polyfills/)
+For more details see [webcomponents.org](http://webcomponents.org/polyfills/).
                      
