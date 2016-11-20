@@ -173,7 +173,7 @@ In many cases you want to set initial values for the input slots the created Cub
 Each `<cubx-core-slot-init>` needs to have the attribute `slot` holding the name of the slot for which to set the value. The inner html inside the `<cubx-core-slot-init>` tag is the value which should be set. This value needs to be valid json. 
 Depending on the type of value the slot expects you can set `boolean`, `string`, `number` or `object` values. The slot initializations are proceeded by the CIF in the same order there where declared inside the `<cubx.core.init>` tag. 
 
-#### Connection ceclaration
+#### Connection declaration
 If you create more then one Cubbles inside your web page it is possible to define connections between them (respectively their provided slots). This can be done using the `<cubx-core-connections>` and `<cubx-core-connection>` tags.
 
     <first-demo-component cubx-webpackage-id="demo-package@1.0">
@@ -188,6 +188,7 @@ If you create more then one Cubbles inside your web page it is possible to defin
     <second-demo-component id="second" cubx-webpackage-id=""demo-package@1.0"></second-demo-component>
     
 Each `<cubx-core-connection>` needs attributes
+
 1. `conection-id` for setting a unique connection id
 2. `source` for setting the output slot name acting as source for this connection
 3. `destination` for setting the target of this connection using `[id-of-target]:[name-of-input-slot]`
