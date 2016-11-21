@@ -307,7 +307,10 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr._prepareResponseData = function (data) {
-      // TODO: check, if data is a valid manifest object/string
+      // axios sets 'error' property on data object if there is an error.
+      if (data.hasOwnProperty('error')) {
+        throw new Error('Error when requesting manifest');
+      };
       var manifest = manifestConverter.convert(data);
       return manifest;
     };

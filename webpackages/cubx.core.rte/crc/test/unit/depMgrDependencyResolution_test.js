@@ -503,6 +503,17 @@ window.cubx.amd.define([ 'CRC',
           result.should.be.equal(convertedManifest);
           expect(stub.callCount).to.equal(1);
         });
+        it('should throw an error if called given data is not a valid manifest object/string', function () {
+          var errorThrown = false;
+          try {
+            DepMgr._prepareResponseData({error: 'arbitrary error...'});
+          } catch (e) {
+            e.should.be.instanceof(Error);
+            errorThrown = true;
+          } finally {
+            errorThrown.should.be.true;
+          }
+        });
       });
     });
   });
