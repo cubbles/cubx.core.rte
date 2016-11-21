@@ -307,7 +307,20 @@ And finally add additional dependencies:
                  &dependencies=[{"webpackage-id":"third-party-pkg@1.0","artifact-id":"third-party-utility"}]'/>
 
 ## iframe-resizer
-// TODO
+The purpose of the iframe-resizer is to resize the iframe that displays a Cubbles component automatically according to it's content. The width of the iframe will always be `100%` while the 
+height is set to the content's height.
+
+To enable resize support for your iframe you need to include `resize.js` script in the iframe's parent page
+
+    <head>
+       <script src="https://cubbles.world/core/cubx.core.rte@2.1.0/iframe-resizer/resize.js"/>
+    </head>
+
+and set the iframe's `id` value which needs to be provided in the `src` using the `iframe-id` url search parameter.
+
+    <body>
+      <iframe id="myIframe" src="https://cubbles.world/core/rte@2.1.0/iframe/index.html?iframe-id=myIframe&webpackage-id=demo-package@1.0&artifact-id=first-demo-component"/>
+    </body>
 
 ## webcomponents
 Webcomponents polyfill. This needs to be included before the crc-loader script. It is sufficient to use [webcompents-lite](#webcomponents-lite). 
