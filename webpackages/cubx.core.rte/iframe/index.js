@@ -3,7 +3,7 @@
   'use strict';
 
   var lastHeight = 0;
-  var iframeId = window.frameElement.id;
+  var iframeId = $_GET('iframe-id');
   var webpackageId = $_GET('webpackage-id');
   var artifactId = $_GET('artifact-id');
   var inits = decodeURIComponent($_GET('inits'));
