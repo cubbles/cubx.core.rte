@@ -274,10 +274,10 @@
      *
      */
     this.attached = function () {
-      this._fireReadyEvent();
       if (this.originAttached) {
         this.originAttached();
       }
+      this._fireReadyEvent();
     };
 
     if (this.hasOwnProperty('detached')) {
