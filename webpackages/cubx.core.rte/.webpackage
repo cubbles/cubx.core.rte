@@ -3,6 +3,11 @@
     "dev": {
       "url": "http://cubbles-base-local/core",
       "proxy": "",
+      "debug": false
+    },
+    "devDryRun": {
+      "url": "http://cubbles-base-local/core",
+      "proxy": "",
       "debug": false,
       "dryRun": true
     },
