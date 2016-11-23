@@ -28,6 +28,10 @@ window.cubx.amd.define([], function () {
       '9.1.0': [
         '_removeEndpointsFromDependencyItems',
         '_removeEndpointsFromDependencyExcludeItems'
+      ],
+      '9.1.1': [
+        '_removeEndpointsFromDependencyItems',
+        '_removeEndpointsFromDependencyExcludeItems'
       ]
     };
 
@@ -36,7 +40,7 @@ window.cubx.amd.define([], function () {
      * @type {string}
      * @private
      */
-    this._targetVersion = '9.1.0';
+    this._targetVersion = '9.1.1';
 
     /**
      * The separator that is used when concatenating artifactId and endpointId from ModelVersion 8.x manifest files

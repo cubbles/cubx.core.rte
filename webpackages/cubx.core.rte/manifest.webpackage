@@ -2,7 +2,7 @@
   "name": "rte",
   "groupId": "cubx.core",
   "version": "2.1.0-SNAPSHOT",
-  "modelVersion": "9.1.0",
+  "modelVersion": "9.1.1",
   "docType": "webpackage",
   "description": "",
   "license": "MIT",

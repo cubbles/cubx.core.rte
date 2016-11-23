@@ -3,7 +3,8 @@
     "dev": {
       "url": "http://cubbles-base-local/core",
       "proxy": "",
-      "debug": false
+      "debug": false,
+      "dryRun": true
     },
     "release": {
       "url": "https://cubbles.world/core",

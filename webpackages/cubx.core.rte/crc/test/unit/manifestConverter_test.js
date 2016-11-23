@@ -4,7 +4,7 @@ window.cubx.amd.define(
     'manifestConverter',
     'text!unit/manifestConverter/manifest@8.3.1.json',
     'text!unit/manifestConverter/manifest@9.1.0.json',
-    'text!unit/manifestConverter/convertedManifest@9.1.0.json'
+    'text!unit/manifestConverter/convertedManifest@9.1.1.json'
   ],
   function (manifestConverter, manifest831, manifest910, convertedManifest910) {
     'use strict';
