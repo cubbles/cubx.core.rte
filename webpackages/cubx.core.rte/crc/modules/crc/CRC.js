@@ -28,7 +28,7 @@ window.cubx.amd.define([
        /* @type {string}
        /* @private
        */
-      this._version = '2.1.0';
+      this._version = '2.2.0-SNAPSHOT';
 
       /**
        * jQuery object containing only one element to which the crc should be appended
