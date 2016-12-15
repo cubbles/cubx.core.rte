@@ -6,8 +6,8 @@
   var iframeId = $_GET('iframe-id');
   var webpackageId = $_GET('webpackage-id');
   var artifactId = $_GET('artifact-id');
-  var inits = decodeURIComponent($_GET('inits'));
-  var dependencies = decodeURIComponent($_GET('dependencies'));
+  var inits = $_GET('inits');
+  var dependencies = $_GET('dependencies');
 
   /**
    * Create a 'cubx-core-slot-init' to define a slot initialization
@@ -169,6 +169,7 @@
       var component = document.createElement(artifactId);
       component.setAttribute('cubx-webpackage-id', webpackageId);
       if (inits) {
+        inits = decodeURIComponent(inits);
         if (inits.indexOf('\'') >= 0) {
           inits = JSON.parse(inits.replace(/'/gi, '"'));
         }
@@ -187,6 +188,7 @@
    */
   function addRootDependencies () {
     if (dependencies) {
+      dependencies = decodeURIComponent(dependencies);
       if (dependencies.indexOf('\'') >= 0) {
         dependencies = dependencies.replace(/'/gi, '"');
       }
