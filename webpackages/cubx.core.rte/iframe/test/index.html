@@ -2,14 +2,18 @@
 <html lang='en'>
 <head>
     <meta charset='UTF-8'>
-    <title>Component Viewer App Test</title>
+    <title>Iframe Tests</title>
     <script src="../../iframe-resizer/resize.js"></script>
 </head>
 <body>
-<h1>Component Viewer App Test</h1>
+<h1>Iframe Tests</h1>
 
-<iframe id="chartIframe"
-        src="../../iframe/index.html?webpackage-id=com.incowia.lib.chart-library@0.2.0-SNAPSHOT&artifact-id=line-chart&inits={'dataColumns':[['Product A',1000,500,1500,1100],['Product B',300,400,700,500]],'xLabels':['January','February','March','April']}&dependencies=[{'webpackage-id':'bootstrap-3.3.5@1.1.0','artifact-id':'bootstrap'}]&iframe-id=chartIframe"/>
+<ul>
+    <li><a href="onlyComponent.html">Iframe loading a component</a></li>
+    <li><a href="componentInit.html">Iframe loading a component with initial slots values</a></li>
+    <li><a href="componentDep.html">Iframe loading a component and an additional dependency</a></li>
+    <li><a href="componentDepInit.html">Iframe loading a component, initial values and a dependency</a></li>
+</ul>
 
 </body>
 </html>
