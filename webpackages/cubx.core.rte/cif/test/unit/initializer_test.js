@@ -502,7 +502,6 @@ describe('Initializer', function () {
       initSlotEl = document.createElement('cubx-core-slot-init');
       initSlotEl.setSlot('slotA');
       initSlotEl.innerHTML = JSON.stringify('a');
-      ;
 
       initializer._initList = [];
 
@@ -523,6 +522,9 @@ describe('Initializer', function () {
     });
     it('initializer._initList[0] should be of type Initializer.SlotInit', function () {
       initializer._initList[ 0 ].should.be.instanceOf(window.cubx.cif.Initializer.SlotInit);
+    });
+    it('cubx-cor-slot-init element should have a property processed (true)', function () {
+      initSlotEl.should.have.property('processed',true);
     });
   });
 

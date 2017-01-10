@@ -126,6 +126,7 @@
       this._addInitSlotEntryToInitList(element, context, initElement);
     }, this);
   };
+
   /**
    * Create  an Initializer.SlotInit object and add to #_initList.
    * @param {HTMLElement} element
@@ -138,6 +139,7 @@
     //  check if the slot is an inputSlot
     if (element.isInputSlot(initSlotElement.getSlot())) {
       var init = new Initializer.SlotInit(element, context, initSlotElement);
+      initSlotElement.processed = true;
       this._initList.push(init);
     }
   };

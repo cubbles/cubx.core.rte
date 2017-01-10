@@ -318,6 +318,7 @@
           var connection = this._createConnection(component, cubxConnection, true);
           component.Context._connectionMgr._connections.push(connection);
         }
+        cubxConnection.processed = true;
       }, this);
     }
   };
