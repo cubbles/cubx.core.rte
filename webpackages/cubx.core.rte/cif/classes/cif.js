@@ -433,6 +433,7 @@
         current.Context.setParent(this._rootContext);
       }
     }
+    current.processed = true;
   };
 
   /**
@@ -819,6 +820,7 @@
         this._componentReady[ runtimeId ].notReadyMembers = true;
         this._attachMembers(component, manifest, deeplevel + 1);
       }
+      component.processed = true;
     }
     root.appendChild(templateContent);
   };
@@ -878,6 +880,7 @@
         this._componentReady[ runtimeId ].notReadyMembers = true;
         this._attachMembers(component, currentMember, deeplevel + 1);
       }
+      component.processed = true;
       root.appendChild(component);
     }
   };

@@ -131,6 +131,11 @@ describe('ConnectionManager', function () {
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', '1:firstSlotoutput-2:firstSlotInput');
         });
+        it('should the dom-element marked as processed', function () {
+          var conElem = child.querySelector('cubx-core-connection');
+          expect(conElem).to.be.exists;
+          conElem.should.have.property('processed', true);
+        });
       });
       describe('the destination is a member and connectionId missed', function () {
         var element;
@@ -192,6 +197,11 @@ describe('ConnectionManager', function () {
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', null);
         });
+        it('should the dom-element marked as processed', function () {
+          var conElem = child.querySelector('cubx-core-connection');
+          expect(conElem).to.be.exists;
+          conElem.should.have.property('processed', true);
+        });
       });
       describe('the destination is a parent', function () {
         var element;
@@ -247,6 +257,11 @@ describe('ConnectionManager', function () {
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', '1:firstSlotoutput-firstSlotInput');
         });
+        it('should the dom-element marked as processed', function () {
+          var conElem = child.querySelector('cubx-core-connection');
+          expect(conElem).to.be.exists;
+          conElem.should.have.property('processed', true);
+        });
       });
       describe('the destination is a parent and connectionId missed', function () {
         var element;
@@ -300,6 +315,11 @@ describe('ConnectionManager', function () {
           connection.destination.should.have.property('memberId', 'parent');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', null);
+        });
+        it('should the dom-element marked as processed', function () {
+          var conElem = child.querySelector('cubx-core-connection');
+          expect(conElem).to.be.exists;
+          conElem.should.have.property('processed', true);
         });
       });
       describe('the source is a parent', function () {
@@ -357,6 +377,11 @@ describe('ConnectionManager', function () {
           connection.should.have.property('internal', true);
           connection.should.have.property('connectionId', 'firstSlotoutput-1:firstSlotInput');
         });
+        it('should the dom-element marked as processed', function () {
+          var conElem = element.querySelector('cubx-core-connection');
+          expect(conElem).to.be.exists;
+          conElem.should.have.property('processed', true);
+        });
       });
       describe('the source is a parent and connectionId missed', function () {
         var element;
@@ -411,6 +436,11 @@ describe('ConnectionManager', function () {
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('internal', true);
           expect(connection.connectionId).to.be.null;
+        });
+        it('should the dom-element marked as processed', function () {
+          var conElem = element.querySelector('cubx-core-connection');
+          expect(conElem).to.be.exists;
+          conElem.should.have.property('processed', true);
         });
       });
     });

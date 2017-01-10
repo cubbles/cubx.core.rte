@@ -104,8 +104,10 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.have.length(36);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
+            ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB.should.have.property('processed', true);
             done();
           }, 100);
         });
@@ -126,8 +128,10 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.be.equals(memberId);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + memberId);
+            ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB.should.have.property('processed', true);
             done();
           }, 100);
         });
@@ -151,8 +155,10 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.be.equals(memberId);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + memberId);
+            ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB.should.have.property('processed', true);
             done();
           }, 100);
         });
@@ -176,8 +182,10 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.be.equals(id);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(runtimeId);
+            ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB.should.have.property('processed', true);
             done();
           }, 100);
         });
@@ -203,8 +211,10 @@ describe('CIF', function () {
             ciftestA.getAttribute('member-id').should.have.length(36);
             ciftestA.getAttribute('runtime-id').should.be.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
+            ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB.should.have.property('processed', true);
             spy.should.calledOnce;
             done();
           }, 100);
@@ -297,8 +307,10 @@ describe('CIF', function () {
         window.setTimeout(function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
+          ciftestA.should.have.property('processed', true);
           var ciftestB = ciftestA.firstElementChild;
           ciftestB.should.have.property('tagName', 'CIFTEST-B');
+          ciftestB.should.have.property('processed', true);
           done();
         }, 100);
       });
@@ -328,99 +340,139 @@ describe('CIF', function () {
           slots: [ {
             slotId: 'testslotA'
           } ],
-          members: [ {
-            componentId: 'test.package-ciftest-b@0.1/ciftest-b',
-            artifactType: 'elementaryComponent',
-            artifactId: 'ciftest-b',
-            memberId: 'B-Element',
-            slots: [ {
-              slotId: 'testslotB'
-            } ]
-          }, {
-            componentId: 'test.package-ciftest-c@0.1/ciftest-a',
-            artifactType: 'compoundComponent',
-            artifactId: 'ciftest-a',
-            memberId: 'A-element',
-            slots: [ {
-              slotId: 'testslotA'
-            } ],
-
-            members: [ {
-              componentId: 'test.package-ciftest-d@0.1/ciftest-d',
-              memberId: 'D-Element',
+          members: [
+            {
+              componentId: 'test.package-ciftest-b@0.1/ciftest-b',
               artifactType: 'elementaryComponent',
-              artifactId: 'ciftest-d',
-              slots: [ {
-                slotId: 'testslotD'
-              } ]
+              artifactId: 'ciftest-b',
+              memberId: 'B-Element',
+              slots: [
+                {
+                  slotId: 'testslotB'
+                }
+              ]
+            },
+            {
+              componentId: 'test.package-ciftest-c@0.1/ciftest-a',
+              artifactType: 'compoundComponent',
+              artifactId: 'ciftest-a',
+              memberId: 'A-element',
+              slots: [
+                {
+                  slotId: 'testslotA'
+                }
+              ],
 
-            } ],
-            connections: [ {
-              connectionId: 'a-d', source: {
-                slot: 'testslotA'
-              }, destination: {
-                memberIdRef: 'D-Element', slot: 'testslotD'
-              }
-            } ]
-          } ],
-          connections: [ {
-            connectionId: 'b-a', source: {
-              memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
-              memberIdRef: 'A-Element', slot: 'testslotA'
+              members: [
+                {
+                  componentId: 'test.package-ciftest-d@0.1/ciftest-d',
+                  memberId: 'D-Element',
+                  artifactType: 'elementaryComponent',
+                  artifactId: 'ciftest-d',
+                  slots: [
+                    {
+                      slotId: 'testslotD'
+                    }
+                  ]
+                }
+              ],
+              connections: [
+                {
+                  connectionId: 'a-d',
+                  source: {
+                    slot: 'testslotA'
+                  },
+                  destination: {
+                    memberIdRef: 'D-Element', slot: 'testslotD'
+                  }
+                }
+              ]
             }
-          } ]
+          ],
+          connections: [
+            {
+              connectionId: 'b-a',
+              source: {
+                memberIdRef: 'B-Element',
+                slot: 'testslotB'
+              },
+              destination: {
+                memberIdRef: 'A-Element',
+                slot: 'testslotA'
+              }
+            }
+          ]
         };
         manifestCiftestA = {
           webpackageId: 'test.package-ciftest-a@0.1/ciftest-a',
           artifactId: 'ciftest-a',
           artifactType: 'compoundComponent',
           modelVersion: '8.0.0',
-          slots: [ {
-            slotId: 'testslotA'
-          } ],
-          members: [ {
-            componentId: 'test.package-ciftest-b@0.1/ciftest-b',
-            artifactType: 'elementaryComponent',
-            artifactId: 'ciftest-b',
-            memberId: 'B-Element',
-            slots: [ {
-              slotId: 'testslotB'
-            } ]
-          }, {
-            componentId: 'test.package-ciftest-c@0.1/ciftest-c',
-            artifactType: 'compoundComponent',
-            artifactId: 'ciftest-c',
-            memberId: 'C-element',
-            slots: [ {
-              slotId: 'testslotC'
-            } ],
-
-            members: [ {
-              componentId: 'test.package-ciftest-d@0.1/ciftest-d',
-              memberId: 'D-Element',
-              artifactType: 'elementaryComponent',
-              artifactId: 'ciftest-d',
-              slots: [ {
-                slotId: 'testslotD'
-              } ]
-
-            } ],
-            connections: [ {
-              connectionId: 'c-d', source: {
-                slot: 'testslotC'
-              }, destination: {
-                memberIdRef: 'D-Element', slot: 'testslotD'
-              }
-            } ]
-          } ],
-          connections: [ {
-            connectionId: 'b-c', source: {
-              memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
-              memberIdRef: 'C-Element', slot: 'testslotC'
+          slots: [
+            {
+              slotId: 'testslotA'
             }
-          } ]
+          ],
+          members: [
+            {
+              componentId: 'test.package-ciftest-b@0.1/ciftest-b',
+              artifactType: 'elementaryComponent',
+              artifactId: 'ciftest-b',
+              memberId: 'B-Element',
+              slots: [ {
+                slotId: 'testslotB'
+              }
+              ]
+            },
+            {
+              componentId: 'test.package-ciftest-c@0.1/ciftest-c',
+              artifactType: 'compoundComponent',
+              artifactId: 'ciftest-c',
+              memberId: 'C-element',
+              slots: [
+                {
+                  slotId: 'testslotC'
+                }
+              ],
+              members: [
+                {
+                  componentId: 'test.package-ciftest-d@0.1/ciftest-d',
+                  memberId: 'D-Element',
+                  artifactType: 'elementaryComponent',
+                  artifactId: 'ciftest-d',
+                  slots: [
+                    {
+                      slotId: 'testslotD'
+                    }
+                  ]
+                }
+              ],
+              connections: [
+                {
+                  connectionId: 'c-d',
+                  source: {
+                    slot: 'testslotC'
+                  },
+                  destination: {
+                    memberIdRef: 'D-Element', slot: 'testslotD'
+                  }
+                }
+              ]
+            }
+          ],
+          connections: [
+            {
+              connectionId: 'b-c',
+              source: {
+                memberIdRef: 'B-Element',
+                slot: 'testslotB'
+              },
+              destination: {
+                memberIdRef: 'C-Element',
+                slot: 'testslotC'
+              }
+            }
+          ]
         };
         getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
           var ergManifest;
@@ -455,16 +507,21 @@ describe('CIF', function () {
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
           ciftestA.getAttribute('member-id').should.have.exists;
           ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
+          ciftestA.should.have.property('processed', true);
           var ciftestB = ciftestA.firstElementChild;
           ciftestB.should.have.property('tagName', 'CIFTEST-B');
+          ciftestB.should.have.property('processed', true);
           var ciftestE = ciftestA.nextElementSibling;
           ciftestE.should.have.property('tagName', 'CIFTEST-E');
           ciftestE.getAttribute('member-id').should.have.exists;
           ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
+          ciftestE.should.have.property('processed', true);
           var ciftestB2 = ciftestE.firstElementChild;
           ciftestB2.should.have.property('tagName', 'CIFTEST-B');
+          ciftestB2.should.have.property('processed', true);
           var ciftestA2 = ciftestB2.nextElementSibling;
           ciftestA2.should.have.property('tagName', 'CIFTEST-A');
+          ciftestA2.should.have.property('processed', true);
           done();
         }, 100);
       });
@@ -556,12 +613,16 @@ describe('CIF', function () {
         window.setTimeout(function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
+          ciftestA.should.have.property('processed', true);
           var ciftestB = ciftestA.firstElementChild;
           ciftestB.should.have.property('tagName', 'CIFTEST-B');
+          ciftestB.should.have.property('processed', true);
           var ciftestA2 = ciftestA.nextElementSibling;
           ciftestA2.should.have.property('tagName', 'CIFTEST-A');
+          ciftestA2.should.have.property('processed', true);
           var ciftestB2 = ciftestA2.firstElementChild;
           ciftestB2.should.have.property('tagName', 'CIFTEST-B');
+          ciftestB2.should.have.property('processed', true);
           done();
         }, 100);
       });
@@ -723,21 +784,26 @@ describe('CIF', function () {
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
             ciftestA.getAttribute('member-id').should.have.exists;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
+            ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB.should.have.property('processed', true);
             var ciftestE = ciftestA.nextElementSibling;
             ciftestE.should.have.property('tagName', 'CIFTEST-E');
             ciftestE.getAttribute('member-id').should.have.exists;
             ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
+            ciftestE.should.have.property('processed', true);
             var ciftestB2 = ciftestE.firstElementChild;
             ciftestB2.should.have.property('tagName', 'CIFTEST-B');
+            ciftestB2.should.have.property('processed', true);
             var ciftestA2 = ciftestB2.nextElementSibling;
             ciftestA2.should.have.property('tagName', 'CIFTEST-A');
+            ciftestA2.should.have.property('processed', true);
             var ciftestE2 = ciftestE.nextElementSibling;
             ciftestE2.should.have.property('tagName', 'CIFTEST-E');
             ciftestE2.getAttribute('member-id').should.have.exists;
             ciftestE2.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE2.getAttribute('member-id'));
-
+            ciftestE2.should.have.property('processed', true);
             done();
           }, 100);
         });
