@@ -902,6 +902,7 @@ describe('CIF', function () {
       var compoundEl;
       var compoundEl2;
       var connectionId;
+      var spy;
       beforeEach(function () {
         manifestCiftestA = {
           webpackageId: 'test.package-ciftest-a@0.1/ciftest-a',
@@ -1089,6 +1090,7 @@ describe('CIF', function () {
         createConnection(compoundEl, manifestCiftestA.slots[ 0 ].slotId, 'two', manifestCiftestE.slots[ 0 ].slotId, connectionId);
         // Than cubx-core-init
         createSlotInit(compoundEl, manifestCiftestA.slots[ 0 ].slotId, '"Hello World!"');
+        spy = sinon.spy(cif._initializer, 'resetInitList');
       });
       afterEach(function () {
         var elList = container.children;
@@ -1102,6 +1104,7 @@ describe('CIF', function () {
         container.Context._components = [];
         container.Context._connectionMgr._connections = [];
         window.cubx.cif.cif._initializer._initList = [];
+        cif._initializer.resetInitList.restore();
       });
       it('should initialize the components', function () {
         cif._initCubxElements(container);
@@ -1145,6 +1148,12 @@ describe('CIF', function () {
         cif._initSlots();
         compoundEl.model.should.have.property('testslotA', 'Hello World!');
         compoundEl2.model.should.have.property('testslotA', 'Hello World!');
+      });
+      it('resetIniList should be called once', function () {
+        cif._initCubxElements(container);
+        cif._initConnections();
+        cif._initSlots();
+        spy.should.have.been.calledOnce;
       });
     });
     describe('crcRoot contains 2 different cubbles and and init the first element and one connections', function () {

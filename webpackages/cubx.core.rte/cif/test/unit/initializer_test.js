@@ -697,8 +697,23 @@ describe('Initializer', function () {
     it('the #_initSlot Method should call forth', function () {
       expect(_initSlotStub.callCount).to.be.equals(4);
     });
+    it('initList should have the length 4', function () {
+      initializer._initList.should.have.length(4);
+    });
   });
 
+  describe('#resetInitList', function () {
+    beforeEach(function () {
+      initializer._initList = [];
+      initializer._initList.push({ dummy: 'slotinit1'});
+      initializer._initList.push({ dummy: 'slotinit2'});
+    });
+    it('should be the initList reseted', function () {
+      initializer._initList.should.have.length(2);
+      initializer.resetInitList();
+      initializer._initList.should.have.length(0);
+    });
+  });
   describe('#sortInitList', function () {
     var spy;
     var origInitList;
