@@ -8,17 +8,11 @@
    */
   var Initializer = function () {
     /**
-     * List of Slots to initalize
+     * List of Slots to initialize
      * @type {Array}
      * @private
      */
     this._initList = [];
-    /**
-     * optimized List of Slots to initalize
-     * @type {Array}
-     * @private
-     */
-    this._optimizedInitList = [];
 
     /**
      * @type {EventFactory}
@@ -27,6 +21,9 @@
     this._eventFactory = new window.cubx.EventFactory();
   };
 
+  /* ******************************************************************************************/
+  /* ************************** public methods ************************************************/
+  /* ******************************************************************************************/
   /**
    * parse the elements for cubx-core-init  for the given context
    * all subelement cubx-core-slot-init will readed and add to the init list
@@ -52,7 +49,7 @@
     this._initList = this._sortInitList(this._initList);
   };
   /**
-   * Init the Slots by using the optimized InitList (#_optimizedInitList).
+   * Init the Slots by using the optimized InitList.
    * @memberOf Initializer
    */
   Initializer.prototype.initSlots = function () {
@@ -63,6 +60,18 @@
     }, this);
   };
 
+  /**
+   * reset the internal list of inits and optimized inits.
+   * @memberOf Initializer
+   * @private
+   */
+  Initializer.prototype.resetInitList = function () {
+    this._initList = [];
+  };
+
+  /* ****************************************************************************************/
+  /* ************************************ private methods ***********************************/
+  /* ****************************************************************************************/
   /**
    * Init one Slot from an item of optimized init
    * @param {SlotInit} init

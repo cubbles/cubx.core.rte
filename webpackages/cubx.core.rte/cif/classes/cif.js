@@ -530,6 +530,7 @@
     this._initializer.initSlots();
     var cifInitReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_READY);
     node.dispatchEvent(cifInitReadyEvent);
+    this._initializer.resetInitList();
   };
 
   /**
