@@ -524,7 +524,7 @@ describe('Initializer', function () {
       initializer._initList[ 0 ].should.be.instanceOf(window.cubx.cif.Initializer.SlotInit);
     });
     it('cubx-cor-slot-init element should have a property processed (true)', function () {
-      initSlotEl.should.have.property('processed',true);
+      initSlotEl.should.have.property('processed', true);
     });
   });
 
