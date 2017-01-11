@@ -8,5 +8,8 @@ module.exports.tasks = {
       },
       'pre-commit': '_validateSources'
     }
+  },
+  clean: {
+    docs: [ '<%= param.doc %>/' ]
   }
 };
