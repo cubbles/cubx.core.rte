@@ -31,6 +31,8 @@ module.exports.tasks = {
       configFile: '<%= param.src %>/dynamic-connection-utils/test/karma.conf.js',
       singleRun: true
     }
-
+  },
+  clean: {
+    docs: [ '<%= param.doc %>/' ]
   }
 };
