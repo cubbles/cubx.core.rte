@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary */
 (function () {
   'use strict';
 
@@ -59,6 +59,10 @@
     this._initializer = new window.cubx.cif.Initializer();
 
     /**
+     * ObserverSummary Object for observe dynamically created or removed cublles
+     */
+    this._observer;
+    /**
      * Listed all allowed modelVersion.
      * @type {string[]}
      * @private
@@ -84,6 +88,13 @@
      * @private
      */
     this._cifReady = false;
+
+    /**
+     * type of the mode of processing: 0 = not in process, 1 = initial processing, 2 = processing started from observer
+     * @type number
+     * @private
+     */
+    this._processMode = 0;
 
     /**
      * map of elemnt waiting for create subtree
@@ -212,6 +223,8 @@
    * @private
    */
   CIF.prototype._initForCRCRoot = function (node) {
+    // start initial processing
+    this._processInitial();
     var me = this;
     node.addEventListener(window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY, function () {
       me._afterCreatedElementsReady(node);
@@ -252,6 +265,15 @@
     this._createInitElements(node);
     //  run slot init
     this._initSlots(node);
+
+    if (this._isInitialProcessing()) {
+      this._createObserverObject();
+    }
+    if (this._isObserverTriggeredProcessing()) {
+      // TODO
+    }
+    // reset the processMode to not processed
+    this._resetProcessMode();
     //  dispatch ready event
     this._ready(node);
   };
@@ -270,6 +292,25 @@
       }
     });
     return firstAttrFalse !== undefined;
+  };
+
+  CIF.prototype._createObserverObject = function () {
+    var crcRoot = this.getCRCRootNode();
+    var elements = Object.keys(window.cubx.CRC.getCache().getAllComponents());
+
+    var observerConfig = {
+      callback: this._detectMutation,
+      rootNode: crcRoot,
+      queries: [
+        {
+          elements: elements.join(',')
+        }
+      ]
+    };
+    if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+      console.log('mutations-summary config', observerConfig);
+    }
+    this._observer = new MutationSummary(observerConfig);
   };
 
   /**
@@ -322,14 +363,16 @@
       node = this.getCRCRootNode();
     }
 
-    var filter = { acceptNode: function (currNode) {
-      var except = [ 'CUBX-CORE-CONNECTIONS', 'CUBX-CORE-CONNECTION', 'CUBX-CORE-INIT', 'CUBX-CORE-SLOT-INIT' ];
-      if (currNode.nodeType === currNode.ELEMENT_NODE && currNode.tagName.indexOf('-') > -1 && except.indexOf(currNode.tagName) === -1) {
-        return NodeFilter.FILTER_ACCEPT;
-      } else {
-        return NodeFilter.FILTER_SKIP;
+    var filter = {
+      acceptNode: function (currNode) {
+        var except = [ 'CUBX-CORE-CONNECTIONS', 'CUBX-CORE-CONNECTION', 'CUBX-CORE-INIT', 'CUBX-CORE-SLOT-INIT' ];
+        if (currNode.nodeType === currNode.ELEMENT_NODE && currNode.tagName.indexOf('-') > -1 && except.indexOf(currNode.tagName) === -1) {
+          return NodeFilter.FILTER_ACCEPT;
+        } else {
+          return NodeFilter.FILTER_SKIP;
+        }
       }
-    }};
+    };
 
     var safeFilter = filter.acceptNode;
     safeFilter.acceptNode = filter.acceptNode;
@@ -1264,6 +1307,47 @@
       }
     }
     return allOk;
+  };
+
+  /**
+   * Set processMode for initial processing (1)
+   * @private
+   */
+  CIF.prototype._processInitial = function () {
+    this._processMode = 1;
+  };
+  /**
+   * Set processMode for observer triggered processing (2)
+   * @private
+   */
+  CIF.prototype._processObserverTriggered = function () {
+    this._processMode = 2;
+  };
+
+  /**
+   * REset the _processMode property to 0 (not processing)
+   * @private
+   */
+  CIF.prototype._resetProcessMode = function () {
+    this._processMode = 0;
+  };
+
+  /**
+   * True during initial prcessing
+   * @returns {boolean}
+   * @private
+   */
+  CIF.prototype._isInitialProcessing = function () {
+    return this._processMode === 1;
+  };
+
+  /**
+   * true during observer triggred processing
+   * @returns {boolean}
+   * @private
+   */
+  CIF.prototype._isObserverTriggeredProcessing = function () {
+    return this._processMode === 2;
   };
 
   // instantiate the CIF
