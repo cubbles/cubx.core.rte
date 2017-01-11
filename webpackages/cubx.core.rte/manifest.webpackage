@@ -73,6 +73,12 @@
           },
           {
             "artifactId": "cubx-component-mixin"
+          },
+          {
+            "artifactId": "queue"
+          },
+          {
+            "artifactId": "mutation-summary"
           }
         ]
       },
@@ -170,6 +176,25 @@
       {
         "artifactId": "iframe-resizer",
         "description": "Utility to resize an iframe according to its content size.",
+        "resources": [
+          "html-import.html"
+        ],
+        "dependencies": []
+      },
+      {
+        "artifactId": "queue",
+        "description": "A queue implementation by Stephen Morley",
+        "resources": [
+          {
+            "prod": "html-import.min.html",
+            "dev": "html-import.html"
+          }
+        ],
+        "dependencies": []
+      },
+      {
+        "artifactId": "mutation-summary",
+        "description": "Mutation Summary is a JavaScript library that makes observing changes to the DOM fast, easy and safe.",
         "resources": [
           "html-import.html"
         ],
