@@ -331,4 +331,44 @@ describe('CIF', function () {
     // Could not test...
     // cif._registerConnectionElements
   });
+  describe('manipulating _processMode property', function () {
+    before(function () {
+      cif._resetProcessMode();
+    });
+    afterEach(function () {
+      cif._resetProcessMode();
+    });
+    it('#_processInitial set the _processMode to 1', function () {
+      cif._processInitial();
+      expect(cif._processMode).to.be.equals(1);
+    });
+    it('#_processObserverTriggered set the _processMode to 2', function () {
+      cif._processObserverTriggered();
+      expect(cif._processMode).to.be.equals(2);
+    });
+    it('#_isInitialProcessing get false if the _processMode is 0', function () {
+      cif._resetProcessMode();
+      expect(cif._isInitialProcessing()).to.be.false;
+    });
+    it('#_isInitialProcessing get true if the _processMode is 1', function () {
+      cif._processInitial();
+      expect(cif._isInitialProcessing()).to.be.true;
+    });
+    it('#_isInitialProcessing get false if the _processMode is 1', function () {
+      cif._processObserverTriggered();
+      expect(cif._isInitialProcessing()).to.be.false;
+    });
+    it('#_isObserverTriggeredProcessing get false if the processmode is 0', function () {
+      cif._resetProcessMode();
+      expect(cif._isObserverTriggeredProcessing()).to.be.false;
+    });
+    it('#_isObserverTriggeredProcessing get false if the processmode is 1', function () {
+      cif._processInitial();
+      expect(cif._isObserverTriggeredProcessing()).to.be.false;
+    });
+    it('#_isObserverTriggeredProcessing get true if the processmode is 2', function () {
+      cif._processObserverTriggered();
+      expect(cif._isObserverTriggeredProcessing()).to.be.true;
+    });
+  });
 });
