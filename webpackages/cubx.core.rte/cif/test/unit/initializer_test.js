@@ -705,8 +705,8 @@ describe('Initializer', function () {
   describe('#resetInitList', function () {
     beforeEach(function () {
       initializer._initList = [];
-      initializer._initList.push({ dummy: 'slotinit1'});
-      initializer._initList.push({ dummy: 'slotinit2'});
+      initializer._initList.push({dummy: 'slotinit1'});
+      initializer._initList.push({dummy: 'slotinit2'});
     });
     it('should be the initList reseted', function () {
       initializer._initList.should.have.length(2);
