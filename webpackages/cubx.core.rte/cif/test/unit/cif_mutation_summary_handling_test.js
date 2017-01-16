@@ -226,7 +226,7 @@ describe('CIF', function () {
         };
       });
       _addPossibleElementToQueueSpy = sinon.spy(cif, '_addPossibleElementToQueue');
-      _processElementFromQueueSpy = sinon.stub(cif, '_processElementFromQueue', function(){
+      _processElementFromQueueSpy = sinon.stub(cif, '_processElementFromQueue', function () {
         // do nothing
       });
     });
