@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue */
 (function () {
   'use strict';
 
@@ -62,6 +62,14 @@
      * ObserverSummary Object for observe dynamically created or removed cublles
      */
     this._observer;
+
+    /**
+     * A queue for dynamically added elements. The element of queue will processed separat, one after the other.
+     * @type {Queue}
+     * @private
+     */
+    this._elementQueue = new Queue();
+
     /**
      * Listed all allowed modelVersion.
      * @type {string[]}
@@ -270,7 +278,7 @@
       this._createObserverObject();
     }
     if (this._isObserverTriggeredProcessing()) {
-      // TODO
+      this._processElementFromQueue();
     }
     // reset the processMode to not processed
     this._resetProcessMode();
@@ -294,8 +302,16 @@
     return firstAttrFalse !== undefined;
   };
 
+  /**
+   * Create the mutation summary observer
+   * @private
+   */
   CIF.prototype._createObserverObject = function () {
     var crcRoot = this.getCRCRootNode();
+    if (Object.keys(window.cubx.CRC.getCache().getAllComponents()).length === 0) {
+      console.warn('Can not initialise Mutation Summary (observer), because the component cache is empty.');
+      return;
+    }
     var elements = Object.keys(window.cubx.CRC.getCache().getAllComponents());
 
     var observerConfig = {
@@ -303,7 +319,7 @@
       rootNode: crcRoot,
       queries: [
         {
-          elements: elements.join(',')
+          element: elements.join(',')
         }
       ]
     };
@@ -311,6 +327,78 @@
       console.log('mutations-summary config', observerConfig);
     }
     this._observer = new MutationSummary(observerConfig);
+  };
+
+  /**
+   * Handler methode for mutataion summary (observer)
+   * @param {Array} summaries all observed changes
+   * @private
+   */
+  CIF.prototype._detectMutation = function (summaries) {
+    if (window.cubx.CRC.getRuntimeMode() === 'dev') {
+      console.log('called cif._detectMutation', summaries);
+    }
+    var componentChangeSummary = summaries[0];
+    var cif = window.cubx.cif.cif;
+    componentChangeSummary.added.forEach(function (addedEl) {
+      cif._addPossibleElementToQueue(addedEl);
+      cif._processElementFromQueue();
+    });
+    componentChangeSummary.removed.forEach(function (removedEl) {
+      // TODO implement remove Element
+    });
+  };
+
+  /**
+   * Check if element descendant of the crcRoot is. If it is, add to the element queue.
+   * @param element potentiell html element to add the element queue
+   * @private
+   */
+  CIF.prototype._addPossibleElementToQueue = function (element) {
+    var ancestor = this._findNextAncestorWithContext(element);
+    if (ancestor === this.getCRCRootNode()) {
+      this._elementQueue.enqueue(element);
+    }
+  };
+
+  /**
+   * Process the next element from the queue.
+   * @private
+   */
+  CIF.prototype._processElementFromQueue = function () {
+    var memberIds = [];
+    var initOrder = 0;
+    // 0. Set Cif to ready = false
+    this._cifReady = false;
+    // 1. getElement
+    var element = this._elementQueue.dequeue();
+    // 2. Update cubx-core-connection elements
+    this._updateCubxCoreConnections(element);
+    // 3. Update cubx-core-slot-init elements
+    initOrder = this._updateCubxCoreInit(element, initOrder);
+    // 4. for each cubbles call _initCubxElementsInRoot
+    this._initCubxElementsInRoot(element, memberIds);
+  };
+
+  /**
+   * Find the next ancestor with context property of the element and get it. If no element with context found get undefined.
+   * @param {HTMLElement} element
+   * @private
+   */
+  CIF.prototype._findNextAncestorWithContext = function (element) {
+    // abort criterion if  the element is BODY
+    if (element.tagName === 'BODY') {
+      return;
+    }
+    // abort criterion if no parentNode exists
+    if (!element.parentNode) {
+      return;
+    }
+    if (element.parentNode.Context) {
+      return element.parentNode;
+    } else {
+      return this._findNextAncestorWithContext(element.parentNode);
+    }
   };
 
   /**

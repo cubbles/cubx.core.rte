@@ -63,7 +63,7 @@ window.cubx.EventFactory.prototype.createEvent = function (type, detail) {
 };
 var cache = {};
 cache.getAllComponents = function () {
-  return [];
+  return {};
 };
 /* eslint-disable no-unused-vars*/
 cache.getComponentCacheEntry = function (key) {
