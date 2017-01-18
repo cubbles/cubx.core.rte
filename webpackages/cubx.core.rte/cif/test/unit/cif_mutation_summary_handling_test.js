@@ -328,7 +328,9 @@ describe('CIF', function () {
     var _updateCubxCoreConnectionsStub;
     var _updateCubxCoreInitStub;
     var _initCubxElementsInRootStub;
+    var _processObserverTriggeredSpy;
     beforeEach(function () {
+      cif._resetProcessMode();
       _updateCubxCoreConnectionsStub = sinon.stub(cif, '_updateCubxCoreConnections', function () {
         // do nothing;
       });
@@ -338,11 +340,14 @@ describe('CIF', function () {
       _initCubxElementsInRootStub = sinon.stub(cif, '_initCubxElementsInRoot', function () {
         // do nothing;
       });
+      _processObserverTriggeredSpy = sinon.spy(cif, '_processObserverTriggered');
     });
     afterEach(function () {
       cif._updateCubxCoreConnections.restore();
       cif._updateCubxCoreInit.restore();
       cif._initCubxElementsInRoot.restore();
+      cif._processObserverTriggered.restore();
+      cif._resetProcessMode();
     });
     describe('the queue is empty', function () {
       beforeEach(function () {
@@ -360,6 +365,9 @@ describe('CIF', function () {
       });
       it('the elementQueue should be empty', function () {
         expect(cif._elementQueue.getLength()).to.be.equal(0);
+      });
+      it('the method _processObserverTriggered should be not called', function () {
+        _processObserverTriggeredSpy.should.be.not.called;
       });
     });
     describe('the queue has elements', function () {
@@ -384,6 +392,9 @@ describe('CIF', function () {
       });
       it('the elementQueue should be empty', function () {
         expect(cif._elementQueue.getLength()).to.be.equal(0);
+      });
+      it('the method _processObserverTriggered should be called once', function () {
+        _processObserverTriggeredSpy.should.be.calledOnce;
       });
     });
   });
