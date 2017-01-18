@@ -280,10 +280,10 @@
     if (this._isObserverTriggeredProcessing()) {
       this._processElementFromQueue();
     }
-    // reset the processMode to not processed
-    this._resetProcessMode();
     //  dispatch ready event
     this._ready(node);
+    // reset the processMode to not processed
+    this._resetProcessMode();
   };
 
   /**
@@ -338,7 +338,7 @@
     if (window.cubx.CRC.getRuntimeMode() === 'dev') {
       console.log('called cif._detectMutation', summaries);
     }
-    var componentChangeSummary = summaries[0];
+    var componentChangeSummary = summaries[ 0 ];
     var cif = window.cubx.cif.cif;
     componentChangeSummary.added.forEach(function (addedEl) {
       cif._addPossibleElementToQueue(addedEl);
@@ -368,10 +368,11 @@
   CIF.prototype._processElementFromQueue = function () {
     var memberIds = [];
     var initOrder = 0;
-    // 0. Set Cif to ready = false
-    this._cifReady = false;
     // 1. getElement
     var element = this._elementQueue.dequeue();
+    if (!element) { // end the process, if no element in the queue
+      return;
+    }
     // 2. Update cubx-core-connection elements
     this._updateCubxCoreConnections(element);
     // 3. Update cubx-core-slot-init elements
@@ -1345,7 +1346,14 @@
         if (window.cubx.CRC.getRuntimeMode() === 'dev') {
           console.log('cif is ready');
         }
+      }
+      if (this._isInitialProcessing()) {
         cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_READY);
+      }
+      if (this._isObserverTriggeredProcessing()) {
+        cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY);
+      }
+      if (cifReadyEvent) {
         node.dispatchEvent(cifReadyEvent);
       }
     }

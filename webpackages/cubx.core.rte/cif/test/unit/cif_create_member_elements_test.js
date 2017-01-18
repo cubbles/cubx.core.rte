@@ -1221,5 +1221,125 @@ describe('CIF', function () {
       });
     });
   });
-})
-;
+  describe('#_afterCreatedElementsReady', function () {
+    var _createConnectionElementsStub;
+    var _initConnectionsStub;
+    var _createInitElementsStub;
+    var _createObserverObjectStub;
+    var _processElementFromQueueStub;
+    var cifReadyEmmiterSpy;
+    var cifDomUpdateReadyEmmiterSpy;
+    var _resetProcessModeSpy;
+    beforeEach(function () {
+      _createConnectionElementsStub = sinon.stub(cif, '_createConnectionElements', function () {
+        // do nothing
+      });
+      _initConnectionsStub = sinon.stub(cif, '_initConnections', function () {
+        // do nothing
+      });
+      _createInitElementsStub = sinon.stub(cif, '_createInitElements', function () {
+        // do nothing
+      });
+      _createObserverObjectStub = sinon.stub(cif, '_createObserverObject', function () {
+        // do nothing
+      });
+      _processElementFromQueueStub = sinon.stub(cif, '_processElementFromQueue', function () {
+        // do nothing
+      });
+      _resetProcessModeSpy = sinon.spy(cif, '_resetProcessMode');
+      cifReadyEmmiterSpy = sinon.stub();
+      document.addEventListener('cifReady', cifReadyEmmiterSpy);
+      cifDomUpdateReadyEmmiterSpy = sinon.spy();
+      document.addEventListener('cifDomUpdateReady', cifDomUpdateReadyEmmiterSpy);
+    });
+    afterEach(function () {
+      cif._createConnectionElements.restore();
+      cif._initConnections.restore();
+      cif._createInitElements.restore();
+      cif._createObserverObject.restore();
+      cif._processElementFromQueue.restore();
+      cif._resetProcessMode.restore();
+    });
+    describe('cif processing initial', function () {
+      beforeEach(function () {
+        var crcRoot = cif.getCRCRootNode();
+        cif._processInitial();
+        cif._afterCreatedElementsReady(crcRoot);
+      });
+      afterEach(function () {
+        cif._resetProcessMode();
+      });
+      it('the method #_createConnectionElements should be called once', function () {
+        _createConnectionElementsStub.should.be.calledOnce;
+      });
+      it('the method #_initConnections should be called once', function () {
+        _initConnectionsStub.should.be.calledOnce;
+      });
+      it('the method #_createInitElements should be called once', function () {
+        _createInitElementsStub.should.be.calledOnce;
+      });
+      it('the method #_createObserverObject should be called once', function () {
+        _createObserverObjectStub.should.be.calledOnce;
+      });
+      it('the method #_processElementFromQueue should be not called', function () {
+        _processElementFromQueueStub.should.be.not.called;
+      });
+      it('the method #_resetProcessMode should be called once', function () {
+        _resetProcessModeSpy.should.be.calledOnce;
+      });
+      it('the event "cifReady" should be fired', function (done) {
+        window.setTimeout(function () {
+          cifReadyEmmiterSpy.should.be.calledOnce;
+          done();
+        });
+      });
+      it('the event "cifDomUpdateReady" should be not fired', function (done) {
+        window.setTimeout(function () {
+          cifDomUpdateReadyEmmiterSpy.should.be.not.called;
+          done();
+        });
+      });
+    });
+    describe('cif processing triggered by observer', function () {
+      beforeEach(function () {
+        var crcRoot = cif.getCRCRootNode();
+        cif._processObserverTriggered();
+        cif._afterCreatedElementsReady(crcRoot);
+      });
+      afterEach(function () {
+        cif._resetProcessMode();
+      });
+      it('the method #_createConnectionElements should be called once', function () {
+        _createConnectionElementsStub.should.be.calledOnce;
+      });
+      it('the method #_initConnections should be called once', function () {
+        _initConnectionsStub.should.be.calledOnce;
+      });
+      it('the method #_createInitElements should be called once', function () {
+        _createInitElementsStub.should.be.calledOnce;
+      });
+      it('the method #_createObserverObject should be not called', function () {
+        _createObserverObjectStub.should.be.not.called;
+      });
+      it('the method #_processElementFromQueue should be called once', function () {
+        _processElementFromQueueStub.should.be.calledOnce;
+      });
+      it('the method #_resetProcessMode should be called once', function () {
+        _resetProcessModeSpy.should.be.calledOnce;
+      });
+      it('the event "cifReady" should be not fired', function (done) {
+        window.setTimeout(function () {
+          cifReadyEmmiterSpy.should.be.not.called;
+          done();
+        });
+      });
+      it('the event "cifDomUpdateReady" should be fired', function (done) {
+        window.setTimeout(function () {
+          cifDomUpdateReadyEmmiterSpy.should.be.calledOnce;
+          done();
+        });
+      });
+    });
+  });
+});
+

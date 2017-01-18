@@ -15,6 +15,7 @@ window.cubx.EventFactory.types = {};
 window.cubx.EventFactory.types.CIF_MODEL_CHANGE = 'cifModelChange';
 window.cubx.EventFactory.types.COMPONENT_READY = 'componentReady';
 window.cubx.EventFactory.types.CIF_READY = 'cifReady';
+window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY = 'cifDomUpdateReady';
 window.cubx.EventFactory.types.CIF_INIT_START = 'cifInitStart';
 window.cubx.EventFactory.types.CIF_INIT_READY = 'cifInitReady';
 window.cubx.EventFactory.types.COMPONENT_CREATED = 'componentCreated';
@@ -47,6 +48,9 @@ window.cubx.EventFactory.prototype.createEvent = function (type, detail) {
       break;
     case window.cubx.EventFactory.types.CIF_READY:
       evt = new CustomEvent(window.cubx.EventFactory.types.CIF_READY, { bubbles: false });
+      break;
+    case window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY:
+      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY, {bubbles: false});
       break;
     case window.cubx.EventFactory.types.CIF_INIT_START:
       evt = new CustomEvent(window.cubx.EventFactory.types.CIF_INIT_START, { bubbles: false });

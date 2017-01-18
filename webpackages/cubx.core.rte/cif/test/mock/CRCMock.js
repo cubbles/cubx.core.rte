@@ -17,6 +17,7 @@ window.cubx.EventFactory.types.CIF_INIT_START = 'cifInitStart';
 window.cubx.EventFactory.types.CIF_INIT_READY = 'cifInitReady';
 window.cubx.EventFactory.types.COMPONENT_CREATED = 'componentCreated';
 window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY = 'cifAllComponentsReady';
+window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY = 'cifDomUpdateReady';
 
 window.cubx.EventFactory.prototype.createModelChangePayloadObject = function (slotname, payload, connectionHook) {
   if (arguments.length < 2) {
@@ -42,7 +43,10 @@ window.cubx.EventFactory.prototype.createEvent = function (type, detail) {
       evt = new CustomEvent(window.cubx.EventFactory.types.COMPONENT_READY, { bubbles: true });
       break;
     case window.cubx.EventFactory.types.CIF_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_READY, { bubbles: false });
+      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_READY, { bubbles: true });
+      break;
+    case window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY:
+      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY, {bubbles: true});
       break;
     case window.cubx.EventFactory.types.CIF_INIT_START:
       evt = new CustomEvent(window.cubx.EventFactory.types.CIF_INIT_START, { bubbles: false });
