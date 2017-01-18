@@ -44,6 +44,15 @@ window.cubx.amd.define([], function () {
   EventFactory.types.CIF_READY = 'cifReady';
 
   /**
+   * Constant for Cif Dom Update Ready event type
+   * @memberof EventFactory.types
+   * @constant
+   * @default
+   * @type {string}
+   */
+  EventFactory.types.CIF_DOM_UPDATE_READY = 'cifDomUpdateReady';
+
+  /**
    * Constant for cifInitStart event type
    * @constant
    * @default
@@ -101,6 +110,9 @@ window.cubx.amd.define([], function () {
     switch (type) { // use switch statement to make it easy to add other event types in the future
       case EventFactory.types.CIF_READY:
         event = new CustomEvent(EventFactory.types.CIF_READY, { bubbles: true });
+        break;
+      case EventFactory.types.CIF_DOM_UPDATE_READY:
+        event = new CustomEvent(EventFactory.types.CIF_DOM_UPDATE_READY, { bubbles: true });
         break;
       case EventFactory.types.CIF_START:
         event = new CustomEvent(EventFactory.types.CIF_START, { bubbles: true });

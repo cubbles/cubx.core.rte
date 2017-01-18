@@ -324,21 +324,67 @@ describe('CIF', function () {
   });
 
   describe('#_processElementFromQueue', function () {
-    var container;
     var element;
+    var _updateCubxCoreConnectionsStub;
+    var _updateCubxCoreInitStub;
+    var _initCubxElementsInRootStub;
     beforeEach(function () {
-      container = cif.getCRCRootNode();
-      var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
-      element = new constructor();
-      container.appendChild(element);
-      cif._elementQueue = new Queue();
-      cif._addPossibleElementToQueue(element);
+      _updateCubxCoreConnectionsStub = sinon.stub(cif, '_updateCubxCoreConnections', function () {
+        // do nothing;
+      });
+      _updateCubxCoreInitStub = sinon.stub(cif, '_updateCubxCoreInit', function () {
+        // do nothing;
+      });
+      _initCubxElementsInRootStub = sinon.stub(cif, '_initCubxElementsInRoot', function () {
+        // do nothing;
+      });
     });
     afterEach(function () {
-      container.removeChild(element);
-      cif._elementQueue = new Queue();
+      cif._updateCubxCoreConnections.restore();
+      cif._updateCubxCoreInit.restore();
+      cif._initCubxElementsInRoot.restore();
     });
-    it('', function () {
+    describe('the queue is empty', function () {
+      beforeEach(function () {
+        expect(cif._elementQueue.getLength()).to.be.equal(0);
+        cif._processElementFromQueue();
+      });
+      it('the method _updateCubxCoreConnections should not called', function () {
+        _updateCubxCoreConnectionsStub.should.be.not.called;
+      });
+      it('the method _updateCubxCoreInit should not called', function () {
+        _updateCubxCoreInitStub.should.be.not.called;
+      });
+      it('the method _initCubxElementsInRoot should not called', function () {
+        _initCubxElementsInRootStub.should.be.not.called;
+      });
+      it('the elementQueue should be empty', function () {
+        expect(cif._elementQueue.getLength()).to.be.equal(0);
+      });
+    });
+    describe('the queue has elements', function () {
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        element = new constructor();
+        cif._elementQueue.enqueue(element);
+        expect(cif._elementQueue.getLength()).to.be.equal(1);
+        cif._processElementFromQueue();
+      });
+      afterEach(function () {
+        cif._elementQueue = new Queue();
+      });
+      it('the method _updateCubxCoreConnections should called once', function () {
+        _updateCubxCoreConnectionsStub.should.be.calledOnce;
+      });
+      it('the method _updateCubxCoreInit should called once', function () {
+        _updateCubxCoreInitStub.should.be.calledOnce;
+      });
+      it('the method _initCubxElementsInRoot should called once', function () {
+        _initCubxElementsInRootStub.should.be.calledOnce;
+      });
+      it('the elementQueue should be empty', function () {
+        expect(cif._elementQueue.getLength()).to.be.equal(0);
+      });
     });
   });
 });

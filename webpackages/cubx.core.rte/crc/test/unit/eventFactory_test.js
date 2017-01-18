@@ -121,6 +121,24 @@ window.cubx.amd.define([ 'CRC',
             event.should.have.property('bubbles', true);
           });
         });
+        describe('create an event from type EventFactory.types.CIF_DOM_UPDATE_READY', function () {
+          var detail;
+          beforeEach(function () {
+            type = EventFactory.types.CIF_DOM_UPDATE_READY;
+            detail = { foo: 'bar' };
+          });
+          afterEach(function () {
+            detail = null;
+          });
+          it('should be true, if an event from type EventFactory.types.CIF_READYDOM_UPDATE_READY created', function () {
+            var event = eventFactory.createEvent(type, detail);
+            event.should.be.exist;
+            event.should.be.instanceof(CustomEvent);
+            event.should.have.property('detail', null);
+            event.should.have.property('type', 'cifReady');
+            event.should.have.property('bubbles', true);
+          });
+        });
         describe('create an event from type EventFactory.types.COMPONENT_READY', function () {
           var detail;
           beforeEach(function () {
