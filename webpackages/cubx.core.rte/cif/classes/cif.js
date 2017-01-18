@@ -373,6 +373,7 @@
     if (!element) { // end the process, if no element in the queue
       return;
     }
+    this._processObserverTriggered();
     // 2. Update cubx-core-connection elements
     this._updateCubxCoreConnections(element);
     // 3. Update cubx-core-slot-init elements
