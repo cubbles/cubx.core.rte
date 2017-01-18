@@ -135,7 +135,7 @@ window.cubx.amd.define([ 'CRC',
             event.should.be.exist;
             event.should.be.instanceof(CustomEvent);
             event.should.have.property('detail', null);
-            event.should.have.property('type', 'cifReady');
+            event.should.have.property('type', 'cifDomUpdateReady');
             event.should.have.property('bubbles', true);
           });
         });
