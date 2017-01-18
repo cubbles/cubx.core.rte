@@ -240,7 +240,7 @@
 
     //  dispatch and listen to EventFactory.types.COMPONENT_READY also on CompoundComponents
     node.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
-      if (!me.isReady(node)) {
+      if (me._isInitialProcessing() || me._isObserverTriggeredProcessing()) {
         var runtimeId = evt.target.getAttribute('runtime-id');
         if (me._componentReady[ runtimeId ]) {
           me._componentReady[ runtimeId ].ready = true;
