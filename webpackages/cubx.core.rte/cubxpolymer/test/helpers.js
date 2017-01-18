@@ -7,6 +7,7 @@ function initNewElement (elementName, templateContext, prototype) {
   // add to crcContainer
   var elem = createNewElement(elementName, templateContext, prototype);
   crcContainer.appendChild(elem);
+  crcContainer.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
 }
 
 function getContainer () {

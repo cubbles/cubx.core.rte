@@ -1,4 +1,4 @@
-/* globals _,initNewElement,getTestComponentCacheEntry, HTMLImports */
+/* globals _,initNewElement,getTestComponentCacheEntry, HTMLImports, getContainer */
 'use strict';
 describe('CubxPolymer (init)', function () {
   before(function (done) {
@@ -32,7 +32,9 @@ describe('CubxPolymer (init)', function () {
           polEl.appendChild(scriptEl);
           document.body.appendChild(el);
           var element = document.createElement(elementName);
-          document.body.appendChild(element);
+          var container = getContainer();
+          container.appendChild(element);
+          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
         });
         after(function () {
           window.componentCacheEntry = undefined;
@@ -429,7 +431,17 @@ describe('CubxPolymer (init)', function () {
       window.componentCacheEntry = undefined;
     });
 
-    it('should call "cubxReady', function (done) {
+    it('should call "cubxReady"', function (done) {
+      setTimeout(function () {
+        expect(cubxReadyCalls).to.be.equals(1);
+        done();
+      }, 50);
+    });
+
+    it('should call "cubxReady" just once', function (done) {
+      var container = getContainer();
+      container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+      container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_READY));
       setTimeout(function () {
         expect(cubxReadyCalls).to.be.equals(1);
         done();

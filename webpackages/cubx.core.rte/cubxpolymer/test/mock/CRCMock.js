@@ -41,28 +41,28 @@ window.cubx.EventFactory.prototype.createEvent = function (type, detail) {
   switch (type) {
 
     case window.cubx.EventFactory.types.CIF_MODEL_CHANGE:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_MODEL_CHANGE, { bubbles: true, detail: detail });
+      evt = new CustomEvent(type, { bubbles: true, detail: detail });
       break;
     case window.cubx.EventFactory.types.COMPONENT_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.COMPONENT_READY, { bubbles: true });
+      evt = new CustomEvent(type, { bubbles: true });
       break;
     case window.cubx.EventFactory.types.CIF_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_READY, { bubbles: false });
+      evt = new CustomEvent(type, { bubbles: true });
       break;
     case window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY, {bubbles: false});
+      evt = new CustomEvent(type, {bubbles: true});
       break;
     case window.cubx.EventFactory.types.CIF_INIT_START:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_INIT_START, { bubbles: false });
+      evt = new CustomEvent(type, { bubbles: false });
       break;
     case window.cubx.EventFactory.types.CIF_INIT_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_INIT_READY, { bubbles: false });
+      evt = new CustomEvent(type, { bubbles: false });
       break;
     case window.cubx.EventFactory.types.COMPONENT_CREATED:
-      evt = new CustomEvent(window.cubx.EventFactory.types.COMPONENT_CREATED, { bubbles: true, detail: detail });
+      evt = new CustomEvent(type, { bubbles: true, detail: detail });
       break;
     case window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY, { bubbles: true });
+      evt = new CustomEvent(type, { bubbles: true });
       break;
     default:
       throw new TypeError('unknowed type: ', type);

@@ -3,6 +3,8 @@
 (function () {
   var cubxComponentMixin = {};
 
+  cubxComponentMixin._isReadyRegistered = false;
+
   /**
    * Set the value of an input slot and trigger a cll of the custom hook method and change the private
    * value of the slot.
@@ -179,13 +181,19 @@
   cubxComponentMixin._cifReady = function () {
     var rootElement = window.cubx.CRC.getCRCElement();
     var me = this;
-    if (window.cubx.cif && window.cubx.cif.cif && window.cubx.cif.cif.isReady(rootElement)) {
-      me._cifReadyHandler();
-    } else {
-      rootElement.addEventListener(window.cubx.EventFactory.types.CIF_READY, function (evt) {
+
+    rootElement.addEventListener(window.cubx.EventFactory.types.CIF_READY, function (evt) {
+      if (!me._isReadyRegistered) {
+        me._isReadyRegistered = true;
         me._cifReadyHandler();
-      });
-    }
+      }
+    });
+    rootElement.addEventListener(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY, function (evt) {
+      if (!me._isReadyRegistered) {
+        me._isReadyRegistered = true;
+        me._cifReadyHandler();
+      }
+    });
   };
 
   /**
