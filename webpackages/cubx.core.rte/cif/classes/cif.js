@@ -345,8 +345,30 @@
       cif._processElementFromQueue();
     });
     componentChangeSummary.removed.forEach(function (removedEl) {
-      // TODO implement remove Element
+      cif._handleRemovedCubble(removedEl, componentChangeSummary.getOldParentNode(removedEl));
     });
+  };
+
+  CIF.prototype._handleRemovedCubble = function (element, oldParentNode) {
+    var context;
+    if (oldParentNode && oldParentNode.Context) {
+      context = oldParentNode.Context;
+    } else if (oldParentNode) {
+      context = this._findNextAncestorWithContext(oldParentNode);
+    }
+    if (context) {
+      // 1. remove connection if element is a source
+      // 2. remove internal connections
+      // 3. searched for marked connection with element is a destination of
+      context._connectionMgr.tidyConnectionsWithCubble(element);
+      // remove element from parent context
+      var index = context.getComponents().indexOf(element);
+      if (index > -1) {
+        context.getComponents().splice(index, 1);
+      }
+    } else {
+      console.warn('No context found for removed cubble "' + element + '".');
+    }
   };
 
   /**
@@ -366,20 +388,21 @@
    * @private
    */
   CIF.prototype._processElementFromQueue = function () {
-    var memberIds = [];
-    var initOrder = 0;
     // 1. getElement
     var element = this._elementQueue.dequeue();
     if (!element) { // end the process, if no element in the queue
       return;
     }
+    var memberIds = [];
+    var initOrder = 0;
     this._processObserverTriggered();
     // 2. Update cubx-core-connection elements
     this._updateCubxCoreConnections(element);
     // 3. Update cubx-core-slot-init elements
-    initOrder = this._updateCubxCoreInit(element, initOrder);
+    this._updateCubxCoreInit(element, initOrder);
     // 4. for each cubbles call _initCubxElementsInRoot
     this._initCubxElementsInRoot(element, memberIds);
+    // TODO check if marked=removed connection exists as destination to this element and activate it
   };
 
   /**

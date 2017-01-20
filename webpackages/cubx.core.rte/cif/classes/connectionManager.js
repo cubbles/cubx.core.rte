@@ -185,6 +185,12 @@
     return connectionList.splice(index, 1)[ 0 ];
   };
 
+  ConnectionManager.prototype.tidyConnectionsWithCubble = function (element) {
+    // TODO 1. remove connection if element is a source
+    // TODO 2. remove internal connections
+    // TODO 3. searched for marked connection with element is a destination of
+  };
+
   /* ***************************************************************************/
   /* ***********************  private Methoden *********************************/
   /* ***************************************************************************/
