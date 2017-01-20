@@ -3,7 +3,7 @@ sudo: true
 # trusty distribution (Ubuntu 14.04.3 LTS - Currently beta version -  If travis make it standard,  delete dist:trusty
 dist: trusty
 node_js:
- - "4"
+ - "6"
 addons:
   firefox: "latest"
 before_install:
