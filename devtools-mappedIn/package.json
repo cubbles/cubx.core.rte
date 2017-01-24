@@ -37,7 +37,9 @@
     "time-grunt": "~1.0.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "cubx-karma-requirejs": "1.1.1",
+    "cubx-requirejs": "^1.1.2",
     "grunt-karma": "^0.12.2",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
@@ -48,7 +50,9 @@
     "karma-mocha": "^0.2.2",
     "karma-mocha-reporter": "^2.0.1",
     "karma-sinon-chai": "1.2.0",
+    "lolex": "^1.5.2",
     "mocha": "^2.4.5",
+    "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0"
   },
   "scripts": {
