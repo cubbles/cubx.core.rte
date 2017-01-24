@@ -1,4 +1,4 @@
-/* globals _,HTMLElement,NodeFilter*/
+/* globals _,HTMLElement,NodeFilter */
 (function () {
   'use strict';
 
@@ -46,6 +46,10 @@
   ConnectionManager.prototype.processConnections = function (sourceComp, payloadObject) {
     // console.log('ConnectionManager.processConnections', sourceComp, payloadObject);
     _.forEach(this._connections, function (connection) {
+      // not process deactivated connections
+      if (connection.deactivated) {
+        return;
+      }
       var correctComponent = sourceComp === connection.source.component;
       var correctSlot = false;
       if (connection.source.slot && payloadObject.slot && payloadObject.slot === connection.source.slot) {
@@ -73,6 +77,10 @@
     });
     // console.log('internal connections', internalConnections);
     _.forEach(internalConnections, function (connection) {
+      // not process deactivated connections
+      if (connection.deactivated) {
+        return;
+      }
       // console.log('---connection', connection);
       if (slotName === connection.source.slot) {
         // console.log('process internal connection', connection, payloadObject);
@@ -185,16 +193,117 @@
     return connectionList.splice(index, 1)[ 0 ];
   };
 
+  /**
+   * Tidy the connections, if a cubble has been removed:
+   * 1. find connection with element as source or destination
+   * 2. remove connection if element is a source
+   * 3. marked connection with element as destination as deactivated
+   * 4. delete component propery from destination
+   * @memberOf ConnectionManager
+   * @param element
+   */
   ConnectionManager.prototype.tidyConnectionsWithCubble = function (element) {
-    // TODO 1. remove connection if element is a source
-    // TODO 2. remove internal connections
-    // TODO 3. searched for marked connection with element is a destination of
+    // find connection with element
+    var connections = this._findAllConnectionsWithElement(element);
+    connections.forEach(function (connection) {
+      if (connection.source.component === element) {
+        this._removeConnection(connection);
+      }
+      if (connection.destination.component === element) {
+        // deactvate connection
+        this._deactivateConnection(connection);
+        // delete destination.component
+        var destination = connection.destination;
+        delete destination.component;
+      }
+    }.bind(this));
   };
-
+  /**
+   * Reactivate removed connection, if found them with the destination to elements memberId.
+   * 1. search in _connections for a deactivated connection with destination as the element (memberId)
+   * 2. add element as destination.component
+   * 3. activate connection
+   * 4. propagate throw the connection the source's slot value.
+   * @param {HTMLElement} element
+   */
+  ConnectionManager.prototype.reactivateConnectionIfExists = function (element) {
+    var connections = this._findAllDeactivatedConnectionsWithMemberId(element);
+    connections.forEach(function (connection) {
+      connection.destination.component = element;
+      this._activateConnection(connection);
+      var value = connection.source.component.model[ connection.source.slot ];
+      var payloadObject = window.cubx.cif.cif.getEventFactory().createModelChangePayloadObject(connection.source.slot, value);
+      this._processConnection(connection, payloadObject);
+    }.bind(this));
+  };
   /* ***************************************************************************/
   /* ***********************  private Methoden *********************************/
   /* ***************************************************************************/
 
+  /**
+   * Remove and get a connection object from _connections
+   * @memberOf ConnectionManager
+   * @param connection
+   * @private
+   */
+  ConnectionManager.prototype._removeConnection = function (connection) {
+    var index = this._connections.indexOf(connection);
+    if (index > -1) {
+      return this._connections.splice(index, 1)[ 0 ];
+    }
+    return;
+  };
+
+  /**
+   * Deactivate an deactivated connection
+   * @memberOf ConnectionManager
+   * @param {ConnectionManager.Connection} connection
+   * @private
+   */
+  ConnectionManager.prototype._deactivateConnection = function (connection) {
+    connection.deactivated = true;
+  };
+  /**
+   * Activate an deactivated connection
+   * @memberOf ConnectionManager
+   * @param {ConnectionManager.Connection} connection
+   * @private
+   */
+  ConnectionManager.prototype._activateConnection = function (connection) {
+    delete connection.deactivated;
+  };
+
+  /**
+   * Find all deactivated connection objects in the _connections list with the given elements member-id as destination.
+   * @memberOf ConnectionManagement
+   * @param {HTMLElement} element for search
+   * @returns {Array.<ConnectionManager.Connection>} found connections
+   * @private
+   */
+  ConnectionManager.prototype._findAllConnectionsWithElement = function (element) {
+    return this._connections.filter(function (connection) {
+      return connection.source.component === element || connection.destination.component === element;
+    });
+  };
+
+  /**
+   * Find all deactivated connection objects in the _connections list with the given elements member-id as destination.
+   * @param {HTMLElement} element
+   * @returns {Array.<ConnectionManager.Connection>}
+   * @private
+   */
+  ConnectionManager.prototype._findAllDeactivatedConnectionsWithMemberId = function (element) {
+    return this._connections.filter(function (connection) {
+      return connection.destination.memberId === element.getAttribute('member-id') && connection.deactivated;
+    });
+  };
+
+  /**
+   * Execute a connection. Get the value of the source slot, and propagate throw the connection.
+   * @param {ConnectionMananger.Connection} connection
+   * @private
+   * @memberOf ConnectionManager
+   */
   ConnectionManager.prototype._executeConnection = function (connection) {
     var value = connection.source.component.model[ connection.source.slot ];
     var payloadObject = {

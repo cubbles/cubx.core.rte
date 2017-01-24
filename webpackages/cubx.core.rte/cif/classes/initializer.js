@@ -1,4 +1,4 @@
-/* globals _*/
+/* globals _ */
 (function () {
   'use strict';
   /**
@@ -80,8 +80,7 @@
    */
   Initializer.prototype._initSlot = function (init) {
     init._component.setInputSlot(init._slot,
-      this._eventFactory.createModelChangePayloadObject(init._slot, init._value,
-        null));
+      this._eventFactory.createModelChangePayloadObject(init._slot, init._value, null));
   };
   /**
    * Sorted an List of InitElements by the deeplevel and order property, backwards.

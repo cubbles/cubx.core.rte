@@ -133,6 +133,10 @@
   CIF.prototype.getInitializer = function () {
     return this._initializer;
   };
+
+  CIF.prototype.getEventFactory = function () {
+    return this._eventFactory;
+  };
   /**
    * Create context for given element acting as root context.
    * @memberOf CIF
@@ -402,9 +406,27 @@
     this._updateCubxCoreInit(element, initOrder);
     // 4. for each cubbles call _initCubxElementsInRoot
     this._initCubxElementsInRoot(element, memberIds);
-    // TODO check if marked=removed connection exists as destination to this element and activate it
+    // check if marked=removed connection exists as destination to this element and activate it
+    this._reactivateConnectionIfExists(element);
   };
 
+  /**
+   * Reactivate old connection if exists
+   * 1. search in _removedConnection for a connection with destination as the element (memberId)
+   * 2. add element as destination.component
+   * 3. move connection to _connections
+   * 4. propagate throw the connection the source's slot value.
+   * @param {HTMLElement} element the cubble as potential destination component
+   * @private
+   */
+  CIF.prototype._reactivateConnectionIfExists = function (element) {
+    var parent = this._findNextAncestorWithContext(element);
+    if (!parent) {
+      return;
+    }
+    var connectionMgr = parent.Context._connectionMgr;
+    connectionMgr.reactivateConnectionIfExists(element);
+  };
   /**
    * Find the next ancestor with context property of the element and get it. If no element with context found get undefined.
    * @param {HTMLElement} element
@@ -440,7 +462,7 @@
       console.log('------------------------allComponentsReady-------------');
     }
     this._cifAllComponentsReady = true;
-    var evt = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY);
+    var evt = this.getEventFactory().createEvent(window.cubx.EventFactory.types.CIF_ALL_COMPONENTS_READY);
     node.dispatchEvent(evt);
   };
 
@@ -675,7 +697,7 @@
     if (!node) {
       node = this.getCRCRootNode();
     }
-    var cifInitStartEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_START);
+    var cifInitStartEvent = this.getEventFactory().createEvent(window.cubx.EventFactory.types.CIF_INIT_START);
     node.dispatchEvent(cifInitStartEvent);
     var me = this;
     this._rootContext.collectSlotInits(me);
@@ -684,7 +706,7 @@
       console.log('cif._initializer._initList (', this._initializer._initList.length, ')', this._initializer._initList);
     }
     this._initializer.initSlots();
-    var cifInitReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_INIT_READY);
+    var cifInitReadyEvent = this.getEventFactory().createEvent(window.cubx.EventFactory.types.CIF_INIT_READY);
     node.dispatchEvent(cifInitReadyEvent);
     this._initializer.resetInitList();
   };
@@ -1372,10 +1394,10 @@
         }
       }
       if (this._isInitialProcessing()) {
-        cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_READY);
+        cifReadyEvent = this.getEventFactory().createEvent(window.cubx.EventFactory.types.CIF_READY);
       }
       if (this._isObserverTriggeredProcessing()) {
-        cifReadyEvent = this._eventFactory.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY);
+        cifReadyEvent = this.getEventFactory().createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY);
       }
       if (cifReadyEvent) {
         node.dispatchEvent(cifReadyEvent);

@@ -1,4 +1,4 @@
-/*globals _*/
+/* globals _ */
 'use strict';
 describe('ConnectionManager', function () {
   describe('processConnection', function () {
@@ -13,59 +13,18 @@ describe('ConnectionManager', function () {
       var connectionMgr;
       var payloadObj;
       var _processConnectionStub;
+      var comp1;
+      var comp2;
+      var comp3;
+      var comp4;
       beforeEach(function () {
-        var comp1 = document.createElement('comp1');
-        var comp2 = document.createElement('comp2');
-        var comp3 = document.createElement('comp3');
-        var comp4 = document.createElement('comp4');
-        connections = [
-          {
-            connectionId: '1:firsttestoutput-2:firsttestinput',
-            source: {
-              component: comp1,
-              memberId: '1',
-              slot: 'firsttestoutput'
-            },
-            destination: {
-              component: comp2,
-              memberId: '2',
-              slot: 'firsttestinput'
-            }
-
-          },
-          {
-            connectionId: '1:secondtestoutput-2:secondtestinput',
-            source: {
-              component: comp1,
-              memberId: 1,
-              slot: 'secondtestoutput'
-            },
-            destination: {
-              component: comp2,
-              memberId: '2',
-              slot: 'secondtestinput'
-            }
-          },
-          {
-            connectionId: '1:thirdtestoutput-2:thirdtestinput',
-            source: {
-              component: comp3,
-              memberId: 1,
-              slot: 'thirdtestoutput'
-            },
-            destination: {
-              component: comp4,
-              memberId: 2,
-              slot: 'thirdtestinput'
-            }
-          }
-        ];
-
+        comp1 = document.createElement('comp1');
+        comp2 = document.createElement('comp2');
+        comp3 = document.createElement('comp3');
+        comp4 = document.createElement('comp4');
         var constructor = cif.getCompoundComponentElementConstructor('ciftest-connectionmgr-test');
         element = new constructor();
-
         connectionMgr = element.Context._connectionMgr;
-        connectionMgr._connections = connections;
         payloadObj = {
           payload: '{}',
           slot: 'firsttestoutput'
@@ -73,77 +32,147 @@ describe('ConnectionManager', function () {
         _processConnectionStub = sinon.stub(connectionMgr, '_processConnection', function () {
           //  do nothing
         });
-        connectionMgr.processConnections(connections[ 0 ].source.component, payloadObj);
       });
-      it('_processConnection called once', function () {
-        expect(_processConnectionStub.calledOnce).to.be.true;
+      afterEach(function () {
+        connectionMgr._processConnection.restore();
+        element = null;
+        connectionMgr = null;
+        payloadObj = null;
       });
-      it('_processConnection called with Args connections[0] and  payloadObj', function () {
-        expect(_processConnectionStub.calledWithExactly(connections[ 0 ], payloadObj)).to.be.true;
+      describe('process connections', function () {
+        beforeEach(function () {
+          connections = [
+            {
+              connectionId: '1:firsttestoutput-2:firsttestinput',
+              source: {
+                component: comp1,
+                memberId: '1',
+                slot: 'firsttestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'firsttestinput'
+              }
+
+            },
+            {
+              connectionId: '1:secondtestoutput-2:secondtestinput',
+              source: {
+                component: comp1,
+                memberId: 1,
+                slot: 'secondtestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'secondtestinput'
+              }
+            },
+            {
+              connectionId: '1:thirdtestoutput-2:thirdtestinput',
+              source: {
+                component: comp3,
+                memberId: 1,
+                slot: 'thirdtestoutput'
+              },
+              destination: {
+                component: comp4,
+                memberId: 2,
+                slot: 'thirdtestinput'
+              }
+            }
+          ];
+
+          connectionMgr._connections = connections;
+          connectionMgr.processConnections(connections[ 0 ].source.component, payloadObj);
+        });
+        afterEach(function () {
+        });
+        it('_processConnection called once', function () {
+          _processConnectionStub.should.calledOnce;
+        });
+        it('_processConnection called with Args connections[0] and  payloadObj', function () {
+          _processConnectionStub.should.calledWithExactly(connections[ 0 ], payloadObj);
+        });
+      });
+      describe('not process deactivated connections', function () {
+        beforeEach(function () {
+          connections = [
+            {
+              connectionId: '1:firsttestoutput-2:firsttestinput',
+              deactivated: true,
+              source: {
+                component: comp1,
+                memberId: '1',
+                slot: 'firsttestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'firsttestinput'
+              }
+
+            },
+            {
+              connectionId: '1:secondtestoutput-2:secondtestinput',
+              source: {
+                component: comp1,
+                memberId: 1,
+                slot: 'secondtestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'secondtestinput'
+              }
+            },
+            {
+              connectionId: '1:thirdtestoutput-2:thirdtestinput',
+              source: {
+                component: comp3,
+                memberId: 1,
+                slot: 'thirdtestoutput'
+              },
+              destination: {
+                component: comp4,
+                memberId: 2,
+                slot: 'thirdtestinput'
+              }
+            }
+          ];
+
+          connectionMgr._connections = connections;
+          connectionMgr.processConnections(connections[ 0 ].source.component, payloadObj);
+        });
+        afterEach(function () {
+        });
+        it('_processConnection not called', function () {
+          _processConnectionStub.should.not.called;
+        });
       });
     });
     describe('#processInternalConnections', function () {
       var connections;
-
       var element;
       var connectionMgr;
       var payloadObj;
       var _processConnectionStub;
+      var comp1;
+      var comp2;
+      var comp3;
+      var comp4;
+
       beforeEach(function () {
-        var comp1 = document.createElement('comp1');
-        var comp2 = document.createElement('comp2');
-        var comp3 = document.createElement('comp3');
-        var comp4 = document.createElement('comp4');
-        connections = [
-          {
-            connectionId: '1:firsttestoutput-2:firsttestoutput',
-            source: {
-              component: comp1,
-              memberId: '1',
-              slot: 'firsttestoutput'
-            },
-            destination: {
-              component: comp2,
-              memberId: '2',
-              slot: 'firsttestinput'
-            },
-            internal: true
-          },
-          {
-            connectionId: '1:secondtestoutput-2:secondtestinput',
-            source: {
-              component: comp1,
-              memberId: '1',
-              slot: 'secondtestoutput'
-            },
-            destination: {
-              component: comp2,
-              memberId: '2',
-              slot: 'secondtestinput'
-            },
-            internal: true
-          },
-          {
-            connectionId: '1:thirdtestoutput-2:thirdtestinput',
-            source: {
-              component: comp3,
-              memberId: '1',
-              slot: 'thirdtestoutput'
-            },
-            destination: {
-              component: comp4,
-              memberId: '2',
-              slot: 'thirdtestinput'
-            },
-            internal: true
-          }
-        ];
+        comp1 = document.createElement('comp1');
+        comp2 = document.createElement('comp2');
+        comp3 = document.createElement('comp3');
+        comp4 = document.createElement('comp4');
 
         var constructor = cif.getCompoundComponentElementConstructor('ciftest-connectionmgr-test');
         element = new constructor();
 
         connectionMgr = element.Context._connectionMgr;
-        connectionMgr._connections = connections;
         payloadObj = {
           payload: '{}',
           slot: 'firsttestoutput'
@@ -151,13 +180,130 @@ describe('ConnectionManager', function () {
         _processConnectionStub = sinon.stub(connectionMgr, '_processConnection', function () {
           //  do nothing
         });
-        connectionMgr.processInternalConnections(connections[ 0 ].source.slot, payloadObj);
       });
-      it('_processConnection called once', function () {
-        expect(_processConnectionStub.calledOnce).to.be.true;
+      afterEach(function () {
+        connectionMgr._processConnection.restore();
+        connectionMgr = null;
+        comp1 = null;
+        comp2 = null;
+        comp3 = null;
+        comp4 = null;
       });
-      it('_processConnection called with Args connections[0] and  payloadObj', function () {
-        expect(_processConnectionStub.calledWithExactly(connections[ 0 ], payloadObj)).to.be.true;
+      describe('process internal connection', function () {
+        beforeEach(function () {
+          connections = [
+            {
+              connectionId: '1:firsttestoutput-2:firsttestoutput',
+              source: {
+                component: comp1,
+                memberId: '1',
+                slot: 'firsttestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'firsttestinput'
+              },
+              internal: true
+            },
+            {
+              connectionId: '1:secondtestoutput-2:secondtestinput',
+              source: {
+                component: comp1,
+                memberId: '1',
+                slot: 'secondtestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'secondtestinput'
+              },
+              internal: true
+            },
+            {
+              connectionId: '1:thirdtestoutput-2:thirdtestinput',
+              source: {
+                component: comp3,
+                memberId: '1',
+                slot: 'thirdtestoutput'
+              },
+              destination: {
+                component: comp4,
+                memberId: '2',
+                slot: 'thirdtestinput'
+              },
+              internal: true
+            }
+          ];
+          connectionMgr._connections = connections;
+          connectionMgr.processInternalConnections(connections[ 0 ].source.slot, payloadObj);
+        });
+        afterEach(function () {
+          connections = null;
+        });
+        it('_processConnection called once', function () {
+          _processConnectionStub.should.be.calledOnce;
+        });
+        it('_processConnection called with Args connections[0] and  payloadObj', function () {
+          _processConnectionStub.should.be.calledWithExactly(connections[ 0 ], payloadObj);
+        });
+      });
+      describe('not process dactivated internal connection', function () {
+        beforeEach(function () {
+          connections = [
+            {
+              connectionId: '1:firsttestoutput-2:firsttestoutput',
+              deactivated: true,
+              source: {
+                component: comp1,
+                memberId: '1',
+                slot: 'firsttestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'firsttestinput'
+              },
+              internal: true
+            },
+            {
+              connectionId: '1:secondtestoutput-2:secondtestinput',
+              source: {
+                component: comp1,
+                memberId: '1',
+                slot: 'secondtestoutput'
+              },
+              destination: {
+                component: comp2,
+                memberId: '2',
+                slot: 'secondtestinput'
+              },
+              internal: true
+            },
+            {
+              connectionId: '1:thirdtestoutput-2:thirdtestinput',
+              source: {
+                component: comp3,
+                memberId: '1',
+                slot: 'thirdtestoutput'
+              },
+              destination: {
+                component: comp4,
+                memberId: '2',
+                slot: 'thirdtestinput'
+              },
+              internal: true
+            }
+          ];
+          connectionMgr._connections = connections;
+          connectionMgr.processInternalConnections(connections[ 0 ].source.slot, payloadObj);
+        });
+        afterEach(function () {
+          connections = [];
+        });
+        it('_processConnection called once', function () {
+          _processConnectionStub.should.be.not.called;
+        });
       });
     });
     describe('#_processConnection', function () {
@@ -1230,14 +1376,6 @@ describe('ConnectionManager', function () {
       });
     });
     describe('#_addHookFunction', function () {
-      /*
-       ConnectionManager.prototype._addHookFunction = function(payloadFrame, connection) {
-       console.log('connection.hookFunction',connection.hookFunction);
-       if (connection.hookFunction) {
-       payloadFrame.connectionHook = connection.hookFunction;
-       }
-       return payloadFrame;
-       };*/
       var payloadFrame;
       var connection;
       var connectionManager;

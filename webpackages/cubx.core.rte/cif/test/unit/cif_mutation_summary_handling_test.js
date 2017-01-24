@@ -400,6 +400,7 @@ describe('CIF', function () {
     var _updateCubxCoreInitStub;
     var _initCubxElementsInRootStub;
     var _processObserverTriggeredSpy;
+    var _reacivateConnectionIfExistsStub;
     beforeEach(function () {
       cif._resetProcessMode();
       _updateCubxCoreConnectionsStub = sinon.stub(cif, '_updateCubxCoreConnections', function () {
@@ -412,12 +413,17 @@ describe('CIF', function () {
         // do nothing;
       });
       _processObserverTriggeredSpy = sinon.spy(cif, '_processObserverTriggered');
+
+      _reacivateConnectionIfExistsStub = sinon.stub(cif, '_reactivateConnectionIfExists', function () {
+        // do nothing
+      });
     });
     afterEach(function () {
       cif._updateCubxCoreConnections.restore();
       cif._updateCubxCoreInit.restore();
       cif._initCubxElementsInRoot.restore();
       cif._processObserverTriggered.restore();
+      cif._reactivateConnectionIfExists.restore();
       cif._resetProcessMode();
     });
     describe('the queue is empty', function () {
@@ -439,6 +445,9 @@ describe('CIF', function () {
       });
       it('the method _processObserverTriggered should be not called', function () {
         _processObserverTriggeredSpy.should.be.not.called;
+      });
+      it('the method _reactivateConnectionIfExists should be not called', function () {
+        _reacivateConnectionIfExistsStub.should.be.not.called;
       });
     });
     describe('the queue has elements', function () {
@@ -466,6 +475,9 @@ describe('CIF', function () {
       });
       it('the method _processObserverTriggered should be called once', function () {
         _processObserverTriggeredSpy.should.be.calledOnce;
+      });
+      it('the method _reactivateConnectionIfExists should be called once', function () {
+        _reacivateConnectionIfExistsStub.should.be.calledOnce;
       });
     });
   });
@@ -541,6 +553,151 @@ describe('CIF', function () {
       it('elementA should be removed from the contexts compound list', function () {
         container.Context.getComponents().should.be.not.include(elementA);
       });
+    });
+  });
+  /* CIF.prototype._reactivateConnectionIfExists = function (element) { // TODO testfall
+    var parent = this._findNextAncestorWithContext(element);
+    var connectionMgr = parent.Context._connectionMgr;
+    connectionMgr.reactivateConnectionIfExists(element);
+  }; */
+  describe('#_reactivateConnectionIfExists', function () {
+    var _findNextAncestorWithContextSpy;
+    beforeEach(function () {
+      _findNextAncestorWithContextSpy = sinon.spy(cif, '_findNextAncestorWithContext');
+    });
+    afterEach(function () {
+      cif._findNextAncestorWithContext.restore();
+    });
+    describe('element ancestor cubble with context is the rootcontext', function () {
+      var container;
+      var elementA;
+      var connectionMgr;
+      var connectionMgrReactivateConnectionIfExistsStub;
+      beforeEach(function () {
+        container = cif.getCRCRootNode();
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        elementA = new constructor();
+        container.appendChild(elementA);
+        connectionMgr = container.Context._connectionMgr;
+        connectionMgrReactivateConnectionIfExistsStub = sinon.stub(connectionMgr, 'reactivateConnectionIfExists', function () {
+          // do nothing
+        });
+        cif._reactivateConnectionIfExists(elementA);
+      });
+      afterEach(function () {
+        connectionMgr.reactivateConnectionIfExists.restore();
+        container.removeChild(elementA);
+        connectionMgr = null;
+        elementA = null;
+      });
+      it('the method _findNextAncestorWithContext should be called once', function () {
+        _findNextAncestorWithContextSpy.should.be.calledOnce;
+        _findNextAncestorWithContextSpy.should.returned(container);
+      });
+      it('the method _reactivateConnectionIfExists of the connectionMgr should be called once', function () {
+        connectionMgrReactivateConnectionIfExistsStub.should.be.calledOnce;
+        connectionMgrReactivateConnectionIfExistsStub.calledWith(elementA);
+      });
+    });
+    describe('element has ancestor cubble with context', function () {
+      var container;
+      var elementA;
+      var elementB;
+      var connectionMgr1ReactivateConnectionIfExistsStub;
+      var connectionMgr2ReactivateConnectionIfExistsStub;
+      var connectionMgr1;
+      var connectionMgr2;
+      beforeEach(function () {
+        container = cif.getCRCRootNode();
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        elementA = new constructor();
+        container.appendChild(elementA);
+        constructor = cif.getCompoundComponentElementConstructor('cif-test-b');
+        elementB = new constructor();
+        elementA.appendChild(elementB);
+        connectionMgr1 = container.Context._connectionMgr;
+        connectionMgr2 = elementA.Context._connectionMgr;
+        connectionMgr1ReactivateConnectionIfExistsStub = sinon.stub(connectionMgr1, 'reactivateConnectionIfExists', function () {
+          // do nothing
+        });
+        connectionMgr2ReactivateConnectionIfExistsStub = sinon.stub(connectionMgr2, 'reactivateConnectionIfExists', function () {
+          // do nothing
+        });
+        cif._reactivateConnectionIfExists(elementB);
+      });
+      afterEach(function () {
+        connectionMgr1.reactivateConnectionIfExists.restore();
+        connectionMgr2.reactivateConnectionIfExists.restore();
+        container.removeChild(elementA);
+        connectionMgr1 = null;
+        connectionMgr2 = null;
+        elementA = null;
+        elementB = null;
+      });
+      it('the method _findNextAncestorWithContext should be called once', function () {
+        _findNextAncestorWithContextSpy.should.be.calledOnce;
+        _findNextAncestorWithContextSpy.should.returned(elementA);
+      });
+      it('the method _reactivateConnectionIfExists of the connectionMgr1 should be not called', function () {
+        connectionMgr1ReactivateConnectionIfExistsStub.should.be.not.called;
+      });
+      it('the method _reactivateConnectionIfExists of the connectionMgr2 should be called once', function () {
+        connectionMgr2ReactivateConnectionIfExistsStub.should.be.calledOnce;
+        connectionMgr2ReactivateConnectionIfExistsStub.calledWith(elementB);
+      });
+    });
+    describe('element has  no ancestor with context', function () {
+      var elementA;
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        elementA = new constructor();
+        document.body.appendChild(elementA);
+        cif._reactivateConnectionIfExists(elementA);
+      });
+      afterEach(function () {
+        document.body.removeChild(elementA);
+        elementA = null;
+      });
+      it('the method _findNextAncestorWithContext should be called once', function () {
+        _findNextAncestorWithContextSpy.should.be.calledTwice;
+        _findNextAncestorWithContextSpy.should.returned(undefined);
+      });
+    });
+  });
+  describe('#_deactivateConnection', function () {
+    before(function () {
+    });
+    after(function () {
+    });
+    beforeEach(function () {
+    });
+    afterEach(function () {
+    });
+    it('', function () {
+    });
+  });
+  describe('#_activateConnection', function () {
+    before(function () {
+    });
+    after(function () {
+    });
+    beforeEach(function () {
+    });
+    afterEach(function () {
+    });
+    it('', function () {
+    });
+  });
+  describe('#_findAllConnectionsWithElement', function () {
+    before(function () {
+    });
+    after(function () {
+    });
+    beforeEach(function () {
+    });
+    afterEach(function () {
+    });
+    it('', function () {
     });
   });
 });
