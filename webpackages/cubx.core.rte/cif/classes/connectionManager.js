@@ -418,7 +418,7 @@
   };
 
   /**
-   * Create Connection instance out of component
+   * Create all connection instances outgoing from the component
    * @memberOf ConnectionManager
    * @param {object} component
    */
@@ -427,17 +427,24 @@
     if (cubxConnections && cubxConnections.parentNode === component) {
       // console.log(cubxConnections.children);
       _.forEach(cubxConnections.children, function (cubxConnection) {
-        if (cubxConnection.getType() !== 'internal') {
-          this._connections.push(this._createConnection(component, cubxConnection));
-        } else {
-          var connection = this._createConnection(component, cubxConnection, true);
-          component.Context._connectionMgr._connections.push(connection);
-        }
-        cubxConnection.processed = true;
+        this.createConnectionFromComponent(component, cubxConnection);
       }, this);
     }
   };
-
+  /**
+   * Create one connection instance outgoing from the component
+   * @param component
+   * @param connectionElement
+   */
+  ConnectionManager.prototype.createConnectionFromComponent = function (component, connectionElement) {
+    if (connectionElement.getType() !== 'internal') {
+      this._connections.push(this._createConnection(component, connectionElement));
+    } else {
+      var connection = this._createConnection(component, connectionElement, true);
+      component.Context._connectionMgr._connections.push(connection);
+    }
+    connectionElement.processed = true;
+  }
   /**
    * Create single connection out of cubx-core-connection tag
    * @param {HTMLElement} component The component holding the cubx-core-connection tag
