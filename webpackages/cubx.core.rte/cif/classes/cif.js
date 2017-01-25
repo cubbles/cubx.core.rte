@@ -324,6 +324,9 @@
       queries: [
         {
           element: elements.join(',')
+        },
+        {
+          element: 'cubx-core-connections, cubx-core-connection'
         }
       ]
     };
@@ -342,6 +345,7 @@
     if (window.cubx.CRC.getRuntimeMode() === 'dev') {
       console.log('called cif._detectMutation', summaries);
     }
+    // added, removed cubbles
     var componentChangeSummary = summaries[ 0 ];
     var cif = window.cubx.cif.cif;
     componentChangeSummary.added.forEach(function (addedEl) {
@@ -351,6 +355,20 @@
     componentChangeSummary.removed.forEach(function (removedEl) {
       cif._handleRemovedCubble(removedEl, componentChangeSummary.getOldParentNode(removedEl));
     });
+
+    // added or removed cubx-core-connections or cubx-core-connection
+    componentChangeSummary = summaries[ 1 ]; // TODO test
+    componentChangeSummary.added.forEach(function (addedEl) {
+      if (addedEl.tagName === 'CUBX-CORE-CONNECTIONS' && !addedEl.generatedByCif) {
+        this._handleAddedConnections(addedEl);
+      }
+      if (addedEl.tagName === 'CUBX-CORE-CONNECTION' && !addedEl.generatedByCif) {
+        this._handleAddedConnection(addedEl);
+      }
+    });
+    componentChangeSummary.removed.forEach(function (removedEl) {
+      // TODO
+    });
   };
 
   CIF.prototype._handleRemovedCubble = function (element, oldParentNode) {
@@ -358,7 +376,10 @@
     if (oldParentNode && oldParentNode.Context) {
       context = oldParentNode.Context;
     } else if (oldParentNode) {
-      context = this._findNextAncestorWithContext(oldParentNode);
+      var parentElem = this._findNextAncestorWithContext(oldParentNode);
+      if (parentElem) {
+        context = parentElem.Context;
+      }
     }
     if (context) {
       // 1. remove connection if element is a source
@@ -445,6 +466,38 @@
       return element.parentNode;
     } else {
       return this._findNextAncestorWithContext(element.parentNode);
+    }
+  };
+
+  CIF.prototype._handleAddedConnections = function (connectionsElement) { // TODO unit test
+    connectionsElement.children.forEach(function (elem) {
+      if (elem.tagName === 'CUBX-CORE-CONNECTION') {
+        this._handleAddedConnection(elem);
+      }
+    }.bind(this));
+  };
+
+  CIF.prototype._handleAddedConnection = function (connectionElement) { // TODO unit test
+    if (connectionElement.getType() === 'internal') {
+      console.warn('Can\'t handle added element, because it is an internal connection. Added connection');
+      return;
+    }
+    // get component
+    var connections = connectionElement.parentNode;
+    if (connections.tagName !== 'CUBX-CORE-CONNECTIONS') {
+      // TODO errorhandling
+      console.error('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element. Added element', connectionElement)
+      return;
+    }
+    var component = connections.parentNode;
+    if (!window.cubx.CRC.getCache().getComponentCacheEntry(component.tagName.toLowerCase())) {
+      console.error('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
+    }
+    // get parent cubbles with context
+    var parent = this._findNextAncestorWithContext(component);
+    if (parent) {
+      // create connection in connectionMgr
+      parent.Context.getConnectionMgr().createConnectionFromComponent(component, connectionElement);
     }
   };
 
@@ -1205,6 +1258,7 @@
     //  create cubx-core-connection tag if there is no one yet for this node and insert it as first child
     if (!cubxConnectionsEl) {
       cubxConnectionsEl = new this._connectionsElement();
+      cubxConnectionsEl.generatedByCif = true;
       if (sourceEl.childElementCount > 0) {
         this._getNode(sourceEl).insertBefore(cubxConnectionsEl, this._getNode(sourceEl).firstElementChild);
       } else {
@@ -1213,6 +1267,7 @@
     }
     // create cubx-core-connection element and add it to cubx-core-connections element
     var cubxConnectionEl = new this._connectionElement();
+    cubxConnectionEl.generatedByCif = true;
     cubxConnectionEl.setSource(connection.source.slot);
     if (connection.connectionId) {
       cubxConnectionEl.setConnectionId(connection.connectionId);

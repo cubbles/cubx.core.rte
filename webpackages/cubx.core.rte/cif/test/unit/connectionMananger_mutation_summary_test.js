@@ -137,20 +137,6 @@ describe('ConnectionManager', function () {
       });
     });
   });
-  /*
-   ConnectionManager.prototype.reactivateConnectionIfExists = function (element) { // TODO testfall
-   var connections = this._findAllDeactivatedConnectionsWithMemberId(element);
-   connections.forEach(function (connection) {
-   connection.destination.component = element;
-   connection._activateConnection(connection);
-   var value = connection.source.component.model[ connection.source.slot ];
-   var payloadObject = window.cubx.cif.cif.getEventFactory().createModelChangePayloadObject(connection.source.slot, value);
-   this._processConnection(connection, payloadObject);
-   }.bind(this));
-   };
-   };
-
-   */
   describe('#reactivateConnectionIfExists', function () {
     var element;
     var elem1;

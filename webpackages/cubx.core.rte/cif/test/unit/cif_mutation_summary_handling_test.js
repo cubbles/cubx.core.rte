@@ -194,21 +194,80 @@ describe('CIF', function () {
         };
       });
       _detectMutationSpy = sinon.spy(cif, '_detectMutation');
-      cif._createObserverObject();
     });
     afterEach(function () {
-      window.cubx.CRC.getCache().getAllComponents.restore();
-      cif._observer.disconnect();
-      delete cif._observer;
       cif._detectMutation.restore();
       while (container.children.length > 0) {
         container.removeChild(container.children[ 0 ]);
       }
     });
-    it('the observer should register, if add a new coubble', function () {
-      var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
-      container.appendChild(new constructor());
-      _detectMutationSpy.should.been.calleOnce;
+    describe('add new cubble', function () {
+      beforeEach(function () {
+        cif._createObserverObject();
+      });
+      afterEach(function () {
+        window.cubx.CRC.getCache().getAllComponents.restore();
+        cif._observer.disconnect();
+        delete cif._observer;
+      });
+
+      it('the observer should register, if add a new cubble', function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        container.appendChild(new constructor());
+        _detectMutationSpy.should.been.calleOnce;
+      });
+    });
+    describe('remove a cubble', function () {
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        container.appendChild(new constructor());
+        cif._createObserverObject();
+      });
+      afterEach(function () {
+        window.cubx.CRC.getCache().getAllComponents.restore();
+        cif._observer.disconnect();
+        delete cif._observer;
+      });
+      it('the observer should register, if remove a cubble', function () {
+        var element = container.querySelector('cif-test-a');
+        container.removeChild(element);
+        _detectMutationSpy.should.been.calleOnce;
+      });
+    });
+    describe('add &lt;cubx-core-connections&gt;', function () {
+      // TODO
+      beforeEach(function () {
+      });
+      afterEach(function () {
+      });
+      it('', function () {
+      });
+    });
+    describe('add cubx-core-connection', function () {
+      // TODO
+      beforeEach(function () {
+      });
+      afterEach(function () {
+      });
+      it('', function () {
+      });
+    });
+    describe('remove &lt;cubx-core-connections&gt;', function () {
+      // TODO
+      beforeEach(function () {
+      });
+      afterEach(function () {
+      });
+      it('', function () {
+      });
+    });
+    describe('remove cubx-core-connection', function () {
+      beforeEach(function () {
+      });
+      afterEach(function () {
+      });
+      it('', function () {
+      });
     });
   });
   describe('#_detectMutation', function () {
@@ -556,10 +615,10 @@ describe('CIF', function () {
     });
   });
   /* CIF.prototype._reactivateConnectionIfExists = function (element) { // TODO testfall
-    var parent = this._findNextAncestorWithContext(element);
-    var connectionMgr = parent.Context._connectionMgr;
-    connectionMgr.reactivateConnectionIfExists(element);
-  }; */
+   var parent = this._findNextAncestorWithContext(element);
+   var connectionMgr = parent.Context._connectionMgr;
+   connectionMgr.reactivateConnectionIfExists(element);
+   }; */
   describe('#_reactivateConnectionIfExists', function () {
     var _findNextAncestorWithContextSpy;
     beforeEach(function () {

@@ -444,6 +444,99 @@ describe('ConnectionManager', function () {
         });
       });
     });
+    describe('#createConnectionFromComponent', function () {
+      /*
+       ConnectionManager.prototype.createConnectionFromComponent = function (component, connectionElement) {
+       if (connectionElement.getType() !== 'internal') {
+       this._connections.push(this._createConnection(component, connectionElement));
+       } else {
+       var connection = this._createConnection(component, connectionElement, true);
+       component.Context._connectionMgr._connections.push(connection);
+       }
+       connectionElement.processed = true;
+       }
+       */
+      var connectionMgr;
+      var container;
+      var context;
+      var _createConnectionStub;
+      var component;
+      var connectionElement;
+      beforeEach(function () {
+        container = cif.getCRCRootNode();
+        context = new window.cubx.cif.Context(container);
+        connectionMgr = new window.cubx.cif.ConnectionManager(context);
+        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection', function () {
+          // just get an object
+          return {};
+        });
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        component = new constructor();
+        connectionElement = document.createElement('cubx-core-connection');
+        connectionElement.setAttribute('connection-id', 'test');
+        connectionElement.setAttribute('source', 'first');
+        connectionElement.setAttribute('destination', 'two:second');
+        connectionElement.getType = function () {
+          return this.getAttribute('type');
+        };
+      });
+      afterEach(function () {
+        container = null;
+        context = null;
+        connectionMgr._createConnection.restore();
+        connectionMgr = null;
+      });
+      describe('normal connection', function () {
+        beforeEach(function () {
+          connectionMgr._connections.should.have.length(0);
+          connectionMgr.createConnectionFromComponent(component, connectionElement);
+        });
+        afterEach(function () {
+          component = null;
+          connectionElement = null;
+        });
+        it('_createConnection should be called once', function () {
+          _createConnectionStub.should.be.calledOnce;
+        });
+        it('_createConnection should be called with component and connectionElement', function () {
+          _createConnectionStub.should.be.calledWithExactly(component, connectionElement);
+        });
+        it('connectionElement should have property processed', function () {
+          connectionElement.should.have.property('processed', true);
+        });
+        it('the property connectionMgr._connections should have a length of 1', function () {
+          connectionMgr._connections.should.have.length(1);
+        });
+      });
+      describe('internal connection', function () {
+        beforeEach(function () {
+          connectionMgr._connections.should.have.length(0);
+          connectionElement.setAttribute('type', 'internal');
+          component.Context = new window.cubx.cif.Context(component);
+
+          connectionMgr.createConnectionFromComponent(component, connectionElement);
+        });
+        afterEach(function () {
+          component = null;
+          connectionElement = null;
+        });
+        it('_createConnection should be called once', function () {
+          _createConnectionStub.should.be.calledOnce;
+        });
+        it('_createConnection should be called with component,connectionElement and true', function () {
+          _createConnectionStub.should.be.calledWithExactly(component, connectionElement, true);
+        });
+        it('connectionElement should have property processed', function () {
+          connectionElement.should.have.property('processed', true);
+        });
+        it('the property _connectionMgr._connections of the parent context should have a length of 0', function () {
+          connectionMgr._connections.should.have.length(0);
+        });
+        it('the property _connectionMgr._connections of the components context should have a length of 1', function () {
+          component.Context._connectionMgr._connections.should.have.length(1);
+        });
+      });
+    });
     describe('#_createConnection', function () {
       describe('getCopyValue() and getRepeatedValues() and getHookFunctions returns with null', function () {
         describe('the destination is a member', function () {

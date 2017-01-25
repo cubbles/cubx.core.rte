@@ -1,4 +1,4 @@
-/*globals CustomEvent*/
+/* globals CustomEvent */
 'use strict';
 window.cubx.amd.define([], function () {
   /**
