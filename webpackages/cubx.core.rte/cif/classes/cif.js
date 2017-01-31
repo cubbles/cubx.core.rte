@@ -345,9 +345,9 @@
     if (window.cubx.CRC.getRuntimeMode() === 'dev') {
       console.log('called cif._detectMutation', summaries);
     }
+    var cif = window.cubx.cif.cif;
     // added, removed cubbles
     var componentChangeSummary = summaries[ 0 ];
-    var cif = window.cubx.cif.cif;
     componentChangeSummary.added.forEach(function (addedEl) {
       cif._addPossibleElementToQueue(addedEl);
       cif._processElementFromQueue();
@@ -357,17 +357,18 @@
     });
 
     // added or removed cubx-core-connections or cubx-core-connection
-    componentChangeSummary = summaries[ 1 ]; // TODO test
+    componentChangeSummary = summaries[ 1 ];
     componentChangeSummary.added.forEach(function (addedEl) {
       if (addedEl.tagName === 'CUBX-CORE-CONNECTIONS' && !addedEl.generatedByCif) {
-        this._handleAddedConnections(addedEl);
+        cif._handleAddedConnections(addedEl);
       }
       if (addedEl.tagName === 'CUBX-CORE-CONNECTION' && !addedEl.generatedByCif) {
-        this._handleAddedConnection(addedEl);
+        cif._handleAddedConnection(addedEl);
       }
     });
     componentChangeSummary.removed.forEach(function (removedEl) {
       // TODO
+      // TODO unit test
     });
   };
 
@@ -469,32 +470,52 @@
     }
   };
 
-  CIF.prototype._handleAddedConnections = function (connectionsElement) { // TODO unit test
-    connectionsElement.children.forEach(function (elem) {
+  /**
+   * Handle a dynamically added &lt;cubx-core-connections&gt; element
+   * @param {HTMLElement} connectionsElement the &lt;cubx-core-connections&gt; element
+   * @private
+   */
+  CIF.prototype._handleAddedConnections = function (connectionsElement) {
+    for (var i = 0; i < connectionsElement.children.length; i++) {
+      var elem = connectionsElement.children[ i ];
       if (elem.tagName === 'CUBX-CORE-CONNECTION') {
         this._handleAddedConnection(elem);
       }
-    }.bind(this));
+    }
   };
 
-  CIF.prototype._handleAddedConnection = function (connectionElement) { // TODO unit test
+  /**
+   * Handle a dynamically added &lt;cubx-core-connection&gt; element
+   * The connection will be added to the parent context, considering by following rules:
+   * - not internal connections allowed for dynamically added connectins
+   * - the dynamically added connection must be in scope of root context
+   * - the &lt;cubx-core-connectionsgt; tag must be a child of &lt;cubx-core-connections&gt; tag and
+   * - the parent &lt;cubx-core-connections&gt; must be a direct child of an cubbles
+   * @param {HTMLElement} connectionElement the &lt;cubx-core-connection&gt; element
+   * @private
+   */
+  CIF.prototype._handleAddedConnection = function (connectionElement) { // TODO internal connections?
     if (connectionElement.getType() === 'internal') {
       console.warn('Can\'t handle added element, because it is an internal connection. Added connection');
       return;
     }
     // get component
     var connections = connectionElement.parentNode;
-    if (connections.tagName !== 'CUBX-CORE-CONNECTIONS') {
-      // TODO errorhandling
-      console.error('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element. Added element', connectionElement)
+    if (!connections || connections.tagName !== 'CUBX-CORE-CONNECTIONS') {
+      console.warn('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element. Added element', connectionElement);
       return;
     }
     var component = connections.parentNode;
     if (!window.cubx.CRC.getCache().getComponentCacheEntry(component.tagName.toLowerCase())) {
-      console.error('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
+      console.warn('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
     }
     // get parent cubbles with context
     var parent = this._findNextAncestorWithContext(component);
+    // Just connections in root context allowed
+    if (parent !== this.getCRCRootNode()) {
+      console.warn('Can\'t handle added element, because it is not aconnection for the root context. It is nly allowed dynamically add connection tags for the root context. Added connection');
+      return;
+    }
     if (parent) {
       // create connection in connectionMgr
       parent.Context.getConnectionMgr().createConnectionFromComponent(component, connectionElement);

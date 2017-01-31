@@ -444,7 +444,8 @@
       component.Context._connectionMgr._connections.push(connection);
     }
     connectionElement.processed = true;
-  }
+  };
+
   /**
    * Create single connection out of cubx-core-connection tag
    * @param {HTMLElement} component The component holding the cubx-core-connection tag

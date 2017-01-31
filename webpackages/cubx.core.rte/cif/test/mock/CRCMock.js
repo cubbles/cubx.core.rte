@@ -3,7 +3,7 @@
 if (!window.cubx) {
   window.cubx = {};
 }
-if ('window.cubx.CRC') {
+if (!window.cubx.CRC) {
   window.cubx.CRC = {};
 }
 
@@ -69,9 +69,8 @@ var cache = {};
 cache.getAllComponents = function () {
   return {};
 };
-/* eslint-disable no-unused-vars*/
+// eslint-disable-next-line no-unused-vars
 cache.getComponentCacheEntry = function (key) {
-  /* eslint-enable no-unused-vars*/
   return { type: 'compound' };
 };
 window.cubx.CRC.getCache = function () {
