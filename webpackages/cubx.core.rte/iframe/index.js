@@ -171,8 +171,9 @@
       if (inits) {
         inits = decodeURIComponent(inits);
         if (inits.indexOf('\'') >= 0) {
-          inits = JSON.parse(inits.replace(/'/gi, '"'));
+          inits = inits.replace(/'/gi, '"');
         }
+        inits = JSON.parse(inits);
         component.appendChild(_createCoreInitElement(inits));
       }
       if (iframeId) {
