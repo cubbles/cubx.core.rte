@@ -327,6 +327,9 @@
         },
         {
           element: 'cubx-core-connections, cubx-core-connection'
+        },
+        {
+          element: 'cubx-core-init, cubx-core-slot'
         }
       ]
     };
@@ -359,20 +362,32 @@
     // added or removed cubx-core-connections or cubx-core-connection
     componentChangeSummary = summaries[ 1 ];
     componentChangeSummary.added.forEach(function (addedEl) {
-      if (addedEl.tagName === 'CUBX-CORE-CONNECTIONS' && !addedEl.generatedByCif) {
-        cif._handleAddedConnections(addedEl);
-      }
       if (addedEl.tagName === 'CUBX-CORE-CONNECTION' && !addedEl.generatedByCif) {
         cif._handleAddedConnection(addedEl);
       }
     });
     componentChangeSummary.removed.forEach(function (removedEl) {
+      if (removedEl.tagName === 'CUBX-CORE-CONNECTIONS') {
+        cif._handleRemovedConnections(removedEl, componentChangeSummary.getOldParentNode(removedEl));
+      }
+      if (removedEl.tagName === 'CUBX-CORE-CONNECTION') {
+        var parent = componentChangeSummary.getOldParentNode(removedEl).parentNode;
+        if (parent) { // handle removed connection just, if the tag is removed from DOM directly. (The oldParentNode is in DOM)
+          cif._handleRemovedConnection(removedEl, parent);
+        }
+      }
+    });
+
+    // added cubx-core-init or cubx-core-slot
+    componentChangeSummary = summaries[ 2 ];
+    componentChangeSummary.added.forEach(function (addedEl) {
       // TODO
       // TODO unit test
     });
   };
 
   CIF.prototype._handleRemovedCubble = function (element, oldParentNode) {
+    // TODO remove connections recursive
     var context;
     if (oldParentNode && oldParentNode.Context) {
       context = oldParentNode.Context;
@@ -471,20 +486,6 @@
   };
 
   /**
-   * Handle a dynamically added &lt;cubx-core-connections&gt; element
-   * @param {HTMLElement} connectionsElement the &lt;cubx-core-connections&gt; element
-   * @private
-   */
-  CIF.prototype._handleAddedConnections = function (connectionsElement) {
-    for (var i = 0; i < connectionsElement.children.length; i++) {
-      var elem = connectionsElement.children[ i ];
-      if (elem.tagName === 'CUBX-CORE-CONNECTION') {
-        this._handleAddedConnection(elem);
-      }
-    }
-  };
-
-  /**
    * Handle a dynamically added &lt;cubx-core-connection&gt; element
    * The connection will be added to the parent context, considering by following rules:
    * - not internal connections allowed for dynamically added connectins
@@ -499,12 +500,13 @@
       console.warn('Can\'t handle added element, because it is an internal connection. Added connection');
       return;
     }
-    // get component
+    // get connections
     var connections = connectionElement.parentNode;
     if (!connections || connections.tagName !== 'CUBX-CORE-CONNECTIONS') {
       console.warn('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element. Added element', connectionElement);
       return;
     }
+    // get component
     var component = connections.parentNode;
     if (!window.cubx.CRC.getCache().getComponentCacheEntry(component.tagName.toLowerCase())) {
       console.warn('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
@@ -522,6 +524,44 @@
     }
   };
 
+  CIF.prototype._handleRemovedConnections = function (connectionsElement, oldParentNode) {
+    // TODO
+    // TODO unittest
+    for (var i = 0; i < connectionsElement.children.length; i++) {
+      var elem = connectionsElement.children[ i ];
+      if (elem.tagName === 'CUBX-CORE-CONNECTION') {
+        this._handleRemovedConnection(elem, oldParentNode);
+      }
+    }
+  };
+
+  CIF.prototype._handleRemovedConnection = function (connectionElement, parentCubble) {
+    if (connectionElement.getType() === 'internal') {
+      console.warn('Can\'t handle added element, because it is an internal connection. Added connection');
+      return;
+    }
+
+    // get component
+    var component = parentCubble;
+    if (!window.cubx.CRC.getCache().getComponentCacheEntry(component.tagName.toLowerCase())) {
+      console.warn('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
+    }
+    // get parent cubbles with context
+    var parent = this._findNextAncestorWithContext(component);
+    // Just connections in root context allowed
+    if (parent !== this.getCRCRootNode()) {
+      console.warn('Can\'t handle added element, because it is not aconnection for the root context. It is nly allowed dynamically add connection tags for the root context. Added connection');
+      return;
+    }
+    var connections = parent.Context.getConnectionMgr()._connections;
+    var index = connections.findIndex(function (con) {
+      return con.connectionId === connectionElement.getAttribute('connection-id');
+    });
+    if (index > -1) {
+      connections.splice(index, 1);
+    }
+    // TODO unittest
+  };
   /**
    * Fire the cifAllComponentsReady Event.
    * @param {HTMLNode} node A crc root-node
