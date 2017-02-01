@@ -1,4 +1,4 @@
-/*global location, MutationObserver*/
+/* global location, MutationObserver */
 (function () {
   'use strict';
 
