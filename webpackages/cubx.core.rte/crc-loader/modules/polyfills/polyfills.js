@@ -1,4 +1,4 @@
-/* globals cubx, Array, String, Element*/
+/* globals cubx, Array, String, Element */
 cubx.amd.define([], function () {
   'use strict';
   (function () {
@@ -54,8 +54,9 @@ cubx.amd.define([], function () {
     }
 
     if (!Array.prototype.findIndex) {
+      // eslint-disable-next-line no-extend-native
       Object.defineProperty(Array.prototype, 'findIndex', {
-        value: function(predicate) {
+        value: function (predicate) {
           'use strict';
           if (this == null) {
             throw new TypeError('Array.prototype.findIndex called on null or undefined');
@@ -84,7 +85,7 @@ cubx.amd.define([], function () {
 
     if (!Array.prototype.filter) {
       // eslint-disable-next-line no-extend-native
-      Array.prototype.filter = function (fun/*, thisArg*/) {
+      Array.prototype.filter = function (fun/* , thisArg */) {
         'use strict';
 
         if (this === void 0 || this === null) {
