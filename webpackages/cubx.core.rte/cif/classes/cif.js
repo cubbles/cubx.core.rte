@@ -497,25 +497,26 @@
    */
   CIF.prototype._handleAddedConnection = function (connectionElement) { // TODO internal connections?
     if (connectionElement.getType() === 'internal') {
-      console.warn('Can\'t handle added element, because it is an internal connection. Added connection');
+      console.warn('Can\'t handle added element, because it is an internal connection. Added connection:', connectionElement);
       return;
     }
     // get connections
     var connections = connectionElement.parentNode;
     if (!connections || connections.tagName !== 'CUBX-CORE-CONNECTIONS') {
-      console.warn('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element. Added element', connectionElement);
+      console.warn('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element. Added element:', connectionElement);
       return;
     }
     // get component
     var component = connections.parentNode;
     if (!window.cubx.CRC.getCache().getComponentCacheEntry(component.tagName.toLowerCase())) {
       console.warn('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
+      return;
     }
     // get parent cubbles with context
     var parent = this._findNextAncestorWithContext(component);
     // Just connections in root context allowed
     if (parent !== this.getCRCRootNode()) {
-      console.warn('Can\'t handle added element, because it is not aconnection for the root context. It is nly allowed dynamically add connection tags for the root context. Added connection');
+      console.warn('Can\'t handle added element. The connection in not in scope of root context. It is only allowed add connection element dynamically for the root context. Added connection:', connectionElement);
       return;
     }
     if (parent) {
@@ -525,8 +526,6 @@
   };
 
   CIF.prototype._handleRemovedConnections = function (connectionsElement, oldParentNode) {
-    // TODO
-    // TODO unittest
     for (var i = 0; i < connectionsElement.children.length; i++) {
       var elem = connectionsElement.children[ i ];
       if (elem.tagName === 'CUBX-CORE-CONNECTION') {
@@ -537,20 +536,21 @@
 
   CIF.prototype._handleRemovedConnection = function (connectionElement, parentCubble) {
     if (connectionElement.getType() === 'internal') {
-      console.warn('Can\'t handle added element, because it is an internal connection. Added connection');
+      console.warn('Can\'t handle removed element, because it is an internal connection. Removed connection:', connectionElement);
       return;
     }
 
     // get component
     var component = parentCubble;
     if (!window.cubx.CRC.getCache().getComponentCacheEntry(component.tagName.toLowerCase())) {
-      console.warn('Can\'t handle the added element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
+      console.warn('Can\'t handle the removed connection element. A "cubx-core-connections" element must be a child an cubble. The current parent element:', component);
+      return;
     }
     // get parent cubbles with context
     var parent = this._findNextAncestorWithContext(component);
     // Just connections in root context allowed
     if (parent !== this.getCRCRootNode()) {
-      console.warn('Can\'t handle added element, because it is not aconnection for the root context. It is nly allowed dynamically add connection tags for the root context. Added connection');
+      console.warn('Can\'t handle added element. The connection in not in scope of root context. It will only processed a removed connection element in the scope of root context. Removed connection:', connectionElement);
       return;
     }
     var connections = parent.Context.getConnectionMgr()._connections;

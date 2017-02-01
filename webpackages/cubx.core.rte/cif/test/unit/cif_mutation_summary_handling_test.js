@@ -916,7 +916,6 @@ describe('CIF', function () {
     });
   });
   describe('#_handleAddedConnection', function () {
-    // TODO internal connections
     // eslint-disable-next-line no-unused-vars
     var getComponentCacheEntryStub;
     var connectionMgrCreateConnectionFromComponentStub;
@@ -925,6 +924,7 @@ describe('CIF', function () {
     var connections;
     var connection;
     var containerConnectionMgr;
+    var consoleWarnSpy;
     beforeEach(function () {
       container = cif.getCRCRootNode();
       var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
@@ -942,6 +942,7 @@ describe('CIF', function () {
         }
       });
       containerConnectionMgr = container.Context.getConnectionMgr();
+      consoleWarnSpy = sinon.spy(console, 'warn');
       connectionMgrCreateConnectionFromComponentStub = sinon.stub(containerConnectionMgr, 'createConnectionFromComponent', function () {
         // do nothing
       });
@@ -949,6 +950,7 @@ describe('CIF', function () {
     afterEach(function () {
       window.cubx.CRC.getCache().getComponentCacheEntry.restore();
       containerConnectionMgr.createConnectionFromComponent.restore();
+      console.warn.restore();
       while (container.childElementCount > 0) {
         container.removeChild(container.children[ 0 ]);
       }
@@ -967,87 +969,72 @@ describe('CIF', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.calledOnce;
         connectionMgrCreateConnectionFromComponentStub.should.be.calledWith(element, connection);
       });
+      it('should be not get a warn log', function () {
+        consoleWarnSpy.should.be.not.called;
+      });
     });
     describe('the <cubx-core-connection> is a direct child of an cubble', function () {
-      var consolewarnSpy;
       beforeEach(function () {
-        consolewarnSpy = sinon.spy(console, 'warn');
-        element.appendChild(connections);
+        element.appendChild(connection);
         cif._handleAddedConnection(connection);
       });
-      afterEach(function () {
-        console.warn.restore();
-      });
-      it('should be get an error log', function () {
-        consolewarnSpy.should.be.calledOnce;
+      it('should be get a warn log', function () {
+        consoleWarnSpy.should.be.calledOnce;
       });
       it('_connectionMgr.createConnectionFromComponent should be not called', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
       });
     });
     describe('the <cubx-core-connections> is not a direct child of an cubble', function () {
-      var consoleWarnSpy;
       beforeEach(function () {
-        consoleWarnSpy = sinon.spy(console, 'warn');
-        var divEl = document.createElement('div');
-        element.appendChild(divEl);
-        divEl.appendChild(connections);
+        var notCubble = document.createElement('not-cubble');
+        element.appendChild(notCubble);
+        notCubble.appendChild(connections);
+        connections.appendChild(connection);
         cif._handleAddedConnection(connection);
       });
-      afterEach(function () {
-        console.warn.restore();
-      });
-      it('should be get an error log', function () {
+      it('should be get a warn log', function () {
         consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('A "cubx-core-connections" element must be a child an cubble.');
       });
       it('_connectionMgr.createConnectionFromComponent should be not called', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
       });
     });
     describe('the <cubx-core-connection> is not a direct child of <cubx-core-connection>', function () {
-      var consoleWarnSpy;
       beforeEach(function () {
-        consoleWarnSpy = sinon.spy(console, 'warn');
         element.appendChild(connections);
         var divEl = document.createElement('div');
         connections.appendChild(divEl);
         divEl.appendChild(connection);
         cif._handleAddedConnection(connection);
       });
-      afterEach(function () {
-        console.warn.restore();
-      });
-      it('should be get an error log', function () {
+      it('should be get a warn log', function () {
         consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle the added element. A "cubx-core-connection" element must be a child of a "cubx-core-connections" element.');
       });
       it('_connectionMgr.createConnectionFromComponent should be not called', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
       });
     });
     describe('the <cubx-core-connection> is not in scope of root context', function () {
-      var consoleWarnSpy;
       beforeEach(function () {
-        consoleWarnSpy = sinon.spy(console, 'warn');
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-c');
         var element2 = new constructor();
         element2.appendChild(connections);
         connections.appendChild(connection);
         cif._handleAddedConnection(connection);
       });
-      afterEach(function () {
-        console.warn.restore();
-      });
-      it('should be get an error log', function () {
+      it('should be get a warn log', function () {
         consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle added element. The connection in not in scope of root context.');
       });
       it('_connectionMgr.createConnectionFromComponent should be not called', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
       });
     });
     describe('the <cubx-core-connection> is as internal connection marked', function () {
-      var consoleWarnSpy;
       beforeEach(function () {
-        consoleWarnSpy = sinon.spy(console, 'warn');
         element.appendChild(connections);
         connection.setAttribute('type', 'internal');
         connection.getType = function () {
@@ -1056,11 +1043,9 @@ describe('CIF', function () {
         connections.appendChild(connection);
         cif._handleAddedConnection(connection);
       });
-      afterEach(function () {
-        console.warn.restore();
-      });
       it('should be get an error log', function () {
         consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle added element, because it is an internal connection.');
       });
       it('_connectionMgr.createConnectionFromComponent should be not called', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
@@ -1068,20 +1053,102 @@ describe('CIF', function () {
     });
   });
   describe('#_handleRemovedConnections', function () {
-    // TODO
     // eslint-disable-next-line no-unused-vars
     var getComponentCacheEntryStub;
     var container;
     var element;
     var connections;
-    var connection;
-    var containerConnectionMgr;
+    var connection1;
+    var connection2;
+    var _handleRemovedConnectionStub;
     beforeEach(function () {
       container = cif.getCRCRootNode();
       var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
       element = new constructor();
       container.appendChild(element);
       connections = document.createElement('cubx-core-connections');
+      connection1 = document.createElement('cubx-core-connection');
+      connection2 = document.createElement('cubx-core-connection');
+      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
+        if (tagName !== 'not-cubble') {
+          return {
+            artifactId: tagName
+          };
+        } else {
+          return;
+        }
+      });
+      _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection', function () {
+        // do nothing
+      });
+    });
+    afterEach(function () {
+      window.cubx.CRC.getCache().getComponentCacheEntry.restore();
+      cif._handleRemovedConnection.restore();
+      while (container.childElementCount > 0) {
+        container.removeChild(container.children[ 0 ]);
+      }
+      connection1 = null;
+      connection2 = null;
+      connections = null;
+      element = null;
+    });
+    describe('handle child connections', function () {
+      beforeEach(function () {
+        connections.appendChild(connection1);
+        connections.appendChild(connection2);
+        connections.appendChild(document.createElement('div'));
+        cif._handleRemovedConnections(connections, element);
+      });
+      it('the method _handleRemovedConnection should be called twice', function () {
+        _handleRemovedConnectionStub.should.be.calledTwice;
+        _handleRemovedConnectionStub.should.be.calledWith(connection1, element);
+        _handleRemovedConnectionStub.should.be.calledWith(connection2, element);
+      });
+    });
+  });
+  describe('#_handleRemovedConnection', function () {
+    // TODO
+    function createConnection (connectionId, sourceElement, sourceSlot, sourceMember, destElement, destSlot, destMember) {
+      var connection = {
+        connectionId: connectionId,
+        source: {
+          component: sourceElement,
+
+          slot: sourceSlot
+        },
+        destination: {
+          component: destElement,
+
+          slot: destSlot
+        }
+
+      };
+      if (sourceMember) {
+        connection.source.memberId = sourceMember;
+      }
+      if (destMember) {
+        connection.destination.memberId = destMember;
+      }
+
+      return connection;
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    var getComponentCacheEntryStub;
+    var container;
+    var element;
+    var connection;
+    var containerConnectionMgr;
+    var destElem;
+    var consoleWarnSpy;
+    beforeEach(function () {
+      container = cif.getCRCRootNode();
+      var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+      element = new constructor();
+      constructor = cif.getCompoundComponentElementConstructor('cif-test-b');
+      destElem = new constructor();
+      container.appendChild(element);
       connection = document.createElement('cubx-core-connection');
       getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
         if (tagName !== 'not-cubble') {
@@ -1093,177 +1160,95 @@ describe('CIF', function () {
         }
       });
       containerConnectionMgr = container.Context.getConnectionMgr();
+      consoleWarnSpy = sinon.spy(console, 'warn');
     });
     afterEach(function () {
       window.cubx.CRC.getCache().getComponentCacheEntry.restore();
-      containerConnectionMgr.createConnectionFromComponent.restore();
+      console.warn.restore();
       while (container.childElementCount > 0) {
         container.removeChild(container.children[ 0 ]);
       }
       connection = null;
-      connections = null;
       element = null;
+      destElem = null;
+      containerConnectionMgr._connections = [];
       containerConnectionMgr = null;
     });
-    describe('delete connections element if connection in root context', function () {
+    describe('the html structure is correct', function () { // TODO
       beforeEach(function () {
+        connection.setAttribute('connection-id', 'con2');
+
+        containerConnectionMgr._connections = [];
+        containerConnectionMgr._connections.push(createConnection('con1', element, 'slotA', 'member1', destElem, 'slotB', 'member2'));
+        containerConnectionMgr._connections.push(createConnection('con2', element, 'slotC', 'member1', destElem, 'slotD', 'member2'));
+        containerConnectionMgr._connections.push(createConnection('con3', destElem, 'slotA', 'member2', element, 'slotB', 'member1'));
+        containerConnectionMgr._connections.push(createConnection('con4', destElem, 'slotC', 'member2', element, 'slotD', 'member1'));
+        containerConnectionMgr._connections.should.have.length(4);
+        cif._handleRemovedConnection(connection, element);
       });
-      afterEach(function () {
+      it('the connection list should have length = 3', function (done) {
+        window.setTimeout(function () {
+          containerConnectionMgr._connections.should.have.length(3);
+          done();
+        });
       });
-      it('', function () {
+      it('in the connection list exists no connection with connectionId "con2"', function (done) {
+        window.setTimeout(function () {
+          containerConnectionMgr._connections.forEach(function (con) {
+            con.connectionId.should.not.equals('con2');
+          })
+          done();
+        });
+      });
+      it('should not get a warn log', function () {
+        consoleWarnSpy.should.be.not.called;
       });
     });
-  });
-  describe('#_handleRemovedConnection', function () {
-    // TODO
-    // eslint-disable-next-line no-unused-vars
-    // var getComponentCacheEntryStub;
-    // var connectionMgrCreateConnectionFromComponentStub;
-    // var container;
-    // var element;
-    // var connections;
-    // var connection;
-    // var containerConnectionMgr;
-    // beforeEach(function () {
-    //   container = cif.getCRCRootNode();
-    //   var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
-    //   element = new constructor();
-    //   container.appendChild(element);
-    //   connections = document.createElement('cubx-core-connections');
-    //   connection = document.createElement('cubx-core-connection');
-    //   getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
-    //     if (tagName !== 'not-cubble') {
-    //       return {
-    //         artifactId: tagName
-    //       };
-    //     } else {
-    //       return;
-    //     }
-    //   });
-    //   containerConnectionMgr = container.Context.getConnectionMgr();
-    //   connectionMgrCreateConnectionFromComponentStub = sinon.stub(containerConnectionMgr, 'createConnectionFromComponent', function () {
-    //     // do nothing
-    //   });
-    // });
-    // afterEach(function () {
-    //   window.cubx.CRC.getCache().getComponentCacheEntry.restore();
-    //   containerConnectionMgr.createConnectionFromComponent.restore();
-    //   while (container.childElementCount > 0) {
-    //     container.removeChild(container.children[ 0 ]);
-    //   }
-    //   connection = null;
-    //   connections = null;
-    //   element = null;
-    //   containerConnectionMgr = null;
-    // });
-    // describe('the html structure is correct', function () {
-    //   beforeEach(function () {
-    //     element.appendChild(connections);
-    //     connections.appendChild(connection);
-    //     cif._handleAddedConnection(connection);
-    //   });
-    //   it('_connectionMgr.createConnectionFromComponent should be called once', function () {
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.calledOnce;
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.calledWith(element, connection);
-    //   });
-    // });
-    // describe('the <cubx-core-connection> is a direct child of an cubble', function () {
-    //   var consolewarnSpy;
-    //   beforeEach(function () {
-    //     consolewarnSpy = sinon.spy(console, 'warn');
-    //     element.appendChild(connections);
-    //     cif._handleAddedConnection(connection);
-    //   });
-    //   afterEach(function () {
-    //     console.warn.restore();
-    //   });
-    //   it('should be get an error log', function () {
-    //     consolewarnSpy.should.be.calledOnce;
-    //   });
-    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-    //   });
-    // });
-    // describe('the <cubx-core-connections> is not a direct child of an cubble', function () {
-    //   var consoleWarnSpy;
-    //   beforeEach(function () {
-    //     consoleWarnSpy = sinon.spy(console, 'warn');
-    //     var divEl = document.createElement('div');
-    //     element.appendChild(divEl);
-    //     divEl.appendChild(connections);
-    //     cif._handleAddedConnection(connection);
-    //   });
-    //   afterEach(function () {
-    //     console.warn.restore();
-    //   });
-    //   it('should be get an error log', function () {
-    //     consoleWarnSpy.should.be.calledOnce;
-    //   });
-    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-    //   });
-    // });
-    // describe('the <cubx-core-connection> is not a direct child of <cubx-core-connection>', function () {
-    //   var consoleWarnSpy;
-    //   beforeEach(function () {
-    //     consoleWarnSpy = sinon.spy(console, 'warn');
-    //     element.appendChild(connections);
-    //     var divEl = document.createElement('div');
-    //     connections.appendChild(divEl);
-    //     divEl.appendChild(connection);
-    //     cif._handleAddedConnection(connection);
-    //   });
-    //   afterEach(function () {
-    //     console.warn.restore();
-    //   });
-    //   it('should be get an error log', function () {
-    //     consoleWarnSpy.should.be.calledOnce;
-    //   });
-    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-    //   });
-    // });
-    // describe('the <cubx-core-connection> is not in scope of root context', function () {
-    //   var consoleWarnSpy;
-    //   beforeEach(function () {
-    //     consoleWarnSpy = sinon.spy(console, 'warn');
-    //     var constructor = cif.getCompoundComponentElementConstructor('cif-test-c');
-    //     var element2 = new constructor();
-    //     element2.appendChild(connections);
-    //     connections.appendChild(connection);
-    //     cif._handleAddedConnection(connection);
-    //   });
-    //   afterEach(function () {
-    //     console.warn.restore();
-    //   });
-    //   it('should be get an error log', function () {
-    //     consoleWarnSpy.should.be.calledOnce;
-    //   });
-    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-    //   });
-    // });
-    // describe('the <cubx-core-connection> is as internal connection marked', function () {
-    //   var consoleWarnSpy;
-    //   beforeEach(function () {
-    //     consoleWarnSpy = sinon.spy(console, 'warn');
-    //     element.appendChild(connections);
-    //     connection.setAttribute('type', 'internal');
-    //     connection.getType = function () {
-    //       return this.getAttribute('type');
-    //     };
-    //     connections.appendChild(connection);
-    //     cif._handleAddedConnection(connection);
-    //   });
-    //   afterEach(function () {
-    //     console.warn.restore();
-    //   });
-    //   it('should be get an error log', function () {
-    //     consoleWarnSpy.should.be.calledOnce;
-    //   });
-    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-    //   });
-    // });
+    describe('the <cubx-core-connections> is not a direct child of an cubble', function () {
+      beforeEach(function () {
+        var notCubble = document.createElement('not-cubble');
+        cif._handleRemovedConnection(connection, notCubble);
+      });
+      it('should get a warn log', function () {
+        consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('A "cubx-core-connections" element must be a child an cubble.');
+      });
+    });
+    describe('the <cubx-core-connection> is not in scope of root context', function () { // TODO
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-c');
+        var element2 = new constructor();
+        element.appendChild(element2);
+        cif._handleRemovedConnection(connection, element2);
+      });
+      //   it('should be get an error log', function () {
+      //     consoleWarnSpy.should.be.calledOnce;
+      //   });
+      //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+      //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+      //   });
+    });
+    describe('the <cubx-core-connection> is as internal connection marked', function () { // TODO
+      //   var consoleWarnSpy;
+      //   beforeEach(function () {
+      //     consoleWarnSpy = sinon.spy(console, 'warn');
+      //     element.appendChild(connections);
+      //     connection.setAttribute('type', 'internal');
+      //     connection.getType = function () {
+      //       return this.getAttribute('type');
+      //     };
+      //     connections.appendChild(connection);
+      //     cif._handleAddedConnection(connection);
+      //   });
+      //   afterEach(function () {
+      //     console.warn.restore();
+      //   });
+      //   it('should be get an error log', function () {
+      //     consoleWarnSpy.should.be.calledOnce;
+      //   });
+      //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+      //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+      //   });
+    });
   });
 });

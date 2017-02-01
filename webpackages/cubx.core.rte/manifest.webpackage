@@ -6,7 +6,7 @@
   "docType": "webpackage",
   "description": "",
   "license": "MIT",
-  "homepage": "https://cubbles.atlassian.net/",
+  "homepage": "https://cubbles.atlassian.net/wiki/display/RTE/Intro",
   "keywords": [
     "cubbles"
   ],
@@ -22,6 +22,10 @@
     {
       "name": "Judit Ross",
       "email": "Judit.Ross@incowia.com"
+    },
+    {
+      "name": "Maximilian Hamm",
+      "email": "Maximilian.Hamm@incowia.com"
     },
     {
       "name": "Edwin Gamboa",
