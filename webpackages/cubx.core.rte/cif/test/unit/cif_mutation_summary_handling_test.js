@@ -1159,8 +1159,14 @@ describe('CIF', function () {
           return;
         }
       });
-      containerConnectionMgr = container.Context.getConnectionMgr();
       consoleWarnSpy = sinon.spy(console, 'warn');
+      containerConnectionMgr = container.Context.getConnectionMgr();
+      containerConnectionMgr._connections = [];
+      containerConnectionMgr._connections.push(createConnection('con1', element, 'slotA', 'member1', destElem, 'slotB', 'member2'));
+      containerConnectionMgr._connections.push(createConnection('con2', element, 'slotC', 'member1', destElem, 'slotD', 'member2'));
+      containerConnectionMgr._connections.push(createConnection('con3', destElem, 'slotA', 'member2', element, 'slotB', 'member1'));
+      containerConnectionMgr._connections.push(createConnection('con4', destElem, 'slotC', 'member2', element, 'slotD', 'member1'));
+      containerConnectionMgr._connections.should.have.length(4);
     });
     afterEach(function () {
       window.cubx.CRC.getCache().getComponentCacheEntry.restore();
@@ -1177,27 +1183,14 @@ describe('CIF', function () {
     describe('the html structure is correct', function () { // TODO
       beforeEach(function () {
         connection.setAttribute('connection-id', 'con2');
-
-        containerConnectionMgr._connections = [];
-        containerConnectionMgr._connections.push(createConnection('con1', element, 'slotA', 'member1', destElem, 'slotB', 'member2'));
-        containerConnectionMgr._connections.push(createConnection('con2', element, 'slotC', 'member1', destElem, 'slotD', 'member2'));
-        containerConnectionMgr._connections.push(createConnection('con3', destElem, 'slotA', 'member2', element, 'slotB', 'member1'));
-        containerConnectionMgr._connections.push(createConnection('con4', destElem, 'slotC', 'member2', element, 'slotD', 'member1'));
-        containerConnectionMgr._connections.should.have.length(4);
         cif._handleRemovedConnection(connection, element);
       });
-      it('the connection list should have length = 3', function (done) {
-        window.setTimeout(function () {
-          containerConnectionMgr._connections.should.have.length(3);
-          done();
-        });
+      it('the connection list should have length = 3', function () {
+        containerConnectionMgr._connections.should.have.length(3);
       });
-      it('in the connection list exists no connection with connectionId "con2"', function (done) {
-        window.setTimeout(function () {
-          containerConnectionMgr._connections.forEach(function (con) {
-            con.connectionId.should.not.equals('con2');
-          })
-          done();
+      it('in the connection list exists no connection with connectionId "con2"', function () {
+        containerConnectionMgr._connections.forEach(function (con) {
+          con.connectionId.should.not.equals('con2');
         });
       });
       it('should not get a warn log', function () {
@@ -1208,6 +1201,9 @@ describe('CIF', function () {
       beforeEach(function () {
         var notCubble = document.createElement('not-cubble');
         cif._handleRemovedConnection(connection, notCubble);
+      });
+      it('the connection list should have length = 4', function () {
+        containerConnectionMgr._connections.should.have.length(4);
       });
       it('should get a warn log', function () {
         consoleWarnSpy.should.be.calledOnce;
@@ -1221,34 +1217,26 @@ describe('CIF', function () {
         element.appendChild(element2);
         cif._handleRemovedConnection(connection, element2);
       });
-      //   it('should be get an error log', function () {
-      //     consoleWarnSpy.should.be.calledOnce;
-      //   });
-      //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-      //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-      //   });
+      it('the connection list should have length = 4', function () {
+        containerConnectionMgr._connections.should.have.length(4);
+      });
+      it('should get a warn log', function () {
+        consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle added element. The connection in not in scope of root context.');
+      });
     });
     describe('the <cubx-core-connection> is as internal connection marked', function () { // TODO
-      //   var consoleWarnSpy;
-      //   beforeEach(function () {
-      //     consoleWarnSpy = sinon.spy(console, 'warn');
-      //     element.appendChild(connections);
-      //     connection.setAttribute('type', 'internal');
-      //     connection.getType = function () {
-      //       return this.getAttribute('type');
-      //     };
-      //     connections.appendChild(connection);
-      //     cif._handleAddedConnection(connection);
-      //   });
-      //   afterEach(function () {
-      //     console.warn.restore();
-      //   });
-      //   it('should be get an error log', function () {
-      //     consoleWarnSpy.should.be.calledOnce;
-      //   });
-      //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
-      //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
-      //   });
+      beforeEach(function () {
+        connection.setAttribute('type', 'internal');
+        cif._handleRemovedConnection(connection, element);
+      });
+      it('the connection list should have length = 4', function () {
+        containerConnectionMgr._connections.should.have.length(4);
+      });
+      it('should be get a warn log', function () {
+        consoleWarnSpy.should.be.calledOnce;
+        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle removed element, because it is an internal connection.');
+      });
     });
   });
 });
