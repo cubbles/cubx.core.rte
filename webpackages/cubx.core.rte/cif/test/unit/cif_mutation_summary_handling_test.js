@@ -299,8 +299,9 @@ describe('CIF', function () {
     var _addPossibleElementToQueueSpy;
     var _processElementFromQueueSpy;
     var _handleRemovedCubbleSpy;
-    var _handleAddedConnectionsStub;
     var _handleAddedConnectionStub;
+    var _handleRemovedConnectionsSpy;
+    var _handleRemovedConnectionStub;
     beforeEach(function () {
       container = cif.getCRCRootNode();
       getAllComponentsStub = sinon.stub(window.cubx.CRC.getCache(), 'getAllComponents', function (artifactId) {
@@ -316,10 +317,11 @@ describe('CIF', function () {
       _handleRemovedCubbleSpy = sinon.stub(cif, '_handleRemovedCubble', function () {
         // do nothing
       });
-      _handleAddedConnectionsStub = sinon.stub(cif, '_handleAddedConnections', function () {
+      _handleAddedConnectionStub = sinon.stub(cif, '_handleAddedConnection', function () {
         // do nothing
       });
-      _handleAddedConnectionStub = sinon.stub(cif, '_handleAddedConnection', function () {
+      _handleRemovedConnectionsSpy = sinon.spy(cif, '_handleRemovedConnections');
+      _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection', function () {
         // do nothing
       });
     });
@@ -328,8 +330,9 @@ describe('CIF', function () {
       cif._addPossibleElementToQueue.restore();
       cif._processElementFromQueue.restore();
       cif._handleRemovedCubble.restore();
-      cif._handleAddedConnections.restore();
       cif._handleAddedConnection.restore();
+      cif._handleRemovedConnections.restore();
+      cif._handleRemovedConnection.restore();
     });
     describe('add a cubble', function () {
       beforeEach(function () {
@@ -385,28 +388,47 @@ describe('CIF', function () {
         });
       });
     });
-    describe('add a "cubx-core-connections" element', function () {
-      var connections;
+    describe('remove a cubble tree', function () {
+      var elementA;
+      var elementB;
+      var elementC;
       beforeEach(function () {
+        container = cif.getCRCRootNode();
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
-        var element = new constructor();
-        container.appendChild(element);
+        elementA = new constructor();
+        container.appendChild(elementA);
+        constructor = cif.getCompoundComponentElementConstructor('cif-test-b');
+        elementB = new constructor();
+        container.appendChild(elementB);
+        constructor = cif.getCompoundComponentElementConstructor('cif-test-c');
+        elementC = new constructor();
+        elementB.appendChild(elementC);
         cif._createObserverObject();
-        connections = document.createElement('cubx-core-connections');
-        element.appendChild(connections);
       });
       afterEach(function () {
         cif._observer.disconnect();
         delete cif._observer;
-        while (container.children.length > 0) {
-          container.removeChild(container.children[ 0 ]);
-        }
-        connections = null;
       });
-      it('the method _handleAddedConnections should be called once', function (done) {
+      it('the method _handleRemovedCubbleSpy should be called once with arguments: deleted element elementA and crcRoot', function (done) {
+        container.removeChild(elementA);
         window.setTimeout(function () {
-          _handleAddedConnectionsStub.should.be.calledOnce;
-          _handleAddedConnectionsStub.should.be.calledWith(connections);
+          _handleRemovedCubbleSpy.should.be.calledOnce;
+          _handleRemovedCubbleSpy.should.be.calledWith(elementA, container);
+          done();
+        });
+      });
+      it('the method _handleRemovedCubbleSpy should be called once with arguments: deleted element elementB and crcRoot', function (done) {
+        container.removeChild(elementB);
+        window.setTimeout(function () {
+          _handleRemovedCubbleSpy.should.be.calledOnce;
+          _handleRemovedCubbleSpy.should.be.calledWith(elementB, container);
+          done();
+        });
+      });
+      it('the method _handleRemovedCubbleSpy should be not called for removed element elementC', function (done) { // TODO remove not just in root?
+        elementB.removeChild(elementC);
+        window.setTimeout(function () {
+          _handleRemovedCubbleSpy.should.be.not.called;
           done();
         });
       });
@@ -437,6 +459,84 @@ describe('CIF', function () {
         window.setTimeout(function () {
           _handleAddedConnectionStub.should.be.calledOnce;
           _handleAddedConnectionStub.should.be.calledWith(connection);
+          done();
+        });
+      });
+    });
+    describe('remove a "cubx-core-connections" element', function () {
+      var connections;
+      var element;
+      var connection1;
+      var connection2;
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        element = new constructor();
+        container.appendChild(element);
+        connections = document.createElement('cubx-core-connections');
+        element.appendChild(connections);
+        connection1 = document.createElement('cubx-core-connection');
+        connections.appendChild(connection1);
+        connection2 = document.createElement('cubx-core-connection');
+        connections.appendChild(connection2);
+        cif._createObserverObject();
+      });
+      afterEach(function () {
+        cif._observer.disconnect();
+        delete cif._observer;
+        while (container.children.length > 0) {
+          container.removeChild(container.children[ 0 ]);
+        }
+        connections = null;
+      });
+      it('the method _handleRemovedConnections should be called once', function (done) {
+        element.removeChild(connections);
+        window.setTimeout(function () {
+          _handleRemovedConnectionsSpy.should.be.calledOnce;
+          _handleRemovedConnectionsSpy.should.be.calledWith(connections, element);
+          done();
+        });
+        // });
+      });
+      it('the method _handleRemovedConnection should be called twice', function (done) {
+        element.removeChild(connections);
+        window.setTimeout(function () {
+          _handleRemovedConnectionStub.should.be.calledTwice;
+          _handleRemovedConnectionStub.should.be.calledWith(connection1, element);
+          _handleRemovedConnectionStub.should.be.calledWith(connection2, element);
+          done();
+        });
+        // });
+      });
+    });
+    describe('remove a "cubx-core-connection" element', function () {
+      // TODO
+      var connections;
+      var connection;
+      var element;
+      beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        element = new constructor();
+        container.appendChild(element);
+        connections = document.createElement('cubx-core-connections');
+        element.appendChild(connections);
+        connection = document.createElement('cubx-core-connection');
+        connections.appendChild(connection);
+        cif._createObserverObject();
+      });
+      afterEach(function () {
+        cif._observer.disconnect();
+        delete cif._observer;
+        while (container.children.length > 0) {
+          container.removeChild(container.children[ 0 ]);
+        }
+        connection = null;
+        connections = null;
+      });
+      it('the method _handleRemovedConnection should be called once', function (done) {
+        connections.removeChild(connection);
+        window.setTimeout(function () {
+          _handleRemovedConnectionStub.should.be.calledOnce;
+          _handleRemovedConnectionStub.should.be.calledWith(connection, element);
           done();
         });
       });
@@ -815,28 +915,6 @@ describe('CIF', function () {
     it('', function () {
     });
   });
-  describe('#_handleAddedConnections', function () {
-    var _handleAddedConnectionStub;
-    var connections;
-    beforeEach(function () {
-      _handleAddedConnectionStub = sinon.stub(cif, '_handleAddedConnection', function () {
-        // do nothing
-      });
-      connections = document.createElement('cubx-core-connections');
-      var connection1 = document.createElement('cubx-core-connection');
-      var connection2 = document.createElement('cubx-core-connection');
-      connections.appendChild(connection1);
-      connections.appendChild(connection2);
-      cif._handleAddedConnections(connections);
-    });
-    afterEach(function () {
-      connections = null;
-      cif._handleAddedConnection.restore();
-    });
-    it('the method "_handleAddedConnection" should be called twice', function () {
-      _handleAddedConnectionStub.should.be.calledTwice;
-    });
-  });
   describe('#_handleAddedConnection', function () {
     // TODO internal connections
     // eslint-disable-next-line no-unused-vars
@@ -874,7 +952,7 @@ describe('CIF', function () {
       while (container.childElementCount > 0) {
         container.removeChild(container.children[ 0 ]);
       }
-      connection == null;
+      connection = null;
       connections = null;
       element = null;
       containerConnectionMgr = null;
@@ -988,5 +1066,204 @@ describe('CIF', function () {
         connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
       });
     });
+  });
+  describe('#_handleRemovedConnections', function () {
+    // TODO
+    // eslint-disable-next-line no-unused-vars
+    var getComponentCacheEntryStub;
+    var container;
+    var element;
+    var connections;
+    var connection;
+    var containerConnectionMgr;
+    beforeEach(function () {
+      container = cif.getCRCRootNode();
+      var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+      element = new constructor();
+      container.appendChild(element);
+      connections = document.createElement('cubx-core-connections');
+      connection = document.createElement('cubx-core-connection');
+      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
+        if (tagName !== 'not-cubble') {
+          return {
+            artifactId: tagName
+          };
+        } else {
+          return;
+        }
+      });
+      containerConnectionMgr = container.Context.getConnectionMgr();
+    });
+    afterEach(function () {
+      window.cubx.CRC.getCache().getComponentCacheEntry.restore();
+      containerConnectionMgr.createConnectionFromComponent.restore();
+      while (container.childElementCount > 0) {
+        container.removeChild(container.children[ 0 ]);
+      }
+      connection = null;
+      connections = null;
+      element = null;
+      containerConnectionMgr = null;
+    });
+    describe('delete connections element if connection in root context', function () {
+      beforeEach(function () {
+      });
+      afterEach(function () {
+      });
+      it('', function () {
+      });
+    });
+  });
+  describe('#_handleRemovedConnection', function () {
+    // TODO
+    // eslint-disable-next-line no-unused-vars
+    // var getComponentCacheEntryStub;
+    // var connectionMgrCreateConnectionFromComponentStub;
+    // var container;
+    // var element;
+    // var connections;
+    // var connection;
+    // var containerConnectionMgr;
+    // beforeEach(function () {
+    //   container = cif.getCRCRootNode();
+    //   var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+    //   element = new constructor();
+    //   container.appendChild(element);
+    //   connections = document.createElement('cubx-core-connections');
+    //   connection = document.createElement('cubx-core-connection');
+    //   getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
+    //     if (tagName !== 'not-cubble') {
+    //       return {
+    //         artifactId: tagName
+    //       };
+    //     } else {
+    //       return;
+    //     }
+    //   });
+    //   containerConnectionMgr = container.Context.getConnectionMgr();
+    //   connectionMgrCreateConnectionFromComponentStub = sinon.stub(containerConnectionMgr, 'createConnectionFromComponent', function () {
+    //     // do nothing
+    //   });
+    // });
+    // afterEach(function () {
+    //   window.cubx.CRC.getCache().getComponentCacheEntry.restore();
+    //   containerConnectionMgr.createConnectionFromComponent.restore();
+    //   while (container.childElementCount > 0) {
+    //     container.removeChild(container.children[ 0 ]);
+    //   }
+    //   connection = null;
+    //   connections = null;
+    //   element = null;
+    //   containerConnectionMgr = null;
+    // });
+    // describe('the html structure is correct', function () {
+    //   beforeEach(function () {
+    //     element.appendChild(connections);
+    //     connections.appendChild(connection);
+    //     cif._handleAddedConnection(connection);
+    //   });
+    //   it('_connectionMgr.createConnectionFromComponent should be called once', function () {
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.calledOnce;
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.calledWith(element, connection);
+    //   });
+    // });
+    // describe('the <cubx-core-connection> is a direct child of an cubble', function () {
+    //   var consolewarnSpy;
+    //   beforeEach(function () {
+    //     consolewarnSpy = sinon.spy(console, 'warn');
+    //     element.appendChild(connections);
+    //     cif._handleAddedConnection(connection);
+    //   });
+    //   afterEach(function () {
+    //     console.warn.restore();
+    //   });
+    //   it('should be get an error log', function () {
+    //     consolewarnSpy.should.be.calledOnce;
+    //   });
+    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+    //   });
+    // });
+    // describe('the <cubx-core-connections> is not a direct child of an cubble', function () {
+    //   var consoleWarnSpy;
+    //   beforeEach(function () {
+    //     consoleWarnSpy = sinon.spy(console, 'warn');
+    //     var divEl = document.createElement('div');
+    //     element.appendChild(divEl);
+    //     divEl.appendChild(connections);
+    //     cif._handleAddedConnection(connection);
+    //   });
+    //   afterEach(function () {
+    //     console.warn.restore();
+    //   });
+    //   it('should be get an error log', function () {
+    //     consoleWarnSpy.should.be.calledOnce;
+    //   });
+    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+    //   });
+    // });
+    // describe('the <cubx-core-connection> is not a direct child of <cubx-core-connection>', function () {
+    //   var consoleWarnSpy;
+    //   beforeEach(function () {
+    //     consoleWarnSpy = sinon.spy(console, 'warn');
+    //     element.appendChild(connections);
+    //     var divEl = document.createElement('div');
+    //     connections.appendChild(divEl);
+    //     divEl.appendChild(connection);
+    //     cif._handleAddedConnection(connection);
+    //   });
+    //   afterEach(function () {
+    //     console.warn.restore();
+    //   });
+    //   it('should be get an error log', function () {
+    //     consoleWarnSpy.should.be.calledOnce;
+    //   });
+    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+    //   });
+    // });
+    // describe('the <cubx-core-connection> is not in scope of root context', function () {
+    //   var consoleWarnSpy;
+    //   beforeEach(function () {
+    //     consoleWarnSpy = sinon.spy(console, 'warn');
+    //     var constructor = cif.getCompoundComponentElementConstructor('cif-test-c');
+    //     var element2 = new constructor();
+    //     element2.appendChild(connections);
+    //     connections.appendChild(connection);
+    //     cif._handleAddedConnection(connection);
+    //   });
+    //   afterEach(function () {
+    //     console.warn.restore();
+    //   });
+    //   it('should be get an error log', function () {
+    //     consoleWarnSpy.should.be.calledOnce;
+    //   });
+    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+    //   });
+    // });
+    // describe('the <cubx-core-connection> is as internal connection marked', function () {
+    //   var consoleWarnSpy;
+    //   beforeEach(function () {
+    //     consoleWarnSpy = sinon.spy(console, 'warn');
+    //     element.appendChild(connections);
+    //     connection.setAttribute('type', 'internal');
+    //     connection.getType = function () {
+    //       return this.getAttribute('type');
+    //     };
+    //     connections.appendChild(connection);
+    //     cif._handleAddedConnection(connection);
+    //   });
+    //   afterEach(function () {
+    //     console.warn.restore();
+    //   });
+    //   it('should be get an error log', function () {
+    //     consoleWarnSpy.should.be.calledOnce;
+    //   });
+    //   it('_connectionMgr.createConnectionFromComponent should be not called', function () {
+    //     connectionMgrCreateConnectionFromComponentStub.should.be.not.called;
+    //   });
+    // });
   });
 });
