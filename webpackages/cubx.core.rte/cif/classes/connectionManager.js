@@ -236,6 +236,20 @@
       this._processConnection(connection, payloadObject);
     }.bind(this));
   };
+
+  /**
+   * Find, remove and get the element corresponded connection object from _connections.
+   * @memberOf ConnectionManager
+   * @param {CustomElement} connectionElement
+   * @private
+   */
+  ConnectionManager.prototype.removeConnection = function (connectionElement) {
+    var connection = this._connections.find(function (con) {
+      return con.connectionId === connectionElement.getAttribute('connection-id');
+    });
+    return this._removeConnection(connection);
+  };
+
   /* ***************************************************************************/
   /* ***********************  private Methoden *********************************/
   /* ***************************************************************************/
@@ -363,6 +377,15 @@
     return connectionObj;
   };
 
+  /**
+   * Find the same connection in connectionlist.
+   * - if connection has a connectionId search in connectionList for elements with the connectionId and return if found.
+   * - if no connectionId exist generate a connectionId inclusion of source and destination. If the generated connectionId in der connectionList found, return this.
+   * @param {array} connectionList The list of connectionn objects
+   * @param {ConnectionManager.Connection} connection
+   * @returns {*}
+   * @private
+   */
   ConnectionManager.prototype._findSameConnection = function (connectionList, connection) {
     var foundConnection =
       _.find(connectionList, function (connectionItem) {
@@ -437,6 +460,15 @@
    * @param connectionElement
    */
   ConnectionManager.prototype.createConnectionFromComponent = function (component, connectionElement) {
+    if (connectionElement.processed) {
+      // The element is already processed.
+      return;
+    }
+    var existingConnection = this._findConnectionByConnectionId(connectionElement.getConnectionId());
+    if (existingConnection) {
+      console.warn('The following connection element didn\'t added to the connection list, because it already exist a connection with the same connectionId. It is not allowed overriding existing connections.', connectionElement);
+      return;
+    }
     if (connectionElement.getType() !== 'internal') {
       this._connections.push(this._createConnection(component, connectionElement));
     } else {
@@ -446,6 +478,17 @@
     connectionElement.processed = true;
   };
 
+  /**
+   * Find a connection by the connectionId
+   * @param connectionId
+   * @returns {*}
+   * @private
+   */
+  ConnectionManager.prototype._findConnectionByConnectionId = function (connectionId) {
+    return this._connections.find(function (con) {
+      return con.connectionId === connectionId;
+    });
+  };
   /**
    * Create single connection out of cubx-core-connection tag
    * @param {HTMLElement} component The component holding the cubx-core-connection tag

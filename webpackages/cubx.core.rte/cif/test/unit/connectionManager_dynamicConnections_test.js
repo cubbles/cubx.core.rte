@@ -1,4 +1,4 @@
-/*globals createTestConnection*/
+/* globals createTestConnection */
 'use strict';
 
 describe('ConnectionManager', function () {
@@ -8,14 +8,6 @@ describe('ConnectionManager', function () {
       cif = window.cubx.cif.cif;
     });
     describe('#_addHookFunction', function () {
-      /*
-       ConnectionManager.prototype._addHookFunction = function(payloadFrame, connection) {
-       console.log('connection.hookFunction',connection.hookFunction);
-       if (connection.hookFunction) {
-       payloadFrame.connectionHook = connection.hookFunction;
-       }
-       return payloadFrame;
-       };*/
       var payloadFrame;
       var connection;
       var connectionManager;
@@ -795,24 +787,106 @@ describe('ConnectionManager', function () {
       });
     });
     describe('#_findSameConnection', function () {
-      // TODO
-      before(function () {
-
-      });
-      after(function () {
-
-      });
+      var connectionList;
+      var source;
+      var destination;
+      var con1;
+      var con2;
+      var con3;
+      var con4;
+      var connectionManager;
+      var context;
       beforeEach(function () {
-
+        source = document.createElement('my-source');
+        destination = document.createElement('my-dest');
+        connectionList = [];
+        con1 = {
+          connectionId: 'con1',
+          source: {
+            component: source,
+            memberId: 'member1',
+            slot: 'slotA'
+          },
+          destination: {
+            component: destination,
+            memberId: 'member2',
+            slot: 'slotB'
+          }
+        };
+        connectionList.push(con1);
+        con2 = {
+          source: {
+            component: source,
+            memberId: 'member1',
+            slot: 'slotC'
+          },
+          destination: {
+            component: destination,
+            memberId: 'member2',
+            slot: 'slotD'
+          }
+        }
+        connectionList.push(con2);
+        con3 = {
+          source: {
+            component: source,
+            memberId: 'member1',
+            slot: 'slotE'
+          },
+          destination: {
+            component: destination,
+            memberId: 'member2',
+            slot: 'slotF'
+          }
+        }
+        con4 = {
+          connectionId: 'con4',
+          source: {
+            component: source,
+            memberId: 'member1',
+            slot: 'slotG'
+          },
+          destination: {
+            component: destination,
+            memberId: 'member2',
+            slot: 'slotH'
+          }
+        }
+        context = new window.cubx.cif.Context(cif.getCRCRootNode());
+        connectionManager = new window.cubx.cif.ConnectionManager(context);
       });
       afterEach(function () {
-
+        connectionList = null;
+        connectionManager = null;
+        context = null;
+        con1 = null;
+        con2 = null;
+        con3 = null;
+        con4 = null;
       });
-      it('', function () {
-
+      it('should find con1', function () {
+        var foundCon = connectionManager._findSameConnection(connectionList, con1);
+        expect(foundCon).to.be.exists;
+        foundCon.should.be.an('object');
+        foundCon.should.be.eql;
+      });
+      it('should find con2', function () {
+        var foundCon = connectionManager._findSameConnection(connectionList, con2);
+        expect(foundCon).to.be.exists;
+        foundCon.should.be.an('object');
+        foundCon.source.should.eql(con2.source);
+        foundCon.destination.should.eql(con2.destination);
+      });
+      it('should not find con3', function () {
+        var foundCon = connectionManager._findSameConnection(connectionList, con3);
+        expect(foundCon).to.be.not.exists;
+      });
+      it('should not find con4', function () {
+        var foundCon = connectionManager._findSameConnection(connectionList, con4);
+        expect(foundCon).to.be.not.exists;
       });
     });
-    describe('#removeConnection', function () {
+    describe('#removeDynamicConnection', function () {
       var connectionMgr;
       var conConfig;
       beforeEach(function () {

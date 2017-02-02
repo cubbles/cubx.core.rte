@@ -381,4 +381,60 @@ describe('ConnectionManager', function () {
       returnedConnections[ 0 ].destination.should.have.property('memberId', 'elem1');
     });
   });
+  describe('#_findConnectionByConnectionId', function () {
+    function createConnection (connectionId, sourceElement, sourceSlot, sourceMember, destElement, destSlot, destMember) {
+      var connection = {
+        connectionId: connectionId,
+        source: {
+          component: sourceElement,
+
+          slot: sourceSlot
+        },
+        destination: {
+          component: destElement,
+
+          slot: destSlot
+        }
+
+      };
+      if (sourceMember) {
+        connection.source.memberId = sourceMember;
+      }
+      if (destMember) {
+        connection.destination.memberId = destMember;
+      }
+
+      return connection;
+    }
+    var element;
+    var destElem;
+    var context;
+    var connectionMgr;
+    beforeEach(function () {
+      element = document.createElement('elem');
+      context = new window.cubx.cif.Context(element);
+      connectionMgr = new window.cubx.cif.ConnectionManager(context);
+      destElem = document.createElement('destElem');
+      connectionMgr._connections.push(createConnection('con1', element, 'slotA', 'member1', destElem, 'slotB', 'member2'));
+      connectionMgr._connections.push(createConnection('con2', element, 'slotC', 'member1', destElem, 'slotD', 'member2'));
+      connectionMgr._connections.push(createConnection('con3', destElem, 'slotA', 'member2', element, 'slotB', 'member1'));
+      connectionMgr._connections.push(createConnection('con4', destElem, 'slotC', 'member2', element, 'slotD', 'member1'));
+      connectionMgr._connections.should.have.length(4);
+    });
+    afterEach(function () {
+      connectionMgr = null;
+      context = null;
+      element = null;
+    });
+    it('the connection should find the existing connection', function () {
+      var connection = connectionMgr._findConnectionByConnectionId('con4');
+      expect(connection).to.be.exists;
+      connection.should.be.property('connectionId', 'con4');
+    });
+    it('the connection should not find the not existing connection element', function () {
+      var connection = connectionMgr._findConnectionByConnectionId('con5');
+      expect(connection).to.be.not.exists;
+
+    });
+  });
 });
