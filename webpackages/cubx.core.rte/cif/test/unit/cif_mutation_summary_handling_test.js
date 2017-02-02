@@ -269,26 +269,48 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('he observer should register, if add a cubx-core-connection element', function () {
+      it('the observer should register, if add a cubx-core-connection element', function () {
         _detectMutationSpy.should.been.calleOnce;
       });
     });
     describe('remove <cubx-core-connections>;', function () {
-      // TODO implementation
       beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        var cubble = new constructor();
+        container.appendChild(cubble);
+
+        var connectionsEl = document.createElement('cubx-core-connections');
+        cubble.appendChild(connectionsEl);
+        cif._createObserverObject();
+        cubble.removeChild(connectionsEl);
       });
       afterEach(function () {
+        cif._observer.disconnect();
+        delete cif._observer;
       });
-      it('', function () {
+      it('the observer should register, if remove a cubx-core-connections element', function () {
+        _detectMutationSpy.should.been.calleOnce;
       });
     });
     describe('remove <cubx-core-connection>', function () {
-      // TODO implementation
       beforeEach(function () {
+        var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
+        var cubble = new constructor();
+        container.appendChild(cubble);
+
+        var connectionsEl = document.createElement('cubx-core-connections');
+        cubble.appendChild(connectionsEl);
+        var connectionEl = document.createElement('cubx-core-connection');
+        connectionsEl.appendChild(connectionEl);
+        cif._createObserverObject();
+        connectionsEl.removeChild(connectionEl);
       });
       afterEach(function () {
+        cif._observer.disconnect();
+        delete cif._observer;
       });
-      it('', function () {
+      it('the observer should register, if remove a cubx-core-connection element', function () {
+        _detectMutationSpy.should.been.calleOnce;
       });
     });
   });
@@ -425,7 +447,7 @@ describe('CIF', function () {
           done();
         });
       });
-      it('the method _handleRemovedCubbleSpy should be not called for removed element elementC', function (done) { // TODO remove not just in root?
+      it('the method _handleRemovedCubbleSpy should be not called for removed element elementC', function (done) { // TODO remove not just in root
         elementB.removeChild(elementC);
         window.setTimeout(function () {
           _handleRemovedCubbleSpy.should.be.not.called;
@@ -509,7 +531,6 @@ describe('CIF', function () {
       });
     });
     describe('remove a "cubx-core-connection" element', function () {
-      // TODO
       var connections;
       var connection;
       var element;
@@ -1108,7 +1129,6 @@ describe('CIF', function () {
     });
   });
   describe('#_handleRemovedConnection', function () {
-    // TODO
     function createConnection (connectionId, sourceElement, sourceSlot, sourceMember, destElement, destSlot, destMember) {
       var connection = {
         connectionId: connectionId,
@@ -1133,7 +1153,6 @@ describe('CIF', function () {
 
       return connection;
     }
-
     // eslint-disable-next-line no-unused-vars
     var getComponentCacheEntryStub;
     var container;
@@ -1180,7 +1199,7 @@ describe('CIF', function () {
       containerConnectionMgr._connections = [];
       containerConnectionMgr = null;
     });
-    describe('the html structure is correct', function () { // TODO
+    describe('the html structure is correct', function () {
       beforeEach(function () {
         connection.setAttribute('connection-id', 'con2');
         cif._handleRemovedConnection(connection, element);
@@ -1210,7 +1229,7 @@ describe('CIF', function () {
         consoleWarnSpy.should.be.calledWithMatch('A "cubx-core-connections" element must be a child an cubble.');
       });
     });
-    describe('the <cubx-core-connection> is not in scope of root context', function () { // TODO
+    describe('the <cubx-core-connection> is not in scope of root context', function () {
       beforeEach(function () {
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-c');
         var element2 = new constructor();
@@ -1225,7 +1244,7 @@ describe('CIF', function () {
         consoleWarnSpy.should.be.calledWithMatch('Can\'t handle added element. The connection in not in scope of root context.');
       });
     });
-    describe('the <cubx-core-connection> is as internal connection marked', function () { // TODO
+    describe('the <cubx-core-connection> is as internal connection marked', function () {
       beforeEach(function () {
         connection.setAttribute('type', 'internal');
         cif._handleRemovedConnection(connection, element);

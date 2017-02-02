@@ -445,17 +445,6 @@ describe('ConnectionManager', function () {
       });
     });
     describe('#createConnectionFromComponent', function () {
-      /*
-       ConnectionManager.prototype.createConnectionFromComponent = function (component, connectionElement) {
-       if (connectionElement.getType() !== 'internal') {
-       this._connections.push(this._createConnection(component, connectionElement));
-       } else {
-       var connection = this._createConnection(component, connectionElement, true);
-       component.Context._connectionMgr._connections.push(connection);
-       }
-       connectionElement.processed = true;
-       }
-       */
       var connectionMgr;
       var container;
       var context;
@@ -466,9 +455,11 @@ describe('ConnectionManager', function () {
         container = cif.getCRCRootNode();
         context = new window.cubx.cif.Context(container);
         connectionMgr = new window.cubx.cif.ConnectionManager(context);
-        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection', function () {
+        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection', function (component, element) {
           // just get an object
-          return {};
+          return {
+            connectionId: element.getAttribute('connection-id')
+          };
         });
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
         component = new constructor();
@@ -479,21 +470,22 @@ describe('ConnectionManager', function () {
         connectionElement.getType = function () {
           return this.getAttribute('type');
         };
+        connectionElement.getConnectionId = function () {
+          return this.getAttribute('connection-id');
+        };
       });
       afterEach(function () {
         container = null;
         context = null;
         connectionMgr._createConnection.restore();
         connectionMgr = null;
+        component = null;
+        connectionElement = null;
       });
       describe('normal connection', function () {
         beforeEach(function () {
           connectionMgr._connections.should.have.length(0);
           connectionMgr.createConnectionFromComponent(component, connectionElement);
-        });
-        afterEach(function () {
-          component = null;
-          connectionElement = null;
         });
         it('_createConnection should be called once', function () {
           _createConnectionStub.should.be.calledOnce;
@@ -516,10 +508,6 @@ describe('ConnectionManager', function () {
 
           connectionMgr.createConnectionFromComponent(component, connectionElement);
         });
-        afterEach(function () {
-          component = null;
-          connectionElement = null;
-        });
         it('_createConnection should be called once', function () {
           _createConnectionStub.should.be.calledOnce;
         });
@@ -535,6 +523,68 @@ describe('ConnectionManager', function () {
         it('the property _connectionMgr._connections of the components context should have a length of 1', function () {
           component.Context._connectionMgr._connections.should.have.length(1);
         });
+      });
+      describe('procressed connection', function () {
+        var connectionElement1;
+        beforeEach(function () {
+          connectionElement1 = document.createElement('cubx-core-connection');
+          connectionElement1.setAttribute('connection-id', 'test1');
+          connectionElement1.setAttribute('source', 'first');
+          connectionElement1.setAttribute('destination', 'two:second');
+          connectionElement1.getType = function () {
+            return this.getAttribute('type');
+          };
+          connectionElement1.getConnectionId = function () {
+            return this.getAttribute('connection-id');
+          };
+          connectionElement1.processed = true;
+          connectionMgr._connections.should.have.length(0);
+          connectionMgr.createConnectionFromComponent(component, connectionElement1);
+        });
+        afterEach(function () {
+          connectionElement1 = null;
+        });
+        it('_createConnection should be not called', function () {
+          _createConnectionStub.should.be.not.called;
+        });
+        it('the property connectionMgr._connections should have a length of 0', function () {
+          connectionMgr._connections.should.have.length(0);
+        });
+      });
+      describe('existing connection', function () {
+        var connectionElement1;
+        var consoleWarnSpy;
+        beforeEach(function () {
+          connectionElement1 = document.createElement('cubx-core-connection');
+          connectionElement1.setAttribute('connection-id', 'test');
+          connectionElement1.setAttribute('source', 'first');
+          connectionElement1.setAttribute('destination', 'two:second');
+          connectionElement1.getType = function () {
+            return this.getAttribute('type');
+          };
+          connectionElement1.getConnectionId = function () {
+            return this.getAttribute('connection-id');
+          };
+          consoleWarnSpy = sinon.spy(console, 'warn');
+          connectionMgr._connections.should.have.length(0);
+          connectionMgr.createConnectionFromComponent(component, connectionElement);
+          connectionMgr.createConnectionFromComponent(component, connectionElement1);
+        });
+        afterEach(function () {
+          connectionElement1 = null;
+          console.warn.restore();
+        });
+        it('the property connectionMgr._connections should have a length of 1', function () {
+          connectionMgr._connections.should.have.length(1);
+        });
+        it('_createConnection should be called once', function () {
+          _createConnectionStub.should.be.calledOnce;
+        });
+        it('should be logged a warning', function () {
+          consoleWarnSpy.should.be.calledOnce;
+          consoleWarnSpy.should.be.calledWithMatch('The following connection element didn\'t added to the connection list, because it already exist a connection with the same connectionId.');
+        });
+
       });
     });
     describe('#_createConnection', function () {
@@ -1401,6 +1451,61 @@ describe('ConnectionManager', function () {
         expect(list).to.exist;
         list.should.be.instanceOf(Array);
         list.should.have.length(2);
+      });
+    });
+    describe('#removeConnection', function () {
+      /*
+       ConnectionManager.prototype.removeConnection = function (connectionElement) { //  TODO Unittest
+       var connection = this._connections.find(function (con) {
+       return con.connectionId === connectionElement.getAttribute('connection-id');
+       });
+       return this._removeConnection(connection);
+       };
+       */
+      var container;
+
+      var connectionMgr;
+      var source;
+      var destination;
+      var elem;
+      var connectionElem;
+      beforeEach(function () {
+        container = cif.getCRCRootNode();
+
+        connectionMgr = new window.cubx.cif.ConnectionManager(context);
+        var constructor = cif.getCompoundComponentElementConstructor('my-source');
+        source = new constructor();
+        source.setAttribute('member-id', 'member1');
+        constructor = cif.getCompoundComponentElementConstructor('my-destination');
+        destination = new constructor();
+        destination.setAttribute('member-id','member2');
+        constructor = cif.getCompoundComponentElementConstructor('my-elem');
+        elem = new constructor();
+        container.appendChild(elem);
+        elem.appendChild(source);
+        elem.appendChild(destination);
+        var connections = document.createElement('cubx-core-connections');
+        connectionElem = document.createElement('cubx-core-connection');
+        connectionElem.setAttribute('connection-id', 'con1');
+        connectionElem.setAttribute('source', 'slotA');
+        connectionElem.setAttribute('destination', 'member2:slotB');
+        connections.appendChild(connectionElem);
+        source.appendChild(connections);
+        connectionMgr = elem.Context.getConnectionMgr();
+        connectionMgr._createConnectionsFromComponent(source);
+      });
+      afterEach(function () {
+        container = null;
+        connectionMgr = null;
+        connectionElem = null;
+        elem = null;
+        source = null;
+        destination = null;
+      });
+      it('should remove the connectionElement corresponding connection object', function () {
+        connectionMgr._connections.should.have.length(1);
+        connectionMgr.removeConnection(connectionElem);
+        connectionMgr._connections.should.have.length(0);
       });
     });
   });

@@ -387,7 +387,6 @@
   };
 
   CIF.prototype._handleRemovedCubble = function (element, oldParentNode) {
-    // TODO remove connections recursive
     var context;
     if (oldParentNode && oldParentNode.Context) {
       context = oldParentNode.Context;
@@ -495,7 +494,7 @@
    * @param {HTMLElement} connectionElement the &lt;cubx-core-connection&gt; element
    * @private
    */
-  CIF.prototype._handleAddedConnection = function (connectionElement) { // TODO internal connections?
+  CIF.prototype._handleAddedConnection = function (connectionElement) {
     if (connectionElement.getType() === 'internal') {
       console.warn('Can\'t handle added element, because it is an internal connection. Added connection:', connectionElement);
       return;
@@ -553,14 +552,7 @@
       console.warn('Can\'t handle added element. The connection in not in scope of root context. It will only processed a removed connection element in the scope of root context. Removed connection:', connectionElement);
       return;
     }
-    var connections = parent.Context.getConnectionMgr()._connections;
-    var index = connections.findIndex(function (con) {
-      return con.connectionId === connectionElement.getAttribute('connection-id');
-    });
-    if (index > -1) {
-      connections.splice(index, 1);
-    }
-    // TODO unittest
+    parent.Context.getConnectionMgr().removeConnection(connectionElement);
   };
   /**
    * Fire the cifAllComponentsReady Event.
