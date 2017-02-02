@@ -434,7 +434,6 @@ describe('ConnectionManager', function () {
     it('the connection should not find the not existing connection element', function () {
       var connection = connectionMgr._findConnectionByConnectionId('con5');
       expect(connection).to.be.not.exists;
-
     });
   });
 });
