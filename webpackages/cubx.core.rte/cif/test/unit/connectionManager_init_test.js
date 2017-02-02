@@ -584,7 +584,6 @@ describe('ConnectionManager', function () {
           consoleWarnSpy.should.be.calledOnce;
           consoleWarnSpy.should.be.calledWithMatch('The following connection element didn\'t added to the connection list, because it already exist a connection with the same connectionId.');
         });
-
       });
     });
     describe('#_createConnection', function () {
@@ -1471,14 +1470,12 @@ describe('ConnectionManager', function () {
       var connectionElem;
       beforeEach(function () {
         container = cif.getCRCRootNode();
-
-        connectionMgr = new window.cubx.cif.ConnectionManager(context);
         var constructor = cif.getCompoundComponentElementConstructor('my-source');
         source = new constructor();
         source.setAttribute('member-id', 'member1');
         constructor = cif.getCompoundComponentElementConstructor('my-destination');
         destination = new constructor();
-        destination.setAttribute('member-id','member2');
+        destination.setAttribute('member-id', 'member2');
         constructor = cif.getCompoundComponentElementConstructor('my-elem');
         elem = new constructor();
         container.appendChild(elem);

@@ -825,7 +825,7 @@ describe('ConnectionManager', function () {
             memberId: 'member2',
             slot: 'slotD'
           }
-        }
+        };
         connectionList.push(con2);
         con3 = {
           source: {
@@ -838,7 +838,7 @@ describe('ConnectionManager', function () {
             memberId: 'member2',
             slot: 'slotF'
           }
-        }
+        };
         con4 = {
           connectionId: 'con4',
           source: {
@@ -851,7 +851,7 @@ describe('ConnectionManager', function () {
             memberId: 'member2',
             slot: 'slotH'
           }
-        }
+        };
         context = new window.cubx.cif.Context(cif.getCRCRootNode());
         connectionManager = new window.cubx.cif.ConnectionManager(context);
       });
