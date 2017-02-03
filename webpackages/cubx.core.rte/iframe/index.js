@@ -1,4 +1,4 @@
-/*global location, MutationObserver*/
+/* global location, MutationObserver */
 (function () {
   'use strict';
 
@@ -56,7 +56,7 @@
           iframeHeight: newHeight,
           id: iframeId
         },
-        document.location.origin
+        '*'
       );
       lastHeight = newHeight;
     }
