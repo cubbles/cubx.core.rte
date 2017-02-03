@@ -56,7 +56,7 @@
           iframeHeight: newHeight,
           id: iframeId
         },
-        document.location.origin
+        '*'
       );
       lastHeight = newHeight;
     }

@@ -2,7 +2,11 @@
 /**
  * Defines the CRC RequireJS Module.
  *
+<<<<<<< HEAD
  * @version 2.1.1
+=======
+ * @version 2.1.2
+>>>>>>> RTE-57
  * @module CRC_Module
  */
 window.cubx.amd.define([
