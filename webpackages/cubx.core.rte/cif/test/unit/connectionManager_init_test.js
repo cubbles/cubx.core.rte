@@ -1453,14 +1453,6 @@ describe('ConnectionManager', function () {
       });
     });
     describe('#removeConnection', function () {
-      /*
-       ConnectionManager.prototype.removeConnection = function (connectionElement) { //  TODO Unittest
-       var connection = this._connections.find(function (con) {
-       return con.connectionId === connectionElement.getAttribute('connection-id');
-       });
-       return this._removeConnection(connection);
-       };
-       */
       var container;
 
       var connectionMgr;
