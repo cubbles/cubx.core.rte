@@ -502,6 +502,9 @@
    * @private
    */
   CIF.prototype._handleAddedConnection = function (connectionElement) {
+    if (connectionElement && connectionElement.generatedByCif) {
+      return;
+    }
     if (connectionElement.getType() === 'internal') {
       console.warn('Can\'t handle added element, because it is an internal connection. Added connection:', connectionElement);
       return;
@@ -541,6 +544,9 @@
   };
 
   CIF.prototype._handleRemovedConnection = function (connectionElement, parentCubble) {
+    if (connectionElement && connectionElement.generatedByCif) {
+      return;
+    }
     if (connectionElement.getType() === 'internal') {
       console.warn('Can\'t handle removed element, because it is an internal connection. Removed connection:', connectionElement);
       return;
