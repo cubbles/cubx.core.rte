@@ -112,6 +112,9 @@
       if (parent === component || this._isElementaryComponent(parent) && context.findParentContextOfElement(parent).isSame(context)) {
         var initSlotElements = [];
         for (var i = 0; i < initElement.children.length; i++) {
+          if (initElement.children[ i ].processed) {
+            continue;
+          }
           if (initElement.children[ i ].tagName === 'CUBX-CORE-SLOT-INIT') {
             initSlotElements.push(initElement.children[ i ]);
           }
