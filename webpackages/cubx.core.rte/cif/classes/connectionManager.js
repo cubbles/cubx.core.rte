@@ -464,7 +464,12 @@
       // The element is already processed.
       return;
     }
-    var existingConnection = this._findConnectionByConnectionId(connectionElement.getConnectionId());
+    var existingConnection;
+    if (connectionElement.getType() !== 'internal') {
+      existingConnection = this._findConnectionByConnectionId(connectionElement.getConnectionId());
+    } else {
+      existingConnection = component.Context._connectionMgr._findConnectionByConnectionId(connectionElement.getConnectionId());
+    }
     if (existingConnection) {
       console.warn('The following connection element didn\'t added to the connection list, because it already exist a connection with the same connectionId. It is not allowed overriding existing connections.', connectionElement);
       return;
