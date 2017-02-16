@@ -329,7 +329,8 @@ describe('CIF', function () {
       getAllComponentsStub = sinon.stub(window.cubx.CRC.getCache(), 'getAllComponents', function (artifactId) {
         return {
           'cif-test-a': {},
-          'cif-test-b': {}
+          'cif-test-b': {},
+          'cif-test-c': {}
         };
       });
       _addPossibleElementToQueueSpy = sinon.spy(cif, '_addPossibleElementToQueue');
@@ -442,15 +443,17 @@ describe('CIF', function () {
       it('the method _handleRemovedCubbleSpy should be called once with arguments: deleted element elementB and crcRoot', function (done) {
         container.removeChild(elementB);
         window.setTimeout(function () {
-          _handleRemovedCubbleSpy.should.be.calledOnce;
+          _handleRemovedCubbleSpy.should.be.calledTwice;
           _handleRemovedCubbleSpy.should.be.calledWith(elementB, container);
+          _handleRemovedCubbleSpy.should.be.calledWith(elementC, elementB);
           done();
         });
       });
-      it('the method _handleRemovedCubbleSpy should be not called for removed element elementC', function (done) { // TODO remove not just in root
+      it('the method _handleRemovedCubbleSpy should be not called for removed element elementC', function (done) {
         elementB.removeChild(elementC);
         window.setTimeout(function () {
-          _handleRemovedCubbleSpy.should.be.not.called;
+          _handleRemovedCubbleSpy.should.be.calledOnce;
+          _handleRemovedCubbleSpy.should.be.calledWith(elementC, elementB);
           done();
         });
       });
@@ -560,32 +563,6 @@ describe('CIF', function () {
           _handleRemovedConnectionStub.should.be.calledWith(connection, element);
           done();
         });
-      });
-    });
-    describe('add a "cubx-core-init" element', function () {
-      // TODO test: add a "cubx-core-init"
-      before(function () {
-      });
-      after(function () {
-      });
-      beforeEach(function () {
-      });
-      afterEach(function () {
-      });
-      it('', function () {
-      });
-    });
-    describe('add a "cubx-core-slot" element', function () {
-      // TODO test: add a "cubx-core-slot"
-      before(function () {
-      });
-      after(function () {
-      });
-      beforeEach(function () {
-      });
-      afterEach(function () {
-      });
-      it('', function () {
       });
     });
   });
@@ -1213,6 +1190,7 @@ describe('CIF', function () {
 
       return connection;
     }
+
     // eslint-disable-next-line no-unused-vars
     var getComponentCacheEntryStub;
     var container;

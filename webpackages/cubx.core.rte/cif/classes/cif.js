@@ -329,7 +329,7 @@
           element: 'cubx-core-connections, cubx-core-connection'
         },
         {
-          element: 'cubx-core-init, cubx-core-slot'
+          element: 'cubx-core-slot-init'
         }
       ]
     };
@@ -376,13 +376,6 @@
           cif._handleRemovedConnection(removedEl, parent);
         }
       }
-    });
-
-    // added cubx-core-init or cubx-core-slot
-    componentChangeSummary = summaries[ 2 ];
-    componentChangeSummary.added.forEach(function (addedEl) {
-      // TODO
-      // TODO unit test
     });
   };
 
@@ -502,7 +495,7 @@
    * @private
    */
   CIF.prototype._handleAddedConnection = function (connectionElement) {
-    if (connectionElement && connectionElement.generatedByCif) {
+    if (!connectionElement || connectionElement.generatedByCif) {
       return;
     }
     if (connectionElement.getType() === 'internal') {
@@ -534,6 +527,13 @@
     }
   };
 
+  /**
+   * Handle removed &lt;cubx-core-connections&gt; tags.
+   * Handle all &lt;cubx-core-connection&gt; children.
+   * @param {HTMLElement} connectionsElement the &lt;cubx-core-connections&gt; element
+   * @param oldParentNode the parentNode before the element was removed
+   * @private
+   */
   CIF.prototype._handleRemovedConnections = function (connectionsElement, oldParentNode) {
     for (var i = 0; i < connectionsElement.children.length; i++) {
       var elem = connectionsElement.children[ i ];
@@ -543,6 +543,12 @@
     }
   };
 
+  /**
+   * Handle a removed &lt;cubx-core-connection&gt; element.
+   * @param {HTMLElement} connectionElement the removed &lt;cubx-core-connection&gt; element
+   * @param parentCubble the parent cubble before the element was removed
+   * @private
+   */
   CIF.prototype._handleRemovedConnection = function (connectionElement, parentCubble) {
     if (connectionElement && connectionElement.generatedByCif) {
       return;
