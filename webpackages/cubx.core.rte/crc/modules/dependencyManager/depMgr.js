@@ -154,16 +154,74 @@ window.cubx.amd.define(
           depTree.removeDuplicates();
           depTree.removeExcludes();
 
-          // console.log(depTree);
           var allDependencies = this._getDependencyListFromTree(depTree);
           this._depList = allDependencies; // TODO: Do we still need to set global _depList property?
           var resourceList = this._calculateResourceList(allDependencies);
-          // console.log(resourceList);
+          this._logDependencyConflicts(depTree);
           this._injectDependenciesToDom(resourceList);
         }.bind(this), function (error) {
           console.error('Error while building and processing DependencyTree: ', error);
         });
     };
+
+    /**
+     * Set crc instance this DependencyMgr instance belongs to
+     * @memberOf DependencyMgr
+     * @param {object} crc
+     * @deprecated
+     */
+    DependencyMgr.prototype.setCRC = function (crc) {
+      if (typeof crc !== 'object') {
+        throw new TypeError('parameter "crc" needs to be an instance of the CRC');
+      }
+
+      this._crc = crc;
+    };
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // --------------------------------                 Static Methods               ---------------------------------
+    // ---------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Check if given type is valid
+     * @param {string} type
+     * @return {boolean}
+     * @memberOf DependencyMgr
+     * @static
+     * @private
+     */
+    DependencyMgr._isValidResourceType = function (type) {
+      for (var property in DependencyMgr._types) {
+        if (DependencyMgr._types.hasOwnProperty(property)) {
+          if (DependencyMgr._types[ property ].name === type) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    /**
+     * Prepare given data for Dependency Resolution. This is used to convert manifest.webpackage files before resolving
+     * Dependencies.
+     * @param {object} data The data to be transformed
+     * @return {object} the prepared data
+     * @static
+     * @memberOf DependencyMgr
+     * @private
+     */
+    DependencyMgr._prepareResponseData = function (data) {
+      // axios sets 'error' property on data object if there is an error.
+      if (data.hasOwnProperty('error')) {
+        throw new Error('Error when requesting manifest');
+      };
+      var manifest = manifestConverter.convert(data);
+      return manifest;
+    };
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // --------------------------------                 Private Methods              ---------------------------------
+    // ---------------------------------------------------------------------------------------------------------------
 
     /**
      * Create a list of Dependencies each represented by a DepReference item. The returned list is ordered in that way
@@ -240,8 +298,8 @@ window.cubx.amd.define(
         var currentReferrer = [];
         current.referrer.some(function (referrer, index) {
           currentReferrer[index] = typeof referrer === 'string'
-                                   ? referrer
-                                   : referrer.webpackageId + '/' + referrer.artifactId;
+            ? referrer
+            : referrer.webpackageId + '/' + referrer.artifactId;
         });
         switch (current.type) {
           case DependencyMgr._types.stylesheet.name :
@@ -261,63 +319,21 @@ window.cubx.amd.define(
     };
 
     /**
-     * Set crc instance this DependencyMgr instance belongs to
+     * Searches for Conflicts in given DependencyTree create warning logs in console for each conflict.
      * @memberOf DependencyMgr
-     * @param {object} crc
-     * @deprecated
-     */
-    DependencyMgr.prototype.setCRC = function (crc) {
-      if (typeof crc !== 'object') {
-        throw new TypeError('parameter "crc" needs to be an instance of the CRC');
-      }
-
-      this._crc = crc;
-    };
-
-    // ---------------------------------------------------------------------------------------------------------------
-    // --------------------------------                 Static Methods               ---------------------------------
-    // ---------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Check if given type is valid
-     * @param {string} type
-     * @return {boolean}
-     * @memberOf DependencyMgr
-     * @static
+     * @param {object} depTree DependencyTree. Should already be cleaned (duplicates and excludes are removed).
      * @private
      */
-    DependencyMgr._isValidResourceType = function (type) {
-      for (var property in DependencyMgr._types) {
-        if (DependencyMgr._types.hasOwnProperty(property)) {
-          if (DependencyMgr._types[ property ].name === type) {
-            return true;
-          }
-        }
-      }
-      return false;
+    DependencyMgr.prototype._logDependencyConflicts = function (depTree) {
+      var conflicts = depTree.getListOfConflictedNodes();
+      conflicts.some(function (conflict) {
+        var webpackageIds = [];
+        conflict.nodes.some(function (conflictedNode) {
+          webpackageIds.push(conflictedNode.data.webpackageId);
+        });
+        console.warn('Artifact', conflict.artifactId, 'is assigned to more than one webpackageId: [', webpackageIds.join(', '), ']');
+      });
     };
-
-    /**
-     * Prepare given data for Dependency Resolution. This is used to convert manifest.webpackage files before resolving
-     * Dependencies.
-     * @param {object} data The data to be transformed
-     * @return {object} the prepared data
-     * @static
-     * @memberOf DependencyMgr
-     * @private
-     */
-    DependencyMgr._prepareResponseData = function (data) {
-      // axios sets 'error' property on data object if there is an error.
-      if (data.hasOwnProperty('error')) {
-        throw new Error('Error when requesting manifest');
-      };
-      var manifest = manifestConverter.convert(data);
-      return manifest;
-    };
-
-    // ---------------------------------------------------------------------------------------------------------------
-    // --------------------------------                 Private Methods              ---------------------------------
-    // ---------------------------------------------------------------------------------------------------------------
 
     /**
      * Build a DependencyTree for a list of given dependencies.

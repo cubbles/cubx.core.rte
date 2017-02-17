@@ -566,6 +566,54 @@
             });
           });
         });
+        describe('#_logDependencyConflicts()', function () {
+          var depTree;
+          beforeEach(function () {
+            /**
+             * Build the following tree:
+             *
+             *               package1@1.0.0/util1
+             *                    /       \
+             *                   /         \
+             *    package3@1.0.0/util3    package5@2.0.0/util5
+             *            |
+             *            |
+             *    package5@1.0.0/util5
+             */
+            depTree = new DependencyTree();
+            var root = new DependencyTree.Node();
+            root.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+            depTree.insertNode(root);
+            var childA = new DependencyTree.Node();
+            childA.data = new DepMgr.DepReference({
+              webpackageId: 'package3@1.0.0',
+              artifactId: 'util3',
+              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
+            });
+            depTree.insertNode(childA, root);
+            var childB = new DependencyTree.Node();
+            childB.data = new DepMgr.DepReference({
+              webpackageId: 'package5@2.0.0',
+              artifactId: 'util5',
+              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
+            });
+            depTree.insertNode(childB, root);
+            var childA1 = new DependencyTree.Node();
+            childA1.data = new DepMgr.DepReference({
+              webpackageId: 'package5@1.0.0',
+              artifactId: 'util5',
+              referrer: { webpackageId: 'package4@1.0.0', artifactId: 'util4' }
+            });
+            depTree.insertNode(childA1, childA);
+          });
+          it('should create an warning log for each conflicted artifact', function () {
+            depMgr = CRC.getDependencyMgr();
+            var spy = sinon.spy(console, 'warn');
+            depMgr._logDependencyConflicts(depTree);
+            expect(spy.calledOnce);
+            spy.reset();
+          });
+        });
       });
     });
 })();

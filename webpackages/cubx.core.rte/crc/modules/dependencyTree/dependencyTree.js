@@ -152,7 +152,7 @@
     };
 
     /**
-     * Get a list of all conflicted nodes. Each item is an object containg the artifactId for the certain conflict and
+     * Get a list of all conflicted nodes. Each item is an object containing the artifactId for the certain conflict and
      * a list of nodes representing all artifacts that share the same artifactId but a different webpackageId.
      * @memberOf DependencyTree
      * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
