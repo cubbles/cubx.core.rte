@@ -218,8 +218,8 @@
             "description": "Call this app to display a component using its webpackage-id and artifact-id as url parameters."
           },
           {
-            "name": "Test App",
-            "path": "/test/index.html",
+            "name": "Demo App",
+            "path": "/demo/index.html",
             "description": "Test app showing the use of the 'iframe-viewer' app and the 'iframe-resizer' app."
           }
         ]
