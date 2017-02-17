@@ -312,6 +312,15 @@ window.cubx.amd.define(
             utils.DOM.appendScriptTagToHead(current.path, currentReferrer);
         }
       }
+      this._fireDepMgrReadyEvent();
+    };
+
+    /**
+     * Fires the 'crcDepMgrReady' Event indicating that all Dependencies have been resolved an injected into <head>.
+     * @memberOf DependencyMgr
+     * @private
+     */
+    DependencyMgr.prototype._fireDepMgrReadyEvent = function () {
       // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
       var blob = new Blob(['<script>window.cubx.CRC.fireDepMgrReadyEvent();</script>'], {type: 'text/html'});
       var url = URL.createObjectURL(blob);
@@ -438,6 +447,8 @@ window.cubx.amd.define(
           };
           promises.push(this._getManifestForDepReference(node.data, baseUrl));
         }.bind(this));
+
+        if (promises.length === 0) { resolve(depTree); }
 
         Promise.all(promises).then(function (results) {
           results.forEach(function (manifest, index) {
