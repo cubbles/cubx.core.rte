@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Component Viewer App Test</title>
+    <script src="../../iframe-resizer/resize.js"></script>
+</head>
+<body>
+<h1>Iframe App Test</h1>
+
+<p>Below we load a component using its webpackage id and artifact id and we initialize some its slots</p>
+
+<ul>
+    <li><b>webpackage-id:</b> com.incowia.lib.chart-library@0.2.0-SNAPSHOT</li>
+    <li><b>artifact-id:</b> line-chart</li>
+    <li><b>inits:</b> {'dataColumns':[['Product A',1000,500,1500,1100],['Product B',300,400,700,500]],'xLabels':['January','February','March','April']}</li>
+</ul>
+
+<iframe id="chartIframe"
+        src="../../iframe/index.html?webpackage-id=com.incowia.lib.chart-library@0.2.0-SNAPSHOT&artifact-id=line-chart&inits={'dataColumns':[['Product A',1000,500,1500,1100],['Product B',300,400,700,500]],'xLabels':['January','February','March','April']}&iframe-id=chartIframe"/>
+
+</body>
+</html>
