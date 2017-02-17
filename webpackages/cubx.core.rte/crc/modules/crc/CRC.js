@@ -1,12 +1,8 @@
-/* globals CustomEvent*/
+/* globals CustomEvent */
 /**
  * Defines the CRC RequireJS Module.
  *
-<<<<<<< HEAD
- * @version 2.1.1
-=======
- * @version 2.1.2
->>>>>>> RTE-57
+ * @version 2.2.0-SNAPSHOT
  * @module CRC_Module
  */
 window.cubx.amd.define([
@@ -17,7 +13,7 @@ window.cubx.amd.define([
   'utils',
   'eventFactory'
 ],
-  function (storageMgr, DepMgr, Cache, ComponentResolver, utils, eventFactory) {
+  function (storageMgr, DepMgr, Cache, ComponentResolver, utils, EventFactory) {
     'use strict';
 
     /**
@@ -87,8 +83,8 @@ window.cubx.amd.define([
        * @type {Object}
        * @private
        */
-      this._eventFactory = eventFactory;
-      window.cubx.EventFactory = eventFactory;
+      this._eventFactory = new EventFactory();
+      window.cubx.EventFactory = EventFactory;
 
       /**
        * The StorageManager instance of this CRC instance
@@ -96,13 +92,6 @@ window.cubx.amd.define([
        * @private
        */
       this._storageManager = storageMgr;
-
-      /**
-       * The name of the crc ready event that is fired after crc has loaded all dependencies and is ready
-       * @type {string}
-       * @private
-       */
-      this._readyEventName = 'crcReady';
 
       /**
        * The ready flag set to true, after crc has loaded all dependencies and is ready
@@ -273,7 +262,8 @@ window.cubx.amd.define([
      * @memberOf CRC
      */
     CRC.prototype.fireReadyEvent = function () {
-      var event = new CustomEvent(this._readyEventName);
+      var eventFactory = this.getEventFactory();
+      var event = eventFactory.createEvent(window.cubx.EventFactory.types.CRC_READY);
       if (this.getCRCElement()) {
         this.getCRCElement().dispatchEvent(event);
       } else {

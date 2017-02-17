@@ -18,6 +18,15 @@ window.cubx.amd.define([], function () {
   EventFactory.types = {};
 
   /**
+   * Constant for crc ready event
+   * @memberOf EventFactory types
+   * @constant
+   * @default
+   * @type {string}
+   */
+  EventFactory.types.CRC_READY = 'crcReady';
+
+  /**
    * Constant for Model Change event type
    * @memberof EventFactory.types
    * @constant
@@ -108,6 +117,9 @@ window.cubx.amd.define([], function () {
     var event;
 
     switch (type) { // use switch statement to make it easy to add other event types in the future
+      case EventFactory.types.CRC_READY:
+        event = new CustomEvent(EventFactory.types.CRC_READY, { bubbles: true });
+        break;
       case EventFactory.types.CIF_READY:
         event = new CustomEvent(EventFactory.types.CIF_READY, { bubbles: true });
         break;
