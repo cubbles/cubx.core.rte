@@ -49,16 +49,19 @@
    * Post a message to the iframe parent containing the offsetHeight of the iframe content
    */
   function _postIframeHeight () {
-    var newHeight = document.querySelector('body').scrollHeight;
-    if (newHeight !== lastHeight) {
-      window.parent.postMessage(
-        {
-          iframeHeight: newHeight,
-          id: iframeId
-        },
-        '*'
-      );
-      lastHeight = newHeight;
+    var component = document.querySelector(artifactId);
+    if (component) {
+      var newHeight = component.scrollHeight;
+      if (newHeight !== lastHeight) {
+        window.parent.postMessage(
+          {
+            iframeHeight: newHeight,
+            id: iframeId
+          },
+          '*'
+        );
+        lastHeight = newHeight;
+      }
     }
   }
 
@@ -74,7 +77,7 @@
     });
 
     var targetNode = document.body;
-    observer.observe(targetNode, { childList: true, characterData: true, subtree: true });
+    observer.observe(targetNode, { childList: true, subtree: true, attributes: true });
   }
 
   /**
@@ -120,8 +123,8 @@
 
   /**
    * Create a script element
-   * @param [Array] attributes - Attributes to be set to the script element
-   * @param [function] cb - Callback function to be called when script has loaded
+   * @param {Array} attributes - Attributes to be set to the script element
+   * @param {function} cb - Callback function to be called when script has loaded
    * @returns {Element} Created script element
    */
   function _createScriptElement (attributes, cb) {
