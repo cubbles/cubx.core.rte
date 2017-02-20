@@ -205,7 +205,7 @@
    */
   function injectHeadScripts () {
     var rteWebpackageId;
-    var iframeURI = document.baseURI;
+    var iframeURI = document.baseURI || location.href;
     var initIndex = iframeURI.indexOf('cubx.core.rte@');
     if (initIndex > -1) {
       rteWebpackageId = iframeURI.substring(initIndex);
