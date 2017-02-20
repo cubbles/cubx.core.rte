@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Component Viewer App Test</title>
+    <script src="../../iframe-resizer/resize.js"></script>
+</head>
+<body>
+<h1>Iframe App Test</h1>
+
+<p>Here we only load a component using its webpackage id and artifact id</p>
+
+<ul>
+    <li><b>webpackage-id:</b> com.incowia.basic-html-components@0.1.3</li>
+    <li><b>artifact-id:</b> cubx-textarea</li>
+</ul>
+<div style="width:100%;height:1px;background-color:#0b0b0b;display:inline-block;"></div>
+
+<iframe id="textAreaIFrame"
+        src="../../iframe/index.html?webpackage-id=com.incowia.basic-html-components@0.1.3&artifact-id=cubx-textarea&iframe-id=textAreaIFrame">
+</iframe>
+
+<p>
+    Try resizing the 'textarea' element to see the 'iframe-resizer' in action. Or you can also set the
+    'rows' value of the 'cubx-text-area' component using the console.
+</p>
+
+</body>
+</html>
