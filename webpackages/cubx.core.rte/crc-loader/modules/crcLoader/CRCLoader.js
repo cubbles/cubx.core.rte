@@ -52,12 +52,12 @@ cubx.amd.define([
    */
   CRCLoader.prototype.run = function () {
     document.addEventListener('crcDepMgrReady', this._includeMainScript.bind(this));
-    var crcContainer = document.querySelector('[cubx-core-crc]');
-    if (!crcContainer) {
-      crcContainer = document.body;
-    }
-    this._crcRoot = crcContainer;
     var action = function () {
+      var crcContainer = document.querySelector('[cubx-core-crc]');
+      if (!crcContainer) {
+        crcContainer = document.body;
+      }
+      this._crcRoot = crcContainer;
       this._checkRootDependencies();
       // keep origin length of cubx.CRCInit.rootDependencies
       this._cubxCRCInitRootDependenciesOriginLength = cubx.CRCInit.rootDependencies ? cubx.CRCInit.rootDependencies.length : 0;
