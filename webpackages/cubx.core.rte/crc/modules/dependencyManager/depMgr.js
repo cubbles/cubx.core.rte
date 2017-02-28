@@ -340,7 +340,7 @@ window.cubx.amd.define(
         conflict.nodes.some(function (conflictedNode) {
           webpackageIds.push(conflictedNode.data.webpackageId);
         });
-        console.warn('Artifact', conflict.artifactId, 'is assigned to more than one webpackageId: [', webpackageIds.join(', '), ']');
+        console.warn('Artifact', conflict.artifactId, 'is defined in multiple webpackages: [', webpackageIds.join(', '), ']');
       });
     };
 
