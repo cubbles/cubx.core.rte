@@ -734,6 +734,7 @@
       if (current.hasOwnProperty('Context')) {
         current.Context.setParent(this._rootContext);
       }
+      root.fireReadyEvent(current.getAttribute('runtime-id'));
     }
     current.processed = true;
   };
@@ -1004,7 +1005,7 @@
       this._componentReady[ runtimeId ].notReadyMembers = true;
       this._attachMembers(root, manifest, 1);
     }
-    root.fireReadyEvent(runtimeId);
+
     return root;
   };
 
