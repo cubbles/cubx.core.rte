@@ -734,7 +734,7 @@
       if (current.hasOwnProperty('Context')) {
         current.Context.setParent(this._rootContext);
       }
-      root.fireReadyEvent(current.getAttribute('runtime-id'));
+      current.fireReadyEvent(current.getAttribute('runtime-id'));
     }
     current.processed = true;
   };

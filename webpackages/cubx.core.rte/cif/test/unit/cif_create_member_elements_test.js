@@ -76,9 +76,11 @@ describe('CIF', function () {
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
