@@ -150,7 +150,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     var attributeName = 'data-cubx-startevent';
     var startEventName = crcLoaderElement.getAttribute(attributeName);
     var defaultValue = 'DOMContentLoaded';
-    cubx.CRCInit.startEvent = startEventName || defaultValue; // TODO: startEvent should also be make configurable using CRCInit object directly
+    cubx.CRCInit.startEvent = startEventName || cubx.CRCInit.startEvent || defaultValue;
     document.addEventListener(cubx.CRCInit.startEvent, function () {
       cubx.CRCInit.startEventArrived = true;
     });
