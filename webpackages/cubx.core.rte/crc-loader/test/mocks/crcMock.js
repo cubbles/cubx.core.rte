@@ -4,6 +4,13 @@
     var CRCMock = function () {
       console.log('init CRCMock');
     };
-    return CRCMock;
+    CRCMock.prototype.init = function () { return; };
+    CRCMock.prototype.getDependencyMgr = function () {
+      return {
+        init: function () { return; },
+        run: function () { return; }
+      };
+    };
+    return new CRCMock();
   });
 })();

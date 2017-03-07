@@ -1,3 +1,4 @@
+/*globals Event */
 'use strict';
 /**
  * Created by pwr on 09.02.2015.
@@ -388,6 +389,24 @@ window.cubx.amd.define([ 'crcLoader' ],
             window.cubx.CRCInit.rootDependencies[0].should.be.an('object');
             window.cubx.CRCInit.rootDependencies[1].should.be.an('object');
           });
+        });
+      });
+
+      describe('#cubx.CRCInit.startEvent can be used to set startEvent', function () {
+        beforeEach(function () {
+          window.cubx.CRCInit = { startEvent: 'pleaseStart' };
+          crcLoader.run();
+        });
+        afterEach(function () {
+          delete window.cubx.CRCInit.startEvent;
+        });
+        it('should not set _crcRoot since pleaseStart event is not dispatched', function () {
+          crcLoader.should.not.have.property('_crcRoot');
+        });
+        it('should detect that pleaseStart event is dispatched and set _crcRoot', function () {
+          var event = new Event('pleaseStart');
+          document.dispatchEvent(event);
+          crcLoader.should.have.property('_crcRoot');
         });
       });
     });
