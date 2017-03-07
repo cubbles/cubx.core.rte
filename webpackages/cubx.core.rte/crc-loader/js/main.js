@@ -166,7 +166,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     // fow backwards compatibility also test for attribute "allow-absolute-resource-urls"
     var attributeName = 'allow-absolute-resource-urls';
     var allowAbsoluteResourceUrls = crcLoaderElement.getAttribute(attributeName);
-    attributeName = 'data-allow-absolute-resource-urls';
+    attributeName = 'data-cubx-allow-absolute-resource-urls';
     allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || crcLoaderElement.getAttribute(attributeName);
     var defaultValue = false;
     cubx.CRCInit.allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || defaultValue;

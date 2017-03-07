@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CRC-TestWebapp</title>
+
+    <link rel="stylesheet" href="style/app.css">
+    <script src="../../../cubx.core.rte/webcomponents/webcomponents-lite.js"></script>
+    <script src="../../../cubx.core.rte/crc-loader/js/main.js" allow-absolute-resource-urls="true"></script>
+
+</head>
+<body>
+<h2>This is a Cubixx-Webapplication</h2>
+
+<p>To extend the application, you can use <i>plain-old-html</i> or <i>CubixxComponents</i></p>
+<hr>
+<a href="allowResources.html">Go Back</a>
+
+<hr>
+<h2>Allow absolute resource urls using old 'allow-absolute-resource-urls' attribute</h2>
+
+<textarea id="logTa" rows="8" cols="50"></textarea>
+
+<hr>
+<div>
+    <elementary-example cubx-dependency="this/elementary-example/main"></elementary-example>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+        var logTa = document.querySelector('#logTa');
+
+        document.addEventListener('cifReady', function() {
+          if (cubx.CRCInit.allowAbsoluteResourceUrls) {
+              logTa.value = 'It works! :-) \n-> cubx.CRCInit.allowAbsoluteResourceUrls = true';
+          } else {
+              logTa.value = 'It does NOT work! :-( \n-> cubx.CRCInit.allowAbsoluteResourceUrls = false';
+          }
+        });
+    })()
+</script>
+
+</body>
+</html>
