@@ -163,8 +163,11 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     if (cubx.CRCInit.allowAbsoluteResourceUrls) {
       return;
     }
-    var attributeName = 'allow-absolute-resource-urls'; // TODO: add "data-" prefix for attribute name
+    // fow backwards compatibility also test for attribute "allow-absolute-resource-urls"
+    var attributeName = 'allow-absolute-resource-urls';
     var allowAbsoluteResourceUrls = crcLoaderElement.getAttribute(attributeName);
+    attributeName = 'data-allow-absolute-resource-urls';
+    allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || crcLoaderElement.getAttribute(attributeName);
     var defaultValue = false;
     cubx.CRCInit.allowAbsoluteResourceUrls = allowAbsoluteResourceUrls || defaultValue;
   })();
