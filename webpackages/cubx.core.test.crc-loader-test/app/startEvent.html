@@ -12,25 +12,25 @@
     <!-- build:js js/app.min.js -->
     <!-- endbuild -->
     <script src="http://localhost:8282/cubx.core.rte/webcomponents/webcomponents-lite.js"></script>
-
+    <script>
+        window.cubx = {
+            "CRCInit": {
+                "rootDependencies": [
+                    "this/util1/main"
+                ]
+            }
+        }
+    </script>
     <!-- include crc-loader webresource from base
         note: the js-file referenced by data-crc-main will be loaded as the last dependency
 
          data-crc-baseUrl="http://boot2docker.me"
     -->
-    <script>
-        window.cubx = {
-            "CRCInit": {
-                "rootDependencies": [
-                    "this/elementary-example/main"
-                ]
-            }
-        }
-    </script>
+
     <!--
     data-CRCInit.loadCIF=<"true"|"false">
     -->
-    <script src="http://localhost:8282/cubx.core.rte/crc-loader/js/main.js" data-crc-main="js/main.js" data-crcinit-loadcif="true"></script>
+    <script src="http://localhost:8282/cubx.core.rte/crc-loader/js/main.js"></script>
 
 </head>
 <body>
@@ -44,21 +44,17 @@
 <a href="index3.html">index3.html</a>
 <a href="index4.html">index4.html</a>
 <a href="index5.html">index5.html</a>
-index6.html
+<a href="index6.html">index6.html</a>
 <a href="index7.html">index7.html</a>
 <a href="index8.html">index8.html</a>
-<a href="startEvent.html">startEvent.html</a>
+startEvent.html
 
 <hr>
-<div cubx-core-crc>
-    <!--
-        Notes:
-        1) Currently the CIF supports the so called 'standalone' -case only.
-        This means you can place only one html-Tag here, representing an elementary or compound -component.
-        2) The so called 'composite' -case, is a planned feature: @see https://webbles.instajira.com/browse/PLAT-205
-     -->
-    <elementary-example></elementary-example>
-</div>
+<ul>
+    <li><a href="startEventAttr.html">startEventAttr.html</a></li>
+    <li><a href="startEventInitO.html">startEventInitO.html</a></li>
+    <li><a href="startEventAttrAndInitO.html">startEventAttrAndInitO.html</a></li>
+</ul>
 
 </body>
 </html>
