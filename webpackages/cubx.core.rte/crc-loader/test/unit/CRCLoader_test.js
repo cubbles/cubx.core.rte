@@ -10,10 +10,17 @@ window.cubx.amd = window.cubx.amd || {};
 window.cubx.amd.define([ 'crcLoader' ],
   function (crcLoader) {
     describe('CRCLoader', function () {
+      function cleanUpCrcLoader () {
+        crcLoader._crcRoot = null;
+        crcLoader._cubxCRCInitRootDependenciesOriginLength = 0;
+        crcLoader._cubxCRCInitRootDependencyExludesOriginLength = 0;
+        crcLoader._webpackageBaseUrl = null;
+        crcLoader._crcBaseUrl = null;
+      }
+
       /*
        * Testcases
        */
-
       describe('#provides init values as expected.', function () {
         before(function () {
           crcLoader.setCRCBaseUrl('test-url');
@@ -432,6 +439,7 @@ window.cubx.amd.define([ 'crcLoader' ],
           crcLoader._addDependenciesAndExcludesToRootDependencies.restore();
           crcLoader._bootstrapCRC.restore();
           window.cubx = originCubx;
+          cleanUpCrcLoader();
         });
         describe('processing will be done', function () {
           it('_checkRootDependencies should be called once', function (done) {
@@ -498,14 +506,15 @@ window.cubx.amd.define([ 'crcLoader' ],
         });
         afterEach(function () {
           delete window.cubx.CRCInit.startEvent;
+          cleanUpCrcLoader();
         });
         it('should not set _crcRoot since pleaseStart event is not dispatched', function () {
-          crcLoader.should.not.have.property('_crcRoot');
+          crcLoader.should.have.property('_crcRoot', null);
         });
         it('should detect that pleaseStart event is dispatched and set _crcRoot', function () {
           var event = new Event('pleaseStart');
           document.dispatchEvent(event);
-          crcLoader.should.have.property('_crcRoot');
+          crcLoader.should.have.property('_crcRoot', window.document.body);
         });
       });
     });
