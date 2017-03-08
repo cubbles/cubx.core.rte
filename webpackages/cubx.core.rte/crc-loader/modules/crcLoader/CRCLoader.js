@@ -1,4 +1,4 @@
-/*globals cubx*/
+/* globals cubx */
 'use strict';
 /**
  * Defines the CRC Loader RequireJS Module.
@@ -53,6 +53,9 @@ cubx.amd.define([
   CRCLoader.prototype.run = function () {
     document.addEventListener('crcDepMgrReady', this._includeMainScript.bind(this));
     var action = function () {
+      if (window.cubx.CRCInit.runtimeMode === 'dev') {
+        console.log('CRCLoader start bootstrap processing (dependencies etc.)');
+      }
       var crcContainer = document.querySelector('[cubx-core-crc]');
       if (!crcContainer) {
         crcContainer = document.body;
@@ -66,11 +69,11 @@ cubx.amd.define([
       this._cubxCRCInitRootDependenciesOriginLength += this._addComponentDependenciesToRootDependencies();
       this._addDependenciesAndExcludesToRootDependencies();
       this._bootstrapCRC();
+      document.removeEventListener(cubx.CRCInit.startEvent, action);
     }.bind(this);
+    document.addEventListener(cubx.CRCInit.startEvent, action);
     if (cubx.CRCInit.startEventArrived) {
       action();
-    } else {
-      document.addEventListener(cubx.CRCInit.startEvent, action);
     }
   };
 

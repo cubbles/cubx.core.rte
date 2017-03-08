@@ -1,4 +1,5 @@
-/*globals Event */
+/* globals Event, CustomEvent */
+
 'use strict';
 /**
  * Created by pwr on 09.02.2015.
@@ -344,7 +345,7 @@ window.cubx.amd.define([ 'crcLoader' ],
         describe('root dependencie included only valid entries', function () {
           var origRootDependencies;
           beforeEach(function () {
-            window.cubx.CRCInit = {rootDependencies: []};
+            window.cubx.CRCInit = { rootDependencies: [] };
             window.cubx.CRCInit.rootDependencies.push({
               artifactId: 'my-elem'
             });
@@ -366,7 +367,7 @@ window.cubx.amd.define([ 'crcLoader' ],
         describe('root dependencie included valid and not valid entries', function () {
           var origRootDependencies;
           beforeEach(function () {
-            window.cubx.CRCInit = {rootDependencies: []};
+            window.cubx.CRCInit = { rootDependencies: [] };
             window.cubx.CRCInit.rootDependencies.push({
               artifactId: 'my-elem'
             });
@@ -386,8 +387,106 @@ window.cubx.amd.define([ 'crcLoader' ],
             crcLoader._checkRootDependencies();
             window.cubx.CRCInit.rootDependencies.should.be.not.eql(origRootDependencies);
             window.cubx.CRCInit.rootDependencies.should.have.length(2);
-            window.cubx.CRCInit.rootDependencies[0].should.be.an('object');
-            window.cubx.CRCInit.rootDependencies[1].should.be.an('object');
+            window.cubx.CRCInit.rootDependencies[ 0 ].should.be.an('object');
+            window.cubx.CRCInit.rootDependencies[ 1 ].should.be.an('object');
+          });
+        });
+      });
+
+      describe('processing  after start event', function () {
+        var _checkRootDependenciesStub;
+        var _addComponentDependenciesToRootDependenciesStub;
+        var _addDependenciesAndExcludesToRootDependenciesStub;
+        var _bootstrapCRCStub;
+        var originCubx;
+
+        beforeEach(function () {
+          originCubx = window.cubx;
+          window.cubx = {
+            CRCInit: {
+              startEvent: 'myStartEvent',
+              runtimeMode: 'dev'
+            }
+          };
+
+          _checkRootDependenciesStub = sinon.stub(crcLoader, '_checkRootDependencies', function () {
+            // do nothing;
+          });
+          _addComponentDependenciesToRootDependenciesStub = sinon.stub(crcLoader, '_addComponentDependenciesToRootDependencies', function () {
+            // do nothing;
+          });
+          _addDependenciesAndExcludesToRootDependenciesStub = sinon.stub(crcLoader, '_addDependenciesAndExcludesToRootDependencies', function () {
+            // do nothing;
+          });
+          _bootstrapCRCStub = sinon.stub(crcLoader, '_bootstrapCRC', function () {
+            // do nothing;
+          });
+
+          crcLoader.run();
+          var startEvent = new CustomEvent(window.cubx.CRCInit.startEvent);
+          document.dispatchEvent(startEvent);
+        });
+        afterEach(function () {
+          crcLoader._checkRootDependencies.restore();
+          crcLoader._addComponentDependenciesToRootDependencies.restore();
+          crcLoader._addDependenciesAndExcludesToRootDependencies.restore();
+          crcLoader._bootstrapCRC.restore();
+          window.cubx = originCubx;
+        });
+        describe('processing will be done', function () {
+          it('_checkRootDependencies should be called once', function (done) {
+            window.setTimeout(function () {
+              _checkRootDependenciesStub.should.be.calledOnce;
+              done();
+            }, 1);
+          });
+          it('_addComponentDependenciesToRootDependencies should be called once', function (done) {
+            window.setTimeout(function () {
+              _addComponentDependenciesToRootDependenciesStub.should.be.calledOnce;
+              done();
+            });
+          });
+          it('_addDependenciesAndExcludesToRootDependencies should be called once', function (done) {
+            window.setTimeout(function () {
+              _addDependenciesAndExcludesToRootDependenciesStub.should.be.calledOnce;
+              done();
+            }, 1);
+          });
+          it('_bootstrapCRC should be called once', function (done) {
+            window.setTimeout(function () {
+              _bootstrapCRCStub.should.be.calledOnce;
+              done();
+            }, 1);
+          });
+        });
+        describe('processing will be done once by repeated fired start event', function () {
+          beforeEach(function () {
+            var startEvent = new CustomEvent(window.cubx.CRCInit.startEvent);
+            document.dispatchEvent(startEvent);
+          });
+          it('_checkRootDependencies should be called once', function (done) {
+            window.setTimeout(function () {
+              _checkRootDependenciesStub.should.be.calledOnce;
+              done();
+            }, 1);
+          });
+          it('_addComponentDependenciesToRootDependencies should be called once', function (done) {
+            window.setTimeout(function () {
+              _addComponentDependenciesToRootDependenciesStub.should.be.calledOnce;
+              done();
+            });
+          });
+          it('_addDependenciesAndExcludesToRootDependencies should be called once', function (done) {
+            window.setTimeout(function () {
+              _addDependenciesAndExcludesToRootDependenciesStub.should.be.calledOnce;
+              done();
+            }, 1);
+          });
+          it('_bootstrapCRC should be called once', function (done) {
+            window.setTimeout(function () {
+              _bootstrapCRCStub.should.be.calledOnce;
+              done();
+            }, 1);
           });
         });
       });
