@@ -689,10 +689,10 @@
   CIF.prototype._initCubxElementsInRoot = function (element, memberIds) {
     var componentName = this._getTagname(element);
     var resolvedComponentManifest = window.cubx.CRC.getResolvedComponent(componentName);
-    var originMemeberId = element.getAttribute('member-id');
+    var originMemberId = element.getAttribute('member-id');
     var originId = element.getAttribute('id');
     var originRuntimeId = element.getAttribute('runtime-id');
-    var memberId = originMemeberId || originId || guid();
+    var memberId = originMemberId || originId || guid();
     var componentId = resolvedComponentManifest.webpackageId + '/' + resolvedComponentManifest.artifactId;
     var runtimeId = componentId + '.' + memberId;
     if (_.includes(memberIds, memberId)) {
@@ -709,7 +709,7 @@
       element.setAttribute('runtime-id', runtimeId);
     }
 
-    if (!originMemeberId) {
+    if (!originMemberId) {
       element.setAttribute('member-id', memberId);
     }
 
