@@ -244,14 +244,12 @@
 
     //  dispatch and listen to EventFactory.types.COMPONENT_READY also on CompoundComponents
     node.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
-      if (me._isInitialProcessing() || me._isObserverTriggeredProcessing()) {
-        var runtimeId = evt.target.getAttribute('runtime-id');
-        if (me._componentReady[ runtimeId ]) {
-          me._componentReady[ runtimeId ].ready = true;
-        }
-        if (!me._hasElementsWaitingForReady()) {
-          me._fireAllComponentsReady(node);
-        }
+      var runtimeId = evt.target.getAttribute('runtime-id');
+      if (me._componentReady[ runtimeId ]) {
+        me._componentReady[ runtimeId ].ready = true;
+      }
+      if (!me._hasElementsWaitingForReady()) {
+        me._fireAllComponentsReady(node);
       }
     });
 
@@ -680,7 +678,7 @@
    * * componentId will be genereted. An existing not valid componentId will overriden.
    * * The element will be added to rootContext._components property.
    * * If the element has a Context, the Context._parent will setted to the rootContext
-   * * If the elment is a compound component, the subtree will created.
+   * * If the element is a compound component, the subtree will created.
    * @memberOf CIF
    * @param {HtmlElement} element
    * @param {array} memberIds
