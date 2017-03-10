@@ -389,6 +389,9 @@
       if (parentElem) {
         context = parentElem.Context;
       }
+      if (!context && this.getCRCRootNode() && this.getCRCRootNode().Context && this.getCRCRootNode().Context._components.find((comp) => comp === element)) {
+        context = this.getCRCRootNode().Context;
+      }
     }
     if (context) {
       // 1. remove connection if element is a source
@@ -401,7 +404,7 @@
         context.getComponents().splice(index, 1);
       }
     } else {
-      console.warn('No context found for removed cubble "' + element + '".');
+      console.warn('No context found for removed cubble "' + element.tagName.toLowerCase() + '".');
     }
   };
 
