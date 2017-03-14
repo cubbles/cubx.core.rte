@@ -389,7 +389,7 @@
       if (parentElem) {
         context = parentElem.Context;
       }
-      if (!context && this.getCRCRootNode() && this.getCRCRootNode().Context && this.getCRCRootNode().Context._components.find((comp) => comp === element)) {
+      if (!context && this.getCRCRootNode() && this.getCRCRootNode().Context && this.getCRCRootNode().Context._components.find(function (comp) { return comp === element; })) {
         context = this.getCRCRootNode().Context;
       }
     }
