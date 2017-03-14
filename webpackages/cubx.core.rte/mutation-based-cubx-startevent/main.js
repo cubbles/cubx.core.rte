@@ -15,6 +15,9 @@
     if (cubxEmitEvent) {
       var event = new Event(cubxEmitEvent);
       document.dispatchEvent(event);
+    } else {
+      console.warn('Can\'t dispatch event since the attribute \'' + cubxEmitEventAttr + '\' is undefined.' +
+        '\n Please provide a value for this attribute within the script tag');
     }
   }
 
@@ -23,17 +26,34 @@
    * @private
    */
   function _processMutation () {
-    var cubxMutation = srcElement.getAttribute(cubxMutationAttr);
     var cubxMutationTargetNode = srcElement.getAttribute(cubxMutationTargetNodeAttr) || 'body';
-    if (cubxMutation && cubxMutationTargetNode) {
-      var observer = new MutationObserver(function (mutations) {
-        _dispatchEmitEvent();
-        observer.disconnect();
-      });
-      cubxMutation = fromSimpleQuoteToDoubleQuotes(cubxMutation);
-      var targetNode = document.querySelector(cubxMutationTargetNode);
-      observer.observe(targetNode, JSON.parse(cubxMutation));
+    var targetNode = document.querySelector(cubxMutationTargetNode);
+    if (!targetNode) {
+      console.warn('Can\'t process mutation since no node could be found using the \'' +
+        cubxMutationTargetNode + '\' selector.' +
+        '\nPlease provide a valid css selector using the \'' + cubxMutationTargetNodeAttr +
+        '\' attribute within the script tag.');
+      return;
     }
+    var cubxMutation = srcElement.getAttribute(cubxMutationAttr);
+    if (!cubxMutation) {
+      console.warn('Can\'t process mutation since the attribute \'' + cubxMutationAttr + '\' is undefined.' +
+        '\nPlease provide a value for this attribute within the src tag');
+      return;
+    }
+    try {
+      cubxMutation = fromSimpleQuoteToDoubleQuotes(cubxMutation);
+      var mutationObject = JSON.parse(cubxMutation);
+    } catch (e) {
+      console.warn('Can\'t process mutation since the \'' + cubxMutationAttr + '\' value is invalid.' +
+        '\nRemember to use JSON notation (Single quotes are also supported).');
+      return;
+    }
+    var observer = new MutationObserver(function (mutations) {
+      _dispatchEmitEvent();
+      observer.disconnect();
+    });
+    observer.observe(targetNode, mutationObject);
   }
 
   /**
@@ -49,6 +69,11 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    if (!srcElement) {
+      console.warn('Can\'t process mutation since the \'' + cubxMutationAttr +
+        '\' attribute is undefined. Please provide a value for this attribute within the script tag.');
+      return;
+    }
     _processMutation();
   });
 })();
