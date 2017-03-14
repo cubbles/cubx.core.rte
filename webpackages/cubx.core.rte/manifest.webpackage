@@ -98,8 +98,9 @@
             "endpointId": "html-import"
           },
           {
-            "webpackageId": "polymer-1.2.3@1.1.0",
-            "artifactId": "polymer"
+            "webpackageId": "polymer-1.2.3@1.0.2",
+            "artifactId": "polymer",
+            "endpointId": "main"
           },
           {
             "artifactId": "cubx-component-mixin"
