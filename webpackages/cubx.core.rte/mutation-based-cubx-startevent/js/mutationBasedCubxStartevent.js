@@ -5,14 +5,14 @@
     this.cubxMutationAttr = 'data-cubx-mutation';
     this.cubxMutationTargetNodeAttr = 'data-cubx-mutation-target-node';
     this.cubxEmitEventAttr = 'data-cubx-emit-event';
-    this.srcElement = document.querySelector('[' + this.cubxMutationAttr + ']');
+    this.scriptElement = document.querySelector('[' + this.cubxMutationAttr + ']');
   };
 
   /**
    * Dispatch 'emitEvent' so that the CRC starts working
    */
   MutationBasedCubxStartevent.prototype._dispatchEmitEvent = function () {
-    var cubxEmitEvent = this.srcElement.getAttribute(this.cubxEmitEventAttr);
+    var cubxEmitEvent = this.scriptElement.getAttribute(this.cubxEmitEventAttr);
     if (cubxEmitEvent) {
       var event = new Event(cubxEmitEvent);
       document.dispatchEvent(event);
@@ -27,7 +27,7 @@
    * @private
    */
   MutationBasedCubxStartevent.prototype._processMutation = function () {
-    var cubxMutationTargetNode = this.srcElement.getAttribute(this.cubxMutationTargetNodeAttr) || 'body';
+    var cubxMutationTargetNode = this.scriptElement.getAttribute(this.cubxMutationTargetNodeAttr) || 'body';
     var targetNode = document.querySelector(cubxMutationTargetNode);
     if (!targetNode) {
       console.warn('Can\'t process mutation since no node could be found using the \'' +
@@ -36,7 +36,7 @@
         '\' attribute within the script tag.');
       return;
     }
-    var cubxMutation = this.srcElement.getAttribute(this.cubxMutationAttr);
+    var cubxMutation = this.scriptElement.getAttribute(this.cubxMutationAttr);
     if (!cubxMutation) {
       console.warn('Can\'t process mutation since the attribute \'' + this.cubxMutationAttr + '\' is undefined.' +
         '\nPlease provide a value for this attribute within the src tag');
@@ -71,7 +71,7 @@
 
   var mutationBasedCubxStartevent = new MutationBasedCubxStartevent();
   document.addEventListener('DOMContentLoaded', function () {
-    if (!mutationBasedCubxStartevent.srcElement) {
+    if (!mutationBasedCubxStartevent.scriptElement) {
       console.warn('Can\'t process mutation since the \'' + mutationBasedCubxStartevent.cubxMutationAttr +
         '\' attribute is undefined. Please provide a value for this attribute within the script tag.');
       return;
