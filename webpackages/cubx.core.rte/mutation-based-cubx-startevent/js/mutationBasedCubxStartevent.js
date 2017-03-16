@@ -2,10 +2,22 @@
 (function () {
   'use strict';
   var MutationBasedCubxStartevent = function () {
-    this.cubxMutationAttr = 'data-cubx-mutation';
+    this.mutation = {childList: true};
     this.cubxMutationTargetNodeAttr = 'data-cubx-mutation-target-node';
     this.cubxEmitEventAttr = 'data-cubx-emit-event';
-    this.scriptElement = document.querySelector('[' + this.cubxMutationAttr + ']');
+    this.scriptElement = document.querySelector('[' + this.cubxEmitEventAttr + ']');
+    this.start();
+  };
+
+  MutationBasedCubxStartevent.prototype.start = function () {
+    document.addEventListener('DOMContentLoaded', function () {
+      if (!this.scriptElement) {
+        console.warn('Can\'t process mutation since the \'' + this.cubxEmitEventAttr +
+          '\' attribute is undefined. Please provide a value for this attribute within the script tag.');
+        return;
+      }
+      this._processMutation();
+    }.bind(this));
   };
 
   /**
@@ -16,6 +28,7 @@
     if (cubxEmitEvent) {
       var event = new Event(cubxEmitEvent);
       document.dispatchEvent(event);
+      console.log('event dispatched');
     } else {
       console.warn('Can\'t dispatch event since the attribute \'' + this.cubxEmitEventAttr + '\' is undefined.' +
         '\n Please provide a value for this attribute within the script tag');
@@ -36,25 +49,12 @@
         '\' attribute within the script tag.');
       return;
     }
-    var cubxMutation = this.scriptElement.getAttribute(this.cubxMutationAttr);
-    if (!cubxMutation) {
-      console.warn('Can\'t process mutation since the attribute \'' + this.cubxMutationAttr + '\' is undefined.' +
-        '\nPlease provide a value for this attribute within the src tag');
-      return;
-    }
-    try {
-      cubxMutation = this.fromSimpleQuoteToDoubleQuotes(cubxMutation);
-      var mutationObject = JSON.parse(cubxMutation);
-    } catch (e) {
-      console.warn('Can\'t process mutation since the \'' + this.cubxMutationAttr + '\' value is invalid.' +
-        '\nRemember to use JSON notation (Single quotes are also supported).');
-      return;
-    }
-    var observer = new MutationObserver(function (mutations) {
+    this.observer = new MutationObserver(function (mutations) {
       this._dispatchEmitEvent();
-      observer.disconnect();
+      this.observer.disconnect();
+      window.cubx.mutationBasedCubxStartevent = null;
     }.bind(this));
-    observer.observe(targetNode, mutationObject);
+    this.observer.observe(targetNode, this.mutation);
   };
 
   /**
@@ -68,19 +68,9 @@
     }
     return string;
   };
-
-  var mutationBasedCubxStartevent = new MutationBasedCubxStartevent();
-  document.addEventListener('DOMContentLoaded', function () {
-    if (!mutationBasedCubxStartevent.scriptElement) {
-      console.warn('Can\'t process mutation since the \'' + mutationBasedCubxStartevent.cubxMutationAttr +
-        '\' attribute is undefined. Please provide a value for this attribute within the script tag.');
-      return;
-    }
-    mutationBasedCubxStartevent._processMutation();
-  });
   if (!window.cubx) {
     window.cubx = {};
   }
-  window.cubx.mutationBasedCubxStartevent = mutationBasedCubxStartevent;
+  window.cubx.mutationBasedCubxStartevent = new MutationBasedCubxStartevent();
 })();
 
