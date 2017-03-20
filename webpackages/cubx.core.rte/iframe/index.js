@@ -37,11 +37,11 @@
   }
 
   /**
-   * Dispatch 'componentReady' event so that the CRC starts working
+   * Dispatch 'componentAppend' event so that the CRC starts working
    */
-  function _dispatchComponentReadyEvent () {
+  function _dispatchComponentAppendEvent () {
     var event = document.createEvent('CustomEvent');
-    event.initCustomEvent('componentReady', true, true, {});
+    event.initCustomEvent('componentAppend', true, true, {});
     document.dispatchEvent(event);
   }
 
@@ -183,7 +183,7 @@
         _addMutationObserver();
       }
       document.querySelector('body').appendChild(component);
-      _dispatchComponentReadyEvent();
+      _dispatchComponentAppendEvent();
     }
   }
 
@@ -211,20 +211,22 @@
       rteWebpackageId = iframeURI.substring(initIndex);
       rteWebpackageId = rteWebpackageId.substring(0, rteWebpackageId.indexOf('/'));
     }
-    scriptElement = _createScriptElement(
+    //
+    var scriptElement = _createScriptElement(
       {
         'src': '../../' + rteWebpackageId + '/webcomponents-lite/webcomponents-lite.js'
       },
-      _dispatchComponentReadyEvent
+      _dispatchComponentAppendEvent
     );
+
     document.head.appendChild(scriptElement);
-    var scriptElement = _createScriptElement(
+    scriptElement = _createScriptElement(
       {
         'src': '../../' + rteWebpackageId + '/crc-loader/js/main.js',
         'data-crcinit-loadcif': 'true',
-        'data-cubx-startevent': 'componentReady'
+        'data-cubx-startevent': 'componentAppend'
       },
-      _dispatchComponentReadyEvent
+      _dispatchComponentAppendEvent
     );
     document.head.appendChild(scriptElement);
   }

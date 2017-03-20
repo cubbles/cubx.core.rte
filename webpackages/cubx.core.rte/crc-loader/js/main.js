@@ -124,21 +124,6 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
   window.cubx.CRCInit.rteWebpackageId = rteWebpackageId.substring(rteWebpackageId.lastIndexOf('/') + 1);
 
   /*
-   * Load webcomponents-lite.min.js when needed
-   */
-  (function () {
-    if ('registerElement' in document &&
-      'import' in document.createElement('link') &&
-      'content' in document.createElement('template')) {
-    } else {
-      // polyfill the platform!
-      var e = document.createElement('script');
-      e.src = crcLoaderBaseUrl.replace(/\/crc-loader$/, '/webcomponents/webcomponents-lite.min.js');
-      document.head.appendChild(e);
-    }
-  })();
-
-  /*
    * Set option 'loadCIF' (default == 'true')
    */
   (function () {
