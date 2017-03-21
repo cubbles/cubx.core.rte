@@ -1,4 +1,4 @@
-/* globals _,guid*/
+/* globals _,guid */
 'use strict';
 (function () {
   var cubxComponentMixin = {};
@@ -272,7 +272,9 @@
     if (!_.isEmpty(origValue) || _.isNumber(origValue) || _.isBoolean(origValue)) {
       value = origValue;
     } else if (!_.isEmpty(type) && this._isValidType(type) && _.isEmpty(origValue)) {
-      value = this._getDefaultValueForType(type);
+      value = this._getDefaultValueForType(type, origValue);
+    } else {
+      value = origValue;
     }
     return value;
   };
@@ -394,19 +396,22 @@
    * Get the defaultvalue for the type.
    *
    * @param {String} type type of the slot
+   * @param {*} fallback value
    * @returns {*}
    * @private
    * @memberOf cubxComponentMixin
    */
-  cubxComponentMixin._getDefaultValueForType = function (type) {
-    var value;
+  cubxComponentMixin._getDefaultValueForType = function (type, fallbackValue) {
+    var value = fallbackValue;
 
     switch (type.toLowerCase()) {
       case 'string':
-        value = '';
         break;
       case 'number':
         value = 0;
+        break;
+      case 'boolean':
+        value = false;
         break;
       case 'array':
         break;
@@ -511,7 +516,7 @@
    */
   cubxComponentMixin._isValidType = function (type) {
     // TODO typescript Types oder types mit jsonschema  prüfen?
-    var validType = [ 'object', 'string', 'number', 'array' ];
+    var validType = [ 'object', 'string', 'number', 'array', 'boolean' ];
     return _.includes(validType, type.toLowerCase());
   };
 

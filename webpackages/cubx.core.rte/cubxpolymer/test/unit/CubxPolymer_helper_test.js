@@ -20,48 +20,103 @@ describe('CubxPolymer (helper)', function () {
     });
 
     describe('_initValue', function () {
-      it('should be an empty string, if arg1 is null and arg2 is undefined', function () {
+      it('should be null, if arg1 is null and arg2 is undefined', function () {
         expect(component._initValue('test')).to.be.string;
-        expect(component._initValue(null)).to.be.empty;
+        expect(component._initValue(null)).to.be.null;
       });
-      it('should be an empty string, if arg1 is null and arg2 is "string"', function () {
-        expect(component._initValue(null, 'string')).to.be.a.string;
-        expect(component._initValue(null, 'string')).to.be.empty;
+      it('should be an empty string (""), if arg1 is an empty string and arg2 is undefined', function () {
+        expect(component._initValue('')).to.be.string;
       });
-      it('should be an empty string, if arg1 is null and arg2 is "STring"', function () {
-        expect(component._initValue(null, 'string')).to.be.a.string;
-        expect(component._initValue(null, 'string')).to.be.empty;
-      });
-      it('should be an empty array, if arg1 is null and arg2 is "array"', function () {
-        expect(component._initValue(null, 'array')).to.be.a.string;
-        expect(component._initValue(null, 'array')).to.be.empty;
-      });
-      it('should be an empty object, if arg1 is null and arg2 is "object"', function () {
-        expect(component._initValue(null, 'object')).to.be.an.object;
-        expect(component._initValue(null, 'object')).to.be.empty;
-      });
-      it('should be 0, if arg1 is null and arg2 is  "number"', function () {
-        expect(component._initValue(null)).to.be.a.number;
-        expect(component._initValue(null, 'number')).to.be.equal(0);
+      it('should be an empty string (""), if arg1 is an empty string and arg2 is string', function () {
+        expect(component._initValue('', 'string')).to.be.string;
       });
 
-      it('should be a string, if arg1 is a string and arg2 is undefined', function () {
-        var value = 'test';
-        expect(component._initValue(value)).to.be.string;
-        expect(component._initValue(value)).to.be.equal(value);
-      });
       it('should be a string, if arg1 is a string and arg2 is "string"', function () {
         var value = 'test';
-        expect(component._initValue(value)).to.be.a.string;
+        expect(component._initValue(value, 'string')).to.be.a.string;
         expect(component._initValue(value, 'string')).to.be.equal(value);
       });
-      it('should be a string, if arg1 is a string and arg2 is "string"', function () {
-        var value = 'test';
-        expect(component._initValue(value)).to.be.a.string;
-        expect(component._initValue(value, 'string')).to.be.equal(value);
+      it('should be null, if arg1 is null and arg2 is "string"', function () {
+        expect(component._initValue(null, 'string')).to.be.a.string;
+        expect(component._initValue(null, 'string')).to.be.null;
+      });
+
+      it('should be an empty string, if arg1 is null and arg2 is "string"', function () {
+        expect(component._initValue('', 'string')).to.be.a.string;
+        expect(component._initValue('', 'string')).to.be.equal('');
+      });
+      it('should be undefined, if arg1 is null and arg2 is "string"', function () {
+        expect(component._initValue(undefined, 'string')).to.be.undefined;
+      });
+      it('should be null, if arg1 is null and arg2 is "array"', function () {
+        expect(component._initValue(null, 'array')).to.be.an.array;
+        expect(component._initValue(null, 'array')).to.be.null;
+      });
+      it('should beundefined, if arg1 is null and arg2 is "array"', function () {
+        expect(component._initValue(undefined, 'array')).to.be.undefined;
+      });
+      it('should be an empty array, if arg1 is "[]" and arg2 is "array"', function () {
+        expect(component._initValue([], 'array')).to.be.an.array;
+        expect(component._initValue([], 'array')).to.be.eql([]);
+      });
+      it('should be "[1,2,3]", if arg1 is "[1,2,3]" and arg2 is "array"', function () {
+        expect(component._initValue([1, 2, 3], 'array')).to.be.an.array;
+        expect(component._initValue([1, 2, 3], 'array')).to.be.eql([1, 2, 3]);
+      });
+      it('should be null, if arg1 is null and arg2 is "object"', function () {
+        expect(component._initValue(null, 'object')).to.be.an.object;
+        expect(component._initValue(null, 'object')).to.be.null;
+      });
+      it('should be {}, if arg1 is {} and arg2 is "object"', function () {
+        expect(component._initValue({}, 'object')).to.be.an.object;
+        expect(component._initValue({}, 'object')).to.be.eql({});
+      });
+      it('should be {foo:"baz"}, if arg1 is {foo:"baz"} and arg2 is "object"', function () {
+        expect(component._initValue({foo: 'baz'}, 'object')).to.be.an.object;
+        expect(component._initValue({foo: 'baz'}, 'object')).to.be.eql({foo: 'baz'});
+      });
+      it('should be undefined, if arg1 is null and arg2 is "object"', function () {
+        expect(component._initValue(undefined, 'object')).to.be.undefined;
+      });
+      it('should be 0, if arg1 is null and arg2 is  "number"', function () {
+        expect(component._initValue(null, 'number')).to.be.a.number;
+        expect(component._initValue(null, 'number')).to.be.equal(0);
+      });
+      it('should be 0, if arg1 is undefined and arg2 is  "number"', function () {
+        expect(component._initValue(undefined, 'number')).to.be.a.number;
+        expect(component._initValue(undefined, 'number')).to.be.equal(0);
+      });
+      it('should be 0, if arg1 is 0 and arg2 is  "number"', function () {
+        expect(component._initValue(0, 'number')).to.be.a.number;
+        expect(component._initValue(0, 'number')).to.be.equal(0);
+      });
+      it('should be 15, if arg1 is 15 and arg2 is  "number"', function () {
+        expect(component._initValue(15, 'number')).to.be.a.number;
+        expect(component._initValue(15, 'number')).to.be.equal(15);
+      });
+      it('should be false, if arg1 is false and arg2 is  "boolean"', function () {
+        expect(component._initValue(false, 'boolean')).to.be.a.boolean;
+        expect(component._initValue(false, 'boolean')).to.be.equal(false);
+      });
+      it('should be true, if arg1 is true and arg2 is  "boolean"', function () {
+        expect(component._initValue(true, 'boolean')).to.be.a.boolean;
+        expect(component._initValue(true, 'boolean')).to.be.equal(true);
+      });
+      it('should be "dummy", if arg1 is "dummy" and arg2 is  "boolean"', function () {
+        expect(component._initValue('dummy', 'boolean')).to.be.a.boolean;
+        expect(component._initValue('dummy', 'boolean')).to.be.equal('dummy');
+      });
+      it('should be false, if arg1 is null and arg2 is  "boolean"', function () {
+        expect(component._initValue(null, 'boolean')).to.be.a.boolean;
+        expect(component._initValue(null, 'boolean')).to.be.equal(false);
+      });
+      it('should be false, if arg1 is null and arg2 is  "boolean"', function () {
+        expect(component._initValue(undefined, 'boolean')).to.be.a.boolean;
+        expect(component._initValue(undefined, 'boolean')).to.be.equal(false);
       });
       it('should be a string, if arg1 is a string is and arg2 not "string"', function () {
         expect(component._initValue('test', 'object')).to.be.equal('test');
+        expect(component._initValue('test', 'object')).to.be.a.string;
       });
       it('should be an object, if arg1 is an object is and arg2is  undefined', function () {
         var value = { test: 'test' };
@@ -73,10 +128,20 @@ describe('CubxPolymer (helper)', function () {
         expect(component._initValue(value, '???')).to.an.object;
         expect(component._initValue(value, '???')).to.be.deep.equal(value);
       });
-
       it('should be an empty string, if arg1 is null is and arg2 is "???"', function () {
         expect(component._initValue(null, '???')).to.an.string;
-        expect(component._initValue(null, '???')).to.be.empty;
+        expect(component._initValue(null, '???')).to.be.null;
+      });
+      it('should be an empty string, if arg1 is null is and arg2 is "???"', function () {
+        expect(component._initValue(undefined, '???')).to.be.undefined;
+      });
+      it('should be an empty string, if arg1 is null is and arg2 is "???"', function () {
+        expect(component._initValue(null, '???')).to.a.string;
+        expect(component._initValue(null, '???')).to.be.null;
+      });
+      it('should be {foo:"baz"}, if arg1 is {foo:"baz"} is and arg2 is "string"', function () {
+        expect(component._initValue({foo: 'baz'}, 'string')).to.an.object;
+        expect(component._initValue({foo: 'baz'}, 'string')).to.be.eql({foo: 'baz'});
       });
     });
 

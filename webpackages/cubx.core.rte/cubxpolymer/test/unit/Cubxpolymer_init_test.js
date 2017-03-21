@@ -183,7 +183,7 @@ describe('CubxPolymer (init)', function () {
           function () {
             it('should have private model attribute of slot', function () {
               var component = document.querySelector(elementName);
-              component.model.should.have.property('stringvalue2', '');
+              component.model.should.have.property('stringvalue2', undefined);
             });
           });
         describe('element Slot variable initialized korrekt if the type is a number and the value not defined',
