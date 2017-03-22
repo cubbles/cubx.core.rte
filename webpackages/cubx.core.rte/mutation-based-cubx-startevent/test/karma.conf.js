@@ -51,8 +51,7 @@ module.exports = function (config) {
     colors: true,
 
     junitReporter: {
-      outputDir: 'test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
+      outputFile: 'test-results/surefire-reports/TEST-karma.xml'
     },
 
     htmlReporter: {
