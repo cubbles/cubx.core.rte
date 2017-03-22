@@ -210,13 +210,6 @@
         "resources": [
           "html-import.html"
         ],
-        "runnables": [
-          {
-            "name": "Demo App",
-            "path": "/demo/index.html",
-            "description": "Call this app to see an example of the use of mutation-based-cubx-start-event."
-          }
-        ],
         "dependencies": []
       }
     ],
