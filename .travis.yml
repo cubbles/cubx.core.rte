@@ -24,6 +24,7 @@ script:
  - grunt karma:crc-loader
  - grunt karma:cubxpolymer
  - grunt karma:dynamic-connection-utils
+ - grunt karma:mutation-based-cubx-startevent
 
 notifications:
   email:
