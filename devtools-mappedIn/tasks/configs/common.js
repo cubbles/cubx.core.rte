@@ -30,7 +30,10 @@ module.exports.tasks = {
     'dynamic-connection-utils': {
       configFile: '<%= param.src %>/dynamic-connection-utils/test/karma.conf.js',
       singleRun: true
+    },
+    'mutation-based-cubx-startevent': {
+      configFile: '<%= param.src %>/mutation-based-cubx-startevent/test/karma.conf.js',
+      singleRun: true
     }
-
   }
 };
