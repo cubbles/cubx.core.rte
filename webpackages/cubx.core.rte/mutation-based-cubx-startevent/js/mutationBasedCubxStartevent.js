@@ -28,7 +28,6 @@
     if (cubxEmitEvent) {
       var event = new Event(cubxEmitEvent);
       document.dispatchEvent(event);
-      console.log('event dispatched');
     } else {
       console.warn('Can\'t dispatch event since the attribute \'' + this.cubxEmitEventAttr + '\' is undefined.' +
         '\n Please provide a value for this attribute within the script tag');
