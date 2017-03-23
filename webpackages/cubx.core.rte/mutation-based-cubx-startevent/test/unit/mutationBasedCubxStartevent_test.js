@@ -5,13 +5,6 @@ describe('MutationBasedCubxStartevent', function () {
   before(function () {
     mutCubxStartevent = window.cubx.mutationBasedCubxStartevent;
   });
-  describe('#fromSimpleQuoteToDoubleQuotes', function () {
-    it('should return a string with double quotes instead of single quotes', function () {
-      var singleQuoteString = '{ \'key\': \'value\', \'key2\': true, \'key3\': 2}';
-      var doubleQuoteString = mutCubxStartevent.fromSimpleQuoteToDoubleQuotes(singleQuoteString);
-      expect(doubleQuoteString).to.equal('{ "key": "value", "key2": true, "key3": 2}');
-    });
-  });
   describe('#dispatchEvent', function () {
     var spyWarn;
     beforeEach(function () {

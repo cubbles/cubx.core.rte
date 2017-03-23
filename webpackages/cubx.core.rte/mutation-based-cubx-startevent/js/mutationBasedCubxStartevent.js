@@ -9,6 +9,9 @@
     this.start();
   };
 
+  /**
+   * Make the utility to start working
+   */
   MutationBasedCubxStartevent.prototype.start = function () {
     document.addEventListener('DOMContentLoaded', function () {
       if (!this.scriptElement) {
@@ -56,17 +59,6 @@
     this.observer.observe(targetNode, this.mutation);
   };
 
-  /**
-   * Replaces all simple quote occurrences to double quote
-   * @param  {string} string - String to be processed
-   * @returns {*} string without single quotes
-   */
-  MutationBasedCubxStartevent.prototype.fromSimpleQuoteToDoubleQuotes = function (string) {
-    if (string.indexOf('\'') >= 0) {
-      string = string.replace(/'/gi, '"');
-    }
-    return string;
-  };
   if (!window.cubx) {
     window.cubx = {};
   }
