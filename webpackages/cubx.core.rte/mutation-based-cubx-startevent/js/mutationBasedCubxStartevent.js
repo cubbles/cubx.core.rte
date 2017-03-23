@@ -3,7 +3,7 @@
   'use strict';
   var MutationBasedCubxStartevent = function () {
     this.mutation = {childList: true};
-    this.cubxMutationTargetNodeAttr = 'data-cubx-mutation-target-node';
+    this.cubxMutationTargetNodeAttr = 'data-cubx-target-selector';
     this.cubxEmitEventAttr = 'data-cubx-emit-event';
     this.scriptElement = document.querySelector('[' + this.cubxEmitEventAttr + ']');
     this.start();
