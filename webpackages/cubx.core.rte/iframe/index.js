@@ -51,7 +51,8 @@
   function _postIframeHeight () {
     var component = document.querySelector(artifactId);
     if (component) {
-      var newHeight = component.scrollHeight;
+      var boundingRect = component.getBoundingClientRect();
+      var newHeight = boundingRect.bottom + boundingRect.top;
       if (newHeight !== lastHeight) {
         window.parent.postMessage(
           {
@@ -71,9 +72,7 @@
    */
   function _addMutationObserver () {
     var observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        _postIframeHeight();
-      });
+      _postIframeHeight();
     });
 
     var targetNode = document.body;
