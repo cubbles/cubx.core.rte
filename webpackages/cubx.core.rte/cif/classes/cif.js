@@ -717,7 +717,7 @@
     if (this._isElementaryComponent(element)) {
       current = element;
       // tree.setAttribute('runtime-id', runtimeId);
-      if (!current.isComponentReady) {
+      if (!current._componentReady) {
         this._componentReady[ runtimeId ] = {
           ready: false
         };
