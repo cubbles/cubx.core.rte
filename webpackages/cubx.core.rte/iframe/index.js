@@ -72,7 +72,9 @@
    */
   function _addMutationObserver () {
     var observer = new MutationObserver(function (mutations) {
-      _postIframeHeight();
+      mutations.forEach(function (mutation) {
+        _postIframeHeight();
+      });
     });
 
     var targetNode = document.body;
