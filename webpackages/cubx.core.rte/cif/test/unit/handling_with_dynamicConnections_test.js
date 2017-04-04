@@ -157,10 +157,12 @@ describe('Handling with DynamicConnections', function () {
         elemOne = new constructor();
         elemOne.setAttribute('runtime-id', 'elemOne/elemOne.member1');
         container.appendChild(elemOne);
+        container.Context.addComponent(elemOne);
         constructor = cif.getCompoundComponentElementConstructor('elem-two');
         elemTwo = new constructor();
         elemTwo.setAttribute('runtime-id', 'elemTwo/elemTwo.member2');
         container.appendChild(elemTwo);
+        container.Context.addComponent(elemTwo);
         dynamicConnection = {
           source: {
             runtimeId: 'elemOne/elemOne.member1',
@@ -433,10 +435,12 @@ describe('Handling with DynamicConnections', function () {
         elemOne = new constructor();
         elemOne.setAttribute('runtime-id', 'elemOne/elemOne.member1');
         container.appendChild(elemOne);
+        container.Context.addComponent(elemOne);
         constructor = cif.getCompoundComponentElementConstructor('elem-two');
         elemTwo = new constructor();
         elemTwo.setAttribute('runtime-id', 'elemTwo/elemTwo.member2');
         container.appendChild(elemTwo);
+        container.Context.addComponent(elemTwo);
         dynamicConnection = {
           source: {
             runtimeId: 'elemOne/elemOne.member1',

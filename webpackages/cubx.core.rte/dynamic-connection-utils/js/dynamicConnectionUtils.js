@@ -335,7 +335,7 @@
     var contextElement;
     if (contextRuntimeId === undefined) {
       var rootElement = document.querySelector('[cubx-core-crc]') || document.body;
-      if (elementFindByAttributeValue('runtime-id', elementRuntimeId).parentNode === rootElement) {
+      if (this._isChild(rootElement, elementFindByAttributeValue('runtime-id', elementRuntimeId))) {
         contextElement = rootElement;
       }
     } else {
