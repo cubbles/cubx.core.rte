@@ -31,62 +31,75 @@ describe('MutationBasedCubxStartevent', function () {
     });
   });
   describe('#_processMutation', function () {
-    var spyWarn;
-    var spyFunction;
+    var spyObserveBody;
+    var spyObserveTargetNode;
     var selector = '#observable';
     beforeEach(function () {
       mutCubxStartevent.scriptElement = document.createElement('script');
+      mutCubxStartevent.scriptElement.setAttribute(mutCubxStartevent.cubxEmitEventAttr, eventName);
     });
     afterEach(function () {
       mutCubxStartevent.scriptElement = null;
     });
-    before(function () {
-      spyWarn = sinon.spy(console, 'warn');
-    });
-    after(function () {
-      console.warn.restore();
-    });
-    it('should warn that the node was not found', function () {
-      mutCubxStartevent.scriptElement.setAttribute(mutCubxStartevent.cubxMutationTargetNodeAttr, selector);
-      mutCubxStartevent._processMutation();
-      spyWarn.should.be.calledOnce;
-      spyWarn.should.be.calledWith('Can\'t process mutation since no node could be found using the \'' +
-        selector + '\' selector.' + '\nPlease provide a valid css selector using the \'' +
-        mutCubxStartevent.cubxMutationTargetNodeAttr + '\' attribute within the script tag.');
-    });
-    describe('should process mutation correctly', function () {
-      var div;
+    describe('target node is in DOM', function () {
+      var div = document.createElement('div');
+      var spyFunction;
       beforeEach(function () {
         spyFunction = sinon.spy(mutCubxStartevent, '_dispatchEmitEvent');
-        mutCubxStartevent.scriptElement.setAttribute(mutCubxStartevent.cubxEmitEventAttr, eventName);
       });
       afterEach(function () {
         mutCubxStartevent._dispatchEmitEvent.restore();
       });
-      it('should observe body and process the mutation correctly', function (done) {
-        mutCubxStartevent._processMutation();
-        document.body.appendChild(document.createElement('p'));
-        document.addEventListener(eventName, function () {
-          spyFunction.should.be.calledOnce;
-          done();
+      describe('process body (as target node) mutation', function () {
+        after(function () {
+          document.body.removeChild(div);
+        });
+        it('should observe body and process the mutation correctly', function (done) {
+          mutCubxStartevent._processMutation();
+          document.body.appendChild(div);
+          document.addEventListener(eventName, function () {
+            spyFunction.should.be.calledOnce;
+            done();
+          });
         });
       });
+      describe('observe target node', function () {
+        before(function () {
+          div.setAttribute('id', 'observable');
+          document.body.appendChild(div);
+        });
+        after(function () {
+          document.body.removeChild(div);
+        });
+        it('should observe the element reached by the \'' + selector + '\' selector and process the mutation correctly', function (done) {
+          mutCubxStartevent.scriptElement.setAttribute(mutCubxStartevent.cubxMutationTargetNodeAttr, selector);
+          mutCubxStartevent._processMutation();
+          div.appendChild(document.createElement('p'));
+          document.addEventListener(eventName, function () {
+            spyFunction.should.be.calledOnce;
+            done();
+          });
+        });
+      });
+    });
+    describe('observe body until the node is added', function () {
       before(function () {
-        div = document.createElement('div');
-        div.setAttribute('id', 'observable');
-        document.body.appendChild(div);
+        spyObserveBody = sinon.spy(mutCubxStartevent, '_observeBody');
+        spyObserveTargetNode = sinon.spy(mutCubxStartevent, '_observeTargetNode');
       });
       after(function () {
-        document.body.removeChild(div);
+        mutCubxStartevent._observeBody.restore();
       });
-      it('should observe the element reached by the \'' + selector + '\' selector and process the mutation correctly', function (done) {
+      it('should call \'_observeBody\' since the target node is not in DOM', function () {
         mutCubxStartevent.scriptElement.setAttribute(mutCubxStartevent.cubxMutationTargetNodeAttr, selector);
         mutCubxStartevent._processMutation();
-        div.appendChild(document.createElement('p'));
-        document.addEventListener(eventName, function () {
-          spyFunction.should.be.calledOnce;
-          done();
-        });
+        spyObserveBody.should.be.calledOnce;
+      });
+      it('should detect that the target node was added', function () {
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        mutCubxStartevent._processMutation();
+        spyObserveTargetNode.should.be.calledOnce;
       });
     });
   });
