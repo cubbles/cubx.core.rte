@@ -42,21 +42,41 @@
    * @private
    */
   MutationBasedCubxStartevent.prototype._processMutation = function () {
-    var cubxMutationTargetNode = this.scriptElement.getAttribute(this.cubxMutationTargetNodeAttr) || 'body';
-    var targetNode = document.querySelector(cubxMutationTargetNode);
-    if (!targetNode) {
-      console.warn('Can\'t process mutation since no node could be found using the \'' +
-        cubxMutationTargetNode + '\' selector.' +
-        '\nPlease provide a valid css selector using the \'' + this.cubxMutationTargetNodeAttr +
-        '\' attribute within the script tag.');
-      return;
+    this.targetNodeSelector = this.scriptElement.getAttribute(this.cubxMutationTargetNodeAttr) || 'body';
+    this.targetNode = document.querySelector(this.targetNodeSelector);
+    if (!this.targetNode) {
+      this._observeBody();
+    } else {
+      this._observeTargetNode();
     }
+  };
+
+  /**
+   * Observe the target node to dispatch the emit event when a mutation occurs
+   * @private
+   */
+  MutationBasedCubxStartevent.prototype._observeTargetNode = function () {
     this.observer = new MutationObserver(function (mutations) {
       this._dispatchEmitEvent();
       this.observer.disconnect();
       window.cubx.mutationBasedCubxStartevent = null;
     }.bind(this));
-    this.observer.observe(targetNode, this.mutation);
+    this.observer.observe(this.targetNode, this.mutation);
+  };
+
+  /**
+   * Observe the body until the target node is added to DOM
+   * @private
+   */
+  MutationBasedCubxStartevent.prototype._observeBody = function () {
+    var bodyObserver = new MutationObserver(function (mutations) {
+      this.targetNode = document.querySelector(this.targetNodeSelector);
+      if (this.targetNode) {
+        this._observeTargetNode();
+        bodyObserver.disconnect();
+      }
+    }.bind(this));
+    bodyObserver.observe(document.body, {childList: true});
   };
 
   if (!window.cubx) {
