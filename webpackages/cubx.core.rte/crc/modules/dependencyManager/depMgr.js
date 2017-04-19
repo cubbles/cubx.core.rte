@@ -759,13 +759,20 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._determineWebpackageIdsForRootRependencies = function (rootDependencies) {
-      var regExp = /([^\/]*)?@([^\/]*)/; // matches on valid webpackageIds,
+      var regExp = /([^/]*)?@([^/]*)/; // matches on valid webpackageIds,
       // e.g. matches "cubx.core.artifactsearch@1.5.0" in "https://cubbles.world/sandbox/cubx.core.artifactsearch@1.5.0/artifactsearch/index.html"
       var pathname = window.location.pathname;
       var result = regExp.exec(pathname);
       // if we find a valid webpackageId in pathname use this for rootWebpackageIds. Otherwise we assume that we are requesting
       // the webpage from localhost using cubx developer tools.
-      var webpackageId = result ? result[0] : pathname.split('/')[1];
+      var webpackageId;
+      if (result) {
+        webpackageId = result[0];
+      } else if (pathname.split('/')[1] === 'localstore') { // if in locale request a the virtual store exists
+        webpackageId = pathname.split('/')[2];
+      } else { // if in locale request without store
+        webpackageId = pathname.split('/')[1];
+      }
 
       rootDependencies.forEach(function (dep) {
         if (!dep.hasOwnProperty('webpackageId') && webpackageId) {
@@ -909,9 +916,9 @@ window.cubx.amd.define(
       cache.addComponentCacheEntry(document, artifactId);
     };
 
-    /* ----------------------------------------------------------------------------------------------------------------*/
-    /* --------------------------------------- Dependency Reference Class ---------------------------------------------*/
-    /* ----------------------------------------------------------------------------------------------------------------*/
+    /* ---------------------------------------------------------------------------------------------------------------- */
+    /* --------------------------------------- Dependency Reference Class --------------------------------------------- */
+    /* ---------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Internal Class for representing a dependency item in a dependency list. Each dependency is in fact a reference to an
@@ -989,9 +996,9 @@ window.cubx.amd.define(
       return this.artifactId;
     };
 
-    /* ----------------------------------------------------------------------------------------------------------------*/
-    /* --------------------------------------- Resource Class ---------------------------------------------*/
-    /* ----------------------------------------------------------------------------------------------------------------*/
+    /* ---------------------------------------------------------------------------------------------------------------- */
+    /* --------------------------------------- Resource Class --------------------------------------------------------- */
+    /* ---------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Internal Class representing a Resource.
