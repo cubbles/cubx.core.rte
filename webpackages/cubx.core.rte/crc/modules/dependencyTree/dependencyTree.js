@@ -448,6 +448,40 @@
     };
 
     /**
+     * Returns a JSON object which describes the dependency tree using Id of each dependency, the
+     * structure of the object is as follows:
+     * {
+     *    'rootNodeWebpackageId/rootNodeArtifactId': {
+     *      'child0WebpackageId/child0ArtifactId': {
+     *        'child00WebpackageId/child00ArtifactId': {...},
+     *        ...
+     *        'child0NWebpackageId/child0NArtifactId': {},    // If node has no children then -> {}
+     *      },
+     *      ...
+     *      'childNWebpackageId/childNArtifactId': {...}
+     *     }
+     * };
+     * @memberOf DependencyTree
+     * @param {object} rootNode A DependencyTree.Node within the DependencyTree acting as root
+     * @returns {{}} JSON object describing the depTree
+     */
+    DependencyTree.prototype.toJSON = function (rootNode) {
+      if (!(rootNode instanceof DependencyTree.Node)) {
+        console.error('Parameter \'rootNode\' needs to be an instance of DependencyTree.Node');
+        return;
+      };
+      var jsonObject = {};
+      var childJson = {};
+      if (rootNode.children.length > 0) {
+        rootNode.children.forEach(function (child) {
+          childJson[child.data.getId()] = (this.toJSON(child));
+        }.bind(this));
+      }
+      jsonObject[rootNode.data.getId()] = childJson;
+      return jsonObject;
+    };
+
+    /**
      * Internal Class representing a node of a DependencyTree
      * @constructor
      * @memberOf DependencyTree
