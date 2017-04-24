@@ -181,6 +181,25 @@
           expect(depTree.contains(node)).to.be.false;
         });
       });
+      describe('#toJSON()', function () {
+        it('should return an object describing the tree as JSON object', function () {
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'rootNode2WpId', artifactId: 'rootNode2AId', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'childAWpId', artifactId: 'childAAId', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'childBWpId', artifactId: 'childBAId', referrer: null});
+          depTree.toJSON(rootNode2).should.equal = {
+            'rootNode2WpId/rootNode2AId': {
+              'childAWpId/childAAId': {},
+              'childBWpId/childBAId': {}
+            }
+          };
+        });
+        it('should log an error if parameter is not of type DependencyTree.Node', function () {
+          var consoleStub = sinon.stub(console, 'error');
+          depTree.toJSON('foo', function () {});
+          expect(consoleStub.called).to.be.true;
+          consoleStub.restore();
+        });
+      });
     });
     describe('DependencyTree.Node', function () {
       var depTree;
