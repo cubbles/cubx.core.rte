@@ -454,10 +454,12 @@
      *      {
      *        "webpackageId": ...,
      *        "artifactId": ...,
+     *        "resources": [...], //optional
      *        "children": [
      *          {
      *            "webpackageId": ...,
      *            "artifactId": ...,
+     *            "resources": [...], //optional
      *            "children": [...]
      *          },
      *          ...
@@ -467,12 +469,13 @@
      *     }
      * }
      * @memberOf DependencyTree
+     * @param {boolean} [includeResources=false] Indicates whether to include resources property.
      * @returns {{}} JSON object describing the depTree
      */
-    DependencyTree.prototype.toJSON = function () {
+    DependencyTree.prototype.toJSON = function (includeResources) {
       var rootNodes = [];
       this._rootNodes.forEach(function (rootNode) {
-        rootNodes.push(rootNode.toJSON());
+        rootNodes.push(rootNode.toJSON(includeResources));
       });
       return { rootNodes: rootNodes };
     };
@@ -610,29 +613,35 @@
      * {
      *    "webpackageId": ...,
      *    "artifactId": ...,
+     *    "resources": [...], //optional
      *    "children": [
      *      {
      *        "webpackageId": ...,
      *        "artifactId": ...,
+     *        "resources": [...], //optional
      *        "children": [...]
      *      },
      *      ...
      *    ]
      * }
      * @memberOf DependencyTree
+     * @param {boolean} [includeResources=false] Indicates whether to include resources property.
      * @returns {{}} JSON object describing the depTree
      */
-    DependencyTree.Node.prototype.toJSON = function () {
+    DependencyTree.Node.prototype.toJSON = function (includeResources) {
       var jsonObject = {};
       var children = [];
       if (this.children.length > 0) {
         this.children.forEach(function (child) {
-          children.push(child.toJSON());
+          children.push(child.toJSON(includeResources));
         });
       }
       jsonObject.webpackageId = this.data.webpackageId;
       jsonObject.artifactId = this.data.artifactId;
       jsonObject.children = children;
+      if (includeResources) {
+        jsonObject.resources = this.data.resources;
+      }
       return jsonObject;
     };
 
