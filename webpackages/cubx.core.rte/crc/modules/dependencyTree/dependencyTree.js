@@ -448,37 +448,33 @@
     };
 
     /**
-     * Returns a JSON object which describes the dependency tree using Id of each dependency, the
-     * structure of the object is as follows:
+     * Returns a JSON object describing the dependency tree using following structure:
      * {
-     *    'rootNodeWebpackageId/rootNodeArtifactId': {
-     *      'child0WebpackageId/child0ArtifactId': {
-     *        'child00WebpackageId/child00ArtifactId': {...},
-     *        ...
-     *        'child0NWebpackageId/child0NArtifactId': {},    // If node has no children then -> {}
+     *    "rootNodes": [
+     *      {
+     *        "webpackageId": ...,
+     *        "artifactId": ...,
+     *        "children": [
+     *          {
+     *            "webpackageId": ...,
+     *            "artifactId": ...,
+     *            "children": [...]
+     *          },
+     *          ...
+     *        ]
      *      },
      *      ...
-     *      'childNWebpackageId/childNArtifactId': {...}
      *     }
-     * };
+     * }
      * @memberOf DependencyTree
-     * @param {object} rootNode A DependencyTree.Node within the DependencyTree acting as root
      * @returns {{}} JSON object describing the depTree
      */
-    DependencyTree.prototype.toJSON = function (rootNode) {
-      if (!(rootNode instanceof DependencyTree.Node)) {
-        console.error('Parameter \'rootNode\' needs to be an instance of DependencyTree.Node');
-        return;
-      };
-      var jsonObject = {};
-      var childJson = {};
-      if (rootNode.children.length > 0) {
-        rootNode.children.forEach(function (child) {
-          childJson[child.data.getId()] = (this.toJSON(child));
-        }.bind(this));
-      }
-      jsonObject[rootNode.data.getId()] = childJson;
-      return jsonObject;
+    DependencyTree.prototype.toJSON = function () {
+      var rootNodes = [];
+      this._rootNodes.forEach(function (rootNode) {
+        rootNodes.push(rootNode.toJSON());
+      });
+      return { rootNodes: rootNodes };
     };
 
     /**
@@ -607,6 +603,37 @@
         if (current.parent != null) parents.push(current.parent);
       }
       return false;
+    };
+
+    /**
+     * Returns a JSON object describing the node using the following structure:
+     * {
+     *    "webpackageId": ...,
+     *    "artifactId": ...,
+     *    "children": [
+     *      {
+     *        "webpackageId": ...,
+     *        "artifactId": ...,
+     *        "children": [...]
+     *      },
+     *      ...
+     *    ]
+     * }
+     * @memberOf DependencyTree
+     * @returns {{}} JSON object describing the depTree
+     */
+    DependencyTree.Node.prototype.toJSON = function () {
+      var jsonObject = {};
+      var children = [];
+      if (this.children.length > 0) {
+        this.children.forEach(function (child) {
+          children.push(child.toJSON());
+        });
+      }
+      jsonObject.webpackageId = this.data.webpackageId;
+      jsonObject.artifactId = this.data.artifactId;
+      jsonObject.children = children;
+      return jsonObject;
     };
 
     return DependencyTree;
