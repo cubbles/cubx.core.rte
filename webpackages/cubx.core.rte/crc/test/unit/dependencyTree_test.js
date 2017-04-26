@@ -222,6 +222,53 @@
             ]
           });
         });
+        it('should include the resources property on nodes of the JSON object', function () {
+          rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
+          childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
+          childC.data.resources = ['index.html'];
+
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childA.data.resources = ['js/main.js', 'css/style.css'];
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+
+          expect(depTree.toJSON(true)).to.deep.equal({
+            rootNodes: [
+              {
+                webpackageId: 'com.example.package1@1.0',
+                artifactId: 'comp-1',
+                resources: [],
+                children: [
+                  {
+                    webpackageId: 'com.example.packageC@1.0',
+                    artifactId: 'comp-c',
+                    resources: ['index.html'],
+                    children: []
+                  }
+                ]
+              },
+              {
+                webpackageId: 'com.example.package2@1.0',
+                artifactId: 'comp-2',
+                resources: [],
+                children: [
+                  {
+                    webpackageId: 'com.example.packageA@1.0',
+                    artifactId: 'comp-a',
+                    resources: ['js/main.js', 'css/style.css'],
+                    children: []
+                  },
+                  {
+                    webpackageId: 'com.example.packageB@1.0',
+                    artifactId: 'comp-b',
+                    resources: [],
+                    children: []
+                  }
+                ]
+              }
+            ]
+          });
+        });
       });
     });
     describe('DependencyTree.Node', function () {
@@ -361,6 +408,59 @@
                     {
                       webpackageId: 'com.example.packageH@1.0',
                       artifactId: 'comp-h',
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            }
+          );
+        });
+        it('should include resources property in the JSON object', function () {
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childA.data.resources = ['js/main.js', 'css/style.css'];
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+          childB.data.resources = ['index.html'];
+          childF.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageF@1.0', artifactId: 'comp-f', referrer: null});
+          childF.data.resources = ['index.html'];
+          childG.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageG@1.0', artifactId: 'comp-g', referrer: null});
+          childH.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageH@1.0', artifactId: 'comp-h', referrer: null});
+
+          expect(rootNode2.toJSON(true)).to.deep.equal(
+            {
+              webpackageId: 'com.example.package2@1.0',
+              artifactId: 'comp-2',
+              resources: [],
+              children: [
+                {
+                  webpackageId: 'com.example.packageA@1.0',
+                  artifactId: 'comp-a',
+                  resources: ['js/main.js', 'css/style.css'],
+                  children: [
+                    {
+                      webpackageId: 'com.example.packageF@1.0',
+                      artifactId: 'comp-f',
+                      resources: ['index.html'],
+                      children: []
+                    }
+                  ]
+                },
+                {
+                  webpackageId: 'com.example.packageB@1.0',
+                  artifactId: 'comp-b',
+                  resources: ['index.html'],
+                  children: [
+                    {
+                      webpackageId: 'com.example.packageG@1.0',
+                      artifactId: 'comp-g',
+                      resources: [],
+                      children: []
+                    },
+                    {
+                      webpackageId: 'com.example.packageH@1.0',
+                      artifactId: 'comp-h',
+                      resources: [],
                       children: []
                     }
                   ]
