@@ -181,7 +181,7 @@
           expect(depTree.contains(node)).to.be.false;
         });
       });
-      describe.only('#toJSON()', function () {
+      describe('#toJSON()', function () {
         it('should return an object describing the dependency tree as JSON object', function () {
           rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
           childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
