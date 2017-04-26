@@ -181,23 +181,46 @@
           expect(depTree.contains(node)).to.be.false;
         });
       });
-      describe('#toJSON()', function () {
-        it('should return an object describing the tree as JSON object', function () {
-          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'rootNode2WpId', artifactId: 'rootNode2AId', referrer: null});
-          childA.data = new DependencyMgr.DepReference({webpackageId: 'childAWpId', artifactId: 'childAAId', referrer: null});
-          childB.data = new DependencyMgr.DepReference({webpackageId: 'childBWpId', artifactId: 'childBAId', referrer: null});
-          depTree.toJSON(rootNode2).should.equal = {
-            'rootNode2WpId/rootNode2AId': {
-              'childAWpId/childAAId': {},
-              'childBWpId/childBAId': {}
-            }
-          };
-        });
-        it('should log an error if parameter is not of type DependencyTree.Node', function () {
-          var consoleStub = sinon.stub(console, 'error');
-          depTree.toJSON('foo', function () {});
-          expect(consoleStub.called).to.be.true;
-          consoleStub.restore();
+      describe.only('#toJSON()', function () {
+        it('should return an object describing the dependency tree as JSON object', function () {
+          rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
+          childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
+
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+
+          expect(depTree.toJSON()).to.deep.equal({
+            rootNodes: [
+              {
+                webpackageId: 'com.example.package1@1.0',
+                artifactId: 'comp-1',
+                children: [
+                  {
+                    webpackageId: 'com.example.packageC@1.0',
+                    artifactId: 'comp-c',
+                    children: []
+                  }
+                ]
+              },
+              {
+                webpackageId: 'com.example.package2@1.0',
+                artifactId: 'comp-2',
+                children: [
+                  {
+                    webpackageId: 'com.example.packageA@1.0',
+                    artifactId: 'comp-a',
+                    children: []
+                  },
+                  {
+                    webpackageId: 'com.example.packageB@1.0',
+                    artifactId: 'comp-b',
+                    children: []
+                  }
+                ]
+              }
+            ]
+          });
         });
       });
     });
@@ -299,6 +322,52 @@
           expect(rootNode1.isAncestorOf(childF)).to.be.false;
           expect(rootNode2.isAncestorOf(childF)).to.be.true;
           expect(rootNode2.isAncestorOf(childE)).to.be.true;
+        });
+      });
+      describe('#toJSON()', function () {
+        it('should return an object describing the node as JSON object', function () {
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+          childF.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageF@1.0', artifactId: 'comp-f', referrer: null});
+          childG.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageG@1.0', artifactId: 'comp-g', referrer: null});
+          childH.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageH@1.0', artifactId: 'comp-h', referrer: null});
+
+          expect(rootNode2.toJSON()).to.deep.equal(
+            {
+              webpackageId: 'com.example.package2@1.0',
+              artifactId: 'comp-2',
+              children: [
+                {
+                  webpackageId: 'com.example.packageA@1.0',
+                  artifactId: 'comp-a',
+                  children: [
+                    {
+                      webpackageId: 'com.example.packageF@1.0',
+                      artifactId: 'comp-f',
+                      children: []
+                    }
+                  ]
+                },
+                {
+                  webpackageId: 'com.example.packageB@1.0',
+                  artifactId: 'comp-b',
+                  children: [
+                    {
+                      webpackageId: 'com.example.packageG@1.0',
+                      artifactId: 'comp-g',
+                      children: []
+                    },
+                    {
+                      webpackageId: 'com.example.packageH@1.0',
+                      artifactId: 'comp-h',
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            }
+          );
         });
       });
     });
