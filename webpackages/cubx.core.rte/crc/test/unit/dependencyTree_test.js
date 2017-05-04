@@ -199,9 +199,13 @@
                   {
                     webpackageId: 'com.example.packageC@1.0',
                     artifactId: 'comp-c',
-                    children: []
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
                   }
-                ]
+                ],
+                usesExisting: [],
+                usedBy: []
               },
               {
                 webpackageId: 'com.example.package2@1.0',
@@ -210,19 +214,25 @@
                   {
                     webpackageId: 'com.example.packageA@1.0',
                     artifactId: 'comp-a',
-                    children: []
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
                   },
                   {
                     webpackageId: 'com.example.packageB@1.0',
                     artifactId: 'comp-b',
-                    children: []
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
                   }
-                ]
+                ],
+                usesExisting: [],
+                usedBy: []
               }
             ]
           });
         });
-        it('should include the resources property on nodes of the JSON object', function () {
+        it('should include the \'resources\' property on nodes of the JSON object', function () {
           rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
           childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
           childC.data.resources = ['index.html'];
@@ -243,9 +253,13 @@
                     webpackageId: 'com.example.packageC@1.0',
                     artifactId: 'comp-c',
                     resources: ['index.html'],
-                    children: []
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
                   }
-                ]
+                ],
+                usesExisting: [],
+                usedBy: []
               },
               {
                 webpackageId: 'com.example.package2@1.0',
@@ -256,15 +270,99 @@
                     webpackageId: 'com.example.packageA@1.0',
                     artifactId: 'comp-a',
                     resources: ['js/main.js', 'css/style.css'],
-                    children: []
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
                   },
                   {
                     webpackageId: 'com.example.packageB@1.0',
                     artifactId: 'comp-b',
                     resources: [],
-                    children: []
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
                   }
-                ]
+                ],
+                usesExisting: [],
+                usedBy: []
+              }
+            ]
+          });
+        });
+        it.only('should assign correct values to \'usesExisting\' and \'usedBy\' properties', function () {
+          rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
+          childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
+
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+
+          var childD = new DependencyTree.Node();
+          childD.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageD@1.0', artifactId: 'comp-d', referrer: {webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a'}});
+
+          var childD2 = new DependencyTree.Node();
+          childD2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageD@1.0', artifactId: 'comp-d', referrer: {webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a'}});
+
+          depTree.insertNode(childD, childC);
+          depTree.insertNode(childD2, childB);
+          depTree.removeDuplicates();
+
+          expect(depTree.toJSON()).to.deep.equal({
+            rootNodes: [
+              {
+                webpackageId: 'com.example.package1@1.0',
+                artifactId: 'comp-1',
+                children: [
+                  {
+                    webpackageId: 'com.example.packageC@1.0',
+                    artifactId: 'comp-c',
+                    children: [
+                      {
+                        webpackageId: 'com.example.packageD@1.0',
+                        artifactId: 'comp-d',
+                        children: [],
+                        usesExisting: [],
+                        usedBy: [
+                          {
+                            webpackageId: 'com.example.packageB@1.0',
+                            artifactId: 'comp-b'
+                          }
+                        ]
+                      }
+                    ],
+                    usesExisting: [],
+                    usedBy: []
+                  }
+                ],
+                usesExisting: [],
+                usedBy: []
+              },
+              {
+                webpackageId: 'com.example.package2@1.0',
+                artifactId: 'comp-2',
+                children: [
+                  {
+                    webpackageId: 'com.example.packageA@1.0',
+                    artifactId: 'comp-a',
+                    children: [],
+                    usesExisting: [],
+                    usedBy: []
+                  },
+                  {
+                    webpackageId: 'com.example.packageB@1.0',
+                    artifactId: 'comp-b',
+                    children: [],
+                    usesExisting: [
+                      {
+                        webpackageId: 'com.example.packageD@1.0',
+                        artifactId: 'comp-d'
+                      }
+                    ],
+                    usedBy: []
+                  }
+                ],
+                usesExisting: [],
+                usedBy: []
               }
             ]
           });
@@ -392,9 +490,13 @@
                     {
                       webpackageId: 'com.example.packageF@1.0',
                       artifactId: 'comp-f',
-                      children: []
+                      children: [],
+                      usesExisting: [],
+                      usedBy: []
                     }
-                  ]
+                  ],
+                  usesExisting: [],
+                  usedBy: []
                 },
                 {
                   webpackageId: 'com.example.packageB@1.0',
@@ -403,16 +505,24 @@
                     {
                       webpackageId: 'com.example.packageG@1.0',
                       artifactId: 'comp-g',
-                      children: []
+                      children: [],
+                      usesExisting: [],
+                      usedBy: []
                     },
                     {
                       webpackageId: 'com.example.packageH@1.0',
                       artifactId: 'comp-h',
-                      children: []
+                      children: [],
+                      usesExisting: [],
+                      usedBy: []
                     }
-                  ]
+                  ],
+                  usesExisting: [],
+                  usedBy: []
                 }
-              ]
+              ],
+              usesExisting: [],
+              usedBy: []
             }
           );
         });
@@ -442,9 +552,13 @@
                       webpackageId: 'com.example.packageF@1.0',
                       artifactId: 'comp-f',
                       resources: ['index.html'],
-                      children: []
+                      children: [],
+                      usesExisting: [],
+                      usedBy: []
                     }
-                  ]
+                  ],
+                  usesExisting: [],
+                  usedBy: []
                 },
                 {
                   webpackageId: 'com.example.packageB@1.0',
@@ -455,17 +569,25 @@
                       webpackageId: 'com.example.packageG@1.0',
                       artifactId: 'comp-g',
                       resources: [],
-                      children: []
+                      children: [],
+                      usesExisting: [],
+                      usedBy: []
                     },
                     {
                       webpackageId: 'com.example.packageH@1.0',
                       artifactId: 'comp-h',
                       resources: [],
-                      children: []
+                      children: [],
+                      usesExisting: [],
+                      usedBy: []
                     }
-                  ]
+                  ],
+                  usesExisting: [],
+                  usedBy: []
                 }
-              ]
+              ],
+              usesExisting: [],
+              usedBy: []
             }
           );
         });
