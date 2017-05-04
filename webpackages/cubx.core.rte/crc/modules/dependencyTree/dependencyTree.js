@@ -463,7 +463,9 @@
      *            "children": [...]
      *          },
      *          ...
-     *        ]
+     *        ],
+     *        usesExisting: [...],
+     *        usedBy: [...]
      *      },
      *      ...
      *     }
@@ -619,10 +621,14 @@
      *        "webpackageId": ...,
      *        "artifactId": ...,
      *        "resources": [...], //optional
-     *        "children": [...]
+     *        "children": [...],
+     *        usesExisting: [...],
+     *        usedBy: [...]
      *      },
      *      ...
-     *    ]
+     *    ],
+     *    usesExisting: [...],
+     *    usedBy: [...]
      * }
      * @memberOf DependencyTree
      * @param {boolean} [includeResources=false] Indicates whether to include resources property.
@@ -631,14 +637,28 @@
     DependencyTree.Node.prototype.toJSON = function (includeResources) {
       var jsonObject = {};
       var children = [];
+      var usedBy = [];
+      var usesExisting = [];
       if (this.children.length > 0) {
         this.children.forEach(function (child) {
           children.push(child.toJSON(includeResources));
         });
       }
+      if (this.usedBy.length > 0) {
+        this.usedBy.forEach(function (child) {
+          usedBy.push({webpackageId: child.data.webpackageId, artifactId: child.data.artifactId});
+        });
+      }
+      if (this.usesExisting.length > 0) {
+        this.usesExisting.forEach(function (child) {
+          usesExisting.push({webpackageId: child.data.webpackageId, artifactId: child.data.artifactId});
+        });
+      }
       jsonObject.webpackageId = this.data.webpackageId;
       jsonObject.artifactId = this.data.artifactId;
       jsonObject.children = children;
+      jsonObject.usesExisting = usesExisting;
+      jsonObject.usedBy = usedBy;
       if (includeResources) {
         jsonObject.resources = this.data.resources;
       }
