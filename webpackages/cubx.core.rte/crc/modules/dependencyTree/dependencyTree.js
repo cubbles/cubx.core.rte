@@ -297,9 +297,11 @@
       var nodesBF = {}; // holds a map of all nodes using "[webpackageId]/[artifactId]" as key
 
       this.traverseBF(function (node) {
+        // TODO: If current node is already removed from depTree skip iteration --> if this.contains(node) is false we don't do to anything
         if (this.contains(node) && nodesBF.hasOwnProperty(node.data.getId())) {
           this._removeDuplicate(nodesBF[node.data.getId()], node);
         } else {
+          // TODO: if current node is NOT marked as excluded AND is still member of current depTree (this.contains(node) == true) push it to nodesBF map
           nodesBF[node.data.getId()] = node;
         }
       }.bind(this));
@@ -463,7 +465,7 @@
      *            "children": [...]
      *          },
      *          ...
-     *        ],
+     // *        ],
      *        usesExisting: [...],
      *        usedBy: [...]
      *      },

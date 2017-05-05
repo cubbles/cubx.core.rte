@@ -457,7 +457,7 @@ window.cubx.amd.define(
             } catch (e) {
               reject(e);
             }
-            resolve(depTree);
+            resolve(depTree); // TODO: Why is the resolve() call inside the forEach loop and NOT after that loop??
           }.bind(this));
         }.bind(this), function (error) {
           reject(error);
