@@ -289,7 +289,7 @@
             ]
           });
         });
-        it.only('should assign correct values to \'usesExisting\' and \'usedBy\' properties', function () {
+        it('should assign correct values to \'usesExisting\' and \'usedBy\' properties', function () {
           rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
           childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
 
@@ -580,6 +580,70 @@
                       children: [],
                       usesExisting: [],
                       usedBy: []
+                    }
+                  ],
+                  usesExisting: [],
+                  usedBy: []
+                }
+              ],
+              usesExisting: [],
+              usedBy: []
+            }
+          );
+        });
+        it('should assign correct values to \'usesExisting\' and \'usedBy\' properties', function () {
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childA.usesExisting = [childH];
+
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+
+          childF.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageF@1.0', artifactId: 'comp-f', referrer: null});
+          childF.usesExisting = [childG];
+
+          childG.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageG@1.0', artifactId: 'comp-g', referrer: null});
+          childG.usedBy = [childF];
+
+          childH.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageH@1.0', artifactId: 'comp-h', referrer: null});
+          childH.usedBy = [childA];
+
+          expect(rootNode2.toJSON()).to.deep.equal(
+            {
+              webpackageId: 'com.example.package2@1.0',
+              artifactId: 'comp-2',
+              children: [
+                {
+                  webpackageId: 'com.example.packageA@1.0',
+                  artifactId: 'comp-a',
+                  children: [
+                    {
+                      webpackageId: 'com.example.packageF@1.0',
+                      artifactId: 'comp-f',
+                      children: [],
+                      usesExisting: [{webpackageId: 'com.example.packageG@1.0', artifactId: 'comp-g'}],
+                      usedBy: []
+                    }
+                  ],
+                  usesExisting: [{webpackageId: 'com.example.packageH@1.0', artifactId: 'comp-h'}],
+                  usedBy: []
+                },
+                {
+                  webpackageId: 'com.example.packageB@1.0',
+                  artifactId: 'comp-b',
+                  children: [
+                    {
+                      webpackageId: 'com.example.packageG@1.0',
+                      artifactId: 'comp-g',
+                      children: [],
+                      usesExisting: [],
+                      usedBy: [{webpackageId: 'com.example.packageF@1.0', artifactId: 'comp-f'}]
+                    },
+                    {
+                      webpackageId: 'com.example.packageH@1.0',
+                      artifactId: 'comp-h',
+                      children: [],
+                      usesExisting: [],
+                      usedBy: [{webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a'}]
                     }
                   ],
                   usesExisting: [],
