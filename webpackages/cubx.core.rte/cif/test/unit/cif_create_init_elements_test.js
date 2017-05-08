@@ -49,7 +49,7 @@ describe('CIF', function () {
     var subElement1;
     var subElement2;
     var spy;
-    before(function () {
+    beforeEach(function () {
       container = document.querySelector('[cubx-core-crc]');
       var constructor = cif.getCompoundComponentElementConstructor('ciftest-a');
       compoundEl = new constructor();
@@ -83,7 +83,7 @@ describe('CIF', function () {
       compoundEl._inits = inits;
       spy = sinon.spy(cif, '_createSlotInitElement');
     });
-    after(function () {
+    afterEach(function () {
       cif._createSlotInitElement.restore();
       container.removeChild(compoundEl);
       container.Context._children = [];
@@ -95,6 +95,13 @@ describe('CIF', function () {
       compoundEl.firstElementChild.tagName.should.equals('CUBX-CORE-INIT');
       subElement2.firstElementChild.tagName.should.equals('CUBX-CORE-INIT');
       expect(spy.calledTwice).to.be.true;
+    });
+    it('_inits propert should be renamed to _createdInits after createin initSlots elements', function () {
+      compoundEl.should.have.property('_inits');
+      var compoundElInits = compoundEl._inits;
+      cif._createInitElements(compoundEl);
+      compoundEl.should.not.have.property('_inits');
+      compoundEl.should.have.deep.property('_createdInits', compoundElInits);
     });
   });
   describe('#_createSlotInitElement', function () {

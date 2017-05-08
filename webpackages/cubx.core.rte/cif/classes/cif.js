@@ -1327,6 +1327,8 @@
         for (var i = 0; i < node._connections.length; i++) {
           this._createConnectionElement(node, node._connections[ i ]);
         }
+        node._createdConnections = node._connections;
+        delete node._connections;
       }
       node = walker.nextNode();
     }
@@ -1411,6 +1413,8 @@
         for (var i = 0; i < node._inits.length; i++) {
           this._createSlotInitElement(node, node._inits[ i ], i);
         }
+        node._createdInits = node._inits;
+        delete node._inits;
       }
       node = walker.nextNode();
     }

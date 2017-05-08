@@ -1,5 +1,4 @@
 'use strict';
-
 describe('CIF', function () {
   var cif;
   before(function () {
@@ -43,7 +42,7 @@ describe('CIF', function () {
     var subElement1;
     var subElement2;
     var spy;
-    before(function () {
+    beforeEach(function () {
       container = document.querySelector('[cubx-core-crc]');
       var constructor = cif.getCompoundComponentElementConstructor('ciftest-a');
       compoundEl = new constructor();
@@ -63,28 +62,34 @@ describe('CIF', function () {
       subElement2.Context.setParent(compoundEl.Context);
       compoundEl.Context.addComponent(subElement2);
       var connections = [ {
-        connectionId: 'a:testoutput-b:testinput', source: {
+        connectionId: 'a:testoutput-b:testinput',
+        source: {
           memberIdRef: 'a', slot: 'testoutput'
-        }, destination: {
+        },
+        destination: {
           memberIdRef: 'b', slot: 'testinput'
         }
       }, {
-        connectionId: 'testoutput-c:testinput', source: {
+        connectionId: 'testoutput-c:testinput',
+        source: {
           slot: 'testoutput'
-        }, destination: {
+        },
+        destination: {
           memberIdRef: 'a', slot: 'testinput'
         }
       }, {
-        connectionId: 'd:testoutput-testinput', source: {
+        connectionId: 'd:testoutput-testinput',
+        source: {
           memberIdRef: 'b', slot: 'testoutput'
-        }, destination: {
+        },
+        destination: {
           slot: 'testinput'
         }
       } ];
       compoundEl._connections = connections;
       spy = sinon.spy(cif, '_createConnectionElement');
     });
-    after(function () {
+    afterEach(function () {
       cif._createConnectionElement.restore();
       container.removeChild(compoundEl);
       container.Context._children = [];
@@ -103,6 +108,14 @@ describe('CIF', function () {
       expect(subElement2.firstElementChild.childElementCount).to.be.equals(1);
       subElement2.firstElementChild.firstElementChild.tagName.should.equals('CUBX-CORE-CONNECTION');
       expect(spy.calledThrice).to.be.true;
+    });
+
+    it('_connections property should be remaned to _createdConnections after create connection tags', function () {
+      compoundEl.should.have.property('_connections');
+      var compoundElConnections = compoundEl._connections;
+      cif._createConnectionElements(compoundEl);
+      compoundEl.should.not.have.property('_connections');
+      compoundEl.should.have.deep.property('_createdConnections', compoundElConnections);
     });
   });
   describe('#_createConnectionElement', function () {
@@ -140,9 +153,11 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
-          connectionId: '1:testoutput-2:testinput', source: {
+          connectionId: '1:testoutput-2:testinput',
+          source: {
             memberIdRef: '1', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: '2', slot: 'testinput'
           }
         };
@@ -188,11 +203,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
-          connectionId: '1:testoutput-2:testinput', source: {
+          connectionId: '1:testoutput-2:testinput',
+          source: {
             memberIdRef: '1', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: '2', slot: 'testinput'
-          }, copyValue: false
+          },
+          copyValue: false
         };
         cif._createConnectionElement(compoundEl, connection);
         subElement1.firstElementChild.should.have.property('tagName', 'CUBX-CORE-CONNECTIONS');
@@ -285,11 +303,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under source Element', function () {
         var connection = {
-          connectionId: '1:testoutput-2:testinput', source: {
+          connectionId: '1:testoutput-2:testinput',
+          source: {
             memberIdRef: '1', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: '2', slot: 'testinput'
-          }, repeatedValues: false
+          },
+          repeatedValues: false
         };
         cif._createConnectionElement(compoundEl, connection);
         subElement1.firstElementChild.should.have.property('tagName', 'CUBX-CORE-CONNECTIONS');
@@ -382,9 +403,11 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: 'testoutput-2:testinput', source: {
+          connectionId: 'testoutput-2:testinput',
+          source: {
             slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: 2, slot: 'testinput'
           }
         };
@@ -431,11 +454,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: 'testoutput-2:testinput', source: {
+          connectionId: 'testoutput-2:testinput',
+          source: {
             slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: 2, slot: 'testinput'
-          }, copyValue: true
+          },
+          copyValue: true
         };
 
         cif._createConnectionElement(compoundEl, connection);
@@ -479,11 +505,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: 'testoutput-2:testinput', source: {
+          connectionId: 'testoutput-2:testinput',
+          source: {
             slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: '2', slot: 'testinput'
-          }, copyValue: false
+          },
+          copyValue: false
         };
 
         cif._createConnectionElement(compoundEl, connection);
@@ -527,11 +556,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: 'testoutput-2:testinput', source: {
+          connectionId: 'testoutput-2:testinput',
+          source: {
             slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: 2, slot: 'testinput'
-          }, repeatedValues: true
+          },
+          repeatedValues: true
         };
 
         cif._createConnectionElement(compoundEl, connection);
@@ -575,11 +607,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: 'testoutput-2:testinput', source: {
+          connectionId: 'testoutput-2:testinput',
+          source: {
             slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: '2', slot: 'testinput'
-          }, repeatedValues: false
+          },
+          repeatedValues: false
         };
 
         cif._createConnectionElement(compoundEl, connection);
@@ -673,11 +708,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: '2:testoutput-testinput', source: {
+          connectionId: '2:testoutput-testinput',
+          source: {
             memberIdRef: '2', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             slot: 'testinput'
-          }, copyValue: false
+          },
+          copyValue: false
         };
         cif._createConnectionElement(compoundEl, connection);
         subElement2.firstElementChild.should.have.property('tagName', 'CUBX-CORE-CONNECTIONS');
@@ -769,11 +807,14 @@ describe('CIF', function () {
       });
       it('connection Tag should be created under compound Element', function () {
         var connection = {
-          connectionId: '2:testoutput-testinput', source: {
+          connectionId: '2:testoutput-testinput',
+          source: {
             memberIdRef: '2', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             slot: 'testinput'
-          }, repeatedValues: false
+          },
+          repeatedValues: false
         };
         cif._createConnectionElement(compoundEl, connection);
         subElement2.firstElementChild.should.have.property('tagName', 'CUBX-CORE-CONNECTIONS');
@@ -866,11 +907,14 @@ describe('CIF', function () {
       it('connection Tag should be created under source Element', function () {
         var functionStr = 'function(value,next){ next(value);}';
         var connection = {
-          connectionId: '1:testoutput-2:testinput', source: {
+          connectionId: '1:testoutput-2:testinput',
+          source: {
             memberIdRef: '1', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: '2', slot: 'testinput'
-          }, hookFunction: functionStr
+          },
+          hookFunction: functionStr
         };
         cif._createConnectionElement(compoundEl, connection);
         subElement1.firstElementChild.should.have.property('tagName', 'CUBX-CORE-CONNECTIONS');
@@ -913,11 +957,14 @@ describe('CIF', function () {
       it('connection Tag should be created under compound Element', function () {
         var functionStr = 'function(value,next){ next(value);}';
         var connection = {
-          connectionId: 'testoutput-2:testinput', source: {
+          connectionId: 'testoutput-2:testinput',
+          source: {
             slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: 2, slot: 'testinput'
-          }, hookFunction: functionStr
+          },
+          hookFunction: functionStr
         };
 
         cif._createConnectionElement(compoundEl, connection);
@@ -962,11 +1009,14 @@ describe('CIF', function () {
       it('connection Tag should be created under compound Element', function () {
         var functionStr = 'function(value,next){ next(value);}';
         var connection = {
-          connectionId: '2:testoutput-testinput', source: {
+          connectionId: '2:testoutput-testinput',
+          source: {
             memberIdRef: '2', slot: 'testoutput'
-          }, destination: {
+          },
+          destination: {
             slot: 'testinput'
-          }, hookFunction: functionStr
+          },
+          hookFunction: functionStr
         };
         cif._createConnectionElement(compoundEl, connection);
         subElement2.firstElementChild.should.have.property('tagName', 'CUBX-CORE-CONNECTIONS');
