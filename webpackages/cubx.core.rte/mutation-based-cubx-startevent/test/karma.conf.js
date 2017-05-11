@@ -6,7 +6,7 @@ module.exports = function (config) {
   var configuration = {
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '../',
+    basePath: '../../',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -26,10 +26,10 @@ module.exports = function (config) {
     ],
     // list of files / patterns to load in the browser
     files: [
-      'test/vendor/mocha-config.js',
-      'js/mutationBasedCubxStartevent.js',
-      'test/unit/**/*_test.js',
-      'test/testMain.js'
+      'mutation-based-cubx-startevent/test/vendor/mocha-config.js',
+      'mutation-based-cubx-startevent/js/mutationBasedCubxStartevent.js',
+      'mutation-based-cubx-startevent/test/unit/**/*_test.js',
+      'mutation-based-cubx-startevent/test/testMain.js'
     ],
 
     // list of files to exclude
@@ -37,7 +37,9 @@ module.exports = function (config) {
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {},
+    preprocessors: {
+      'mutation-based-cubx-startevent/js/**/*.js': 'coverage'
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -51,11 +53,11 @@ module.exports = function (config) {
     colors: true,
 
     junitReporter: {
-      outputFile: 'test-results/surefire-reports/TEST-karma.xml'
+      outputFile: 'mutation-based-cubx-startevent/test-results/surefire-reports/TEST-karma.xml'
     },
 
     htmlReporter: {
-      outputFile: 'test-results/html/TEST-karma.html'
+      outputFile: 'mutation-based-cubx-startevent/test-results/html/TEST-karma.html'
     },
 
     mochaReporter: {
@@ -64,7 +66,7 @@ module.exports = function (config) {
 
     coverageReporter: {
       type: 'html',
-      dir: 'test-results/coverage/'
+      dir: 'mutation-based-cubx-startevent/test-results/coverage/'
     },
 
     // level of logging
