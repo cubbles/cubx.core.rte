@@ -359,10 +359,11 @@
     var cif = window.cubx.cif.cif;
     // added, removed cubbles
     var componentChangeSummary = summaries[ 0 ];
-    componentChangeSummary.added.forEach(function (addedEl) {
-      cif._addPossibleElementToQueue(addedEl);
+    if (componentChangeSummary.added.length > 0) {
+      cif._addPossibleElementToQueue(componentChangeSummary.added);
       cif._processElementFromQueue();
-    });
+    }
+    // TODO: remove forEach. Instead push whole array to queue. Use if to check if array is not empty
     componentChangeSummary.removed.forEach(function (removedEl) {
       cif._handleRemovedCubble(removedEl, componentChangeSummary.getOldParentNode(removedEl));
     });
@@ -468,23 +469,29 @@
    */
   CIF.prototype._processElementFromQueue = function () {
     // 1. getElement
-    var element = this._elementQueue.dequeue();
-    if (!element) { // end the process, if no element in the queue
+    var elements = this._elementQueue.dequeue();
+    if (!elements) { // end the process, if no element in the queue
       return;
     }
     // flag indicates that there are outstanding components which needs to be processed by CIF (even if elementary components are still ready)
     this._cifAllComponentsReady = false;
-    var memberIds = [];
-    var initOrder = 0;
-    this._processObserverTriggered();
-    // 2. Update cubx-core-connection elements
-    this._updateCubxCoreConnections(element);
-    // 3. Update cubx-core-slot-init elements
-    this._updateCubxCoreInit(element, initOrder);
-    // 4. for each cubbles call _initCubxElementsInRoot
-    this._initCubxElementsInRoot(element, memberIds);
-    // check if marked=removed connection exists as destination to this element and activate it
-    this._reactivateConnectionIfExists(element);
+
+    elements.forEach(function (element) {
+      if (element.processed) {
+        return;
+      }
+      var memberIds = [];
+      var initOrder = 0;
+      this._processObserverTriggered();
+      // 2. Update cubx-core-connection elements
+      this._updateCubxCoreConnections(element);
+      // 3. Update cubx-core-slot-init elements
+      this._updateCubxCoreInit(element, initOrder);
+      // 4. for each cubbles call _initCubxElementsInRoot
+      this._initCubxElementsInRoot(element, memberIds);
+      // check if marked=removed connection exists as destination to this element and activate it
+      this._reactivateConnectionIfExists(element);
+    }.bind(this));
 
     // check if all Componentes in CRC are ready and fire all components ready event if so
     if (!this._hasElementsWaitingForReady()) {

@@ -474,13 +474,17 @@
       console.warn('The following connection element didn\'t added to the connection list, because it already exist a connection with the same connectionId. It is not allowed overriding existing connections.', connectionElement);
       return;
     }
-    if (connectionElement.getType() !== 'internal') {
-      this._connections.push(this._createConnection(component, connectionElement));
-    } else {
-      var connection = this._createConnection(component, connectionElement, true);
-      component.Context._connectionMgr._connections.push(connection);
+    try {
+      if (connectionElement.getType() !== 'internal') {
+        this._connections.push(this._createConnection(component, connectionElement));
+      } else {
+        var connection = this._createConnection(component, connectionElement, true);
+        component.Context._connectionMgr._connections.push(connection);
+      }
+      connectionElement.processed = true;
+    } catch (e) {
+      console.warn('Connection ' + connectionElement + 'could not be created.');
     }
-    connectionElement.processed = true;
   };
 
   /**
@@ -557,6 +561,9 @@
           node = walker.nextNode();
         }
       }
+    }
+    if (connection.destination.component == null) {
+      throw new Error('Error during connection creation:' + cubxConnection);
     }
     if (typeof copyValue === 'undefined' || copyValue === null) {
       connection.copyValue = true;

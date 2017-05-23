@@ -1473,6 +1473,8 @@ describe('ConnectionManager', function () {
         container.appendChild(elem);
         elem.appendChild(source);
         elem.appendChild(destination);
+        elem.Context.addComponent(source);
+        elem.Context.addComponent(destination);
         var connections = document.createElement('cubx-core-connections');
         connectionElem = document.createElement('cubx-core-connection');
         connectionElem.setAttribute('connection-id', 'con1');

@@ -696,7 +696,7 @@ describe('CIF', function () {
       beforeEach(function () {
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
         element = new constructor();
-        cif._elementQueue.enqueue(element);
+        cif._elementQueue.enqueue([element]);
         expect(cif._elementQueue.getLength()).to.be.equal(1);
         cif._processElementFromQueue();
       });
