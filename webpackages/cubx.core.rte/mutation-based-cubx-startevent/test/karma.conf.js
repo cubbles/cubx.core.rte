@@ -53,7 +53,8 @@ module.exports = function (config) {
     colors: true,
 
     junitReporter: {
-      outputFile: 'mutation-based-cubx-startevent/test-results/surefire-reports/TEST-karma.xml'
+      outputDir: 'mutation-based-cubx-startevent/test-results/surefire-reports',
+      outputFile: 'TEST-karma.xml'
     },
 
     htmlReporter: {
