@@ -486,6 +486,32 @@
       return { rootNodes: rootNodes };
     };
 
+    DependencyTree.prototype.clone = function () {
+      var hash = new WeakMap();
+      function clone (obj) {
+        if (!obj || typeof obj !== 'object') {
+          return obj;
+        }
+        if (hash.has(obj)) {
+          return hash.get(obj);
+        }
+        try {
+          var result = Array.isArray(obj) ? []
+            : obj.constructor ? new obj.constructor() : {};
+        } catch (e) {  // The constructor failed, create without running it
+          result = Object.create(Object.getPrototypeOf(obj));
+        }
+        hash.set(obj, result);
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            result[key] = clone(obj[key]);
+          }
+        }
+        return result;
+      }
+      return clone(this);
+    };
+
     /**
      * Internal Class representing a node of a DependencyTree
      * @constructor

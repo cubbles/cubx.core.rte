@@ -368,6 +368,34 @@
           });
         });
       });
+      describe('#clone()', function () {
+        var clonedTree;
+        beforeEach(function () {
+          rootNode1.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package1@1.0', artifactId: 'comp-1', referrer: null});
+          childC.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageC@1.0', artifactId: 'comp-c', referrer: null});
+
+          rootNode2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.package2@1.0', artifactId: 'comp-2', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageB@1.0', artifactId: 'comp-b', referrer: null});
+
+          var childD = new DependencyTree.Node();
+          childD.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageD@1.0', artifactId: 'comp-d', referrer: {webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a'}});
+
+          var childD2 = new DependencyTree.Node();
+          childD2.data = new DependencyMgr.DepReference({webpackageId: 'com.example.packageD@1.0', artifactId: 'comp-d', referrer: {webpackageId: 'com.example.packageA@1.0', artifactId: 'comp-a'}});
+
+          depTree.insertNode(childD, childC);
+          depTree.insertNode(childD2, childB);
+          clonedTree = depTree.clone();
+          console.log(clonedTree);
+        });
+        it('cloned tree should be an instance of \'DependencyTree\'', function () {
+          expect(clonedTree instanceof DependencyTree).to.be.true;
+        });
+        it('cloned and original tree should be deep equal', function () {
+          expect(clonedTree).to.deep.equal(depTree);
+        });
+      });
     });
     describe('DependencyTree.Node', function () {
       var depTree;
