@@ -548,14 +548,20 @@ window.cubx.amd.define(
             this._responseCache.addItem(depReference.webpackageId, manifest);
           }
           var artifact = this._extractArtifact(depReference, manifest);
-          if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
-            dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
+          try {
+            if (artifact.hasOwnProperty('dependencies') && artifact.dependencies.length > 0) {
+              dependencies = this._createDepReferenceListFromArtifactDependencies(artifact.dependencies, depReference);
+            }
+            this._storeManifestFiles(manifest, artifact.artifactId);
+            resolve({
+              resources: artifact.resources || [],
+              dependencies: dependencies
+            });
+          } catch (e) {
+            console.error('The artifact \'' + depReference.artifactId + '\' is not defined in manifest:',
+              '\n\tDependency reference: ', depReference, '\n\tManifest: ', manifest);
+            reject(new Error('Artifact not defined.'));
           }
-          this._storeManifestFiles(manifest, artifact.artifactId);
-          resolve({
-            resources: artifact.resources || [],
-            dependencies: dependencies
-          });
         }.bind(this);
 
         // append '/' to baseUrl if not present
