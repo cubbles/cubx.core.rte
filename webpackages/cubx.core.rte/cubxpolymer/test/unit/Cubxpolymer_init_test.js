@@ -449,7 +449,6 @@ describe('CubxPolymer (init)', function () {
     });
   });
   describe('#getComponentBaseUri', function () {
-    var elementName = 'dummy-default-value';
     var component;
     var expectedBaseUri;
     var basedBaseUrl;
