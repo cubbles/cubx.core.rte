@@ -448,4 +448,32 @@ describe('CubxPolymer (init)', function () {
       }, 50);
     });
   });
+  describe('#getComponentBaseUri', function () {
+    var elementName = 'dummy-default-value';
+    var component;
+    var expectedBaseUri;
+    var basedBaseUrl;
+    before(function () {
+      basedBaseUrl = 'dummy/url/';
+      var artifactId = 'base-uri-element';
+      var webpackageId = 'dummy-pack@1.0.0';
+      window.componentCacheEntry = getTestComponentCacheEntry()[artifactId];
+      initNewElement(artifactId);
+      component = document.querySelector(artifactId);
+      component.___cubxManifest___ = {artifactId: artifactId, webpackageId: webpackageId};
+      expectedBaseUri = basedBaseUrl + webpackageId + '/' + artifactId;
+    });
+    after(function () {
+      window.cubx.CRC._baseUrl = undefined;
+      window.componentCacheEntry = undefined;
+    });
+    it('should return the valid component baseUri when baseUrl has a \'/\' at the end', function () {
+      window.cubx.CRC._baseUrl = 'dummy/url/';
+      expect(component.getComponentBaseUri()).to.be.equal(expectedBaseUri);
+    });
+    it('should return the valid component baseUri when baseUrl has no \'/\' at the end', function () {
+      window.cubx.CRC._baseUrl = 'dummy/url';
+      expect(component.getComponentBaseUri()).to.be.equal(expectedBaseUri);
+    });
+  });
 });

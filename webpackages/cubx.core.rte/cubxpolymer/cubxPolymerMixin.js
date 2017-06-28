@@ -153,6 +153,21 @@
     return JSON.stringify(exportDynamicConnections);
   };
 
+  /**
+   * Return the base uri of the component, which has the pattern: [baseUrl]/[webpackageId]/[artifactId]
+   * @returns {string}
+   */
+  cubxPolymerMixin.getComponentBaseUri = function () {
+    var artifactId = this.___cubxManifest___.artifactId;
+    var webpackageId = this.___cubxManifest___.webpackageId;
+    var baseUri = window.cubx.CRC._baseUrl;
+    if (baseUri.lastIndexOf('/') !== baseUri.length - 1) {
+      baseUri += '/';
+    }
+    baseUri += webpackageId + '/' + artifactId;
+    return baseUri;
+  };
+
   /* *****************************************************************/
   /* *********************** private methods *************************/
   /* *****************************************************************/
