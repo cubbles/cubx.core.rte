@@ -164,7 +164,7 @@
    */
   Initializer.prototype._isElementaryComponent = function (element) {
     if (!element || !element.tagName) {
-      console.error('parameter element is not a HTMLElement');
+      console.error('The parameter "element" is not a HTMLElement');
       return false;
     }
     if (!window.cubx.CRC.getCache().getComponentCacheEntry(element.tagName.toLowerCase())) {
@@ -184,7 +184,7 @@
    */
   Initializer.prototype._isConnectionElement = function (element) {
     if (!element || !element.tagName) {
-      console.error('parameter element is not a HTMLElement');
+      console.error('The parameter "element" is not a HTMLElement');
       return false;
     }
     if (element.tagName === 'CUBX-CORE-CONNECTIONS' || element.tagName === 'CUBX-CORE-CONNECTION') {

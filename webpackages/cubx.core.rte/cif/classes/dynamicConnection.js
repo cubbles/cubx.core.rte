@@ -9,8 +9,7 @@
   DynamicConnection.prototype.setSource = function (source) {
     var error = this._validateSource(source);
     if (error.length > 0) {
-      console.error('The "source" parameter (' + JSON.stringify(source) + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "source" parameter ', source, ' is not valid. Caused error:', error);
       throw new SyntaxError('Not valid source parameter.');
     }
     this.source = source;
@@ -64,8 +63,7 @@
   DynamicConnection.prototype.setSourceSlot = function (slot) {
     var error = this._validateSlot(slot);
     if (error.length > 0) {
-      console.error('The "slot" parameter (' + slot + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "slot" parameter', slot, ' is not valid. Caused error:', error);
       throw new SyntaxError('Not valid slot parameter.');
     }
     if (!this.source) {
@@ -76,8 +74,7 @@
   DynamicConnection.prototype.setConnectionId = function (connectionId) {
     var error = this._validateConnectionId(connectionId);
     if (error.length > 0) {
-      console.error('The "connectionId" parameter (' + connectionId + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "connectionId" parameter ', connectionId, ') is not valid. Caused error:', error);
       throw new SyntaxError('Not valid connectionId parameter.');
     }
     this.connectionId = connectionId;
@@ -85,8 +82,7 @@
   DynamicConnection.prototype.setCopyValue = function (copyValue) {
     var error = this._validateCopyValue(copyValue);
     if (error.length > 0) {
-      console.error('The "copyValue" parameter (' + copyValue + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "copyValue" parameter ', copyValue, ' is not valid. Caused error:', error);
       throw new SyntaxError('Not valid copyValue parameter.');
     }
     this.copyValue = copyValue;
@@ -94,8 +90,7 @@
   DynamicConnection.prototype.setRepeatedValues = function (repeatedValues) {
     var error = this._validateRepeatedValues(repeatedValues);
     if (error.length > 0) {
-      console.error('The "repeatedValues" parameter (' + repeatedValues + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "repeatedValues" parameter ', repeatedValues, ' is not valid. Caused error:', error);
       throw new SyntaxError('Not valid repeatedValues parameter.');
     }
 
@@ -104,8 +99,7 @@
   DynamicConnection.prototype.setDirectExecution = function (directExecution) {
     var error = this._validateDirectExecution(directExecution);
     if (error.length > 0) {
-      console.error('The "directExecution" parameter (' + directExecution + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "directExecution" parameter ', directExecution, ' is not valid. Caused error:', error);
       throw new SyntaxError('Not valid directExecution parameter.');
     }
 
@@ -114,8 +108,7 @@
   DynamicConnection.prototype.setHookFunction = function (hookFunction) {
     var error = this._validateHookFunction(hookFunction);
     if (error.length > 0) {
-      console.error('The "hookFunction" parameter (' + hookFunction + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "hookFunction" parameter ', hookFunction, ' is not valid. Caused error:', error);
       throw new SyntaxError('Not valid hookFunction parameter.');
     }
     this.hookFunction = hookFunction;
@@ -179,8 +172,7 @@
     }
     var error = temp.validate();
     if (error.length > 0) {
-      console.error('The "config" parameter (' + JSON.stringify(config) + ') is not a valid. Caused error:' +
-        JSON.stringify(error));
+      console.error('The "config" parameter ', config, ') is not valid. Caused error:', error);
       throw new SyntaxError('The parameter "config" is not valid.');
     } else {
       Object.assign(this, temp);

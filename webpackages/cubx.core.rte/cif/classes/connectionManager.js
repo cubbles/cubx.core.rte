@@ -265,7 +265,6 @@
     if (index > -1) {
       return this._connections.splice(index, 1)[ 0 ];
     }
-    return;
   };
 
   /**
@@ -483,7 +482,7 @@
       }
       connectionElement.processed = true;
     } catch (e) {
-      console.warn('Connection ' + connectionElement + 'could not be created.');
+      console.warn('Connection ', connectionElement, 'could not be created.');
     }
   };
 
@@ -518,8 +517,8 @@
 
     connection.connectionId = cubxConnection.getConnectionId();
     if (!connection.connectionId || connection.connectionId === 'undefined') {
-      console.warn('The connectionId is not defined for the connection with source: "' + source +
-        '" and destination: "' + destination + '".');
+      console.warn('The connectionId is not defined for the connection with source: "', source,
+        '" and destination: "', destination, '".');
     }
     // set source properties to connection
     connection.source.memberId = internal ? 'self' : component.getAttribute('member-id');
@@ -972,8 +971,7 @@
         }
       } else {
         console.error(
-          'The connection can not convert to a DynamicConnection, because it is static defined ' +
-          'connection.');
+          'The connection can not convert to a DynamicConnection, because it is defined as  astatic connection.');
       }
       return dynamicConnection;
     };
