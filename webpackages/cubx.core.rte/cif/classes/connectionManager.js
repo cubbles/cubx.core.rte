@@ -971,7 +971,7 @@
         }
       } else {
         console.error(
-          'The connection can not convert to a DynamicConnection, because it is defined as  astatic connection.');
+          'The connection can not convert to a DynamicConnection, because it is defined as a static connection.');
       }
       return dynamicConnection;
     };

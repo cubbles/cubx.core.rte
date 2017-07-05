@@ -534,7 +534,7 @@ describe('Connection', function () {
       it('should log an error', function () {
         expect(spy.calledOnce).to.be.true;
         expect(spy.calledWith(
-          'The connection can not convert to a DynamicConnection, because it is static defined connection.'))
+          'The connection can not convert to a DynamicConnection, because it is defined as a static connection.'))
           .to.be.true;
       });
     });
