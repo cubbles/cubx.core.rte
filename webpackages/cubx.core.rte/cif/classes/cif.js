@@ -1452,7 +1452,7 @@
       el = node;
     }
     if (!el) {
-      console.error('the "_createSlotInitElement" method not found the membeer element: ', root, 'slotInit', slotInit);
+      console.error('the "_createSlotInitElement" method not found the member element: ', root, 'slotInit', slotInit);
     }
     // get cubx-core-init tag or null
     var cubxInitEl = _.find(el.children, function (element) {
