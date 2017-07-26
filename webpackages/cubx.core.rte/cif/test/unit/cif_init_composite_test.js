@@ -180,7 +180,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -284,17 +283,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -335,17 +338,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'a-d', source: {
+              connectionId: 'a-d',
+              source: {
                 slot: 'testslotA'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-a', source: {
+            connectionId: 'b-a',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'A-Element', slot: 'testslotA'
             }
           } ]
@@ -374,7 +381,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -478,17 +484,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -529,17 +539,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'a-d', source: {
+              connectionId: 'a-d',
+              source: {
                 slot: 'testslotA'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-a', source: {
+            connectionId: 'b-a',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'A-Element', slot: 'testslotA'
             }
           } ]
@@ -568,7 +582,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -651,17 +664,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -702,17 +719,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'a-d', source: {
+              connectionId: 'a-d',
+              source: {
                 slot: 'testslotA'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-a', source: {
+            connectionId: 'b-a',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'A-Element', slot: 'testslotA'
             }
           } ]
@@ -753,17 +774,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'a-d', source: {
+              connectionId: 'a-d',
+              source: {
                 slot: 'testslotA'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-a', source: {
+            connectionId: 'b-a',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'A-Element', slot: 'testslotA'
             }
           } ]
@@ -802,7 +827,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -1055,7 +1079,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -1071,7 +1094,6 @@ describe('CIF', function () {
             default:
               ergManifest = {};
               break;
-
           }
           ergManifest.artifactType = 'compoundComponent';
           return ergManifest;
@@ -1144,6 +1166,8 @@ describe('CIF', function () {
       });
       it('should be initialized', function () {
         cif._initCubxElements(container);
+        console.log('##################', container);
+        console.log(compoundEl);
         cif._initConnections();
         cif._initSlots();
         compoundEl.model.should.have.property('testslotA', 'Hello World!');
@@ -1204,17 +1228,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -1298,7 +1326,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -1314,7 +1341,6 @@ describe('CIF', function () {
             default:
               ergManifest = {};
               break;
-
           }
           ergManifest.artifactType = 'compoundComponent';
           return ergManifest;
@@ -1531,7 +1557,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });

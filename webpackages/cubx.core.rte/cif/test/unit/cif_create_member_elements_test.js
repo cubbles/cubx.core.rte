@@ -24,7 +24,7 @@ describe('CIF', function () {
       var crc;
       var manifest;
       var compoundEl;
-      /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }]*/
+      /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }] */
       var getResolvedComponentStub;
       beforeEach(function () {
         crc = window.cubx.CRC;
@@ -68,9 +68,11 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
@@ -226,7 +228,7 @@ describe('CIF', function () {
     describe('crcRoot contains one cubbles and other html elements', function () {
       var container;
       var manifest;
-      /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }]*/
+      /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }] */
       var getResolvedComponentStub;
       var crc;
       var compoundEl;
@@ -275,17 +277,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -321,7 +327,7 @@ describe('CIF', function () {
       var container;
       var manifestCiftestE;
       var manifestCiftestA;
-      /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }]*/
+      /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }] */
       var getResolvedComponentStub;
       var crc;
       var compoundEl;
@@ -487,7 +493,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -531,7 +536,7 @@ describe('CIF', function () {
     describe('crcRoot contains 2 identical cubbles', function () {
       var container;
       var manifest;
-      /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }]*/
+      /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "getResolvedComponentStub" }] */
       var getResolvedComponentStub;
       var crc;
       var compoundEl;
@@ -581,17 +586,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -686,17 +695,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'a-d', source: {
+              connectionId: 'a-d',
+              source: {
                 slot: 'testslotA'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-a', source: {
+            connectionId: 'b-a',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'A-Element', slot: 'testslotA'
             }
           } ]
@@ -737,17 +750,21 @@ describe('CIF', function () {
 
             } ],
             connections: [ {
-              connectionId: 'c-d', source: {
+              connectionId: 'c-d',
+              source: {
                 slot: 'testslotC'
-              }, destination: {
+              },
+              destination: {
                 memberIdRef: 'D-Element', slot: 'testslotD'
               }
             } ]
           } ],
           connections: [ {
-            connectionId: 'b-c', source: {
+            connectionId: 'b-c',
+            source: {
               memberIdRef: 'B-Element', slot: 'testslotB'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'C-Element', slot: 'testslotC'
             }
           } ]
@@ -763,7 +780,6 @@ describe('CIF', function () {
               break;
             default:
               break;
-
           }
           return ergManifest;
         });
@@ -870,9 +886,11 @@ describe('CIF', function () {
 
           } ],
           connections: [ {
-            connectionId: 'c-d', source: {
+            connectionId: 'c-d',
+            source: {
               slot: 'testslotC'
-            }, destination: {
+            },
+            destination: {
               memberIdRef: 'd', slot: 'testslotD'
             }
           } ],
@@ -881,9 +899,11 @@ describe('CIF', function () {
           } ]
         } ],
         connections: [ {
-          connectionId: 'b-c', source: {
+          connectionId: 'b-c',
+          source: {
             memberIdRef: 'b', slot: 'testslotB'
-          }, destination: {
+          },
+          destination: {
             memberIdRef: 'd', slot: 'testslotC'
           }
         } ],
@@ -1344,4 +1364,3 @@ describe('CIF', function () {
     });
   });
 });
-
