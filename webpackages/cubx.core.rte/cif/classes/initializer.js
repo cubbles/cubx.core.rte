@@ -109,7 +109,7 @@
       var parent = initElement.parentNode;
       // The parent is the coponent self (internal init, or an elementary component
       // For compound in the subtree of component will this Method called separate
-      if (parent === component || this._isElementaryComponent(parent) && context.findParentContextOfElement(parent).isSame(context)) {
+      if ((parent === component || this._isElementaryComponent(parent)) && context.findParentContextOfElement(parent).isSame(context)) {
         var initSlotElements = [];
         for (var i = 0; i < initElement.children.length; i++) {
           if (initElement.children[ i ].processed) {
@@ -228,9 +228,10 @@
      * @memberOf SlotInit
      */
 
-    this._value;
     try {
-      this._value = JSON.parse(initSlotElement.innerHTML);
+      // replace \\" with \\\\\\\"" for JSON.parse. After the parse it will be \"
+      var str = initSlotElement.textContent.replace(/\\\\"/g, '\\\\\\\"'); // eslint-disable-line no-useless-escape
+      this._value = JSON.parse(str);
     } catch (err) {
       if (err instanceof SyntaxError) {
         console.error('One of <cubx-core-slot-init> element contains a not valid JSON:', initSlotElement, ' This belongs to the following cubbles:', element);

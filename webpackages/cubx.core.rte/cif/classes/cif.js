@@ -1475,7 +1475,9 @@
     cubxInitEl.generatedByCif = true;
     cubxSlotInitEl.setSlot(slotInit.slot);
 
+    // var value = slotInit.value.replace(/\\\\"/g, '\"');
     cubxSlotInitEl.innerHTML = JSON.stringify(slotInit.value);
+    // cubxSlotInitEl.textContent = JSON.stringify(slotInit.value);
 
     cubxSlotInitEl.setOrder(order);
     cubxSlotInitEl.setDeepLevel(el._deeplevel);
