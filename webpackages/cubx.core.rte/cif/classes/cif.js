@@ -1452,7 +1452,7 @@
       el = node;
     }
     if (!el) {
-      console.error('the "_createSlotInitElement" method not found the membeer element: ', root, 'slotInit', slotInit);
+      console.error('the "_createSlotInitElement" method not found the member element: ', root, 'slotInit', slotInit);
     }
     // get cubx-core-init tag or null
     var cubxInitEl = _.find(el.children, function (element) {
@@ -1475,7 +1475,9 @@
     cubxInitEl.generatedByCif = true;
     cubxSlotInitEl.setSlot(slotInit.slot);
 
+    // var value = slotInit.value.replace(/\\\\"/g, '\"');
     cubxSlotInitEl.innerHTML = JSON.stringify(slotInit.value);
+    // cubxSlotInitEl.textContent = JSON.stringify(slotInit.value);
 
     cubxSlotInitEl.setOrder(order);
     cubxSlotInitEl.setDeepLevel(el._deeplevel);
