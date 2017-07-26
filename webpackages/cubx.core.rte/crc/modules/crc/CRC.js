@@ -3,7 +3,6 @@
  * Defines the CRC RequireJS Module.
  *
  * @version 2.4.0-SNAPSHOT
- * @module CRC_Module
  */
 window.cubx.amd.define([
   'storageManager',

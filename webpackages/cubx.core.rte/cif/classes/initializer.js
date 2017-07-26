@@ -109,7 +109,7 @@
       var parent = initElement.parentNode;
       // The parent is the coponent self (internal init, or an elementary component
       // For compound in the subtree of component will this Method called separate
-      if ((parent === component || this._isElementaryComponent(parent)) && context.findParentContextOfElement(parent).isSame(context)) {
+      if (parent === component || this._isElementaryComponent(parent) && context.findParentContextOfElement(parent).isSame(context)) {
         var initSlotElements = [];
         for (var i = 0; i < initElement.children.length; i++) {
           if (initElement.children[ i ].processed) {
