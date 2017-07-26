@@ -2,7 +2,7 @@
 /**
  * Defines the CRC RequireJS Module.
  *
- * @version 2.3.2
+ * @version 2.3.3
  * @module CRC_Module
  */
 window.cubx.amd.define([
@@ -28,7 +28,7 @@ window.cubx.amd.define([
        /* @type {string}
        /* @private
        */
-      this._version = '2.3.2';
+      this._version = '2.3.3';
 
       /**
        * jQuery object containing only one element to which the crc should be appended
