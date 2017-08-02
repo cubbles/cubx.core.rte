@@ -476,22 +476,22 @@
     // flag indicates that there are outstanding components which needs to be processed by CIF (even if elementary components are still ready)
     this._cifAllComponentsReady = false;
 
+    var initOrder = 0;
+    var memberIds = [];
     elements.forEach(function (element) {
       if (element.processed) {
         return;
       }
-      var memberIds = [];
-      var initOrder = 0;
       this._processObserverTriggered();
       // 2. Update cubx-core-connection elements
       this._updateCubxCoreConnections(element);
       // 3. Update cubx-core-slot-init elements
-      this._updateCubxCoreInit(element, initOrder);
+      initOrder = this._updateCubxCoreInit(element, initOrder);
       // 4. for each cubbles call _initCubxElementsInRoot
       this._initCubxElementsInRoot(element, memberIds);
       // check if marked=removed connection exists as destination to this element and activate it
       this._reactivateConnectionIfExists(element);
-    }.bind(this));
+    }, this);
 
     // check if all Componentes in CRC are ready and fire all components ready event if so
     if (!this._hasElementsWaitingForReady()) {
