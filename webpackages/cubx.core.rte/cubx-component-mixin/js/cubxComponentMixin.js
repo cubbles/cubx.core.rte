@@ -325,6 +325,9 @@
       } else {
         slot.direction = [ 'input', 'output' ];
       }
+      if (elem.description) {
+        slot.description = elem.description;
+      }
       me._slots.push(slot);
     });
 
