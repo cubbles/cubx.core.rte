@@ -620,8 +620,9 @@
     // get parent cubbles with context
     var parent = this._findNextAncestorWithContext(component);
     // Just connections in root context allowed
+    // TODO: change next line to: if (parent && parent !== this.getCRCRootNode())
     if (parent !== this.getCRCRootNode()) {
-      console.warn('Can\'t handle added element. The connection in not in scope of root context. It will only processed a removed connection element in the scope of root context. Removed connection:', connectionElement);
+      console.warn('Can\'t handle removed element. The connection in not in scope of root context. It will only processed a removed connection element in the scope of root context. Removed connection:', connectionElement);
       return;
     }
     parent.Context.getConnectionMgr().removeConnection(connectionElement);
