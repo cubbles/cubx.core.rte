@@ -23,7 +23,8 @@
     'unit/manifestConverter_test',
     'unit/dependencyTree_test',
     'unit/depMgrDependencyTreeCreation_test',
-    'unit/dependencyTreeModification_test'
+    'unit/dependencyTreeModification_test',
+    'unit/depMgrParseGlobalResponseCache_test.js'
   ];
 
   // get all tests via requireJS and run them

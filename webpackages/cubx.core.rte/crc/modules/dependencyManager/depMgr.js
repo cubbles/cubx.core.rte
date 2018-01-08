@@ -110,6 +110,7 @@ window.cubx.amd.define(
       this._crc = get(window, 'cubx.CRC');
       var rootDependencies = get(window, 'cubx.CRCInit.rootDependencies') || [];
       var rootDependencyExcludes = get(window, 'cubx.CRCInit.rootDependencyExcludes') || [];
+      var responseCache = get(window, 'cubx.CRCInit.responseCache') || [];
 
       // load cif, if it is not excluded by config
       if (get(window, 'cubx.CRCInit.loadCIF') === 'true') {
@@ -132,6 +133,19 @@ window.cubx.amd.define(
 
       // set all top level dependencies as initial depList
       this._depList = this._createDepReferenceListFromArtifactDependencies(rootDependencies, null);
+
+      // Fill this._responseCache from global responseCache
+      this._parseGlobalResponseCache(responseCache);
+    };
+
+    DependencyMgr.prototype._parseGlobalResponseCache = function (responseCache) {
+      responseCache.forEach(function (manifest) {
+        var webpackageId = manifest.name + '@' + manifest.version;
+        if (manifest.groupId && manifest.groupId.length > 0) {
+          webpackageId = manifest.groupId + '.' + webpackageId;
+        }
+        this._responseCache.addItem(webpackageId, manifest);
+      }.bind(this));
     };
 
     /**
