@@ -24,7 +24,7 @@
     'unit/dependencyTree_test',
     'unit/depMgrDependencyTreeCreation_test',
     'unit/dependencyTreeModification_test',
-    'unit/depMgrParseGlobalResponseCache_test.js'
+    'unit/depMgrParseGlobalResponseCache_test'
   ];
 
   // get all tests via requireJS and run them
