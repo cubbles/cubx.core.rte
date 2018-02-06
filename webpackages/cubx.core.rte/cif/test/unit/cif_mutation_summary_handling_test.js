@@ -1279,7 +1279,7 @@ describe('CIF', function () {
       });
       it('should get a warn log', function () {
         consoleWarnSpy.should.be.calledOnce;
-        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle added element. The connection in not in scope of root context.');
+        consoleWarnSpy.should.be.calledWithMatch('Can\'t handle removed element. The connection in not in scope of root context.');
       });
     });
     describe('the <cubx-core-connection> is as internal connection marked', function () {
