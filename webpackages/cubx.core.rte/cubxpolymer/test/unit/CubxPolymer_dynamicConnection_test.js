@@ -3,6 +3,7 @@
 'use strict';
 describe('CubxPolymer (dynamicConnection', function () {
   var DynamicConnection;
+  this.timeout(3000);
   before(function (done) {
     DynamicConnection = window.cubx.cif.DynamicConnection;
     HTMLImports.whenReady(function () {
