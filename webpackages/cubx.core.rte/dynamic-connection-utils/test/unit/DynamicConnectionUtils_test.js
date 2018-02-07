@@ -4,6 +4,7 @@
 describe('DynamicConnectionUtils', function () {
   var dynamicConnectionUtil;
   var Context;
+  this.timeout(3000);
   before(function (done) {
     dynamicConnectionUtil = window.cubx.dynamicConnectionUtil;
     Context = window.cubx.cif.Context;
