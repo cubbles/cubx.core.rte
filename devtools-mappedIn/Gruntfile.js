@@ -1,4 +1,4 @@
-/*global process, __dirname*/
+/* globals process, __dirname */
 'use strict';
 var path = require('path');
 var _ = require('lodash');

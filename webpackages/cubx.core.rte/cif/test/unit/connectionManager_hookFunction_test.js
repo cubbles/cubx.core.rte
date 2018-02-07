@@ -1,4 +1,4 @@
-/*globals _*/
+/* globals _ */
 'use strict';
 describe('ConnectionManager', function () {
   describe('hookFunctions', function () {
@@ -873,9 +873,9 @@ describe('ConnectionManager', function () {
       });
       describe('Call hoookFunction for connection 7', function () {
         var hookFunctionSpy;
-        /* eslint-disable no-unused-vars*/
+        /* eslint-disable no-unused-vars */
         var _setSlotValueSpy;
-        /* eslint-enable no-unused-vars*/
+        /* eslint-enable no-unused-vars */
         before(function () {
           var connectionMgr = child1.Context.getConnectionMgr();
           var connection = _.find(connectionMgr._connections, { connectionId: dynamicConnectionId7 });

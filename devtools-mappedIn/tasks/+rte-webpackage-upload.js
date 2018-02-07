@@ -3,4 +3,3 @@ module.exports = function (grunt) {
   grunt.registerTask('+rte-webpackage-upload', 'check crc varsion and upload',
     [ 'check-crc-version:default', '+webpackage-upload' ]);
 };
-

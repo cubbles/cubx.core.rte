@@ -1,4 +1,4 @@
-/* globals CustomEvent*/
+/* globals CustomEvent */
 'use strict';
 
 if (!window.cubx) {
@@ -39,7 +39,6 @@ window.cubx.EventFactory.prototype.createModelChangePayloadObject = function (sl
 window.cubx.EventFactory.prototype.createEvent = function (type, detail) {
   var evt;
   switch (type) {
-
     case window.cubx.EventFactory.types.CIF_MODEL_CHANGE:
       evt = new CustomEvent(type, { bubbles: true, detail: detail });
       break;

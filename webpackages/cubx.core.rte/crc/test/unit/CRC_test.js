@@ -1,4 +1,4 @@
-/*globals HTMLDivElement, HTMLBodyElement*/
+/* globals HTMLDivElement, HTMLBodyElement */
 /**
  * Created by pwr on 05.02.2015.
  */

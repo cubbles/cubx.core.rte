@@ -207,7 +207,7 @@ window.cubx.amd.define(['manifestConverter'], function (manifestConverter) {
     APP: 'app',
     UTILITY: 'utilitiy',
     isComponent: function (type) {
-      if (type && type === this.COMPOUND_COMPONENT || type === this.ELEMENTARY_COMPONENT) {
+      if ((type && type === this.COMPOUND_COMPONENT) || type === this.ELEMENTARY_COMPONENT) {
         return true;
       }
 

@@ -87,7 +87,7 @@ window.cubx.amd.define(function () {
    * @memberOf ResponseCache
    */
   ResponseCache.prototype.invalidate = function () {
-     // reset cache
+    // reset cache
     this._cache = {};
   };
 

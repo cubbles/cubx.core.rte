@@ -1,4 +1,4 @@
-/*global _,Polymer*/
+/* global _,Polymer */
 
 /**
  * CubxPolymer wrapped the Polymer function.

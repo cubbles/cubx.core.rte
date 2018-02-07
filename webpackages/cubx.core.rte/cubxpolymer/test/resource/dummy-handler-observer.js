@@ -26,4 +26,3 @@ getTestComponentCacheEntry()[ 'dummy-handler-observer' ] = {
     }
   ]
 };
-

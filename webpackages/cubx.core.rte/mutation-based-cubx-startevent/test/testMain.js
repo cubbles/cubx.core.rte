@@ -1,4 +1,4 @@
-/* globals mocha mochaPhantomJS*/
+/* globals mocha mochaPhantomJS */
 (function () {
   'use strict';
   if (!window.cubx) {

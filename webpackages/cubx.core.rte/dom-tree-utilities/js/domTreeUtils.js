@@ -14,7 +14,6 @@ function elementFindByAttributeValue (attribute, value) {
       return all[ i ];
     }
   }
-  return;
 }
 
 function findAncestorElement (element, ancestorName) {

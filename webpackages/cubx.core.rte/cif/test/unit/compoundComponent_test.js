@@ -1,4 +1,4 @@
-/*globals cache*/
+/* globals cache */
 'use strict';
 
 describe('CompoundComponent', function () {
@@ -10,9 +10,9 @@ describe('CompoundComponent', function () {
   describe('#createdCallback', function () {
     var spy;
     var ElementConstructor;
-    /* eslint-disable no-unused-vars*/
+    /* eslint-disable no-unused-vars */
     var container;
-    /* eslint-enable no-unused-vars*/
+    /* eslint-enable no-unused-vars */
     var element;
     before(function () {
       container = document.querySelector('[cubx-core-crc]');
@@ -30,9 +30,9 @@ describe('CompoundComponent', function () {
     });
   });
   describe('#isInputSlot', function () {
-    /* eslint-disable no-unused-vars*/
+    /* eslint-disable no-unused-vars */
     var getCacheStub;
-    /* eslint-enable no-unused-vars*/
+    /* eslint-enable no-unused-vars */
     var container;
     before(function () {
       container = document.querySelector('[cubx-core-crc]');
@@ -135,9 +135,9 @@ describe('CompoundComponent', function () {
     var container;
     var element;
     var stub;
-    /* eslint-disable no-unused-vars*/
+    /* eslint-disable no-unused-vars */
     var getCacheStub;
-    /* eslint-enable no-unused-vars*/
+    /* eslint-enable no-unused-vars */
     before(function () {
       container = document.querySelector('[cubx-core-crc]');
       getCacheStub = sinon.stub(window.cubx.CRC, 'getCache', function () {

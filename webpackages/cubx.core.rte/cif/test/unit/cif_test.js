@@ -80,8 +80,6 @@ describe('CIF', function () {
     });
 
     describe('_cifReady attribute is true', function () {
-      /* eslint-disable no-unused-vars*/
-
       beforeEach(function () {
         cif._cifReady = true;
       });
@@ -196,10 +194,9 @@ describe('CIF', function () {
     });
   });
   describe('#_isElementaryComponent', function () {
-    var getComponentCacheEntryStub;
+    var getComponentCacheEntryStub; // eslint-disable-line no-unused-vars
     var elementaryCompName;
     var compoundCompName;
-    var container;
     beforeEach(function () {
       elementaryCompName = 'cubixx-test-elementary';
       compoundCompName = 'cubixx-test-compound';
@@ -216,7 +213,6 @@ describe('CIF', function () {
         }
         return elem;
       });
-      container = document.querySelector('[cubx-core-crc]');
     });
     afterEach(function () {
       window.cubx.CRC.getCache().getComponentCacheEntry.restore();
@@ -231,10 +227,9 @@ describe('CIF', function () {
     });
   });
   describe('#_isCompoundComponent', function () {
-    var getResolvedComponentStub;
+    var getResolvedComponentStub; // eslint-disable-line no-unused-vars
     var elementaryCompName;
     var compoundCompName;
-    var container;
     beforeEach(function () {
       elementaryCompName = 'cubixx-test-elementary';
       compoundCompName = 'cubixx-test-compound';
@@ -250,7 +245,6 @@ describe('CIF', function () {
         }
         return elem;
       });
-      container = document.querySelector('[cubx-core-crc]');
     });
     afterEach(function () {
       window.cubx.CRC.getResolvedComponent.restore();
@@ -311,9 +305,9 @@ describe('CIF', function () {
   });
   describe('#_registerCompoundComponentElement', function () {
     it('should be register with component name "-"', function () {
-      /* eslint-disable no-unused-vars*/
+      /* eslint-disable no-unused-vars */
       var constructor = cif._registerCompoundComponentElement('ciftest-registercompound');
-      /* eslint-enable no-unused-vars*/
+      /* eslint-enable no-unused-vars */
       var el = new constructor();
 
       el.should.have.deep.property('isCompoundComponent', true);

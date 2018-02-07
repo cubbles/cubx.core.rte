@@ -84,4 +84,3 @@
   }
   window.cubx.mutationBasedCubxStartevent = new MutationBasedCubxStartevent();
 })();
-

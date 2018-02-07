@@ -241,7 +241,7 @@
     if (typeof runtimeId !== 'string') {
       error.push('Not valid "runtimeId" (' + JSON.stringify(runtimeId) + '). It must be a string.');
     } else {
-      var reg = /^[a-z][a-zA-Z0-9-.:\/@]*$/;
+      var reg = /^[a-z][a-zA-Z0-9-.:/@]*$/;
       if (!runtimeId.match(reg)) {
         error.push(
           'Not valid "runtimeId" (' + runtimeId + '). It must match to ' + reg);

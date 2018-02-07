@@ -59,9 +59,9 @@
     this._initializer = new window.cubx.cif.Initializer();
 
     /**
-     * ObserverSummary Object for observe dynamically created or removed cublles
+     * ObserverSummary Object for observe dynamically created or removed cubbles
      */
-    this._observer;
+    this._observer; // eslint-disable-line chai-friendly/no-unused-expressions
 
     /**
      * A queue for dynamically added elements. The element of queue will processed separat, one after the other.
@@ -675,8 +675,8 @@
    * @private
    */
   CIF.prototype._initCubxElements = function (rootNode) {
-    if (!node) {
-      node = this.getCRCRootNode();
+    if (!rootNode) {
+      rootNode = this.getCRCRootNode();
     }
 
     var filter = {
@@ -696,7 +696,7 @@
     // 1. iterate all over children recursive  - treeWalker - collect all cubbes components
     // check all nodes of custom element and if the are cubbles (contained in crc/cache
     var walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_ELEMENT, safeFilter, false);
-    var node = walker.currentNode;
+    // var node = walker.currentNode;
     var elementList = [];
     while (walker.nextNode()) {
       var curNode = walker.currentNode;

@@ -147,8 +147,7 @@
         return;
       }
 
-      if (!this._getParentContextForRuntimeId(connection.source.runtimeId)
-          .isSame(this._getParentContextForRuntimeId(connection.destination.runtimeId))) {
+      if (!this._getParentContextForRuntimeId(connection.source.runtimeId).isSame(this._getParentContextForRuntimeId(connection.destination.runtimeId))) {
         console.error('The connection' + JSON.stringify(connection, null, 2) +
           ' can not be created. Ambiguous context: ' +
           'The source context is not the same as a the destination context. ' +
@@ -471,4 +470,3 @@
 
   window.cubx.dynamicConnectionUtil = DynamicConnectionUtil;
 }());
-

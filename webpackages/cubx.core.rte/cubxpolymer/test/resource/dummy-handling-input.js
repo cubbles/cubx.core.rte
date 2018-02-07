@@ -23,4 +23,3 @@ getTestComponentCacheEntry()[ 'dummy-handling-input' ] = {
     }
   ]
 };
-

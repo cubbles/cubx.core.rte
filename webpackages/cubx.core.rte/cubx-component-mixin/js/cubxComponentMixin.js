@@ -68,8 +68,7 @@
     if (!slotObj) {
       return false;
     }
-    if (slotObj.hasOwnProperty('direction') && _.includes(slotObj.direction, 'output') ||
-      _.isEmpty(slotObj.direction)) {
+    if ((slotObj.hasOwnProperty('direction') && _.includes(slotObj.direction, 'output')) || _.isEmpty(slotObj.direction)) {
       return true;
     } else if (!slotObj.hasOwnProperty('direction')) {
       return true;

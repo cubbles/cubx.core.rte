@@ -15,7 +15,8 @@ describe('CubxPolymer origin content', function () {
       document.body.appendChild(element);
       var template = '<span>{{value}}</span>';
       var prototype = {
-        is: elementName, attached: function () {
+        is: elementName,
+        attached: function () {
           // before wait for Lifecycle Method attached called
           done();
         }
@@ -55,7 +56,8 @@ describe('CubxPolymer origin content', function () {
       document.body.appendChild(element);
       var template = '<span>{{value}}</span>';
       var prototype = {
-        is: elementName, attached: function () {
+        is: elementName,
+        attached: function () {
           // before wait for Lifecycle Method attached called
           done();
         }

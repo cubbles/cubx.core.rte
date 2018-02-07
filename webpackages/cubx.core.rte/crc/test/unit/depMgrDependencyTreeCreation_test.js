@@ -1,4 +1,4 @@
-/* globals describe, before, beforeEach, after, afterEach, it, expect*/
+/* globals describe, before, beforeEach, after, afterEach, it, expect */
 (function () {
   'use strict';
 
@@ -69,7 +69,7 @@
                 } else if (!(dep instanceof DepMgr.DepReference)) {
                   throw new TypeError();
                 } else {
-                  window.setTimeout(function () { reject({message: 'Error while resolving...'}); }, 100);
+                  window.setTimeout(function () { reject({message: 'Error while resolving...'}); }, 100); // eslint-disable-line prefer-promise-reject-errors
                 }
               });
             });
@@ -330,7 +330,7 @@
                   if (manifest) {
                     resolve(manifest);
                   } else {
-                    reject();
+                    reject(); // eslint-disable-line prefer-promise-reject-errors
                   }
                 }, 200);
               });
@@ -463,7 +463,7 @@
                 if (response.hasOwnProperty('data')) {
                   window.setTimeout(function () { resolve(response); }, 200);
                 } else {
-                  window.setTimeout(function () { reject({message: 'Error while requesting ' + url}); }, 100);
+                  window.setTimeout(function () { reject({message: 'Error while requesting ' + url}); }, 100); // eslint-disable-line prefer-promise-reject-errors
                 }
               });
             });

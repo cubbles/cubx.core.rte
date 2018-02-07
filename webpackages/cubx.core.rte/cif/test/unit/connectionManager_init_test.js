@@ -62,12 +62,11 @@ describe('ConnectionManager', function () {
         container.removeChild(element);
       });
       it('connectionMgr._createConnectionsFromComponent should be called for each component ' +
-        'in _components property',
-        function () {
-          expect(stub.calledTwice).to.be.true;
-          expect(stub.calledWith(components[ 0 ])).to.be.true;
-          expect(stub.calledWith(components[ 1 ])).to.be.true;
-        });
+        'in _components property', function () {
+        expect(stub.calledTwice).to.be.true;
+        expect(stub.calledWith(components[ 0 ])).to.be.true;
+        expect(stub.calledWith(components[ 1 ])).to.be.true;
+      });
     });
     describe('#_createConnectionsFromComponent', function () {
       describe('the destination is a member', function () {

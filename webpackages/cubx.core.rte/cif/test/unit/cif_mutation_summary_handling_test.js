@@ -995,8 +995,6 @@ describe('CIF', function () {
           return {
             artifactId: tagName
           };
-        } else {
-          return;
         }
       });
       containerConnectionMgr = container.Context.getConnectionMgr();
@@ -1132,8 +1130,6 @@ describe('CIF', function () {
           return {
             artifactId: tagName
           };
-        } else {
-          return;
         }
       });
       _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection', function () {
@@ -1212,8 +1208,6 @@ describe('CIF', function () {
           return {
             artifactId: tagName
           };
-        } else {
-          return;
         }
       });
       consoleWarnSpy = sinon.spy(console, 'warn');

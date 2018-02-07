@@ -117,4 +117,3 @@ window.cubx.CRC.getNormedModelVersion = function (modelVersion) {
 function getComponentCacheEntry () {
   return window.cacheEntry;
 }
-

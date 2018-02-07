@@ -23,5 +23,4 @@ function createTestConnection (obj, staticFlag, internalFlag) {
   con.static = staticFlag;
   con.internal = typeof internalFlag === 'boolean' ? internalFlag : false;
   return con;
-}
-
+};

@@ -60,8 +60,8 @@ describe('CubxPolymer (helper)', function () {
         expect(component._initValue([], 'array')).to.be.eql([]);
       });
       it('should be "[1,2,3]", if arg1 is "[1,2,3]" and arg2 is "array"', function () {
-        expect(component._initValue([1, 2, 3], 'array')).to.be.an.array;
-        expect(component._initValue([1, 2, 3], 'array')).to.be.eql([1, 2, 3]);
+        expect(component._initValue([ 1, 2, 3 ], 'array')).to.be.an.array;
+        expect(component._initValue([ 1, 2, 3 ], 'array')).to.be.eql([ 1, 2, 3 ]);
       });
       it('should be null, if arg1 is null and arg2 is "object"', function () {
         expect(component._initValue(null, 'object')).to.be.an.object;
@@ -72,8 +72,8 @@ describe('CubxPolymer (helper)', function () {
         expect(component._initValue({}, 'object')).to.be.eql({});
       });
       it('should be {foo:"baz"}, if arg1 is {foo:"baz"} and arg2 is "object"', function () {
-        expect(component._initValue({foo: 'baz'}, 'object')).to.be.an.object;
-        expect(component._initValue({foo: 'baz'}, 'object')).to.be.eql({foo: 'baz'});
+        expect(component._initValue({ foo: 'baz' }, 'object')).to.be.an.object;
+        expect(component._initValue({ foo: 'baz' }, 'object')).to.be.eql({ foo: 'baz' });
       });
       it('should be undefined, if arg1 is null and arg2 is "object"', function () {
         expect(component._initValue(undefined, 'object')).to.be.undefined;
@@ -140,8 +140,8 @@ describe('CubxPolymer (helper)', function () {
         expect(component._initValue(null, '???')).to.be.null;
       });
       it('should be {foo:"baz"}, if arg1 is {foo:"baz"} is and arg2 is "string"', function () {
-        expect(component._initValue({foo: 'baz'}, 'string')).to.an.object;
-        expect(component._initValue({foo: 'baz'}, 'string')).to.be.eql({foo: 'baz'});
+        expect(component._initValue({ foo: 'baz' }, 'string')).to.an.object;
+        expect(component._initValue({ foo: 'baz' }, 'string')).to.be.eql({ foo: 'baz' });
       });
     });
 
@@ -245,4 +245,3 @@ describe('CubxPolymer (helper)', function () {
     });
   });
 });
-

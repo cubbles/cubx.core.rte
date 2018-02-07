@@ -270,4 +270,3 @@ window.cubx.amd.define(
       });
     });
   });
-

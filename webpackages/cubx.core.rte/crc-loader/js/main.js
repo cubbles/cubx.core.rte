@@ -1,4 +1,4 @@
-/*globals cubx, location*/
+/* globals cubx, location */
 (function () {
   'use strict';
   // define global namespace cubx
@@ -118,7 +118,8 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
   }
   var crcLoaderBaseUrl = crcLoaderUrl.replace(/\/js\/main\.js$/, '');
   var crcBaseUrl = crcLoaderBaseUrl.replace(/\/crc-loader$/, '/crc');
-  var webpackageBaseUrl = baseUrl || crcLoaderBaseUrl.replace(/\/[a-zA-Z0-9-\.@]*\/crc-loader$/, '/');
+  var reg = /\/[a-zA-Z0-9-.@]*\/crc-loader$/;
+  var webpackageBaseUrl = baseUrl || crcLoaderBaseUrl.replace(reg, '/');
   window.cubx.CRCInit.webpackageBaseUrl = webpackageBaseUrl;
   var rteWebpackageId = crcLoaderBaseUrl.substring(0, crcLoaderBaseUrl.lastIndexOf('/'));
   window.cubx.CRCInit.rteWebpackageId = rteWebpackageId.substring(rteWebpackageId.lastIndexOf('/') + 1);

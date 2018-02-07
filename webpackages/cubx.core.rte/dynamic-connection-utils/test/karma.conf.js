@@ -50,7 +50,8 @@ module.exports = function (config) {
     reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
     // reporters: ['progress'],
     junitReporter: {
-      outputFile: 'test-results/surefire-reports/TEST-karma.xml'
+      outputDir: 'test-results/surefire-reports',
+      outputFile: 'TEST-karma.xml'
     },
 
     htmlReporter: {

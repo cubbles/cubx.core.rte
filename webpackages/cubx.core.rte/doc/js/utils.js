@@ -1,4 +1,4 @@
-/* globals XMLHttpRequest*/
+/* globals XMLHttpRequest */
 'use strict';
 (function () {
   function getTextFile (url) {

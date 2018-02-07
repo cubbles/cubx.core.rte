@@ -1,5 +1,5 @@
 'use strict';
-/*globals cubx*/
+/* globals cubx */
 /**
  * Defines the DependencyTagTransformer RequireJS Module.
  * This module takes responsibility for the following tasks

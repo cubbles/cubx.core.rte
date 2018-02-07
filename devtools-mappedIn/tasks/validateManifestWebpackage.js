@@ -1,4 +1,4 @@
-/* globals module,require*/
+/* globals module,require */
 module.exports = function (grunt) {
   'use strict';
   grunt.registerTask('+webpackage-validateManifestFile', 'Validate \'manifest.webpackage\' file.', function () {

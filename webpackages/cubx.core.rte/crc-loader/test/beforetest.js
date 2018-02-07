@@ -1,4 +1,4 @@
-/* globals cubx*/
+/* globals cubx */
 /**
  * Created by jtrs on 14.09.2015.
  */
@@ -48,4 +48,3 @@ Q.test(a[l])&&(a[l]=a[l].replace(Q,""));"."===a[0].charAt(0)&&k&&(l=k.slice(0,k.
     (b=e.getAttribute("data-requiremodule")),g=F[e.getAttribute("data-requirecontext")])}(g?g.defQueue:R).push([b,c,d])};cubx.amd.define.amd={jQuery:!0};g.exec=function(b){return eval(b)};g(q)}})(this);
 // @formatter:on
 /* eslint-enable */
-

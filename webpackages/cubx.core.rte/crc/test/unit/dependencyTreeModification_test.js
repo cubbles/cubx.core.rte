@@ -1,4 +1,4 @@
-/* globals describe, before, beforeEach, after, afterEach, it, expect*/
+/* globals describe, before, beforeEach, after, afterEach, it, expect */
 'use strict';
 (function () {
   window.cubx.amd.define(['dependencyTree', 'dependencyManager', 'unit/utils/CubxNamespaceManager'],

@@ -1,4 +1,4 @@
-/* globals localStorage*/
+/* globals localStorage */
 /**
  * Defines the Storage Manager RequireJS Module.
  *

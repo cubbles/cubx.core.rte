@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Connection', function () {
-  /* eslint-disable no-unused-vars*/
+  /* eslint-disable no-unused-vars */
   var cif;
-  /* eslint-enable no-unused-vars*/
+  /* eslint-enable no-unused-vars */
   var Connection;
   before(function () {
     cif = window.cubx.cif.cif;

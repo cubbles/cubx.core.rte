@@ -32,4 +32,3 @@ getTestComponentCacheEntry()[ 'dummy-repropagate' ] = {
     }
   ]
 };
-

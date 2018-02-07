@@ -498,7 +498,7 @@
         try {
           var result = Array.isArray(obj) ? []
             : obj.constructor ? new obj.constructor() : {};
-        } catch (e) {  // The constructor failed, create without running it
+        } catch (e) { // The constructor failed, create without running it
           result = Object.create(Object.getPrototypeOf(obj));
         }
         hash.set(obj, result);
