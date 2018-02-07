@@ -82,9 +82,7 @@ module.exports = function (grunt, workspacePath) {
       // update .workspace file to point to the new folder name
       workspaceConfig.activeWebpackage = webpackageCommonName;
       grunt.file.write(workspaceConfigFile, JSON.stringify(workspaceConfig, null, 2));
-      // TODO: Create 'bower-install' task
-      // TODO: Update 'workspace/.bowerrc' File
-      //
+
       grunt.log.error('Fixed.');
     }
   }

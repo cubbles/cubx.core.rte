@@ -1,4 +1,5 @@
 /* globals process, __dirname */
+
 'use strict';
 var path = require('path');
 var _ = require('lodash');
@@ -58,7 +59,10 @@ module.exports = function (grunt) {
   /**
    * Analyse workspace. If webpackage configured extend the options.
    */
-  var activeWebpackage = grunt.file.readJSON(workspaceConfigPath).activeWebpackage;
+  var config = grunt.file.readJSON(workspaceConfigPath);
+  // update the enviroment variable for proxy, if configured.
+  updateProxyConfig(config);
+  var activeWebpackage = config.activeWebpackage;
   if (activeWebpackage && activeWebpackage.length > 0) {
     var activeWebpackageConfigPath = path.join(workspacePath, activeWebpackage, '.webpackage');
     var manifestWebpackagePath = path.join(workspacePath, activeWebpackage, 'manifest.webpackage');
@@ -68,6 +72,7 @@ module.exports = function (grunt) {
       (function () {
         // Webpackage related grunt options
         var webpackageRelatedOptions = {
+          workspaceConfigObject: config,
           activeWebpackage: activeWebpackage,
           activeWebpackageConfigPath: activeWebpackageConfigPath,
           activeWebpackageConfig: grunt.file.readJSON(activeWebpackageConfigPath),
@@ -94,5 +99,13 @@ module.exports = function (grunt) {
    */
   var configs = require('load-grunt-configs')(grunt, options);
   grunt.initConfig(configs);
-  // console.log(grunt.config.get('param.src'));
+
+  function updateProxyConfig (workSpaceConfig) {
+    if (workSpaceConfig && workSpaceConfig.https_proxy) {
+      process.env.https_proxy = workSpaceConfig.https_proxy;
+    }
+    if (workSpaceConfig && workSpaceConfig.http_proxy) {
+      process.env.http_proxy = workSpaceConfig.http_proxy;
+    }
+  }
 };

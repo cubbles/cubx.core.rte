@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports.tasks = {
-
   githooks: {
     all: {
       options: {
@@ -35,5 +34,8 @@ module.exports.tasks = {
       configFile: '<%= param.src %>/mutation-based-cubx-startevent/test/karma.conf.js',
       singleRun: true
     }
+  },
+  clean: {
+    docs: [ '<%= param.doc %>/' ]
   }
 };
