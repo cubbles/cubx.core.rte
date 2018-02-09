@@ -1,0 +1,21 @@
+{
+  "name": "cubxpolymer",
+  "description": "",
+  "homepage": "",
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^2.2.4",
+    "chai": "^2.2.0",
+    "lodash": "~3.6.0",
+    "sinonjs": "~1.16.1",
+    "polymer": "1.1.2"
+  }
+}
