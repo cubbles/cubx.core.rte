@@ -16,14 +16,12 @@ module.exports = function (config) {
     files: [
       'test/vendor/mocha-config.js',
       'test/mock/*.js',
+      '../webcomponents/custom-elements-es5-adapter.js',
       '../webcomponents/webcomponents-lite.js',
-      '../webcomponents/webcomponents-lite.js',
-      '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../guid-utility/js/guid.js',
-      '../cif/classes/dynamicConnection.js',
-      '../cif/classes/initializer.js',
-      '../dom-tree-utilities/js/domTreeUtils.js',
-      '../dynamic-connection-utils/js/dynamicConnectionUtils.js',
+      '../cif/classes/connectionManager.js',
+      '../cif/classes/context.js',
+      'CubxComponent.js',
       'test/helpers.js',
       'test/unit/**/*_test.js',
       'test/resource/*.js'
@@ -79,9 +77,9 @@ module.exports = function (config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     // browsers: ['PhantomJS'], //, 'Firefox', 'Chrome'
 
-    browsers: [ 'Chrome', 'Firefox' ],
+    // browsers: [ 'Chrome', 'Firefox' ],
     // use just Chrome for debugging in Webstorm
-    // browsers: [ 'Chrome' ],
+    browsers: [ 'Chrome' ],
     captureTimeout: 10000,
 
     // Continuous Integration mode

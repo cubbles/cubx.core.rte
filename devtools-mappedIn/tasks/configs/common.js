@@ -26,6 +26,10 @@ module.exports.tasks = {
       configFile: '<%= param.src %>/cubxpolymer/test/karma.conf.js',
       singleRun: true
     },
+    cubxpcomponent: {
+      configFile: '<%= param.src %>/cubxcomponent/test/karma.conf.js',
+      singleRun: true
+    },
     'dynamic-connection-utils': {
       configFile: '<%= param.src %>/dynamic-connection-utils/test/karma.conf.js',
       singleRun: true

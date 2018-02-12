@@ -12,10 +12,9 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "mocha": "^2.2.4",
-    "chai": "^2.2.0",
-    "lodash": "~3.6.0",
-    "sinonjs": "~1.16.1",
-    "polymer": "1.1.2"
+    "mocha": "^5.0.1",
+    "chai": "^4.1.2",
+    "sinon": "^4.2.2",
+    "sinon-chai": "^2.14.0"
   }
 }

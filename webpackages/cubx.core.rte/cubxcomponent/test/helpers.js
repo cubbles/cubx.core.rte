@@ -1,4 +1,4 @@
-/* globals _,HTMLElement */
+/* globals _,HTMLElement, CubxComponent */
 /* eslint no-unused-vars: [2, { "varsIgnorePattern": "registerCompoundComponentElement|getTestComponentCacheEntry|initNewElement"} ] */
 'use strict';
 
@@ -40,12 +40,12 @@ function createNewElement (elementName, templateContext, prototype) {
     prototype.is = elementName;
   }
 
-  CubxPolymer(prototype);
-
   var el = document.createElement('div');
-  el.innerHTML = '<dom-module id="' + elementName + '" >' +
-    '<template>' + templateContext + '</template>' +
-    '</dom-module>';
+
+  el.innerHTML = '<template id="' + elementName + '" >' +
+     templateContext +
+    '</template>';
+  CubxComponent(prototype);
 
   document.body.appendChild(el);
 
