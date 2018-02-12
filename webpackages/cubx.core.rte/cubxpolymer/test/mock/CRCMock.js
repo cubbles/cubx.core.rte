@@ -88,7 +88,7 @@ window.cubx.CRC.getStorageManager = function () {
   return storageManager;
 };
 window.cubx.CRC.getCRCElement = function () {
-  return document.querySelector('[cubx-core-crc]');
+  return document.querySelector('[cubx-core-crc]' || document.body);
 };
 
 window.cubx.CRC.isReady = function () {

@@ -179,20 +179,19 @@
    */
   cubxComponentMixin._cifReady = function () {
     var rootElement = window.cubx.CRC.getCRCElement();
-    var me = this;
 
     rootElement.addEventListener(window.cubx.EventFactory.types.CIF_READY, function (evt) {
-      if (!me._isReadyRegistered) {
-        me._isReadyRegistered = true;
-        me._cifReadyHandler();
+      if (!this._isReadyRegistered) {
+        this._isReadyRegistered = true;
+        this._cifReadyHandler();
       }
-    });
+    }.bind(this));
     rootElement.addEventListener(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY, function (evt) {
-      if (!me._isReadyRegistered) {
-        me._isReadyRegistered = true;
-        me._cifReadyHandler();
+      if (!this._isReadyRegistered) {
+        this._isReadyRegistered = true;
+        this._cifReadyHandler();
       }
-    });
+    }.bind(this));
   };
 
   /**

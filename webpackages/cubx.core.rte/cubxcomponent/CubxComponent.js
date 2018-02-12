@@ -1,4 +1,4 @@
-/* globals HTMLElement, customElements */
+/* globals HTMLElement, customElements, */
 (function () {
   function CubxComponent (prototype) {
     if (!prototype) {
@@ -9,27 +9,47 @@
       console.error('the prototype parameter missed th "is" property');
       return;
     }
+    Object.assign(prototype, window.cubx.cubxComponentMixin);
 
     function CubxComponentClass () {
-      this.cubxComponentName = prototype.is;
       HTMLElement.call(this);
+      Object.assign(this, prototype);
+      this.cubxComponentName = this.is;
+      console.log('constructor of ' + this.cubxComponentName);
       // TODO this._initValues();
 
-      if (prototype.created && typeof prototype.created === 'function') {
-        prototype.created();
+      if (this.created && typeof this.created === 'function') {
+        this.created();
       }
+      this._cifReady();
     }
+    // Object.assign(CubxComponentClass.prototype, prototype);
+    // Object.assign(CubxComponentClass.prototype, window.cubx.cubxComponentMixin);
 
     CubxComponentClass.prototype.connectedCallback = function () {
-      if (prototype.connected && typeof prototype.connected === 'function') {
-        prototype.connected();
+      if (this.connected && typeof this.connected === 'function') {
+        this.connected();
       }
     };
 
     CubxComponentClass.prototype.disconnectedCallback = function () {
-      if (prototype.disconnected && typeof prototype.disconnected === 'function') {
-        prototype.disconnected();
+      if (this.disconnected && typeof this.disconnected === 'function') {
+        this.disconnected();
       }
+    };
+
+    CubxComponentClass.prototype._callCubxReadyLifeCycleMethod = function () {
+      if (this.cubxReady) {
+        this.cubxReady();
+      }
+    };
+
+    /**
+     * Called if cifReady event dispatched.
+     * @private
+     */
+    CubxComponentClass.prototype._cifReadyHandler = function () {
+      this._callCubxReadyLifeCycleMethod();
     };
 
     Object.setPrototypeOf(CubxComponentClass.prototype, HTMLElement.prototype);
