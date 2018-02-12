@@ -13,10 +13,24 @@
     function CubxComponentClass () {
       this.cubxComponentName = prototype.is;
       HTMLElement.call(this);
+      // TODO this._initValues();
+
       if (prototype.created && typeof prototype.created === 'function') {
         prototype.created();
       }
     }
+
+    CubxComponentClass.prototype.connectedCallback = function () {
+      if (prototype.connected && typeof prototype.connected === 'function') {
+        prototype.connected();
+      }
+    };
+
+    CubxComponentClass.prototype.disconnectedCallback = function () {
+      if (prototype.disconnected && typeof prototype.disconnected === 'function') {
+        prototype.disconnected();
+      }
+    };
 
     Object.setPrototypeOf(CubxComponentClass.prototype, HTMLElement.prototype);
     Object.setPrototypeOf(CubxComponentClass, HTMLElement);
