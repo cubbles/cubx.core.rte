@@ -33,9 +33,10 @@ describe('CubxComponent (init)', function () {
           scriptEl.setAttribute('foo', 'bar');
           el.appendChild(scriptEl);
           document.body.appendChild(el);
+          var runtimeId = elementName + '#1';
           var element = document.createElement(elementName);
+          element.setAttribute('runtime-id', runtimeId);
           container.appendChild(element);
-          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
         });
         it('should be exists', function (done) {
           setTimeout(function () {
@@ -46,7 +47,6 @@ describe('CubxComponent (init)', function () {
           }, 50);
         });
       });
-
       describe('create the same element twice"', function () {
         var elementName = 'dummy-empty';
         before(function () {
@@ -66,10 +66,11 @@ describe('CubxComponent (init)', function () {
           el.appendChild(scriptEl);
           document.body.appendChild(el);
           var element = document.createElement(elementName);
+          element.setAttribute('runtime-id', elementName + '#2');
           var element2 = document.createElement(elementName);
+          element2.setAttribute('runtime-id', elementName + '#3');
           container.appendChild(element);
           container.appendChild(element2);
-          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
         });
         it('should be exists', function (done) {
           setTimeout(function () {
@@ -104,10 +105,10 @@ describe('CubxComponent (init)', function () {
           el.appendChild(scriptEl);
           document.body.appendChild(el);
           spyCallback.should.have.callCount(0); // not called before created
-          var element = document.createElement(elementName);// called after created
-          spyCallback.should.have.callCount(1);
+          var element = document.createElement(elementName);
+          spyCallback.should.have.callCount(1);// called after created
+          element.setAttribute('runtime-id', elementName + '#1');
           container.appendChild(element);
-          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
         });
         after(function () {
           delete window.spyCallback;
@@ -148,9 +149,8 @@ describe('CubxComponent (init)', function () {
           document.body.appendChild(el);
           var element = document.createElement(elementName);
           spyCallback.should.have.callCount(0); // not called before append to dom
+          element.setAttribute('runtime-id', elementName + '#1');
           container.appendChild(element);
-
-          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
         });
         after(function () {
           delete window.spyCallback;
@@ -185,8 +185,8 @@ describe('CubxComponent (init)', function () {
 
           document.body.appendChild(el);
           var element = document.createElement(elementName);
+          element.setAttribute('runtime-id', elementName + '#1');
           container.appendChild(element);
-          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
         });
         after(function () {
           delete window.spyCallback;
@@ -224,9 +224,52 @@ describe('CubxComponent (init)', function () {
           el.appendChild(scriptEl);
 
           document.body.appendChild(el);
+          var runtimeId = elementName + '#1';
+          document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
+            if (evt.detail.runtimeId === runtimeId) {
+              container.dispatchEvent(new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+            }
+          });
           var element = document.createElement(elementName);
+          element.setAttribute('runtime-id', runtimeId);
           container.appendChild(element);
-          container.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+        });
+        after(function () {
+          delete window.spyCallback;
+        });
+
+        it('should be call cubxReady callback', function (done) {
+          setTimeout(function () {
+            spyCallback.should.have.been.calledOnce;
+            done();
+          }, 50);
+        });
+      });
+      describe('element use ready lifecycle method (without html template)"', function () {
+        var elementName = 'dummy-empty6';
+        var spyCallback;
+        before(function () {
+          spyCallback = sinon.spy();
+          window.spyCallback = spyCallback;
+          var el = document.createElement('div');
+
+          var scriptEl = document.createElement('script');
+          scriptEl.async = false;
+          scriptEl.defer = false;
+          scriptEl.type = 'text/javascript';
+          var content = 'CubxComponent({ is: "' + elementName + '", ready: function(){ spyCallback();} });';
+          try {
+            scriptEl.appendChild(document.createTextNode(content));
+          } catch (e) {
+            scriptEl.text = content;
+          }
+          scriptEl.setAttribute('foo', 'bar');
+          el.appendChild(scriptEl);
+
+          document.body.appendChild(el);
+          var element = document.createElement(elementName);
+          element.setAttribute('runtime-id', elementName + '#1');
+          container.appendChild(element);
         });
         after(function () {
           delete window.spyCallback;

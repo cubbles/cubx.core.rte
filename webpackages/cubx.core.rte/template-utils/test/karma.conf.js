@@ -15,20 +15,9 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       'test/mocha-config.js',
-      'test/mock/*.js',
-      '../webcomponents/custom-elements-es5-adapter.js',
-      '../webcomponents/webcomponents-lite.js',
-      'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
-      '../template-utils/js/template-utils.js',
-      'test/helpers.js',
-      '../cubx-component-mixin/js/cubxComponentMixin.js',
-      '../guid-utility/js/guid.js',
-      '../cif/classes/connectionManager.js',
-      '../cif/classes/context.js',
-      'CubxComponent.js',
-      'test/unit/**/*_test.js',
-      'test/resource/*.js'
-
+      'js/template-utils.js',
+      {pattern: 'test/resources/*.html', included: false, served: true},
+      'test/unit/**/*_test.js'
     ],
 
     // list of files to exclude

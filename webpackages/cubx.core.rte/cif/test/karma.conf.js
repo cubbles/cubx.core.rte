@@ -19,6 +19,7 @@ module.exports = function (config) {
       'test/testSetup.js',
       'test/mock/CRCMock.js',
       '../guid-utility/js/guid.js',
+      '../template-utils/js/template-utils.js',
       '../mutation-summary/vendor/mutation-summary.js',
       '../queue/vendor/Queue.src.js',
       '../dom-tree-utilities/js/domTreeUtils.js',

@@ -312,7 +312,6 @@
    */
   cubxComponentMixin._generateSlotsMethod = function (slots) {
     this._slots = [];
-    var me = this;
     _.each(slots, function (elem) {
       var slot = { slotId: elem.slotId };
       if (elem.type) {
@@ -326,8 +325,8 @@
       if (elem.description) {
         slot.description = elem.description;
       }
-      me._slots.push(slot);
-    });
+      this._slots.push(slot);
+    }.bind(this));
 
     this.slots = function () {
       return this._slots;

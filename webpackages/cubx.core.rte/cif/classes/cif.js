@@ -1059,7 +1059,7 @@
   CIF.prototype._attachMembers = function (root, rootManifest, deeplevel) {
     var rootRuntimeId = root.getAttribute('runtime-id');
     var artifactId = root.tagName.toLowerCase();
-    var promise = this._findTemplate(artifactId);
+    var promise = window.cubx.utils.findTemplate(artifactId);
     var me = this;
     promise.then(
       function (results) {
@@ -1228,59 +1228,6 @@
       }
       component.processed = true;
       root.appendChild(component);
-    }
-  };
-
-  /**
-   * Search for a template with the id, and get the first template with the id. If not found returns undefined.
-   * @param {string} id - wanted id attribute
-   * @returns {HTMLTemplateElement|undefined}
-   * @memberOf CIF
-   * @private
-   */
-  CIF.prototype._findTemplate = function (id) {
-    var promises = [];
-    var importDocList = document.querySelectorAll('link[rel=import]');
-    var me = this;
-    var importDoc;
-    for (var i = 0; i < importDocList.length; i++) {
-      importDoc = importDocList[ i ];
-
-      promises.push(new Promise(function (resolve, reject) {
-        if (importDoc.import) {
-          me._resolveTemplateContent(importDoc, id, resolve, reject);
-        } else {
-          importDoc.addEventListener('load', function (event) {
-            me._resolveTemplateContent(event.target, id, resolve, reject);
-          });
-        }
-      }));
-    }
-    return Promise.all(promises);
-  };
-
-  /**
-   * Import the template document and call resolve for the template id attribute equals with the parameter id, otherwise resolve with false.
-   * @memberOf CIF
-   * @param {HTMLLinkElement} importDoc - Link import Tag
-   * @param {string} id -
-   * @param resolve
-   * @param reject
-   * @private
-   */
-  CIF.prototype._resolveTemplateContent = function (importDoc, id, resolve, reject) {
-    var content;
-    var template;
-    if (importDoc) {
-      content = importDoc.import;
-    }
-    if (content) {
-      template = content.querySelector('#' + id);
-    }
-    if (template) {
-      resolve(template);
-    } else {
-      resolve(false);
     }
   };
 
