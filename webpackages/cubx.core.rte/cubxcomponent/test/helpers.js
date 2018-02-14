@@ -1,25 +1,47 @@
-/* globals _,HTMLElement, CubxComponent */
-/* eslint no-unused-vars: [2, { "varsIgnorePattern": "registerCompoundComponentElement|getTestComponentCacheEntry|initNewElement|createHtmlImport"} ] */
+/* globals _,HTMLElement, CubxComponent, guid */
+/* eslint no-unused-vars: [2, { "varsIgnorePattern": "registerCompoundComponentElement|getTestComponentCacheEntry|initNewElement|createHtmlImport |createNewElementWithTemplate"} ] */
 'use strict';
 
 function createHtmlImport (path) {
-  return new Promise(function (resolve) {
+  return new Promise(function (resolve, reject) {
     var link = document.createElement('link');
     link.setAttribute('rel', 'import');
     link.setAttribute('href', path);
     link.onload = function () {
       resolve(link);
     };
+    setTimeout(function () {
+      reject(new Error('Timeout of 200 ms'));
+    }, 200);
     document.body.appendChild(link);
   });
 }
 
-function initNewElement (elementName, templateContext, prototype) {
+function initNewElementWithTemplate (elementName, prototype, templatePath) {
   var crcContainer = getContainer();
   // add to crcContainer
-  var elem = createNewElement(elementName, templateContext, prototype);
+  var promise = createNewElementWithTemplate(elementName, prototype, templatePath);
+  return promise.then(function (elem) {
+    document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
+      if (evt.detail.runtimeId === elem.getAttribute('runtime-id')) {
+        crcContainer.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+      }
+    });
+    crcContainer.appendChild(elem);
+    return Promise.resolve(elem);
+  });
+}
+
+function initNewElement (elementName, prototype) {
+  var crcContainer = getContainer();
+  // add to crcContainer
+  var elem = createNewElement(elementName, prototype);
+  document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
+    if (evt.detail.runtimeId === elem.getAttribute('runtime-id')) {
+      crcContainer.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+    }
+  });
   crcContainer.appendChild(elem);
-  crcContainer.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
 }
 
 function getContainer () {
@@ -36,13 +58,19 @@ function getContainer () {
   return crcContainer;
 }
 
-function createNewElement (elementName, templateContext, prototype) {
+function createNewElementWithTemplate (elementName, prototype, templatePath) {
+  var promise = createHtmlImport(templatePath);
+  return promise.then(function () {
+    var elem = createNewElement(elementName, prototype);
+    return Promise.resolve(elem);
+  }).catch(function (err) {
+    return Promise.reject(err);
+  });
+}
+
+function createNewElement (elementName, prototype) {
   if (elementName.indexOf('-') === -1) {
     throw new SyntaxError('Tagname must enclosed a "-" character.');
-  }
-
-  if (!templateContext) {
-    templateContext = '<span>Base Component Test</span>';
   }
 
   if (!prototype) {
@@ -52,17 +80,12 @@ function createNewElement (elementName, templateContext, prototype) {
     prototype.is = elementName;
   }
 
-  var el = document.createElement('div');
-
-  el.innerHTML = '<template id="' + elementName + '" >' +
-     templateContext +
-    '</template>';
   CubxComponent(prototype);
 
-  document.body.appendChild(el);
-
   // add to crcContainer
-  return document.createElement(elementName);
+  var element = document.createElement(elementName);
+  element.setAttribute('runtime-id', guid());
+  return element;
 }
 
 function getTestComponentCacheEntry () {
