@@ -111,6 +111,28 @@
         ]
       },
       {
+        "artifactId": "cubxcomponent",
+        "resources": [
+          "cubxcomponent.html"
+        ],
+        "dependencies": [
+          {
+            "webpackageId": "lodash-3.10.1@1.0.1",
+            "artifactId": "lodash",
+            "endpointId": "html-import"
+          },
+          {
+            "artifactId": "cubx-component-mixin"
+          },
+          {
+            "artifactId": "dynamic-connection-utils"
+          },
+          {
+            "artifactId": "template-utils"
+          }
+        ]
+      },
+      {
         "artifactId": "webcomponents",
         "description": "The origin polyfill library version 1.1.0.",
         "resources": []
