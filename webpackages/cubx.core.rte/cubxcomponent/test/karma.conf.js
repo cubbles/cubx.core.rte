@@ -26,8 +26,9 @@ module.exports = function (config) {
       '../cif/classes/connectionManager.js',
       '../cif/classes/context.js',
       'CubxComponent.js',
-      'test/unit/**/*_test.js',
-      'test/resource/*.js'
+      {pattern: 'test/resources/*.html', included: false, served: true},
+      'test/resources/*.js',
+      'test/unit/**/*_test.js'
 
     ],
 

@@ -1,4 +1,4 @@
-/* globals  HTMLImports, getContainer */
+/* globals  HTMLImports, getContainer, createHtmlImport */
 'use strict';
 describe('CubxComponent (init)', function () {
   before(function (done) {
@@ -76,7 +76,7 @@ describe('CubxComponent (init)', function () {
           setTimeout(function () {
             var components = document.querySelectorAll(elementName);
             for (var i = 0; i < components.length; i++) {
-              var component = components[i];
+              var component = components[ i ];
               component.should.be.exists;
               expect(component.cubxComponentName).to.be.equals(elementName);
             }
@@ -203,46 +203,91 @@ describe('CubxComponent (init)', function () {
         });
       });
       describe('element use cubxReady lifecycle method"', function () {
-        var elementName = 'dummy-empty5';
-        var spyCallback;
-        before(function () {
-          spyCallback = sinon.spy();
-          window.spyCallback = spyCallback;
-          var el = document.createElement('div');
+        describe('triggered with cifDomUpdateReady', function () {
+          var elementName = 'dummy-empty5';
+          var spyCallback;
+          before(function () {
+            spyCallback = sinon.spy();
+            window.spyCallback = spyCallback;
+            var el = document.createElement('div');
 
-          var scriptEl = document.createElement('script');
-          scriptEl.async = false;
-          scriptEl.defer = false;
-          scriptEl.type = 'text/javascript';
-          var content = 'CubxComponent({ is: "' + elementName + '", cubxReady: function(){ spyCallback();} });';
-          try {
-            scriptEl.appendChild(document.createTextNode(content));
-          } catch (e) {
-            scriptEl.text = content;
-          }
-          scriptEl.setAttribute('foo', 'bar');
-          el.appendChild(scriptEl);
-
-          document.body.appendChild(el);
-          var runtimeId = elementName + '#1';
-          document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
-            if (evt.detail.runtimeId === runtimeId) {
-              container.dispatchEvent(new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+            var scriptEl = document.createElement('script');
+            scriptEl.async = false;
+            scriptEl.defer = false;
+            scriptEl.type = 'text/javascript';
+            var content = 'CubxComponent({ is: "' + elementName + '", cubxReady: function(){ spyCallback();} });';
+            try {
+              scriptEl.appendChild(document.createTextNode(content));
+            } catch (e) {
+              scriptEl.text = content;
             }
-          });
-          var element = document.createElement(elementName);
-          element.setAttribute('runtime-id', runtimeId);
-          container.appendChild(element);
-        });
-        after(function () {
-          delete window.spyCallback;
-        });
+            scriptEl.setAttribute('foo', 'bar');
+            el.appendChild(scriptEl);
 
-        it('should be call cubxReady callback', function (done) {
-          setTimeout(function () {
-            spyCallback.should.have.been.calledOnce;
-            done();
-          }, 50);
+            document.body.appendChild(el);
+            var runtimeId = elementName + '#1';
+            document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
+              if (evt.detail.runtimeId === runtimeId) {
+                container.dispatchEvent(new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+              }
+            });
+            var element = document.createElement(elementName);
+            element.setAttribute('runtime-id', runtimeId);
+            container.appendChild(element);
+          });
+          after(function () {
+            delete window.spyCallback;
+          });
+
+          it('should be call cubxReady callback', function (done) {
+            setTimeout(function () {
+              spyCallback.should.have.been.calledOnce;
+              done();
+            }, 50);
+          });
+        });
+        describe('triggered with cifReady', function () {
+          var elementName = 'dummy-empty5';
+          var spyCallback;
+          before(function () {
+            spyCallback = sinon.spy();
+            window.spyCallback = spyCallback;
+            var el = document.createElement('div');
+
+            var scriptEl = document.createElement('script');
+            scriptEl.async = false;
+            scriptEl.defer = false;
+            scriptEl.type = 'text/javascript';
+            var content = 'CubxComponent({ is: "' + elementName + '", cubxReady: function(){ spyCallback();} });';
+            try {
+              scriptEl.appendChild(document.createTextNode(content));
+            } catch (e) {
+              scriptEl.text = content;
+            }
+            scriptEl.setAttribute('foo', 'bar');
+            el.appendChild(scriptEl);
+
+            document.body.appendChild(el);
+            var runtimeId = elementName + '#1';
+            document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
+              if (evt.detail.runtimeId === runtimeId) {
+                container.dispatchEvent(new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_READY));
+              }
+            });
+            var element = document.createElement(elementName);
+            element.setAttribute('runtime-id', runtimeId);
+            container.appendChild(element);
+          });
+          after(function () {
+            delete window.spyCallback;
+          });
+
+          it('should be call cubxReady callback', function (done) {
+            setTimeout(function () {
+              spyCallback.should.have.been.calledOnce;
+              done();
+            }, 50);
+          });
         });
       });
       describe('element use ready lifecycle method (without html template)"', function () {
@@ -276,6 +321,59 @@ describe('CubxComponent (init)', function () {
         });
 
         it('should be call cubxReady callback', function (done) {
+          setTimeout(function () {
+            spyCallback.should.have.been.calledOnce;
+            done();
+          }, 50);
+        });
+      });
+      describe('element create with html template)"', function () {
+        var elementName = 'dummy-element-1';
+        var spyCallback;
+        before(function (done) {
+          spyCallback = sinon.spy();
+          window.spyCallback = spyCallback;
+          var promise = createHtmlImport('base/test/resources/template-dummy-element-1.html');
+          promise.then(function (value) {
+            var el = document.createElement('div');
+
+            var scriptEl = document.createElement('script');
+            scriptEl.async = false;
+            scriptEl.defer = false;
+            scriptEl.type = 'text/javascript';
+            var content = 'CubxComponent({ is: "' + elementName + '", ready: function(){ spyCallback();} });';
+            try {
+              scriptEl.appendChild(document.createTextNode(content));
+            } catch (e) {
+              scriptEl.text = content;
+            }
+            scriptEl.setAttribute('foo', 'bar');
+            el.appendChild(scriptEl);
+
+            document.body.appendChild(el);
+            var element = document.createElement(elementName);
+            element.setAttribute('runtime-id', elementName + '#1');
+            container.appendChild(element);
+            done();
+          }).catch(function (err) {
+            console.err(err);
+            done();
+          });
+        });
+        after(function () {
+          delete window.spyCallback;
+        });
+        it('should be have integrated the template', function (done) {
+          setTimeout(function () {
+            var el = document.querySelector(elementName);
+            var content = el.firstElementChild;
+            expect(content).to.be.exist;
+            content.tagName.should.be.equal('DIV');
+            content.innerHTML.should.be.equal('Hallo Cubbles!');
+            done();
+          }, 50);
+        });
+        it('should be call ready callback', function (done) {
           setTimeout(function () {
             spyCallback.should.have.been.calledOnce;
             done();

@@ -1,6 +1,18 @@
 /* globals _,HTMLElement, CubxComponent */
-/* eslint no-unused-vars: [2, { "varsIgnorePattern": "registerCompoundComponentElement|getTestComponentCacheEntry|initNewElement"} ] */
+/* eslint no-unused-vars: [2, { "varsIgnorePattern": "registerCompoundComponentElement|getTestComponentCacheEntry|initNewElement|createHtmlImport"} ] */
 'use strict';
+
+function createHtmlImport (path) {
+  return new Promise(function (resolve) {
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'import');
+    link.setAttribute('href', path);
+    link.onload = function () {
+      resolve(link);
+    };
+    document.body.appendChild(link);
+  });
+}
 
 function initNewElement (elementName, templateContext, prototype) {
   var crcContainer = getContainer();

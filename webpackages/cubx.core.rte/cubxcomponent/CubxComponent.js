@@ -149,7 +149,7 @@
             this.appendChild(templateContent);
           }
           return Promise.resolve(true);
-        });
+        }.bind(this));
     };
 
     CubxComponentClass.prototype._fireReadyEvent = function () {
