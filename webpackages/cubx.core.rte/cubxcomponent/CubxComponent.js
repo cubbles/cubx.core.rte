@@ -47,9 +47,9 @@
       }
     };
 
-    CubxComponentClass.prototype._callCubxReadyLifeCycleMethod = function () {
-      if (this.cubxReady && typeof this.cubxReady === 'function') {
-        this.cubxReady();
+    CubxComponentClass.prototype._callContextReadyLifeCycleMethod = function () {
+      if (this.contextReady && typeof this.contextReady === 'function') {
+        this.contextReady();
       }
     };
 
@@ -58,7 +58,7 @@
      * @private
      */
     CubxComponentClass.prototype._cifReadyHandler = function () {
-      this._callCubxReadyLifeCycleMethod();
+      this._callContextReadyLifeCycleMethod();
     };
 
     CubxComponentClass.prototype._initSlots = function (slots) {

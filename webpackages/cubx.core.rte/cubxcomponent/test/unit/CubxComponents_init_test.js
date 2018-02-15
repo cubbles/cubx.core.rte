@@ -202,7 +202,7 @@ describe('CubxComponent (init)', function () {
           }, 50);
         });
       });
-      describe('element use cubxReady lifecycle method"', function () {
+      describe('element use contextReady lifecycle method"', function () {
         describe('triggered with cifDomUpdateReady', function () {
           var elementName = 'dummy-empty5';
           var spyCallback;
@@ -215,7 +215,7 @@ describe('CubxComponent (init)', function () {
             scriptEl.async = false;
             scriptEl.defer = false;
             scriptEl.type = 'text/javascript';
-            var content = 'CubxComponent({ is: "' + elementName + '", cubxReady: function(){ spyCallback();} });';
+            var content = 'CubxComponent({ is: "' + elementName + '", contextReady: function(){ spyCallback();} });';
             try {
               scriptEl.appendChild(document.createTextNode(content));
             } catch (e) {
@@ -239,7 +239,7 @@ describe('CubxComponent (init)', function () {
             delete window.spyCallback;
           });
 
-          it('should be call cubxReady callback', function (done) {
+          it('should be call contextReady callback', function (done) {
             setTimeout(function () {
               spyCallback.should.have.been.calledOnce;
               done();
@@ -258,7 +258,7 @@ describe('CubxComponent (init)', function () {
             scriptEl.async = false;
             scriptEl.defer = false;
             scriptEl.type = 'text/javascript';
-            var content = 'CubxComponent({ is: "' + elementName + '", cubxReady: function(){ spyCallback();} });';
+            var content = 'CubxComponent({ is: "' + elementName + '", contextReady: function(){ spyCallback();} });';
             try {
               scriptEl.appendChild(document.createTextNode(content));
             } catch (e) {
@@ -282,7 +282,7 @@ describe('CubxComponent (init)', function () {
             delete window.spyCallback;
           });
 
-          it('should be call cubxReady callback', function (done) {
+          it('should be call contextReady callback', function (done) {
             setTimeout(function () {
               spyCallback.should.have.been.calledOnce;
               done();
@@ -320,7 +320,7 @@ describe('CubxComponent (init)', function () {
           delete window.spyCallback;
         });
 
-        it('should be call cubxReady callback', function (done) {
+        it('should be call contextReady callback', function (done) {
           setTimeout(function () {
             spyCallback.should.have.been.calledOnce;
             done();

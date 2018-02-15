@@ -452,7 +452,7 @@
    */
   cubxPolymerMixin._cifReadyHandler = function () {
     this._synchronizeModelWithStorageManager();
-    this._callCubxReadyLifeCycleMethod();
+    this._callContextReadyLifeCycleMethod();
   };
 
   /**
@@ -460,7 +460,7 @@
    * @memberOf cubxPolymerMixin
    * @private
    */
-  cubxPolymerMixin._callCubxReadyLifeCycleMethod = function () {
+  cubxPolymerMixin._callContextReadyLifeCycleMethod = function () {
     if (this.cubxReady) {
       this.cubxReady();
     }
