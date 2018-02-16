@@ -143,7 +143,7 @@
           var documentFragment = document.createDocumentFragment();
           var elem = doc.documentElement.querySelector('body').firstChild;
           while (elem) {
-            documentFragment.appendChild(elem);
+            documentFragment.appendChild(elem.cloneNode(true));
             elem = elem.nextSibling;
           }
           setTimeout(function () {

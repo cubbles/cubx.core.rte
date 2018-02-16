@@ -389,7 +389,7 @@ describe('CubxComponent (init)', function () {
           scriptEl.async = false;
           scriptEl.defer = false;
           scriptEl.type = 'text/javascript';
-          var content = 'CubxComponent({ is: "' + elementName + '", template:{content:"<div>Hallo Cubbles!</div>"} });';
+          var content = 'CubxComponent({ is: "' + elementName + '", template:{content:"<div>Hallo Cubbles!</div><p>Hallo Cubbles again!</p>"} });';
           try {
             scriptEl.appendChild(document.createTextNode(content));
           } catch (e) {
@@ -418,6 +418,9 @@ describe('CubxComponent (init)', function () {
             expect(content).to.be.exist;
             content.tagName.should.be.equal('DIV');
             content.innerHTML.should.be.equal('Hallo Cubbles!');
+            expect(content.nextElementSibling).to.be.exist;
+            content.nextElementSibling.tagName.should.be.equal('P');
+            content.nextElementSibling.innerHTML.should.be.equal('Hallo Cubbles again!');
             done();
           }, 50);
         });
