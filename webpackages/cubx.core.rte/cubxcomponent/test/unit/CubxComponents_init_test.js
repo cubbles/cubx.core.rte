@@ -290,7 +290,7 @@ describe('CubxComponent (init)', function () {
           });
         });
       });
-      describe('element use ready lifecycle method (without html template)"', function () {
+      describe('element use ready lifecycle method (without template)"', function () {
         var elementName = 'dummy-empty6';
         var spyCallback;
         before(function () {
@@ -376,6 +376,48 @@ describe('CubxComponent (init)', function () {
         it('should be call ready callback', function (done) {
           setTimeout(function () {
             spyCallback.should.have.been.calledOnce;
+            done();
+          }, 50);
+        });
+      });
+      describe('element create with inline template)"', function () {
+        var elementName = 'dummy-element-2';
+        before(function () {
+          var el = document.createElement('div');
+
+          var scriptEl = document.createElement('script');
+          scriptEl.async = false;
+          scriptEl.defer = false;
+          scriptEl.type = 'text/javascript';
+          var content = 'CubxComponent({ is: "' + elementName + '", template:{content:"<div>Hallo Cubbles!</div>"} });';
+          try {
+            scriptEl.appendChild(document.createTextNode(content));
+          } catch (e) {
+            scriptEl.text = content;
+          }
+          scriptEl.setAttribute('foo', 'bar');
+          el.appendChild(scriptEl);
+
+          document.body.appendChild(el);
+          try {
+            var element = document.createElement(elementName);
+          } catch (err) {
+            console.log(err);
+          }
+
+          element.setAttribute('runtime-id', elementName + '#1');
+          container.appendChild(element);
+        });
+        after(function () {
+          delete window.spyCallback;
+        });
+        it('should be have integrated the template', function (done) {
+          setTimeout(function () {
+            var el = document.querySelector(elementName);
+            var content = el.firstElementChild;
+            expect(content).to.be.exist;
+            content.tagName.should.be.equal('DIV');
+            content.innerHTML.should.be.equal('Hallo Cubbles!');
             done();
           }, 50);
         });

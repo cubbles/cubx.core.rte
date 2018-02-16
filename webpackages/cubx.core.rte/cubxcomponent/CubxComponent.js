@@ -1,4 +1,4 @@
-/* globals HTMLElement, customElements, _ */
+/* globals HTMLElement, customElements, _, DOMParser */
 (function () {
   function CubxComponent (prototype) {
     if (!prototype) {
@@ -135,23 +135,41 @@
     };
 
     CubxComponentClass.prototype._includeTemplate = function (artifactId) {
-      var promise = window.cubx.utils.findTemplate(this.cubxComponentName);
-      return promise.then(
-        function (results) {
-          var template;
-          for (var i = 0; i < results.length; i++) {
-            var result = results[ i ];
-            if (typeof result === 'object') {
-              template = result;
-              break;
-            }
+      var promise;
+      if (this.template && this.template.content && typeof this.template.content === 'string') {
+        return new Promise(function (resolve, reject) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(this.template.content, 'text/html');
+          var documentFragment = document.createDocumentFragment();
+          var elem = doc.documentElement.querySelector('body').firstChild;
+          while (elem) {
+            documentFragment.appendChild(elem);
+            elem = elem.nextSibling;
           }
-          if (template) {
-            var templateContent = document.importNode(template.content, true);
-            this.appendChild(templateContent);
-          }
-          return Promise.resolve(true);
+          setTimeout(function () {
+            this.appendChild(documentFragment);
+            resolve(true);
+          }.bind(this), 0);
         }.bind(this));
+      } else {
+        promise = window.cubx.utils.findTemplate(this.cubxComponentName);
+        return promise.then(
+          function (results) {
+            var template;
+            for (var i = 0; i < results.length; i++) {
+              var result = results[ i ];
+              if (typeof result === 'object') {
+                template = result;
+                break;
+              }
+            }
+            if (template) {
+              var templateContent = document.importNode(template.content, true);
+              this.appendChild(templateContent);
+            }
+            return Promise.resolve(true);
+          }.bind(this));
+      }
     };
 
     CubxComponentClass.prototype._fireReadyEvent = function () {
