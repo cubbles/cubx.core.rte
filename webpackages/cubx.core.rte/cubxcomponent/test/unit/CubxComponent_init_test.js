@@ -1,6 +1,7 @@
 /* globals  HTMLImports, getContainer, createHtmlImport */
 'use strict';
 describe('CubxComponent (init)', function () {
+  this.timeout(5000);
   before(function (done) {
     HTMLImports.whenReady(function () {
       done();
@@ -111,6 +112,7 @@ describe('CubxComponent (init)', function () {
           container.appendChild(element);
         });
         after(function () {
+          spyCallback = null;
           delete window.spyCallback;
         });
 
@@ -153,6 +155,7 @@ describe('CubxComponent (init)', function () {
           container.appendChild(element);
         });
         after(function () {
+          spyCallback = null;
           delete window.spyCallback;
         });
         it('should be call connected callback', function (done) {
@@ -189,6 +192,7 @@ describe('CubxComponent (init)', function () {
           container.appendChild(element);
         });
         after(function () {
+          spyCallback = null;
           delete window.spyCallback;
         });
 
@@ -204,7 +208,7 @@ describe('CubxComponent (init)', function () {
       });
       describe('element use contextReady lifecycle method"', function () {
         describe('triggered with cifDomUpdateReady', function () {
-          var elementName = 'dummy-empty5';
+          var elementName = 'dummy-empty5a';
           var spyCallback;
           before(function () {
             spyCallback = sinon.spy();
@@ -228,7 +232,8 @@ describe('CubxComponent (init)', function () {
             var runtimeId = elementName + '#1';
             document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
               if (evt.detail.runtimeId === runtimeId) {
-                container.dispatchEvent(new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+                var cifDomUpdateReadyEvt = new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY);
+                container.dispatchEvent(cifDomUpdateReadyEvt);
               }
             });
             var element = document.createElement(elementName);
@@ -236,6 +241,7 @@ describe('CubxComponent (init)', function () {
             container.appendChild(element);
           });
           after(function () {
+            spyCallback = null;
             delete window.spyCallback;
           });
 
@@ -247,7 +253,7 @@ describe('CubxComponent (init)', function () {
           });
         });
         describe('triggered with cifReady', function () {
-          var elementName = 'dummy-empty5';
+          var elementName = 'dummy-empty5b';
           var spyCallback;
           before(function () {
             spyCallback = sinon.spy();
@@ -271,7 +277,8 @@ describe('CubxComponent (init)', function () {
             var runtimeId = elementName + '#1';
             document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
               if (evt.detail.runtimeId === runtimeId) {
-                container.dispatchEvent(new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_READY));
+                var cifReadyEvt = new window.cubx.EventFactory().createEvent(window.cubx.EventFactory.types.CIF_READY);
+                container.dispatchEvent(cifReadyEvt);
               }
             });
             var element = document.createElement(elementName);
@@ -279,6 +286,7 @@ describe('CubxComponent (init)', function () {
             container.appendChild(element);
           });
           after(function () {
+            spyCallback = null;
             delete window.spyCallback;
           });
 
@@ -317,6 +325,7 @@ describe('CubxComponent (init)', function () {
           container.appendChild(element);
         });
         after(function () {
+          spyCallback = null;
           delete window.spyCallback;
         });
 
@@ -333,7 +342,11 @@ describe('CubxComponent (init)', function () {
         before(function (done) {
           spyCallback = sinon.spy();
           window.spyCallback = spyCallback;
-          var promise = createHtmlImport('base/test/resources/template-dummy-element-1.html');
+          var url = 'base/test/resources/template-dummy-element-1.html';
+          if (window.testRun) {
+            url = url.replace('base/test/', '');
+          }
+          var promise = createHtmlImport(url);
           promise.then(function (value) {
             var el = document.createElement('div');
 
@@ -356,11 +369,12 @@ describe('CubxComponent (init)', function () {
             container.appendChild(element);
             done();
           }).catch(function (err) {
-            console.err(err);
+            console.error(err);
             done();
           });
         });
         after(function () {
+          spyCallback = null;
           delete window.spyCallback;
         });
         it('should be have integrated the template', function (done) {
@@ -407,9 +421,6 @@ describe('CubxComponent (init)', function () {
 
           element.setAttribute('runtime-id', elementName + '#1');
           container.appendChild(element);
-        });
-        after(function () {
-          delete window.spyCallback;
         });
         it('should be have integrated the template', function (done) {
           setTimeout(function () {

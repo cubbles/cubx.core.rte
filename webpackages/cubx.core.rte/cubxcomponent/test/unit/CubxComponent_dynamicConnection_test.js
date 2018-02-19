@@ -20,8 +20,8 @@ describe('CubxComponent (dynamicConnection', function () {
     before(function () {
       var container = getContainer();
       // container.Context = new window.cubx.cif.Context(container);
-      var constructor = registerCompoundComponentElement('compound-element-add1');
-      compElem = new constructor();
+      registerCompoundComponentElement('compound-element-add1');
+      compElem = document.createElement('compound-element-add1');
       compRuntimeId = 'com.incowia.dynamic-connection-test@1.2.0-SNAPSHOT/comp-elem-add1';
       compElem.setAttribute('runtime-id', compRuntimeId);
       compElem.Context = new window.cubx.cif.Context(compElem);
@@ -380,8 +380,8 @@ describe('CubxComponent (dynamicConnection', function () {
     before(function () {
       var container = getContainer();
       // container.Context = new window.cubx.cif.Context(container);
-      var constructor = registerCompoundComponentElement('compound-element-remove1');
-      compElem = new constructor();
+      registerCompoundComponentElement('compound-element-remove1');
+      compElem = document.createElement('compound-element-remove1');
       compRuntimeId = 'com.incowia.dynamic-connection-test@1.2.0-SNAPSHOT/comp-elem-remove1';
       compElem.setAttribute('runtime-id', compRuntimeId);
       compElem.Context = new window.cubx.cif.Context(compElem);
@@ -565,8 +565,8 @@ describe('CubxComponent (dynamicConnection', function () {
     before(function () {
       var container = getContainer();
       // container.Context = new window.cubx.cif.Context(container);
-      var constructor = registerCompoundComponentElement('compound-element-export1');
-      compElem = new constructor();
+      registerCompoundComponentElement('compound-element-export1');
+      compElem = document.createElement('compound-element-export1');
       compRuntimeId = 'com.incowia.dynamic-connection-test@1.2.0-SNAPSHOT/comp-elem-export1';
       compElem.setAttribute('runtime-id', compRuntimeId);
       compElem.Context = new window.cubx.cif.Context(compElem);

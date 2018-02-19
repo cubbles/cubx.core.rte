@@ -19,7 +19,6 @@ module.exports = function (config) {
       '../webcomponents/custom-elements-es5-adapter.js',
       '../webcomponents/webcomponents-lite.js',
       'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
-      'test/helpers.js',
       '../template-utils/js/template-utils.js',
       '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../guid-utility/js/guid.js',
@@ -29,6 +28,7 @@ module.exports = function (config) {
       '../dom-tree-utilities/js/domTreeUtils.js',
       '../dynamic-connection-utils/js/dynamicConnectionUtils.js',
       'CubxComponent.js',
+      'test/helpers.js',
       {pattern: 'test/resources/*.html', included: false, served: true},
       'test/resources/*.js',
       'test/unit/**/*_test.js'
@@ -87,6 +87,7 @@ module.exports = function (config) {
     browsers: [ 'Chrome', 'Firefox' ],
     // use just Chrome for debugging in Webstorm
     // browsers: [ 'Chrome' ],
+    // browsers: [ 'Firefox' ],
     captureTimeout: 10000,
 
     // Continuous Integration mode

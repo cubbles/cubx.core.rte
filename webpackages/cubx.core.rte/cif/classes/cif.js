@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue, customElements */
 (function () {
   'use strict';
 
@@ -901,57 +901,72 @@
    * @private
    */
   CIF.prototype._registerConnectionElements = function () {
-    var ConnectionPrototype = Object.create(HTMLElement.prototype);
-    ConnectionPrototype.setSource = function (slot) {
+    function ConnectionClass () {
+      HTMLElement.call(this);
+    }
+
+    ConnectionClass.prototype.setSource = function (slot) {
       this.setAttribute('source', slot);
     };
-    ConnectionPrototype.getSource = function () {
+    ConnectionClass.prototype.getSource = function () {
       return this.getAttribute('source');
     };
-    ConnectionPrototype.setDestination = function (slot, memberIndex) {
+    ConnectionClass.prototype.setDestination = function (slot, memberIndex) {
       var destination = memberIndex != null ? memberIndex + ':' + slot : 'parent:' + slot;
       this.setAttribute('destination', destination);
     };
-    ConnectionPrototype.getDestination = function () {
+    ConnectionClass.prototype.getDestination = function () {
       return this.getAttribute('destination');
     };
-    ConnectionPrototype.setType = function (type) {
+    ConnectionClass.prototype.setType = function (type) {
       this.setAttribute('type', type);
     };
-    ConnectionPrototype.getType = function () {
+    ConnectionClass.prototype.getType = function () {
       return this.getAttribute('type');
     };
-    ConnectionPrototype.setConnectionId = function (connectionId) {
+    ConnectionClass.prototype.setConnectionId = function (connectionId) {
       this.setAttribute('connection-id', connectionId);
     };
-    ConnectionPrototype.getConnectionId = function () {
+    ConnectionClass.prototype.getConnectionId = function () {
       return this.getAttribute('connection-id');
     };
-    ConnectionPrototype.setCopyValue = function (copyValue) {
+    ConnectionClass.prototype.setCopyValue = function (copyValue) {
       this.setAttribute('copy-value', copyValue);
     };
-    ConnectionPrototype.getCopyValue = function () {
+    ConnectionClass.prototype.getCopyValue = function () {
       return this.getAttribute('copy-value');
     };
-    ConnectionPrototype.setRepeatedValues = function (repeatedValues) {
+    ConnectionClass.prototype.setRepeatedValues = function (repeatedValues) {
       this.setAttribute('repeated-values', repeatedValues);
     };
-    ConnectionPrototype.getRepeatedValues = function () {
+    ConnectionClass.prototype.getRepeatedValues = function () {
       return this.getAttribute('repeated-values');
     };
-    ConnectionPrototype.setHookFunction = function (hook) {
+    ConnectionClass.prototype.setHookFunction = function (hook) {
       this.setAttribute('hook-function', hook);
     };
-    ConnectionPrototype.getHookFunction = function () {
+    ConnectionClass.prototype.getHookFunction = function () {
       return this.getAttribute('hook-function');
     };
-    this._connectionElement = document.registerElement('cubx-core-connection', { prototype: ConnectionPrototype });
+    Object.setPrototypeOf(ConnectionClass.prototype, HTMLElement.prototype);
+    Object.setPrototypeOf(ConnectionClass, HTMLElement);
+    if (!customElements.get('cubx-core-connection')) {
+      customElements.define('cubx-core-connection', ConnectionClass);
+      this._connectionElement = ConnectionClass;
+    }
 
-    var ConnectionsPrototype = Object.create(HTMLElement.prototype);
-    ConnectionsPrototype.createdCallback = function () {
+    function ConnectionsClass () {
+      HTMLElement.call(this);
+    }
+    ConnectionsClass.prototype.createdCallback = function () {
       this.style.display = 'none';
     };
-    this._connectionsElement = document.registerElement('cubx-core-connections', { prototype: ConnectionsPrototype });
+    Object.setPrototypeOf(ConnectionsClass.prototype, HTMLElement.prototype);
+    Object.setPrototypeOf(ConnectionsClass, HTMLElement);
+    if (!customElements.get('cubx-core-connections')) {
+      customElements.define('cubx-core-connections', ConnectionsClass);
+      this._connectionsElement = ConnectionClass;
+    }
   };
   /**
    * Register new elements for handling initialization
@@ -959,45 +974,60 @@
    * @private
    */
   CIF.prototype._registerInitializationElements = function () {
-    var InitPrototype = Object.create(HTMLElement.prototype);
-    InitPrototype.createdCallback = function () {
+    function InitClass () {
+      HTMLElement.call(this);
+    }
+    InitClass.prototype.createdCallback = function () {
       this.style.display = 'none';
     };
-    this._initSlot = document.registerElement('cubx-core-init', { prototype: InitPrototype });
+    Object.setPrototypeOf(InitClass.prototype, HTMLElement.prototype);
+    Object.setPrototypeOf(InitClass, HTMLElement);
+    if (!customElements.get('cubx-core-init')) {
+      customElements.define('cubx-core-init', InitClass);
+      this._initSlot = InitClass;
+    }
 
-    var InitSlotPrototype = Object.create(HTMLElement.prototype);
-    InitSlotPrototype.setSlot = function (slot) {
+    function SlotInitClass () {
+      HTMLElement.call(this);
+    }
+
+    SlotInitClass.prototype.setSlot = function (slot) {
       this.setAttribute('slot', slot);
     };
-    InitSlotPrototype.getSlot = function () {
+    SlotInitClass.prototype.getSlot = function () {
       return this.getAttribute('slot');
     };
-    InitSlotPrototype.setMember = function (member) {
+    SlotInitClass.prototype.setMember = function (member) {
       this.setAttribute('member', member);
     };
-    InitSlotPrototype.getMember = function () {
+    SlotInitClass.prototype.getMember = function () {
       return this.getAttribute('member');
     };
-    InitSlotPrototype.setOrder = function (order) {
+    SlotInitClass.prototype.setOrder = function (order) {
       this.setAttribute('order', order);
     };
-    InitSlotPrototype.getOrder = function () {
+    SlotInitClass.prototype.getOrder = function () {
       return this.getAttribute('order');
     };
-    InitSlotPrototype.getType = function () {
+    SlotInitClass.prototype.getType = function () {
       return this.getAttribute('type');
     };
-    InitSlotPrototype.setType = function (type) {
+    SlotInitClass.prototype.setType = function (type) {
       this.setAttribute('type', type);
     };
-    InitSlotPrototype.getDeepLevel = function () {
+    SlotInitClass.prototype.getDeepLevel = function () {
       return this.getAttribute('deeplevel');
     };
-    InitSlotPrototype.setDeepLevel = function (deeplevel) {
+    SlotInitClass.prototype.setDeepLevel = function (deeplevel) {
       this.setAttribute('deeplevel', deeplevel);
     };
+    Object.setPrototypeOf(SlotInitClass.prototype, HTMLElement.prototype);
+    Object.setPrototypeOf(SlotInitClass, HTMLElement);
 
-    this._slotInitElement = document.registerElement('cubx-core-slot-init', { prototype: InitSlotPrototype });
+    if (!customElements.get('cubx-core-slot-init')) {
+      customElements.define('cubx-core-slot-init', SlotInitClass);
+      this._slotInitElement = SlotInitClass;
+    }
   };
   /**
    * Returns the DOMTree on basis of manifest object representing the complete application including all it's used
