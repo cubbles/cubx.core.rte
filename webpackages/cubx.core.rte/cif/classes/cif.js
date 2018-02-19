@@ -788,7 +788,7 @@
    * @private
    */
   CIF.prototype._updateCubxCoreInit = function (element, initOrder) {
-    var cubxCoreInit = this._getNode(element).querySelector('cubx-core-init');
+    var cubxCoreInit = element.querySelector('cubx-core-init');
     if (cubxCoreInit) {
       var cubxCoreSlotinits = cubxCoreInit.querySelectorAll('cubx-core-slot-init');
       var removeList = [];
@@ -1330,15 +1330,7 @@
       }
     }
   };
-  /**
-   * Return the node or (if Polymer exists) the Polymer wrapper of the node
-   * @param {HTMLElement} node
-   * @return {*}
-   * @private
-   */
-  CIF.prototype._getNode = function (node) {
-    return window.Polymer && typeof node.root === 'object' && this._isElementaryComponent(node) ? window.Polymer.dom(node.root) : node;
-  };
+
   /**
    * Create html connection nodes for representing the connections defined in the manifest
    * @memberOf CIF
@@ -1395,9 +1387,9 @@
       cubxConnectionsEl = new this._connectionsElement();
       cubxConnectionsEl.generatedByCif = true;
       if (sourceEl.childElementCount > 0) {
-        this._getNode(sourceEl).insertBefore(cubxConnectionsEl, this._getNode(sourceEl).firstElementChild);
+        sourceEl.insertBefore(cubxConnectionsEl, sourceEl.firstElementChild);
       } else {
-        this._getNode(sourceEl).appendChild(cubxConnectionsEl);
+        sourceEl.appendChild(cubxConnectionsEl);
       }
     }
     // create cubx-core-connection element and add it to cubx-core-connections element
@@ -1423,7 +1415,7 @@
       cubxConnectionEl.setHookFunction(connection.hookFunction);
     }
 
-    this._getNode(cubxConnectionsEl).appendChild(cubxConnectionEl);
+    cubxConnectionsEl.appendChild(cubxConnectionEl);
   };
   /**
    * Create html init nodes for representing the connections defined in manifest
@@ -1484,9 +1476,9 @@
       cubxInitEl = new this._initSlot();
       cubxInitEl.generatedByCif = true;
       if (el.childElementCount > 0) {
-        this._getNode(el).insertBefore(cubxInitEl, this._getNode(el).firstElementChild);
+        el.insertBefore(cubxInitEl, el.firstElementChild);
       } else {
-        this._getNode(el).appendChild(cubxInitEl);
+        el.appendChild(cubxInitEl);
       }
     }
     // create cubx-core-slot-init element and add it to cubx-core-init element
