@@ -305,6 +305,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[0] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         container.Context._children = [];
@@ -502,6 +505,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[0] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         container.Context._children = [];
@@ -614,6 +620,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[0] === el) {
+            elList = container.children;
+          }
         }
         container.Context._children = [];
         container.Context._components = [];
@@ -789,6 +798,9 @@ describe('CIF', function () {
         while (elems[ 0 ]) {
           var el = elems[ 0 ];
           container.removeChild(el);
+          if (elems[0] === el) {
+            elems = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         container.Context._children = [];

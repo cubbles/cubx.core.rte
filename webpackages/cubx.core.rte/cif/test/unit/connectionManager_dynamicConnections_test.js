@@ -728,7 +728,8 @@ describe('ConnectionManager', function () {
           function () {
             var spy;
             beforeEach(function () {
-              var source = document.createElement('source-element');
+              var constructor = cif.getCompoundComponentElementConstructor('source-element');
+              var source = new constructor();
               var sourceRuntimeId = 'source:runtimeId.sourceMember';
               var destinationRuntimeId = 'destination:runtimeId.destinationMember';
               source.setAttribute('runtime-id', sourceRuntimeId);

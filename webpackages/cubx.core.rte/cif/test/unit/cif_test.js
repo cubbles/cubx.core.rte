@@ -311,10 +311,8 @@ describe('CIF', function () {
       var el = new constructor();
 
       el.should.have.deep.property('isCompoundComponent', true);
-
-      expect(function () {
-        cif._registerCompoundComponentElement('ciftest-registercompound');
-      }).to.throw(Error);
+      var constructor2 = cif._registerCompoundComponentElement('ciftest-registercompound');
+      expect(constructor).to.equal(constructor2);
     });
   });
   describe('#_registerConnectionElements', function () {

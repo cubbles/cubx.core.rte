@@ -192,6 +192,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -393,6 +396,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -595,6 +601,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -839,6 +848,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -1119,6 +1131,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -1365,6 +1380,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -1569,6 +1587,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();

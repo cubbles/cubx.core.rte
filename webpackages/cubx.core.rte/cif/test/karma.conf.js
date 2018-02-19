@@ -14,6 +14,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
+      '../webcomponents/custom-elements-es5-adapter.js',
       '../webcomponents/webcomponents-lite.js',
       'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
       'test/testSetup.js',
@@ -88,6 +89,7 @@ module.exports = function (config) {
     browsers: [ 'Chrome', 'Firefox' ], //, 'Firefox', 'Chrome'
     // use just Chrome for debugging in Webstorm
     // browsers: [ 'Chrome' ],
+    // browsers: [ 'Firefox' ],
     captureTimeout: 6000,
 
     // Continuous Integration mode

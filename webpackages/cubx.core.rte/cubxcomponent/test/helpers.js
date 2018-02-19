@@ -101,18 +101,6 @@ function getTestComponentCacheEntry () {
  * @return {function}
  * @private
  */
-// function registerCompoundComponentElement (name) {
-//   if (typeof name !== 'string' || (typeof name === 'string' && name.indexOf('-') < 1)) {
-//     throw new TypeError('parameter name needs to be of type "string" and needs to contain a "-"');
-//   }
-//
-//   var CompoundComponentPrototype = Object.create(HTMLElement.prototype);
-//   // extend prototype with specific CompoundComponent properties
-//   _.merge(CompoundComponentPrototype, window.cubx.cif.compoundComponent);
-//
-//   var constructor = document.registerElement(name, { prototype: CompoundComponentPrototype });
-//   return constructor;
-// }
 function registerCompoundComponentElement (name) {
   if (typeof name !== 'string' || (typeof name === 'string' && name.indexOf('-') < 1)) {
     throw new TypeError('parameter name needs to be of type "string" and needs to contain a "-"');

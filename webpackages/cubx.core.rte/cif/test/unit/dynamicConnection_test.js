@@ -377,8 +377,8 @@ describe('DynamicConnection', function () {
         var runtimeId = 'abc_def';
         var error = dynamicConnection._validateRuntimeId(runtimeId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
-          'Not valid "runtimeId" (' + runtimeId + '). It must match to /^[a-z][a-zA-Z0-9-.:\\/@]*$/');
+        error.should.have.deep.property('[0]');
+        error[0].should.be.to.include('Not valid "runtimeId" (' + runtimeId + ').');
       });
       it('should be valid if the parameter is undefined', function () {
         var runtimeId;
@@ -661,9 +661,8 @@ describe('DynamicConnection', function () {
         it('should have get Errors', function () {
           var error = dynamicConnection.validate();
           error.should.have.length(3);
-          error.should.have.deep.property('[0]',
-            'Not valid "runtimeId" (' + dynamicConnection.source.runtimeId +
-            '). It must match to /^[a-z][a-zA-Z0-9-.:\\/@]*$/');
+          error.should.have.deep.property('[0]');
+          error[0].should.be.to.include('Not valid "runtimeId" (' + dynamicConnection.source.runtimeId + ').');
           error.should.have.deep.property('[1]', 'The "copyValue" must be a boolean.');
           error.should.have.deep.property('[2]', 'The "hookFunction" must be a string.');
         });
