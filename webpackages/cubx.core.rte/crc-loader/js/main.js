@@ -136,7 +136,7 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
     var defaultValue = 'true';
     var loadCIF = loadCIFAttr || defaultValue;
     cubx.CRCInit.loadCIF = loadCIF;
-    if ([ 'true', 'false' ].indexOf(loadCIFAttr) > -1) {
+    if ([ 'true', 'false' ].indexOf(loadCIFAttr) === -1) {
       console.warn(
         'Expected CRCLoader attribute "' + attributeName + '" to be "true" or "false". ' +
         'Got "' + loadCIFAttr + '". ' +
