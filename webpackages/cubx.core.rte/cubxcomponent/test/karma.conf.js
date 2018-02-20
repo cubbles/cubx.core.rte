@@ -26,6 +26,7 @@ module.exports = function (config) {
       '../cif/classes/connectionManager.js',
       '../cif/classes/context.js',
       '../dom-tree-utilities/js/domTreeUtils.js',
+      '../cif/classes/compoundComponent.js',
       '../dynamic-connection-utils/js/dynamicConnectionUtils.js',
       'CubxComponent.js',
       'test/helpers.js',

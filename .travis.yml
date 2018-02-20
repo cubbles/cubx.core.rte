@@ -22,7 +22,7 @@ script:
  - grunt karma:cif
  - grunt karma:crc
  - grunt karma:crc-loader
- - grunt karma:cubxpolymer
+ - grunt karma:cubxcomponent
  - grunt karma:dynamic-connection-utils
  - grunt karma:mutation-based-cubx-startevent
 

@@ -22,11 +22,7 @@ module.exports.tasks = {
       configFile: '<%= param.src %>/crc-loader/test/karma.conf.js',
       singleRun: true
     },
-    cubxpolymer: {
-      configFile: '<%= param.src %>/cubxpolymer/test/karma.conf.js',
-      singleRun: true
-    },
-    cubxpcomponent: {
+    cubxcomponent: {
       configFile: '<%= param.src %>/cubxcomponent/test/karma.conf.js',
       singleRun: true
     },
