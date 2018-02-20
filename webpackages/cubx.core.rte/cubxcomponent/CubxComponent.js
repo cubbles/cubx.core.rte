@@ -245,14 +245,7 @@
         }
         return connectionId;
       };
-      /**
-       * Remove an existing dynamic connection from the belonging contexts connection list.
-       * @memberOf cubxPolymerMixin
-       * @public
-       * @param {string} connection
-       * @throws Error - if the connectionID in the connection list not exists or  if the  connection not dynamic
-       *     connection is.
-       */
+
       CubxComponentClass.prototype.removeDynamicConnection = function (connection) {
         var connectionId = this._identifyConnectionId(connection);
         var ownRuntimeId = this.getRuntimeId();
@@ -290,7 +283,7 @@
      *     }
        * ]
        * </pre>
-       * @memberOf cubxPolymerMixin
+       * @memberOf cubxComponent
        * @public
        */
       CubxComponentClass.prototype.exportDynamicConnections = function () {
@@ -314,10 +307,6 @@
         return JSON.stringify(exportDynamicConnections);
       };
 
-      /**
-       * Return the base uri of the component, which has the pattern: [baseUrl]/[webpackageId]/[artifactId]
-       * @returns {string}
-       */
       CubxComponentClass.prototype.getComponentBaseUri = function () {
         var artifactId = this.___cubxManifest___.artifactId;
         var webpackageId = this.___cubxManifest___.webpackageId;

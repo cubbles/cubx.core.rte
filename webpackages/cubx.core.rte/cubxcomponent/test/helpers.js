@@ -107,17 +107,28 @@ function registerCompoundComponentElement (name) {
   }
   function getConstructor () {
     var CompoundComponentClass = function () {
-      Object.assign(this, window.cubx.cif.compoundComponent);
-      return HTMLElement.call(this);
+      var htmlEl = HTMLElement.call(this);
+      var me;
+      if (htmlEl) {
+        me = htmlEl;
+      } else {
+        me = this;
+      }
+      Object.assign(me, window.cubx.cif.compoundComponent);
+      me.createdCallback();
+      return me;
     };
 
     Object.setPrototypeOf(CompoundComponentClass.prototype, HTMLElement.prototype);
     Object.setPrototypeOf(CompoundComponentClass, HTMLElement);
     return CompoundComponentClass;
   }
-  if (!customElements.get(name)) {
-    customElements.define(name, getConstructor());
+  var constructor = customElements.get(name);
+  if (!constructor) {
+    constructor = getConstructor();
+    customElements.define(name, constructor);
   }
+  return constructor;
 }
 
 (function () {

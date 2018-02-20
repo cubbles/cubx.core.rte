@@ -87,30 +87,6 @@
         ]
       },
       {
-        "artifactId": "cubxpolymer",
-        "resources": [
-          "cubxpolymer.html"
-        ],
-        "dependencies": [
-          {
-            "webpackageId": "lodash-3.10.1@1.0.1",
-            "artifactId": "lodash",
-            "endpointId": "html-import"
-          },
-          {
-            "webpackageId": "polymer-1.2.3@1.0.2",
-            "artifactId": "polymer",
-            "endpointId": "main"
-          },
-          {
-            "artifactId": "cubx-component-mixin"
-          },
-          {
-            "artifactId": "dynamic-connection-utils"
-          }
-        ]
-      },
-      {
         "artifactId": "cubxcomponent",
         "resources": [
           "cubxcomponent.html"
