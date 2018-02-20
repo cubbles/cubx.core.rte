@@ -6,15 +6,16 @@
     <title>CRC-TestWebapp</title>
 
     <link rel="stylesheet" href="style/app.css">
+    <script src="../../../cubx.core.rte/webcomponents/custom-elements-es5-adapter.js"></script>
     <script src="../../../cubx.core.rte/webcomponents/webcomponents-lite.js"></script>
 
     <script src="../../../cubx.core.rte/crc-loader/js/main.js" data-crcinit-loadcif="true" data-cubx-startevent="pleaseStart"></script>
 
 </head>
 <body>
-<h2>This is a Cubixx-Webapplication</h2>
+<h2>This is a Cubles-Webapplication</h2>
 
-<p>To extend the application, you can use <i>plain-old-html</i> or <i>CubixxComponents</i></p>
+<p>To extend the application, you can use <i>plain-old-html</i> or <i>CubblesComponents</i></p>
 <hr>
 <a href="startEvent.html">Go Back</a>
 
@@ -27,7 +28,7 @@
 <button id="dispatchEventB" type="button">Dispatch 'pleaseStart' event</button>
 <hr>
 <div>
-    <elementary-example cubx-dependency="this/elementary-example/main"></elementary-example>
+    <elementary-example cubx-webpackage-id="this"></elementary-example>
 </div>
 
 <script>

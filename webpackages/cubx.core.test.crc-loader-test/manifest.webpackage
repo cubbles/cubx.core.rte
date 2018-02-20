@@ -1,8 +1,8 @@
 {
   "name": "crc-loader-test",
   "groupId": "cubx.core.test",
-  "version": "0.1.0-SNAPSHOT",
-  "modelVersion": "8.3.0",
+  "version": "0.2.0-SNAPSHOT",
+  "modelVersion": "9.1.1",
   "docType": "webpackage",
   "author": {
     "name": "Hd Böhlau",
@@ -35,44 +35,38 @@
       {
         "artifactId": "util1",
         "description": "This util demonstrates ...",
-        "endpoints": [
+        "resources": [
+          "js/util1.js"
+        ],
+        "dependencies": [
           {
-            "endpointId": "main",
-            "resources": [
-              "js/util1.js"
-            ],
-            "dependencies": [
-              "cubx.core.test.crc-loader-test/util2/main",
-              "this/util3/main"
-            ]
+            "artifactId": "util2",
+            "webpackageId": "cubx.core.test.crc-loader-test"
+          },
+          {
+            "artifactId": "util3",
+            "webpackageId": "cubx.core.test.crc-loader-test"
           }
         ]
       },
       {
         "artifactId": "util2",
         "description": "This util demonstrates ...",
-        "endpoints": [
+        "resources": [
+          "js/util2.js"
+        ],
+        "dependencies": [
           {
-            "endpointId": "main",
-            "resources": [
-              "js/util2.js"
-            ],
-            "dependencies": [
-              "this/util3/main"
-            ]
+            "artifactId": "util3"
           }
         ]
+
       },
       {
         "artifactId": "util3",
         "description": "This util demonstrates ...",
-        "endpoints": [
-          {
-            "endpointId": "main",
-            "resources": [
-              "js/util3.js"
-            ]
-          }
+        "resources": [
+          "js/util3.js"
         ]
       }
     ],
@@ -87,16 +81,14 @@
             "description": "Demo app..."
           }
         ],
-        "endpoints": [
+
+        "resources": [
+          "elementary-example.html"
+        ],
+        "dependencies": [
           {
-            "endpointId": "main",
-            "description": "This is recommended for you use with webcomponents.",
-            "resources": [
-              "elementary-example.html"
-            ],
-            "dependencies": [
-              "cubx.core.rte@2.0.0-SNAPSHOT/cubxpolymer/main"
-            ]
+            "artifactId": "cubxcomponent",
+            "webpackageId": "cubx.core.rte@3.0.0-SNAPSHOT"
           }
         ],
         "slots": [
