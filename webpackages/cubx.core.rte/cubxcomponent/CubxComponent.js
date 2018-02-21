@@ -34,21 +34,31 @@
         me._initValues();
         var promise = me._includeTemplate(me.cubxComponentName);
         promise.then(function () {
+          me.__component_ready = true;
           if (this.ready && typeof this.ready === 'function') {
             this.ready();
+          }
+          if (this.__component_connected) {
+            // readyevent can jeut fire, if component connected
+            this._fireReadyEvent();
           }
         }.bind(me));
         return htmlElement;
       };
 
       CubxComponentClass.prototype.connectedCallback = function () {
+        this.__component_connected = true;
         if (this.connected && typeof this.connected === 'function') {
           this.connected();
         }
-        this._fireReadyEvent();
+        if (this.__component_ready) {
+          // Ready event just fire if component ready
+          this._fireReadyEvent();
+        }
       };
 
       CubxComponentClass.prototype.disconnectedCallback = function () {
+        this.__component_connected = false;
         if (this.disconnected && typeof this.disconnected === 'function') {
           this.disconnected();
         }
@@ -180,13 +190,14 @@
       };
 
       CubxComponentClass.prototype._fireReadyEvent = function () {
-        // console.log('_fireReadyEvent ', this);
-        this._componentReady = true;
-        var componentReadyEvent = this.eventFactory.createEvent(window.cubx.EventFactory.types.COMPONENT_READY,
-          {
-            runtimeId: this.getAttribute('runtime-id')
-          });
-        this.dispatchEvent(componentReadyEvent);
+        if (!this._componentReady) { // fire ready event just once
+          this._componentReady = true;
+          var componentReadyEvent = this.eventFactory.createEvent(window.cubx.EventFactory.types.COMPONENT_READY,
+            {
+              runtimeId: this.getAttribute('runtime-id')
+            });
+          this.dispatchEvent(componentReadyEvent);
+        }
       };
 
       CubxComponentClass.prototype._generateChangeMethodForProperty = function (slotId) {
