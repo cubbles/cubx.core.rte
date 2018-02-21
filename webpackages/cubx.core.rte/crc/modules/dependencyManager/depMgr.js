@@ -207,7 +207,7 @@ window.cubx.amd.define(
     DependencyMgr._isValidResourceType = function (type) {
       for (var property in DependencyMgr._types) {
         if (DependencyMgr._types.hasOwnProperty(property)) {
-          if (DependencyMgr._types[ property ].name === type) {
+          if (DependencyMgr._types[property].name === type) {
             return true;
           }
         }
@@ -228,7 +228,8 @@ window.cubx.amd.define(
       // axios sets 'error' property on data object if there is an error.
       if (data.hasOwnProperty('error')) {
         throw new Error('Error when requesting manifest');
-      };
+      }
+      ;
       var manifest = manifestConverter.convert(data);
       return manifest;
     };
@@ -284,13 +285,13 @@ window.cubx.amd.define(
     DependencyMgr.prototype._calculateResourceList = function (depList) {
       var resourceList = [];
       for (var i = 0; i < depList.length; i++) {
-        var currentDepRef = depList[ i ];
+        var currentDepRef = depList[i];
         for (var j = 0; j < currentDepRef.resources.length; j++) {
           // remove endpoint appendix from artifactId if there was one added by the manifestConverter
           var qualifiedArtifactId = currentDepRef.artifactId.indexOf('#') > -1
             ? currentDepRef.webpackageId + '/' + currentDepRef.artifactId.split('#')[0]
             : currentDepRef.webpackageId + '/' + currentDepRef.artifactId;
-          var resource = this._createResourceFromItem(qualifiedArtifactId, currentDepRef.resources[ j ],
+          var resource = this._createResourceFromItem(qualifiedArtifactId, currentDepRef.resources[j],
             this._runtimeMode, currentDepRef.referrer);
           if (resource) {
             resourceList.push(resource);
@@ -308,7 +309,7 @@ window.cubx.amd.define(
     DependencyMgr.prototype._injectDependenciesToDom = function (resourceList) {
       // var element = document.getElementsByTagName('head')[0].firstElementChild;
       for (var i = 0; i < resourceList.length; i++) {
-        var current = resourceList[ i ];
+        var current = resourceList[i];
         var currentReferrer = [];
         current.referrer.some(function (referrer, index) {
           currentReferrer[index] = typeof referrer === 'string'
@@ -387,7 +388,7 @@ window.cubx.amd.define(
         // define recursively called function for resolving dependencyTree level by level
         // parentNodes is an array of same length as dependencies. parentNodes[i] is a parentNode reference for
         // dependencies[i]
-        (function resolveDependencies (dependencies, parentNodes) {
+        (function resolveDependencies(dependencies, parentNodes) {
           var resolutionsQueue = [];
           var nodes = [];
 
@@ -431,7 +432,7 @@ window.cubx.amd.define(
     };
 
     /**
-     * Iterate over a given DependencyTree and check each node if there are dependecyExcludes defined in corresponding
+     * Iterate over a given DependencyTree and check each node if there are dependencyExcludes defined in corresponding
      * manifest. If so these dependencyExcludes will be added.
      * @memberOf DependencyMgr
      * @param {object} depTree A DependencyTree instance
@@ -458,24 +459,28 @@ window.cubx.amd.define(
           // if given node is a rootNode check global rootDependencies for existing excludes.
           if (node.parent == null) {
             this._checkAndAddExcludesForRootDependencies(node);
-          };
+          }
           promises.push(this._getManifestForDepReference(node.data, baseUrl));
         }.bind(this));
 
-        if (promises.length === 0) { resolve(depTree); }
+        if (promises.length === 0) {
+          resolve(depTree);
+        }
 
-        Promise.all(promises).then(function (results) {
-          results.forEach(function (manifest, index) {
-            try {
-              this._checkAndAddExcludesToDepReference(nodes[index].data, manifest);
-            } catch (e) {
-              reject(e);
-            }
-            resolve(depTree); // TODO: Why is the resolve() call inside the forEach loop and NOT after that loop??
-          }.bind(this));
-        }.bind(this), function (error) {
-          reject(error);
-        });
+        Promise.all(promises)
+          .then(function (results) {
+            results.forEach(function (manifest, index) {
+              try {
+                this._checkAndAddExcludesToDepReference(nodes[index].data, manifest);
+              } catch (e) {
+                reject(e);
+              }
+            }.bind(this));
+            resolve(depTree);
+          }.bind(this))
+          .catch(function (error) {
+            reject(error);
+          });
       }.bind(this));
     };
 
@@ -589,8 +594,12 @@ window.cubx.amd.define(
         } else { // default case: request manifest using ajax
           var url = baseUrl + depReference.webpackageId + '/manifest.webpackage';
           this._fetchManifest(url).then(
-            function (response) { processManifest(response.data, true); },
-            function (error) { reject(error); }
+            function (response) {
+              processManifest(response.data, true);
+            },
+            function (error) {
+              reject(error);
+            }
           );
         }
       }.bind(this));
@@ -653,7 +662,8 @@ window.cubx.amd.define(
             // dependencyExcludes if available
             if (dependency.hasOwnProperty('dependencyExcludes')) {
               depRef.dependencyExcludes = dependency.dependencyExcludes;
-            };
+            }
+            ;
 
             depList.push(depRef);
           }
@@ -694,20 +704,20 @@ window.cubx.amd.define(
 
       var get = window.cubx.utils.get;
       var allowAbsoluteResourceUrls = get(window, 'cubx.CRCInit.allowAbsoluteResourceUrls');
-      if (item[ runtimeMode ].indexOf('http') === 0 || item[ runtimeMode ].indexOf('blob') === 0) {
+      if (item[runtimeMode].indexOf('http') === 0 || item[runtimeMode].indexOf('blob') === 0) {
         if (allowAbsoluteResourceUrls) {
-          file = item[ runtimeMode ];
+          file = item[runtimeMode];
         } else {
-          console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ' + item[ runtimeMode ]);
+          console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ' + item[runtimeMode]);
           return;
         }
       } else {
-        file = this._baseUrl + qualifiedArtifactId + '/' + item[ runtimeMode ];
+        file = this._baseUrl + qualifiedArtifactId + '/' + item[runtimeMode];
       }
 
       var resMetaObj = this._determineResourceType(file);
       if (!resMetaObj.fileType) {
-        console.warn('The following resource will be ignored, because the type of the resource is unkown. It should be "js", "html" or "css". (' + item[ runtimeMode ] + ')');
+        console.warn('The following resource will be ignored, because the type of the resource is unkown. It should be "js", "html" or "css". (' + item[runtimeMode] + ')');
         return;
       }
       return new DependencyMgr.Resource(resMetaObj.fileName, resMetaObj.fileType.name, referrer);
@@ -728,13 +738,13 @@ window.cubx.amd.define(
         paramType = fileName.substr(paramTypeIndex + 6);
         fileName = fileName.substring(0, paramTypeIndex);
       }
-      var fileEnding = paramType || fileName.split('.')[ fileName.split('.').length - 1 ];
+      var fileEnding = paramType || fileName.split('.')[fileName.split('.').length - 1];
 
       for (var property in DependencyMgr._types) {
         if (DependencyMgr._types.hasOwnProperty(property)) {
-          var type = DependencyMgr._types[ property ];
+          var type = DependencyMgr._types[property];
           for (var i = 0; i < type.fileEndings.length; i++) {
-            if (type.fileEndings[ i ] === fileEnding) {
+            if (type.fileEndings[i] === fileEnding) {
               fileType = type;
               break;
             }
@@ -892,7 +902,7 @@ window.cubx.amd.define(
         // for apps, elementaryComponents etc.
         // console.log(JSON.stringify(manifest))
         Object.keys(manifest.artifacts).some(function (artifactType) {
-          manifest.artifacts[ artifactType ].some(function (artifact) {
+          manifest.artifacts[artifactType].some(function (artifact) {
             if (artifact.artifactId === depReference.artifactId) {
               requestedArtifact = artifact;
             }
@@ -916,7 +926,7 @@ window.cubx.amd.define(
         throw TypeError('parameter item needs to be of type "DepReference"');
       }
       for (var i = 0; i < depList.length; i++) {
-        if (item.equals(depList[ i ])) {
+        if (item.equals(depList[i])) {
           index = i;
           break;
         }

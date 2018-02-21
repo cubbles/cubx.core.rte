@@ -11,6 +11,21 @@
      * @constructor
      */
     var DependencyTree = function () {
+
+      /**
+       * Holding all conflicts of type DependencyTree.conflictTypes.NAME
+       * @type {Array}
+       * @private
+       */
+      this._nameConflicts = [];
+
+      /**
+       * Holding all conflicts of type DependencyTree.conflictTypes.VERSION
+       * @type {Array}
+       * @private
+       */
+      this._versionConflicts = [];
+
       /**
        * The nodes Array holds all rootNodes of the dependencyTree. The order of root nodes is important when it comes
        * to dependency conflict resolution.
@@ -18,6 +33,15 @@
        * @type {Array}
        */
       this._rootNodes = [];
+    };
+
+    /**
+     * Enum for possible conflictTypes
+     * @type {{NAME: string, VERSION: string}}
+     */
+    DependencyTree.conflictTypes = {
+      NAME: 'nameConflict',
+      VERSION: 'versionConflict'
     };
 
     /**
@@ -103,6 +127,82 @@
     };
 
     /**
+     * Get a list of all conflicted nodes. Each item is an object containing the artifactId for the certain conflict and
+     * a list of nodes representing all artifacts that share the same artifactId but a different webpackageId.
+     * @memberOf DependencyTree
+     * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
+     * @returns {object} conflicts Array of found conflicts
+     * @private
+     */
+    DependencyTree.prototype._getListOfConflictedNodes = function (node) {
+      if (node && !(node instanceof DependencyTree.Node)) {
+        console.error('Parameter \'node\' needs to be an instance of DependencyTree.Node');
+        return;
+      }
+      if (node && !this.contains(node)) {
+        console.error('Given node is not member of DependencyTree');
+        return [];
+      }
+
+      var artifacts = {};
+      var conflicts = [];
+
+      // search only in subtree of given node for conflicts
+      if (node) {
+        this.traverseSubtreeBF(node, function (currentNode) {
+          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
+            artifacts[currentNode.data.artifactId].push(currentNode);
+          } else {
+            artifacts[currentNode.data.artifactId] = [currentNode];
+          }
+        });
+      } else { // search whole tree for conflicts
+        this.traverseBF(function (currentNode) {
+          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
+            artifacts[currentNode.data.artifactId].push(currentNode);
+          } else {
+            artifacts[currentNode.data.artifactId] = [currentNode];
+          }
+        });
+      }
+
+      // identify all conflicts
+      Object.keys(artifacts).forEach(function (artifactId) {
+        var nodes = artifacts[artifactId];
+        var webpackageId = nodes[0].data.webpackageId;
+        var conflictedNodes = [];
+        if (nodes.length > 1) {
+          conflictedNodes.push(nodes[0]);
+          nodes.forEach(function (currentNode) {
+            if (webpackageId !== currentNode.data.webpackageId) {
+              conflictedNodes.push(currentNode);
+            }
+          });
+          if (conflictedNodes.length > 1) {
+            var conflict = {
+              artifactId: artifactId,
+              nodes: conflictedNodes
+            };
+            conflicts.push(conflict);
+          }
+        }
+      });
+
+      return conflicts;
+    };
+
+    /**
+     * Determine the type of conflict for the given conflict
+     * @memberOf DependencyTree
+     * @param {array} conflict Object holding an artifactId and a list of conflicted Nodes
+     * @return {string} the type of conflict
+     * @private
+     */
+    DependencyTree.prototype._determineTypeOfConflict = function (conflict) {
+      //TODO
+    };
+
+    /**
      * Apply all excludes in DependencyTree. Note: this needs to be done before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} DependencyTree itself
@@ -144,7 +244,7 @@
       // if we can reach any of the current rootNodes by using the parent reference given node is a member of DependencyTree
       while (node.parent != null) {
         node = node.parent;
-      };
+      }
 
       return this._rootNodes.some(function (rootNode) {
         return rootNode.equals(node);
@@ -159,62 +259,21 @@
      * @returns {object} conflicts Array of found conflicts
      */
     DependencyTree.prototype.getListOfConflictedNodes = function (node) {
-      if (node && !(node instanceof DependencyTree.Node)) {
-        console.error('Parameter \'node\' needs to be an instance of DependencyTree.Node');
-        return;
-      }
-      if (node && !this.contains(node)) {
-        console.error('Given node is not member of DependencyTree');
-        return [];
-      }
+      return this._getListOfConflictedNodes(node);
+    };
 
-      var artifacts = {};
-      var conflicts = [];
+    /**
+     * Iterate through dependencyTree and determine all conflicts that can be found. The conflicts are classified either as
+     * name conflicts (same artifactId but different webpackage) or as
+     * version conflicts (same artifactId, same webpackage name and goupdId but different version string)
+     * @memberOf DependencyTree
+     */
+    DependencyTree.prototype.determineArtifactConflicts = function () {
+      var conflicts = this._getListOfConflictedNodes()
+      //TODO: filter conflicts by type an add them to instance properties _nameConflicts and _versionConflicts
+      conflicts.forEach(function (conflict) {
 
-      // search only in subtree of given node for conflicts
-      if (node) {
-        this.traverseSubtreeBF(node, function (currentNode) {
-          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
-            artifacts[currentNode.data.artifactId].push(currentNode);
-          } else {
-            artifacts[currentNode.data.artifactId] = [currentNode];
-          }
-        });
-      } else { // search whole tree for conflicts
-        this.traverseBF(function (currentNode) {
-          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
-            artifacts[currentNode.data.artifactId].push(currentNode);
-          } else {
-            artifacts[currentNode.data.artifactId] = [currentNode];
-          }
-        });
-      }
-
-      // identify all conflicts
-      Object.keys(artifacts).forEach(function (artifactId) {
-        var nodes = artifacts[artifactId];
-        var webpackageId = nodes[0].data.webpackageId;
-        var conflictedNodes = [];
-        if (nodes.length > 1) {
-          conflictedNodes.push(nodes[0]);
-
-          nodes.forEach(function (currentNode) {
-            if (webpackageId !== currentNode.data.webpackageId) {
-              conflictedNodes.push(currentNode);
-            }
-          });
-
-          if (conflictedNodes.length > 1) {
-            var conflict = {
-              artifactId: artifactId,
-              nodes: conflictedNodes
-            };
-            conflicts.push(conflict);
-          }
-        }
-      });
-
-      return conflicts;
+      })
     };
 
     /**
@@ -384,9 +443,10 @@
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
-      };
+      }
+      ;
       this._rootNodes.some(function (node) {
-        (function processNode (node) {
+        (function processNode(node) {
           if (callback(node) === false) {
             return true;
           }
@@ -407,7 +467,8 @@
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
-      };
+      }
+      ;
       var queue = this._rootNodes.length > 0 ? this._rootNodes.slice() : [];
       while (queue.length > 0) {
         var node = queue.shift();
@@ -418,7 +479,8 @@
         }
         if (callback(node) === false) {
           return;
-        };
+        }
+        ;
       }
     };
 
@@ -432,11 +494,13 @@
       if (!(rootNode instanceof DependencyTree.Node)) {
         console.error('Parameter \'rootNode\' needs to be an instance of DependencyTree.Node');
         return;
-      };
+      }
+      ;
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
-      };
+      }
+      ;
       var queue = [rootNode];
       while (queue.length > 0) {
         var node = queue.shift();
@@ -447,7 +511,8 @@
         }
         if (callback(node) === false) {
           return;
-        };
+        }
+        ;
       }
     };
 
@@ -483,12 +548,13 @@
       this._rootNodes.forEach(function (rootNode) {
         rootNodes.push(rootNode.toJSON(includeResources));
       });
-      return { rootNodes: rootNodes };
+      return {rootNodes: rootNodes};
     };
 
     DependencyTree.prototype.clone = function () {
       var hash = new WeakMap();
-      function clone (obj) {
+
+      function clone(obj) {
         if (!obj || typeof obj !== 'object') {
           return obj;
         }
@@ -509,6 +575,7 @@
         }
         return result;
       }
+
       return clone(this);
     };
 
@@ -634,7 +701,9 @@
       while (parents.length > 0) {
         var current = parents.shift();
         if (current.equals(node)) return true;
-        current.usedBy.forEach(function (item) { parents.push(item); });
+        current.usedBy.forEach(function (item) {
+          parents.push(item);
+        });
         if (current.parent != null) parents.push(current.parent);
       }
       return false;
