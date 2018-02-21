@@ -982,12 +982,19 @@
 
     function getConnectionsConstructor () {
       var ConnectionsClass = function () {
-        return HTMLElement.call(this);
+        var htmlEl = HTMLElement.call(this);
+        var me;
+        if (htmlEl) {
+          me = htmlEl;
+        } else {
+          me = this;
+        }
+        setTimeout(function () {
+          this.style.display = 'none';
+        }.bind(me), 0);
+        return htmlEl;
       };
 
-      ConnectionsClass.prototype.createdCallback = function () {
-        this.style.display = 'none';
-      };
       Object.setPrototypeOf(ConnectionsClass.prototype, HTMLElement.prototype);
       Object.setPrototypeOf(ConnectionsClass, HTMLElement);
       return ConnectionsClass;
@@ -1008,12 +1015,20 @@
   CIF.prototype._registerInitializationElements = function () {
     function getInitConstructor () {
       var InitClass = function () {
-        return HTMLElement.call(this);
+        var htmlEl = HTMLElement.call(this);
+        var me;
+        if (htmlEl) {
+          me = htmlEl;
+        } else {
+          me = this;
+        }
+        setTimeout(function () {
+          this.style.display = 'none';
+        }.bind(me), 0);
+
+        return htmlEl;
       };
 
-      InitClass.prototype.createdCallback = function () {
-        this.style.display = 'none';
-      };
       Object.setPrototypeOf(InitClass.prototype, HTMLElement.prototype);
       Object.setPrototypeOf(InitClass, HTMLElement);
       return InitClass;
