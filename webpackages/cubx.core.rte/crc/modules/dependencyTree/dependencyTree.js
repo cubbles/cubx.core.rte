@@ -11,7 +11,6 @@
      * @constructor
      */
     var DependencyTree = function () {
-
       /**
        * Holding all conflicts of type DependencyTree.conflictTypes.NAME
        * @type {Array}
@@ -37,11 +36,12 @@
 
     /**
      * Enum for possible conflictTypes
-     * @type {{NAME: string, VERSION: string}}
+     * @type {{NAME: string, VERSION: string, MIXED: string}}
      */
     DependencyTree.conflictTypes = {
       NAME: 'nameConflict',
-      VERSION: 'versionConflict'
+      VERSION: 'versionConflict',
+      MIXED: 'mixedConflict'
     };
 
     /**
@@ -199,7 +199,25 @@
      * @private
      */
     DependencyTree.prototype._determineTypeOfConflict = function (conflict) {
-      //TODO
+      // group conflicted nodes by webpackage name (everything to the left of '@' sign)
+      var webpackageMapByName = {};
+      conflict.nodes.forEach(function (node) {
+        var webpackageName = node.data.webpackageId.split('@')[0];
+        if (webpackageMapByName.hasOwnProperty(webpackageName)) {
+          webpackageMapByName[webpackageName].push(node);
+        } else {
+          webpackageMapByName[webpackageName] = [node];
+        }
+      });
+
+      // determine conflict type based on number of unique webpackage names appeared for this conflict
+      if (Object.keys(webpackageMapByName).length === 1) {
+        return DependencyTree.conflictTypes.VERSION;
+      } else if (Object.keys(webpackageMapByName).length === 2 && conflict.nodes.length === 2) {
+        return DependencyTree.conflictTypes.NAME;
+      } else {
+        return DependencyTree.conflictTypes.MIXED;
+      }
     };
 
     /**
@@ -269,11 +287,22 @@
      * @memberOf DependencyTree
      */
     DependencyTree.prototype.determineArtifactConflicts = function () {
-      var conflicts = this._getListOfConflictedNodes()
-      //TODO: filter conflicts by type an add them to instance properties _nameConflicts and _versionConflicts
+      var conflicts = this._getListOfConflictedNodes();
+      // TODO: filter conflicts by type an add them to instance properties _nameConflicts and _versionConflicts
       conflicts.forEach(function (conflict) {
-
-      })
+        var type = this._determineTypeOfConflict(conflict);
+        switch (type) {
+          case DependencyTree.conflictTypes.NAME:
+            this._nameConflicts.push(conflict);
+            break;
+          case DependencyTree.conflictTypes.VERSION:
+            this._versionConflicts.push(conflict);
+            break;
+          case DependencyTree.conflictTypes.MIXED:
+            // TODO: handle mixed conflicts
+            break;
+        }
+      }.bind(this));
     };
 
     /**
@@ -444,9 +473,8 @@
         console.error('Parameter \'callback\' needs to be of type function');
         return;
       }
-      ;
       this._rootNodes.some(function (node) {
-        (function processNode(node) {
+        (function processNode (node) {
           if (callback(node) === false) {
             return true;
           }
@@ -468,7 +496,6 @@
         console.error('Parameter \'callback\' needs to be of type function');
         return;
       }
-      ;
       var queue = this._rootNodes.length > 0 ? this._rootNodes.slice() : [];
       while (queue.length > 0) {
         var node = queue.shift();
@@ -480,7 +507,6 @@
         if (callback(node) === false) {
           return;
         }
-        ;
       }
     };
 
@@ -554,7 +580,7 @@
     DependencyTree.prototype.clone = function () {
       var hash = new WeakMap();
 
-      function clone(obj) {
+      function clone (obj) {
         if (!obj || typeof obj !== 'object') {
           return obj;
         }

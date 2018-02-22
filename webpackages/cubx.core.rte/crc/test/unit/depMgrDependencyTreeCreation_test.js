@@ -17,6 +17,8 @@
       'text!unit/dependencyResolution/dependencyPackage6.json'],
     function (CRC, DepMgr, DependencyTree, manifestConverter, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
       var depMgr;
+      var Node = DependencyTree.Node;
+      var DepRef = DepMgr.DepReference;
 
       describe('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
@@ -651,10 +653,57 @@
             spy.reset();
           });
         });
-        describe.skip('#_determineArtifactConflicts()', function () {
+        describe('#_determineTypeOfConflict()', function () {
+          var conflicts;
           var depTree;
-          var Node = DependencyTree.Node;
-          var DepRef = DepMgr.DepReference;
+
+          beforeEach(function () {
+            depTree = new DependencyTree();
+            var nodeA = new Node();
+            nodeA.data = new DepRef({ webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null });
+            var nodeB = new Node();
+            nodeB.data = new DepRef({ webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null });
+            var nodeC = new Node();
+            nodeC.data = new DepRef({ webpackageId: 'packageB@1.0', artifactId: 'artifact_A', referrer: null });
+            depTree.insertNode(nodeA);
+            depTree.insertNode(nodeB);
+            depTree.insertNode(nodeC);
+
+            // create three types of conflicts
+            conflicts = [
+              // version conflict
+              {
+                artifactId: 'artifact_A',
+                nodes: [nodeA, nodeB]
+              },
+              // naming conflict
+              {
+                artifactId: 'artifact_A',
+                nodes: [nodeA, nodeC]
+              },
+              // mixed conflict
+              {
+                artifactId: 'artifact_A',
+                nodes: [nodeA, nodeB, nodeC]
+              }
+            ];
+          });
+
+          it('should identify version conflicts correctly', function () {
+            var type = depTree._determineTypeOfConflict(conflicts[0]);
+            type.should.eql(DependencyTree.conflictTypes.VERSION);
+          });
+          it('should identify naming conflicts correctly', function () {
+            var type = depTree._determineTypeOfConflict(conflicts[1]);
+            type.should.eql(DependencyTree.conflictTypes.NAME);
+          });
+          it('should identify mixed conflicts correctly', function () {
+            var type = depTree._determineTypeOfConflict(conflicts[2]);
+            type.should.eql(DependencyTree.conflictTypes.MIXED);
+          });
+        });
+        describe('#determineArtifactConflicts()', function () {
+          var depTree;
 
           beforeEach(function () {
             /**
@@ -708,17 +757,23 @@
               webpackageId: 'packageB@2.0.0',
               artifactId: 'my-comp',
               referrer: {webpackageId: 'packageA@1.0.0', artifactId: 'artifactA'}
-            })
-            depTree.insertNode(childB1, rootB)
-          })
+            });
+            depTree.insertNode(childB1, rootB);
+          });
 
-          it('should determine and naming conflicts and store them on internal property _nameConflicts', function () {
+          it('should determine naming conflicts and store them on internal property _nameConflicts', function () {
             depTree.determineArtifactConflicts();
             depTree.should.have.property('_nameConflicts');
-            depTree._nameConflicts.should.be.an('object');
-            Object.keys(depTree._nameConflicts).should.be.eql(1)
-          })
-        })
+            depTree._nameConflicts.should.be.an('array');
+            depTree._nameConflicts.should.have.lengthOf(1);
+          });
+          it('should determine version conflicts and store them on internal property _versionConflicts', function () {
+            depTree.determineArtifactConflicts();
+            depTree.should.have.property('_versionConflicts');
+            depTree._versionConflicts.should.be.an('array');
+            depTree._versionConflicts.should.have.lengthOf(1);
+          });
+        });
       });
     });
 })();
