@@ -39,6 +39,8 @@
             this.ready();
           }
           if (this.__component_connected) {
+            // call connected lifecycle method just if component ready
+            this.connectedLifecycle();
             // readyevent can jeut fire, if component connected
             this._fireReadyEvent();
           }
@@ -48,12 +50,17 @@
 
       CubxComponentClass.prototype.connectedCallback = function () {
         this.__component_connected = true;
-        if (this.connected && typeof this.connected === 'function') {
-          this.connected();
-        }
         if (this.__component_ready) {
+          // call connected lifecycle method just if component ready
+          this.connectedLifecycle();
           // Ready event just fire if component ready
           this._fireReadyEvent();
+        }
+      };
+
+      CubxComponentClass.prototype.connectedLifecycle = function () {
+        if (this.connected && typeof this.connected === 'function') {
+          this.connected();
         }
       };
 
@@ -180,7 +187,7 @@
                   break;
                 }
               }
-              if (template) {
+              if (template && template.content) {
                 var templateContent = document.importNode(template.content, true);
                 this.appendChild(templateContent);
               }
