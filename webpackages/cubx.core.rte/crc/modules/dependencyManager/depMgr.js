@@ -388,7 +388,7 @@ window.cubx.amd.define(
         // define recursively called function for resolving dependencyTree level by level
         // parentNodes is an array of same length as dependencies. parentNodes[i] is a parentNode reference for
         // dependencies[i]
-        (function resolveDependencies(dependencies, parentNodes) {
+        (function resolveDependencies (dependencies, parentNodes) {
           var resolutionsQueue = [];
           var nodes = [];
 

@@ -221,6 +221,20 @@
     };
 
     /**
+     * Extract all version conflicts from a given mixed conflict. In theory a given mixed conflict holding n nodes
+     * can contain up to n/2 version conflicts.
+     * @param {object} conflict
+     * @memberOf DependencyTree
+     * @return {array} List of extracted version conflicts
+     * @private
+     */
+    DependencyTree.prototype._extractVersionConflictsFromMixedConflict = function (conflict) {
+      var conflicts = [];
+
+      return conflicts;
+    };
+
+    /**
      * Apply all excludes in DependencyTree. Note: this needs to be done before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} DependencyTree itself

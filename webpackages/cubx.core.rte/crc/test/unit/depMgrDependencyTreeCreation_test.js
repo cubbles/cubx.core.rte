@@ -20,7 +20,7 @@
       var Node = DependencyTree.Node;
       var DepRef = DepMgr.DepReference;
 
-      describe('DependencyMgr DependencyTree creation', function () {
+      describe.only('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
           var stub;
           var rootDepList;
@@ -84,8 +84,8 @@
                   throw new TypeError();
                 } else {
                   window.setTimeout(function () {
-                    reject({message: 'Error while resolving...'});
-                  }, 100); // eslint-disable-line prefer-promise-reject-errors
+                    reject({message: 'Error while resolving...'}); // eslint-disable-line prefer-promise-reject-errors
+                  }, 100);
                 }
               });
             });
@@ -501,8 +501,8 @@
                   }, 200);
                 } else {
                   window.setTimeout(function () {
-                    reject({message: 'Error while requesting ' + url});
-                  }, 100); // eslint-disable-line prefer-promise-reject-errors
+                    reject({message: 'Error while requesting ' + url}); // eslint-disable-line prefer-promise-reject-errors
+                  }, 100);
                 }
               });
             });
@@ -702,6 +702,48 @@
             type.should.eql(DependencyTree.conflictTypes.MIXED);
           });
         });
+        // describe('#_extractVersionConflictsFromMixedConflict()', function () {
+        //   var conflict;
+        //   var depTree;
+        //
+        //   beforeEach(function () {
+        //     depTree = new DependencyTree();
+        //     var nodeA = new Node();
+        //     nodeA.data = new DepRef({ webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null });
+        //     var nodeB = new Node();
+        //     nodeB.data = new DepRef({ webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null });
+        //     var nodeC = new Node();
+        //     nodeC.data = new DepRef({ webpackageId: 'packageB@1.0', artifactId: 'artifact_A', referrer: null });
+        //     var nodeD = new Node();
+        //     nodeD.data = new DepRef({ webpackageId: 'packageB@2.0', artifcatId: 'artifact_A', referrer: null });
+        //     var nodeE = new Node();
+        //     nodeE.data = new DepRef({ webpackageId: 'packageC@1.0', artifcatId: 'artifact_A', referrer: null });
+        //     depTree.insertNode(nodeA);
+        //     depTree.insertNode(nodeB);
+        //     depTree.insertNode(nodeC);
+        //     depTree.insertNode(nodeD);
+        //     depTree.insertNode(nodeE);
+        //
+        //     // create mixed conflict containing 2 version conflicts and one name conflict
+        //     conflicts = [
+        //       // version conflict
+        //       {
+        //         artifactId: 'artifact_A',
+        //         nodes: [nodeA, nodeB]
+        //       },
+        //       // naming conflict
+        //       {
+        //         artifactId: 'artifact_A',
+        //         nodes: [nodeA, nodeC]
+        //       },
+        //       // mixed conflict
+        //       {
+        //         artifactId: 'artifact_A',
+        //         nodes: [nodeA, nodeB, nodeC]
+        //       }
+        //     ];
+        //   });
+        // });
         describe('#determineArtifactConflicts()', function () {
           var depTree;
 
