@@ -20,7 +20,7 @@
       var Node = DependencyTree.Node;
       var DepRef = DepMgr.DepReference;
 
-      describe.only('DependencyMgr DependencyTree creation', function () {
+      describe('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
           var stub;
           var rootDepList;
