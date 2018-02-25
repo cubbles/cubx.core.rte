@@ -702,48 +702,55 @@
             type.should.eql(DependencyTree.conflictTypes.MIXED);
           });
         });
-        // describe('#_extractVersionConflictsFromMixedConflict()', function () {
-        //   var conflict;
-        //   var depTree;
-        //
-        //   beforeEach(function () {
-        //     depTree = new DependencyTree();
-        //     var nodeA = new Node();
-        //     nodeA.data = new DepRef({ webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null });
-        //     var nodeB = new Node();
-        //     nodeB.data = new DepRef({ webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null });
-        //     var nodeC = new Node();
-        //     nodeC.data = new DepRef({ webpackageId: 'packageB@1.0', artifactId: 'artifact_A', referrer: null });
-        //     var nodeD = new Node();
-        //     nodeD.data = new DepRef({ webpackageId: 'packageB@2.0', artifcatId: 'artifact_A', referrer: null });
-        //     var nodeE = new Node();
-        //     nodeE.data = new DepRef({ webpackageId: 'packageC@1.0', artifcatId: 'artifact_A', referrer: null });
-        //     depTree.insertNode(nodeA);
-        //     depTree.insertNode(nodeB);
-        //     depTree.insertNode(nodeC);
-        //     depTree.insertNode(nodeD);
-        //     depTree.insertNode(nodeE);
-        //
-        //     // create mixed conflict containing 2 version conflicts and one name conflict
-        //     conflicts = [
-        //       // version conflict
-        //       {
-        //         artifactId: 'artifact_A',
-        //         nodes: [nodeA, nodeB]
-        //       },
-        //       // naming conflict
-        //       {
-        //         artifactId: 'artifact_A',
-        //         nodes: [nodeA, nodeC]
-        //       },
-        //       // mixed conflict
-        //       {
-        //         artifactId: 'artifact_A',
-        //         nodes: [nodeA, nodeB, nodeC]
-        //       }
-        //     ];
-        //   });
-        // });
+        describe.skip('#_extractVersionConflictsFromMixedConflict()', function () {
+          var conflict;
+          var depTree;
+          var nodeA;
+          var nodeB;
+          var nodeC;
+          var nodeD;
+          var nodeE;
+
+          beforeEach(function () {
+            depTree = new DependencyTree();
+            nodeA = new Node();
+            nodeA.data = new DepRef({ webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null });
+            nodeB = new Node();
+            nodeB.data = new DepRef({ webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null });
+            nodeC = new Node();
+            nodeC.data = new DepRef({ webpackageId: 'packageB@1.0', artifactId: 'artifact_A', referrer: null });
+            nodeD = new Node();
+            nodeD.data = new DepRef({ webpackageId: 'packageB@2.0', artifcatId: 'artifact_A', referrer: null });
+            nodeE = new Node();
+            nodeE.data = new DepRef({ webpackageId: 'packageC@1.0', artifcatId: 'artifact_A', referrer: null });
+            depTree.insertNode(nodeA);
+            depTree.insertNode(nodeB);
+            depTree.insertNode(nodeC);
+            depTree.insertNode(nodeD);
+            depTree.insertNode(nodeE);
+
+            // create mixed conflict containing 2 version conflicts and one name conflict
+            conflict = {
+              artifactId: 'artifact_A',
+              nodes: [nodeA, nodeB, nodeC, nodeD, nodeE]
+            };
+          });
+          it('should extract version conflicts out of given mixed conflict', function () {
+            var extractedConflicts = depTree._extractVersionConflictsFromMixedConflict(conflict);
+            extractedConflicts.should.be.an('array');
+            extractedConflicts.should.have.lengthOf(2);
+            extractedConflicts.should.have.members(
+              {
+                artifactId: 'artifact_A',
+                nodes: [nodeA, nodeB]
+              },
+              {
+                artifactId: 'artifact_A',
+                nodes: [nodeC, nodeD]
+              }
+            )
+          });
+        });
         describe('#determineArtifactConflicts()', function () {
           var depTree;
 
