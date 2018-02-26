@@ -192,6 +192,26 @@
     };
 
     /**
+     * Group given list of nodes by their webpackage name.
+     * @memberOf DependencyTree
+     * @param {array} nodes
+     * @return {object} nodes grouped by webpackage name as key
+     * @private
+     */
+    DependencyTree.prototype._groupNodesByWebpackageName = function (nodes) {
+      var webpackageMapByName = {};
+      nodes.forEach(function (node) {
+        var webpackageName = node.data.webpackageId.split('@')[0];
+        if (webpackageMapByName.hasOwnProperty(webpackageName)) {
+          webpackageMapByName[webpackageName].push(node);
+        } else {
+          webpackageMapByName[webpackageName] = [node];
+        }
+      });
+      return webpackageMapByName;
+    };
+
+    /**
      * Determine the type of conflict for the given conflict
      * @memberOf DependencyTree
      * @param {array} conflict Object holding an artifactId and a list of conflicted Nodes
@@ -200,15 +220,7 @@
      */
     DependencyTree.prototype._determineTypeOfConflict = function (conflict) {
       // group conflicted nodes by webpackage name (everything to the left of '@' sign)
-      var webpackageMapByName = {};
-      conflict.nodes.forEach(function (node) {
-        var webpackageName = node.data.webpackageId.split('@')[0];
-        if (webpackageMapByName.hasOwnProperty(webpackageName)) {
-          webpackageMapByName[webpackageName].push(node);
-        } else {
-          webpackageMapByName[webpackageName] = [node];
-        }
-      });
+      var webpackageMapByName = this._groupNodesByWebpackageName(conflict.nodes);
 
       // determine conflict type based on number of unique webpackage names appeared for this conflict
       if (Object.keys(webpackageMapByName).length === 1) {
@@ -230,7 +242,18 @@
      */
     DependencyTree.prototype._extractVersionConflictsFromMixedConflict = function (conflict) {
       var conflicts = [];
-      // var webpackagesMap
+      var webpackagesMap = this._groupNodesByWebpackageName(conflict.nodes);
+
+      // create new conflicts
+      Object.keys(webpackagesMap).forEach(function (webpackageName) {
+        if (webpackagesMap[webpackageName].length > 1) {
+          conflicts.push({
+            artifactId: conflict.artifactId,
+            nodes: webpackagesMap[webpackageName]
+          });
+        }
+      });
+
       return conflicts;
     };
 
@@ -302,7 +325,6 @@
      */
     DependencyTree.prototype.determineArtifactConflicts = function () {
       var conflicts = this._getListOfConflictedNodes();
-      // TODO: filter conflicts by type an add them to instance properties _nameConflicts and _versionConflicts
       conflicts.forEach(function (conflict) {
         var type = this._determineTypeOfConflict(conflict);
         switch (type) {
@@ -313,7 +335,7 @@
             this._versionConflicts.push(conflict);
             break;
           case DependencyTree.conflictTypes.MIXED:
-            // TODO: handle mixed conflicts
+            Array.prototype.push.apply(this._versionConflicts, this._extractVersionConflictsFromMixedConflict(conflict));
             break;
         }
       }.bind(this));
