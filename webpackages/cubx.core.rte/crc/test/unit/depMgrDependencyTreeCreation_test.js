@@ -751,7 +751,7 @@
             ]);
           });
         });
-        describe('#determineArtifactConflicts()', function () {
+        describe('conflict detection and resolution', function () {
           var depTree;
           var childA1;
           var childA2;
@@ -846,31 +846,36 @@
             depTree.insertNode(childC3, rootC);
           });
 
-          it('should determine naming conflicts and store them on internal property _nameConflicts', function () {
-            depTree.determineArtifactConflicts();
-            depTree.should.have.property('_nameConflicts');
-            depTree._nameConflicts.should.be.an('array');
-            depTree._nameConflicts.should.have.lengthOf(1);
-            depTree._nameConflicts[0].should.eql({
-              artifactId: 'my-comp',
-              nodes: [childA1, childB1]
+          describe('#determineArtifactConflicts()', function () {
+            it('should determine naming conflicts and store them on internal property _nameConflicts', function () {
+              depTree.determineArtifactConflicts();
+              depTree.should.have.property('_nameConflicts');
+              depTree._nameConflicts.should.be.an('array');
+              depTree._nameConflicts.should.have.lengthOf(1);
+              depTree._nameConflicts[0].should.eql({
+                artifactId: 'my-comp',
+                nodes: [childA1, childB1]
+              });
+            });
+            it('should determine version conflicts and store them on internal property _versionConflicts', function () {
+              depTree.determineArtifactConflicts();
+              depTree.should.have.property('_versionConflicts');
+              depTree._versionConflicts.should.be.an('array');
+              depTree._versionConflicts.should.have.lengthOf(2);
+              depTree._versionConflicts.should.have.deep.members([
+                {
+                  artifactId: 'util5',
+                  nodes: [childA2, childA11]
+                },
+                {
+                  artifactId: 'artifact_C',
+                  nodes: [childC2, childC3]
+                }
+              ]);
             });
           });
-          it('should determine version conflicts and store them on internal property _versionConflicts', function () {
-            depTree.determineArtifactConflicts();
-            depTree.should.have.property('_versionConflicts');
-            depTree._versionConflicts.should.be.an('array');
-            depTree._versionConflicts.should.have.lengthOf(2);
-            depTree._versionConflicts.should.have.deep.members([
-              {
-                artifactId: 'util5',
-                nodes: [childA2, childA11]
-              },
-              {
-                artifactId: 'artifact_C',
-                nodes: [childC2, childC3]
-              }
-            ]);
+          describe('#resolveArtifactVersionConflicts()', function () {
+
           });
         });
       });
