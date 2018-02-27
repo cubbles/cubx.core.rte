@@ -335,7 +335,7 @@
    * @private
    */
   compoundComponent._cifReadyHandler = function () {
-    this._synchronizeModelWithStorageManager();
+    // do nothing
   };
   /* *******************************************************************/
   /* ******************** generate methods ******************************/

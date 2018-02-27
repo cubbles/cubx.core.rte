@@ -210,7 +210,6 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
       'polyfills': crcLoaderBaseUrl + '/modules/polyfills/polyfills',
       // crc modules definition block starts here
       'crc': crcLoaderBaseUrl + '/../crc/modules/crc/CRC',
-      'storageManager': crcLoaderBaseUrl + '/../crc/modules/storageManager/storageManager',
       'text': crcLoaderBaseUrl + '/../crc/modules/text/text',
       'dependencyManager': crcLoaderBaseUrl + '/../crc/modules/dependencyManager/depMgr',
       'cache': crcLoaderBaseUrl + '/../crc/modules/cache/cache',

@@ -17,7 +17,6 @@
     'unit/depMgr_test',
     'unit/depMgrDependencyResolution_test',
     'unit/eventFactory_test',
-    'unit/storageManager_test',
     'unit/utils_array_test',
     'unit/responseCache_test',
     'unit/manifestConverter_test',

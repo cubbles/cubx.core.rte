@@ -157,22 +157,6 @@
   };
 
   /**
-   * Synchronize the model with crc.storageManager.
-   *
-   * @memberOf cubxComponentMixin
-   * @private
-   */
-  cubxComponentMixin._synchronizeModelWithStorageManager = function () {
-    var storageManager = window.cubx.CRC.getStorageManager();
-    try {
-      var mergedModel = storageManager.getModel(this.getRuntimeId(), this._getModel());
-      this._setModel(mergedModel);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  /**
    * Wait for event cifReady, and then finish the initialisation.
    * @private
    * @memberOf cubxComponentMixin

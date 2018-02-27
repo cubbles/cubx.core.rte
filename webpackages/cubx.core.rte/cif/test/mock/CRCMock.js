@@ -76,13 +76,7 @@ cache.getComponentCacheEntry = function (key) {
 window.cubx.CRC.getCache = function () {
   return cache;
 };
-window.cubx.CRC.getStorageManager = function () {
-  var storageManager = {};
-  storageManager.getModel = function (id, model) {
-    return model;
-  };
-  return storageManager;
-};
+
 window.cubx.CRC.getCRCElement = function () {
   return document.querySelector('[cubx-core-crc]');
 };

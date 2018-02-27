@@ -7,7 +7,6 @@
     paths: {
       'CRC': 'crc/modules/crc/CRC',
       'dependencyManager': 'crc/modules/dependencyManager/depMgr',
-      'storageManager': 'crc/modules/storageManager/storageManager',
       'text': 'crc/modules/text/text',
       'utils': 'crc/modules/utils/utils',
       'cache': 'crc/modules/cache/cache',

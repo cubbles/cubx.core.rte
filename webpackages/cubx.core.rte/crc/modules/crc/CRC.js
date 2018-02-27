@@ -5,7 +5,6 @@
  * @version 3.0.0-SNAPSHOT
  */
 window.cubx.amd.define([
-  'storageManager',
   'dependencyManager',
   'cache',
   'componentResolver',
@@ -85,13 +84,6 @@ window.cubx.amd.define([
     window.cubx.EventFactory = EventFactory;
 
     /**
-     * The StorageManager instance of this CRC instance
-     * @type {object}
-     * @private
-     */
-    this._storageManager = storageMgr;
-
-    /**
      * The ready flag set to true, after crc has loaded all dependencies and is ready
      * @type {boolean}
      * @private
@@ -162,15 +154,6 @@ window.cubx.amd.define([
    */
   CRC.prototype.getEventFactory = function () {
     return this._eventFactory;
-  };
-
-  /**
-   * Get the Sotarage Manager instance
-   * @return {Object}
-   * @memberOf CRC
-   */
-  CRC.prototype.getStorageManager = function () {
-    return this._storageManager;
   };
 
   /**
