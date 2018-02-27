@@ -10,7 +10,7 @@ window.cubx.amd.define([
   'componentResolver',
   'utils',
   'eventFactory'
-], function (storageMgr, DepMgr, Cache, ComponentResolver, utils, EventFactory) {
+], function (DepMgr, Cache, ComponentResolver, utils, EventFactory) {
   'use strict';
 
   /**
