@@ -333,7 +333,7 @@
         if (this._processConnectionHook(newPayloadObject)) {
           return;
         }
-        this._context.getRootElement()._setSlotValue(newPayloadObject.slot, newPayloadObject.payload);
+        this._context.getRootElement()._setInModel(newPayloadObject.slot, newPayloadObject.payload);
         this._context.getRootElement().fireModelChangeEvent(newPayloadObject);
       } else {
         //  ingoing and sibling connection
@@ -629,7 +629,7 @@
           if (this._processConnectionHook(newPayloadFrame)) {
             return;
           }
-          this._context.getRootElement()._setSlotValue(newPayloadFrame.slot, newPayloadFrame.payload);
+          this._context.getRootElement()._setInModel(newPayloadFrame.slot, newPayloadFrame.payload);
           this._context.getRootElement().fireModelChangeEvent(newPayloadFrame);
         }
       } else {

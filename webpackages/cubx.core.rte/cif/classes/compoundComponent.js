@@ -366,6 +366,7 @@
         // }
         me._generateGetMethod(item.slotId);
         me._generateSetMethod(item.slotId);
+        me._generateGetterAndSetter(item.slotId);
         me._generateRepropagateMethod(item.slotId);
       });
     }
