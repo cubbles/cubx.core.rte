@@ -42,6 +42,9 @@ describe('CubxComponent (Input/Output)', function () {
       it('should set the value of attribute model.inputvalue', function () {
         component.setInputvalue(testString);
         component.model.should.have.property('inputvalue', testString);
+        component.model.should.have.property('_inputvalue', testString);
+        component.model.inputvalue.should.be.equal(testString);
+        component.model['inputvalue'].should.be.equal(testString);
       });
       it('should be exists: "setOutputvalue()"', function () {
         component.setOutputvalue.should.be.exists;
@@ -51,6 +54,9 @@ describe('CubxComponent (Input/Output)', function () {
       it('should set the value of attribute model.outputvalue', function () {
         component.setOutputvalue(testString);
         component.model.should.have.property('outputvalue', testString);
+        component.model.should.have.property('_outputvalue', testString);
+        component.model.outputvalue.should.be.equal(testString);
+        component.model['outputvalue'].should.be.equal(testString);
       });
       it('should be exists: "setInputoutputvalue()"', function () {
         component.setInputoutputvalue.should.be.exists;
@@ -59,6 +65,9 @@ describe('CubxComponent (Input/Output)', function () {
       it('should set the value of attribute model.inputoutputvalue', function () {
         component.setInputoutputvalue(testString);
         component.model.should.have.property('inputoutputvalue', testString);
+        component.model.should.have.property('_inputoutputvalue', testString);
+        component.model.inputoutputvalue.should.be.equal(testString);
+        component.model['inputoutputvalue'].should.be.equal(testString);
       });
     });
     describe('get method', function () {
@@ -88,6 +97,87 @@ describe('CubxComponent (Input/Output)', function () {
       it('should get the value of attribute model.inputoutputvalue', function () {
         expect(component2.getInputoutputvalue()).to.be.equals('Hallo Webble Word! (inputoutputvalue)');
         expect(component2.getInputoutputvalue()).to.be.equals(component2.model.inputoutputvalue);
+      });
+    });
+    describe('getter and setter', function () {
+      describe('getter', function () {
+        var spyInputValue; // eslint-disable-line no-unused-vars
+        var spyOutputValue; // eslint-disable-line no-unused-vars
+        var spyInputoutputvalue; // eslint-disable-line no-unused-vars
+        beforeEach(function () {
+          spyInputValue = sinon.spy(component, 'getInputvalue');
+          spyOutputValue = sinon.spy(component, 'getOutputvalue');
+          spyInputoutputvalue = sinon.spy(component, 'getInputoutputvalue');
+        });
+        afterEach(function () {
+          component.getInputvalue.restore();
+          component.getOutputvalue.restore();
+          component.getInputoutputvalue.restore();
+        });
+        it('getter called getInputvalue for slot inputvalue', function () {
+          var res = component.model.inputvalue; // eslint-disable-line no-unused-vars
+          spyInputValue.should.be.calledOnce;
+        });
+        it('not called getInputvalue for internal slot variable _inputvalue', function () {
+          var res = component.model._inputvalue; // eslint-disable-line no-unused-vars
+          spyInputValue.should.not.called;
+        });
+        it('getter called getOutputvalue for slot outputvalue', function () {
+          var res = component.model.outputvalue; // eslint-disable-line no-unused-vars
+          spyOutputValue.should.be.calledOnce;
+        });
+        it('not called getOutputvalue for internal slot variable _outputvalue', function () {
+          var res = component.model._outputvalue; // eslint-disable-line no-unused-vars
+          spyOutputValue.should.not.called;
+        });
+        it('getter called getInputoutputvalue for slot inputoutputvalue', function () {
+          var res = component.model.inputoutputvalue; // eslint-disable-line no-unused-vars
+          spyInputoutputvalue.should.be.calledOnce;
+        });
+        it('not called getInputoutputvalue for internal slot variable _inputoutputvalue', function () {
+          var res = component.model._inputoutputvalue; // eslint-disable-line no-unused-vars
+          spyInputoutputvalue.should.not.called;
+        });
+      });
+      describe('setter', function () {
+        var spyInputValue; // eslint-disable-line no-unused-vars
+        var spyOutputValue; // eslint-disable-line no-unused-vars
+        var spyInputoutputvalue; // eslint-disable-line no-unused-vars
+        beforeEach(function () {
+          spyInputValue = sinon.spy(component, 'setInputvalue');
+          spyOutputValue = sinon.spy(component, 'setOutputvalue');
+          spyInputoutputvalue = sinon.spy(component, 'setInputoutputvalue');
+        });
+        afterEach(function () {
+          component.setInputvalue.restore();
+          component.setOutputvalue.restore();
+          component.setInputoutputvalue.restore();
+        });
+
+        it('setter called setInputvalue for slot inputvalue', function () {
+          component.model.inputvalue = 'test';
+          spyInputValue.should.be.calledOnce;
+        });
+        it('not called setInputvalue for internal slot variable _inputvalue', function () {
+          component.model._inputvalue = 'test';
+          spyInputValue.should.not.called;
+        });
+        it('setter called setOutputvalue for slot outputvalue', function () {
+          component.model.outputvalue = 'test';
+          spyOutputValue.should.be.calledOnce;
+        });
+        it('not called setOutputvalue for internal slot variable _outputvalue', function () {
+          component.model._outputvalue = 'test';
+          spyOutputValue.should.not.called;
+        });
+        it('setter called setInputoutputvalue for slot inputoutputvalue', function () {
+          component.model.inputoutputvalue = 'test';
+          spyInputoutputvalue.should.be.calledOnce;
+        });
+        it('not called setInputoutputvalue for internal slot variable _inputoutputvalue', function () {
+          component.model._inputoutputvalue = 'test';
+          spyInputoutputvalue.should.not.called;
+        });
       });
     });
     describe('modelChanged method', function () {
@@ -161,10 +251,16 @@ describe('CubxComponent (Input/Output)', function () {
           expect(spy.calledWith('inputoutputvalue', testString)).to.be.ok;
           component._outputHandler.restore();
         });
-        it('for outputvalue2 by setting model variable dirct should be not called synchron', function () {
+        it('for outputvalue2 by setting slot variable direct (outputvalue2),  should be called', function () {
           var spy = sinon.spy(component, '_outputHandler');
           component.model.outputvalue2 = testString2;
-          expect(spy.called).to.be.not.ok;
+          spy.should.be.calledOnce;
+          component._outputHandler.restore();
+        });
+        it('for outputvalue2 by setting model internal variable direct (_outputvalue2),  should be not called synchron', function () {
+          var spy = sinon.spy(component, '_outputHandler');
+          component.model._outputvalue2 = testString2;
+          spy.should.be.not.called;
           component._outputHandler.restore();
         });
       });

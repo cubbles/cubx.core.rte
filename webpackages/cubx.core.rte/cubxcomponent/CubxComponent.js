@@ -111,6 +111,7 @@
 
         this._generateSetMethod(slotId);
         this._generateGetMethod(slotId);
+        this._generateGetterAndSetter(slotId);
 
         this._generateChangeMethodForProperty(slotId);
 

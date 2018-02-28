@@ -116,13 +116,22 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._setInModel = function (key, value) {
-    var modelName = key;
+    var modelName = '_' + key;
     if (!_.isString(modelName)) {
       modelName = String(modelName);
     }
-    this._setSlotValue(key, value);
+    this._setSlotValue(modelName, value);
   };
 
+  cubxComponentMixin._generateGetterAndSetter = function (key) {
+    var me = this;
+    Object.defineProperty(this.model, key, {
+      get: function () {
+        return me[ me._getGetMethodName(key) ]();
+      },
+      set: function (value) { me[ me._getSetMethodName(key) ](value); }
+    });
+  };
   /**
    * Get the internal EventFactory instance.
    *
@@ -283,8 +292,9 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._generateGetMethod = function (slotId) {
+    var modelName = '_' + slotId;
     this[ this._getGetMethodName(slotId) ] = function () {
-      return this.model[ slotId ];
+      return this.model[ modelName ];
     };
   };
 
