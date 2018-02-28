@@ -21,6 +21,8 @@
           me = this;
         }
         Object.assign(me, prototype);
+        me.$ = {};
+        me._generate$$Method();
         me._cifReady();
         me.cubxComponentName = me.is;
         me.eventFactory = new window.cubx.EventFactory();
@@ -32,6 +34,7 @@
         }
 
         me._initValues();
+        me.$ = {};
         var promise = me._includeTemplate(me.cubxComponentName);
         promise.then(function () {
           me.__component_ready = true;
@@ -159,12 +162,32 @@
         }
       };
 
+      CubxComponentClass.prototype.fill$Object = function (doc) {
+        var nodes = doc.querySelectorAll('[id]');
+        var ids = {};
+        for (var i = 0; i < nodes.length; i++) {
+          if (!ids[nodes[i].id]) {
+            ids[nodes[i].id] = nodes[i];
+          }
+        }
+
+        Object.keys(ids).forEach(function (id) {
+          if (ids.hasOwnProperty(id)) {
+            Object.defineProperty(this.$, id, {
+              get: function () {
+                return ids[ id ];
+              }
+            });
+          }
+        }, this);
+      };
       CubxComponentClass.prototype._includeTemplate = function (artifactId) {
         var promise;
         if (this.template && this.template.content && typeof this.template.content === 'string') {
           return new Promise(function (resolve, reject) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(this.template.content, 'text/html');
+            this.fill$Object(doc);
             var documentFragment = document.createDocumentFragment();
             var elem = doc.documentElement.querySelector('body').firstChild;
             while (elem) {
@@ -190,6 +213,7 @@
               }
               if (template && template.content) {
                 var templateContent = document.importNode(template.content, true);
+                this.fill$Object(templateContent);
                 this.appendChild(templateContent);
               }
               return Promise.resolve(true);

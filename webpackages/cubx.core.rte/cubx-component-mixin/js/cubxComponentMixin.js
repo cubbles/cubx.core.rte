@@ -132,6 +132,13 @@
       set: function (value) { me[ me._getSetMethodName(key) ](value); }
     });
   };
+
+  cubxComponentMixin._generate$$Method = function () {
+    this.$$ = function (value) {
+      return this.querySelector(value);
+    };
+  };
+
   /**
    * Get the internal EventFactory instance.
    *

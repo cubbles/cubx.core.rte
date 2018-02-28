@@ -1,4 +1,4 @@
-/* globals _,initNewElement,getTestComponentCacheEntry,HTMLImports */
+/* globals _,initNewElement,getTestComponentCacheEntry,HTMLImports,createHtmlImport,getContainer */
 'use strict';
 describe('CubxComponent (helper)', function () {
   before(function (done) {
@@ -19,7 +19,7 @@ describe('CubxComponent (helper)', function () {
       window.componentCacheEntry = undefined;
     });
 
-    describe('_initValue', function () {
+    describe('#_initValue', function () {
       it('should be null, if arg1 is null and arg2 is undefined', function () {
         expect(component._initValue('test')).to.be.string;
         expect(component._initValue(null)).to.be.null;
@@ -145,7 +145,7 @@ describe('CubxComponent (helper)', function () {
       });
     });
 
-    describe('_cloneValue', function () {
+    describe('#_cloneValue', function () {
       it('changing of cloned object not change origin Object', function () {
         var obj = { a: 'b' };
         var clonedObj = component._cloneValue(obj);
@@ -160,7 +160,7 @@ describe('CubxComponent (helper)', function () {
       });
     });
 
-    describe('_isValidType', function () {
+    describe('#_isValidType', function () {
       it('should be ok, if type is "string"', function () {
         expect(component._isValidType('string')).to.be.ok;
       });
@@ -241,6 +241,108 @@ describe('CubxComponent (helper)', function () {
           return elem.slotId === 'inputoutputwithoutdirectionvar';
         });
         expect(component.isOutputSlot(slot)).to.be.ok;
+      });
+    });
+  });
+
+  describe('css selector functions', function () {
+    var container;
+    var elementName = 'css-selector-test-element';
+    var element;
+    before(function (done) {
+      container = getContainer();
+      var url = 'base/test/resources/template-css-selector-test-element.html';
+      var promise = createHtmlImport(url);
+      promise.then(function (value) {
+        var el = document.createElement('div');
+
+        var scriptEl = document.createElement('script');
+        scriptEl.async = false;
+        scriptEl.defer = false;
+        scriptEl.type = 'text/javascript';
+        var content = 'CubxComponent({ is: "' + elementName + '", ready: function(){ spyCallback();} });';
+        try {
+          scriptEl.appendChild(document.createTextNode(content));
+        } catch (e) {
+          scriptEl.text = content;
+        }
+        el.appendChild(scriptEl);
+
+        document.body.appendChild(el);
+        element = document.createElement(elementName);
+        element.setAttribute('runtime-id', elementName + '#1');
+        container.appendChild(element);
+        done();
+      }).catch(function (err) {
+        console.error(err);
+        done();
+      });
+    });
+    describe('#$$', function () {
+      it('should find the element with id=a', function (done) {
+        setTimeout(function () {
+          var el = element.$$('#a');
+          expect(el).exist;
+          el.id.should.be.equal('a');
+          el.innerHTML.should.be.equal('a');
+          done();
+        }, 50);
+      });
+      it('should find the element with id=b', function (done) {
+        setTimeout(function () {
+          var el = element.$$('#b');
+          expect(el).exist;
+          el.id.should.be.equal('b');
+          el.firstChild.innerHTML.should.be.equal('b');
+          done();
+        }, 50);
+      });
+      it('should find the element with id=c', function (done) {
+        setTimeout(function () {
+          var el = element.$$('#c');
+          expect(el).exist;
+          el.id.should.be.equal('c');
+          el.innerHTML.should.be.equal('c');
+          done();
+        }, 50);
+      });
+      it('should find the element with class=d', function (done) {
+        setTimeout(function () {
+          var el = element.$$('.d');
+          expect(el).exist;
+          el.className.should.be.equal('d');
+          el.innerHTML.should.be.equal('d');
+          done();
+        }, 50);
+      });
+    });
+    describe('.<id>', function () {
+      it('should find the element with id=a', function (done) {
+        setTimeout(function () {
+          var el = element.$.a;
+          expect(el).exist;
+          el.id.should.be.equal('a');
+          el.innerHTML.should.be.equal('a');
+          done();
+        }, 50);
+      });
+      it('should find the element with id=b', function (done) {
+        setTimeout(function () {
+          var el = element.$.b;
+          expect(el).exist;
+          el.id.should.be.equal('b');
+          el.firstChild.innerHTML.should.be.equal('b');
+          done();
+        }, 50);
+      });
+      it('should find the element with id=c', function (done) {
+        setTimeout(function () {
+          var el = element.$.c;
+          expect(el).exist;
+          el.id.should.be.equal('c');
+          el.innerHTML.should.be.equal('c');
+          done();
+        }, 50);
       });
     });
   });
