@@ -32,7 +32,6 @@
         if (me.created && typeof me.created === 'function') {
           me.created();
         }
-
         me._initValues();
         me.$ = {};
         var promise = me._includeTemplate(me.cubxComponentName);
@@ -162,15 +161,8 @@
         }
       };
 
-      CubxComponentClass.prototype.fill$Object = function (doc) {
-        var nodes = doc.querySelectorAll('[id]');
-        var ids = {};
-        for (var i = 0; i < nodes.length; i++) {
-          if (!ids[nodes[i].id]) {
-            ids[nodes[i].id] = nodes[i];
-          }
-        }
-
+      CubxComponentClass.prototype._fill$Object = function (doc) {
+        var ids = this._collectIds(doc);
         Object.keys(ids).forEach(function (id) {
           if (ids.hasOwnProperty(id)) {
             Object.defineProperty(this.$, id, {
@@ -181,13 +173,29 @@
           }
         }, this);
       };
+
+      CubxComponentClass.prototype._collectIds = function (doc) {
+        if (this.__ids) {
+          return this.__ids;
+        }
+        var nodes = doc.querySelectorAll('[id]');
+        var ids = {};
+        for (var i = 0; i < nodes.length; i++) {
+          if (!ids[nodes[i].id]) {
+            ids[nodes[i].id] = nodes[i];
+          }
+        }
+        this.__ids = ids;
+        return this.__ids;
+      };
+
       CubxComponentClass.prototype._includeTemplate = function (artifactId) {
         var promise;
         if (this.template && this.template.content && typeof this.template.content === 'string') {
           return new Promise(function (resolve, reject) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(this.template.content, 'text/html');
-            this.fill$Object(doc);
+            this._fill$Object(doc);
             var documentFragment = document.createDocumentFragment();
             var elem = doc.documentElement.querySelector('body').firstChild;
             while (elem) {
@@ -196,6 +204,7 @@
             }
             setTimeout(function () {
               this.appendChild(documentFragment);
+              this._initListeners();
               resolve(true);
             }.bind(this), 0);
           }.bind(this));
@@ -213,12 +222,48 @@
               }
               if (template && template.content) {
                 var templateContent = document.importNode(template.content, true);
-                this.fill$Object(templateContent);
+                this._fill$Object(templateContent);
                 this.appendChild(templateContent);
               }
+              this._initListeners();
               return Promise.resolve(true);
             }.bind(this));
         }
+      };
+
+      CubxComponentClass.prototype._initListeners = function () {
+        var listener = this.listener;
+        var evtName;
+        var id;
+        if (!listener) {
+          return;
+        }
+        Object.keys(listener).forEach(function (key) {
+          if (listener.hasOwnProperty(key)) {
+            var splits = key.split('.');
+            if (splits.length === 1) {
+              evtName = key;
+            } else if (splits.length === 2) {
+              evtName = splits[1];
+              id = splits[0];
+            } else {
+              console.error('The following listener configuration is not valid:' + key);
+              return;
+            }
+            this._addListener(evtName, id, listener[key]);
+          }
+        }.bind(this));
+      };
+
+      CubxComponentClass.prototype._addListener = function (evtName, id, listenerFuncName) {
+        var comp;
+        if (id) {
+          comp = this.querySelector('#' + id);
+        } else {
+          comp = this;
+        }
+
+        comp.addEventListener(evtName, this[listenerFuncName].bind(this));
       };
 
       CubxComponentClass.prototype._fireReadyEvent = function () {
