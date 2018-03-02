@@ -499,6 +499,16 @@
     };
 
     /**
+     * This triggers the resolution of all version conflicts. All conflicted nodes will be removed using the shortestPath
+     * lookup. Note: you need to call determineArtifactConflicts() first!
+     * @memberOf DependencyTree
+     * @public
+     */
+    DependencyTree.prototype.resolveArtifactVersionConflicts = function () {
+
+    };
+
+    /**
      * Travers the DependencyTree in Depth First pre-order. The given callback will be called on each visited node given
      * the node itself as the first parameter. If the callback returns false the traversal will be canceled.
      * @memberOf DependencyTree

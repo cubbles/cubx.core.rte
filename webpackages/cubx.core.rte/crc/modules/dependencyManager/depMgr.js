@@ -663,8 +663,6 @@ window.cubx.amd.define(
             if (dependency.hasOwnProperty('dependencyExcludes')) {
               depRef.dependencyExcludes = dependency.dependencyExcludes;
             }
-            ;
-
             depList.push(depRef);
           }
         });
