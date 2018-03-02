@@ -31,7 +31,6 @@ describe('CubxComponent (init)', function () {
           } catch (e) {
             scriptEl.text = content;
           }
-          scriptEl.setAttribute('foo', 'bar');
           el.appendChild(scriptEl);
           document.body.appendChild(el);
           var runtimeId = elementName + '#1';

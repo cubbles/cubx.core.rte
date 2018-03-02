@@ -32,16 +32,21 @@ function initNewElementWithTemplate (elementName, prototype, templatePath) {
   });
 }
 
-function initNewElement (elementName, prototype) {
+function initNewElement (elementName, prototype, id) {
   var crcContainer = getContainer();
   // add to crcContainer
   var elem = createNewElement(elementName, prototype);
+  if (id) {
+    elem.id = id;
+    elem.setAttribute('member-id', id);
+  }
   document.addEventListener(window.cubx.EventFactory.types.COMPONENT_READY, function (evt) {
     if (evt.detail.runtimeId === elem.getAttribute('runtime-id')) {
       crcContainer.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
     }
   });
   crcContainer.appendChild(elem);
+  return elem;
 }
 
 function getContainer () {
