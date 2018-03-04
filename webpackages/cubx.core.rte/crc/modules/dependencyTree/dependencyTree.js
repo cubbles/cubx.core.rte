@@ -423,9 +423,18 @@
       this.traverseBF(function (node) {
         // If current node is already removed from depTree skip iteration --> if this.contains(node) is false we don't do anything
         if (this.contains(node)) {
-          if (nodesBF.hasOwnProperty(node.data.getId())) {
+          if (nodesBF.hasOwnProperty(node.data.getId())) { // TODO: use custom check to compare two nodes if their are equal. Maybe we could make this compare function configurable??
             this._removeDuplicate(nodesBF[node.data.getId()], node);
-          } else {
+          // } else if (//** current node is on conflict state with any node in nodesBF **/) {
+          //   switch (//** determineTypeOfConflict(node, conflictedNode)**/) {
+            //  case 'nameConflict':
+            //     just add this conflict to global conflicts array and create log
+            //     break;
+            //  case 'versionConflict':
+            //     remove node and set usesExisting and usedBy accordingly. And add this conflict to global conflicts and create log
+            //     break;
+            // }
+          // } else {
             // TODO: if current node is NOT marked as excluded AND is still member of current depTree (this.contains(node) == true) push it to nodesBF map
             nodesBF[node.data.getId()] = node;
           }
