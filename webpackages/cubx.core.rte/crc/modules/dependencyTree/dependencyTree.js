@@ -434,7 +434,7 @@
             //     remove node and set usesExisting and usedBy accordingly. And add this conflict to global conflicts and create log
             //     break;
             // }
-          // } else {
+          } else {
             // TODO: if current node is NOT marked as excluded AND is still member of current depTree (this.contains(node) == true) push it to nodesBF map
             nodesBF[node.data.getId()] = node;
           }
