@@ -37,7 +37,7 @@ describe('CubxPolymer call connection-hook', function () {
       afterEach(function () {
         container.Context._connectionMgr._connections = [];
       });
-      it('should ', function (done) {
+      it('hook function should create a slot value with source and destination id', function (done) {
         window.setTimeout(function () {
           var value = 'Hallo Cubbles!';
           elem1.setMessage('Hallo Cubbles!');
@@ -74,7 +74,7 @@ describe('CubxPolymer call connection-hook', function () {
       afterEach(function () {
         container.Context._connectionMgr._connections = [];
       });
-      it('should ', function (done) {
+      it('hook function should create a slot value with source and destination id', function (done) {
         window.setTimeout(function () {
           var value = 'Hallo Cubbles!';
           elem1.setMessage('Hallo Cubbles!');
