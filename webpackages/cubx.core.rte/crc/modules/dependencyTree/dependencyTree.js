@@ -127,71 +127,6 @@
     };
 
     /**
-     * Get a list of all conflicted nodes. Each item is an object containing the artifactId for the certain conflict and
-     * a list of nodes representing all artifacts that share the same artifactId but a different webpackageId.
-     * @memberOf DependencyTree
-     * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
-     * @returns {object} conflicts Array of found conflicts
-     * @private
-     */
-    DependencyTree.prototype._getListOfConflictedNodes = function (node) {
-      if (node && !(node instanceof DependencyTree.Node)) {
-        console.error('Parameter \'node\' needs to be an instance of DependencyTree.Node');
-        return;
-      }
-      if (node && !this.contains(node)) {
-        console.error('Given node is not member of DependencyTree');
-        return [];
-      }
-
-      var artifacts = {};
-      var conflicts = [];
-
-      // search only in subtree of given node for conflicts
-      if (node) {
-        this.traverseSubtreeBF(node, function (currentNode) {
-          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
-            artifacts[currentNode.data.artifactId].push(currentNode);
-          } else {
-            artifacts[currentNode.data.artifactId] = [currentNode];
-          }
-        });
-      } else { // search whole tree for conflicts
-        this.traverseBF(function (currentNode) {
-          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
-            artifacts[currentNode.data.artifactId].push(currentNode);
-          } else {
-            artifacts[currentNode.data.artifactId] = [currentNode];
-          }
-        });
-      }
-
-      // identify all conflicts
-      Object.keys(artifacts).forEach(function (artifactId) {
-        var nodes = artifacts[artifactId];
-        var webpackageId = nodes[0].data.webpackageId;
-        var conflictedNodes = [];
-        if (nodes.length > 1) {
-          conflictedNodes.push(nodes[0]);
-          nodes.forEach(function (currentNode) {
-            if (webpackageId !== currentNode.data.webpackageId) {
-              conflictedNodes.push(currentNode);
-            }
-          });
-          if (conflictedNodes.length > 1) {
-            var conflict = {
-              artifactId: artifactId,
-              nodes: conflictedNodes
-            };
-            conflicts.push(conflict);
-          }
-        }
-      });
-
-      return conflicts;
-    };
-
-    /**
      * Group given list of nodes by their webpackage name.
      * @memberOf DependencyTree
      * @param {array} nodes
@@ -209,52 +144,6 @@
         }
       });
       return webpackageMapByName;
-    };
-
-    /**
-     * Determine the type of conflict for the given conflict
-     * @memberOf DependencyTree
-     * @param {array} conflict Object holding an artifactId and a list of conflicted Nodes
-     * @return {string} the type of conflict
-     * @private
-     */
-    DependencyTree.prototype._determineTypeOfConflict = function (conflict) {
-      // group conflicted nodes by webpackage name (everything to the left of '@' sign)
-      var webpackageMapByName = this._groupNodesByWebpackageName(conflict.nodes);
-
-      // determine conflict type based on number of unique webpackage names appeared for this conflict
-      if (Object.keys(webpackageMapByName).length === 1) {
-        return DependencyTree.conflictTypes.VERSION;
-      } else if (Object.keys(webpackageMapByName).length === 2 && conflict.nodes.length === 2) {
-        return DependencyTree.conflictTypes.NAME;
-      } else {
-        return DependencyTree.conflictTypes.MIXED;
-      }
-    };
-
-    /**
-     * Extract all version conflicts from a given mixed conflict. In theory a given mixed conflict holding n nodes
-     * can contain up to n/2 version conflicts.
-     * @param {object} conflict
-     * @memberOf DependencyTree
-     * @return {array} List of extracted version conflicts
-     * @private
-     */
-    DependencyTree.prototype._extractVersionConflictsFromMixedConflict = function (conflict) {
-      var conflicts = [];
-      var webpackagesMap = this._groupNodesByWebpackageName(conflict.nodes);
-
-      // create new conflicts
-      Object.keys(webpackagesMap).forEach(function (webpackageName) {
-        if (webpackagesMap[webpackageName].length > 1) {
-          conflicts.push({
-            artifactId: conflict.artifactId,
-            nodes: webpackagesMap[webpackageName]
-          });
-        }
-      });
-
-      return conflicts;
     };
 
     /**
@@ -304,41 +193,6 @@
       return this._rootNodes.some(function (rootNode) {
         return rootNode.equals(node);
       });
-    };
-
-    /**
-     * Get a list of all conflicted nodes. Each item is an object containing the artifactId for the certain conflict and
-     * a list of nodes representing all artifacts that share the same artifactId but a different webpackageId.
-     * @memberOf DependencyTree
-     * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
-     * @returns {object} conflicts Array of found conflicts
-     */
-    DependencyTree.prototype.getListOfConflictedNodes = function (node) {
-      return this._getListOfConflictedNodes(node);
-    };
-
-    /**
-     * Iterate through dependencyTree and determine all conflicts that can be found. The conflicts are classified either as
-     * name conflicts (same artifactId but different webpackage) or as
-     * version conflicts (same artifactId, same webpackage name and goupdId but different version string)
-     * @memberOf DependencyTree
-     */
-    DependencyTree.prototype.determineArtifactConflicts = function () {
-      var conflicts = this._getListOfConflictedNodes();
-      conflicts.forEach(function (conflict) {
-        var type = this._determineTypeOfConflict(conflict);
-        switch (type) {
-          case DependencyTree.conflictTypes.NAME:
-            this._nameConflicts.push(conflict);
-            break;
-          case DependencyTree.conflictTypes.VERSION:
-            this._versionConflicts.push(conflict);
-            break;
-          case DependencyTree.conflictTypes.MIXED:
-            Array.prototype.push.apply(this._versionConflicts, this._extractVersionConflictsFromMixedConflict(conflict));
-            break;
-        }
-      }.bind(this));
     };
 
     /**
@@ -505,16 +359,6 @@
       } else {
         return null;
       }
-    };
-
-    /**
-     * This triggers the resolution of all version conflicts. All conflicted nodes will be removed using the shortestPath
-     * lookup. Note: you need to call determineArtifactConflicts() first!
-     * @memberOf DependencyTree
-     * @public
-     */
-    DependencyTree.prototype.resolveArtifactVersionConflicts = function () {
-
     };
 
     /**
