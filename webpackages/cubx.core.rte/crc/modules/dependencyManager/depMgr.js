@@ -349,14 +349,15 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._logDependencyConflicts = function (depTree) {
-      var conflicts = depTree.getListOfConflictedNodes();
-      conflicts.some(function (conflict) {
-        var webpackageIds = [];
-        conflict.nodes.some(function (conflictedNode) {
-          webpackageIds.push(conflictedNode.data.webpackageId);
-        });
-        console.warn('Artifact', conflict.artifactId, 'is defined in multiple webpackages: [', webpackageIds.join(', '), ']');
-      });
+      // var conflicts = depTree.getListOfConflictedNodes();
+      // conflicts.some(function (conflict) {
+      //   var webpackageIds = [];
+      //   conflict.nodes.some(function (conflictedNode) {
+      //     webpackageIds.push(conflictedNode.data.webpackageId);
+      //   });
+      //   console.warn('Artifact', conflict.artifactId, 'is defined in multiple webpackages: [', webpackageIds.join(', '), ']');
+      // });
+      // TODO: adjust method
     };
 
     /**

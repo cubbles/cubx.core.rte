@@ -45,6 +45,17 @@
     };
 
     /**
+     * Enum for characterizing different relationships between nodes
+     * @type {{ARTIFACT_VERSION_CONFLICT: number, ARTIFACT_NAME_CONFLICT: number, ARTIFACT_CUPLICATE: number}}
+     */
+    DependencyTree.NodeRelationship = {
+      'DISTINCT_ARTIFACT': 0,
+      'ARTIFACT_VERSION_CONFLICT': 1,
+      'ARTIFACT_NAME_CONFLICT': 2,
+      'ARTIFACT_DUPLICATE': 3
+    };
+
+    /**
      * Mark all descendants of given node as excluded.
      * @param {object} node A DependencyTree.Node whose descendants should be marked excluded
      * @returns {object} the DependencyTree itself
@@ -144,6 +155,41 @@
         }
       });
       return webpackageMapByName;
+    };
+
+    /**
+     * Determine the relationship between two given nodes. For possible return values see DependencyTree.NodeRelationship enum.
+     * @param {object} nodeA
+     * @param {object} nodeB
+     * @memberOf DependencyTree
+     * @return {number} Relationship Type
+     * @private
+     */
+    DependencyTree.prototype._determineNodeRelationship = function (nodeA, nodeB) {
+      var type = DependencyTree.NodeRelationship.DISTINCT_ARTIFACT;
+      if (nodeA.equalsArtifact(nodeB)) {
+        type = DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE;
+      } else if (nodeA.equalsArtifactIgnoreVersion(nodeB)) {
+        type = DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT;
+      } else if (nodeA.data.artifactId === nodeB.data.artifactId) {
+        type = DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT;
+      }
+      return type;
+    };
+
+    /**
+     * Get related node(s) to given node out out of give nodes array depending on the given type of relationship.
+     * @memberOf DependencyTree
+     * @param {object} node The given node to compare to
+     * @param {array} nodes A nodes array to compare against
+     * @param {number} relationship One of DependencyTree.NodeRelationship
+     * @returns {array}
+     * @private
+     */
+    DependencyTree.prototype._getRelatedNodes = function (node, nodes, relationship) {
+      var relatedNodes = [];
+
+      return relatedNodes;
     };
 
     /**
@@ -272,15 +318,15 @@
      * @returns {object} The DependencyTree without duplicates
      */
     DependencyTree.prototype.removeDuplicates = function () {
-      var nodesBF = {}; // holds a map of all nodes using "[webpackageId]/[artifactId]" as key
+      var nodesBF = {}; // holds a map of all processed nodes using "[webpackageId]/[artifactId]" as key
 
       this.traverseBF(function (node) {
         // If current node is already removed from depTree skip iteration --> if this.contains(node) is false we don't do anything
         if (this.contains(node)) {
-          if (nodesBF.hasOwnProperty(node.data.getId())) { // TODO: use custom check to compare two nodes if their are equal. Maybe we could make this compare function configurable??
+          if (nodesBF.hasOwnProperty(node.data.getId())) {
             this._removeDuplicate(nodesBF[node.data.getId()], node);
-          // } else if (//** current node is on conflict state with any node in nodesBF **/) {
-          //   switch (//** determineTypeOfConflict(node, conflictedNode)**/) {
+            // } else if (//** current node is on conflict state with any node in nodesBF **/) {
+            //   switch (//** determineTypeOfConflict(node, conflictedNode)**/) {
             //  case 'nameConflict':
             //     just add this conflict to global conflicts array and create log
             //     break;
@@ -568,6 +614,17 @@
      */
     DependencyTree.Node.prototype.equalsArtifact = function (node) {
       return node.data.getId() === this.data.getId();
+    };
+
+    /**
+     * Check if the given node references the same artifact but ignore the version number. This can be used to determine
+     * nodes with artifact version conflicts.
+     * @memberOf DependencyTree.Node
+     * @param {object} node DependencyTree.Node to compare to
+     * @return {boolean} true if artifactId and webpackageName and (optional) groupId are equal. False otherwise
+     */
+    DependencyTree.Node.prototype.equalsArtifactIgnoreVersion = function (node) {
+      return (node.data.webpackageId.split('@')[0] + '/' + node.data.artifactId) === (this.data.webpackageId.split('@')[0] + '/' + this.data.artifactId);
     };
 
     /**
