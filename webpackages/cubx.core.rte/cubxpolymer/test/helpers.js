@@ -2,12 +2,17 @@
 /* eslint no-unused-vars: [2, { "varsIgnorePattern": "registerCompoundComponentElement|getTestComponentCacheEntry|initNewElement"} ] */
 'use strict';
 
-function initNewElement (elementName, templateContext, prototype) {
+function initNewElement (elementName, templateContext, prototype, id) {
   var crcContainer = getContainer();
   // add to crcContainer
   var elem = createNewElement(elementName, templateContext, prototype);
+  if (id) {
+    elem.id = id;
+    elem.setAttribute('member-id', id);
+  }
   crcContainer.appendChild(elem);
   crcContainer.dispatchEvent(window.cubx.EventFactory.prototype.createEvent(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY));
+  return elem;
 }
 
 function getContainer () {
@@ -40,15 +45,16 @@ function createNewElement (elementName, templateContext, prototype) {
     prototype.is = elementName;
   }
 
-  CubxPolymer(prototype);
+  var elementDef = document.querySelector('dom-module[id=' + elementName + ']');
+  if (!elementDef) {
+    CubxPolymer(prototype);
+    var el = document.createElement('div');
+    el.innerHTML = '<dom-module id="' + elementName + '" >' +
+      '<template>' + templateContext + '</template>' +
+      '</dom-module>';
 
-  var el = document.createElement('div');
-  el.innerHTML = '<dom-module id="' + elementName + '" >' +
-    '<template>' + templateContext + '</template>' +
-    '</dom-module>';
-
-  document.body.appendChild(el);
-
+    document.body.appendChild(el);
+  }
   // add to crcContainer
   return document.createElement(elementName);
 }

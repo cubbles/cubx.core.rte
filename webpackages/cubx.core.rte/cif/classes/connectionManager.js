@@ -679,6 +679,7 @@
   ConnectionManager.prototype._addHookFunction = function (payloadFrame, connection) {
     if (connection.hookFunction) {
       payloadFrame.connectionHook = connection.hookFunction;
+      payloadFrame.source = connection.source.component;
     }
     return payloadFrame;
   };
