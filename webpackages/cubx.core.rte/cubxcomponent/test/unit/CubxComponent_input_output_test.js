@@ -265,60 +265,138 @@ describe('CubxComponent (Input/Output)', function () {
         });
       });
 
-      describe('_triggerModelChangeEvent', function () {
-        var testString = 'test for trigger';
-        var spy;
-        before(function () {
-          spy = sinon.spy(component, '_triggerModelChangeEvent');
-        });
-        it('for outputvalue should be called', function () {
-          component.setOutputvalue(testString);
-          expect(spy.calledOnce).to.be.true;
-          expect(spy.withArgs('outputvalue', {
-            connectionHook: undefined,
-            payload: testString,
-            slot: 'outputvalue'
-          }).calledOnce).to.be.ok;
-        });
-        it('for inputoutputvalue should be called', function () {
-          component.setInputoutputvalue(testString);
-          expect(spy.withArgs('inputoutputvalue', {
-            connectionHook: undefined,
-            payload: testString,
-            slot: 'inputoutputvalue'
-          }).calledOnce).to.be.ok;
-        });
-      });
-      describe('_trigger cifModelChange Event', function () {
+      describe('call #_triggerModelChangeEvent', function () {
         var testString = 'test for trigger';
         var spy;
         beforeEach(function () {
-          var test = function (event) {
+          spy = sinon.spy(component, '_triggerModelChangeEvent');
+        });
+        afterEach(function () {
+          component._triggerModelChangeEvent.restore();
+        });
+        it('for outputvalue should be called', function () {
+          component.setOutputvalue(testString);
+          spy.should.have.been.calledOnce;
+          spy.should.have.been.calledWith('outputvalue', {
+            connectionHook: undefined,
+            payload: testString,
+            slot: 'outputvalue'
+          });
+        });
+        it('for inputoutputvalue should be called', function () {
+          component.setInputoutputvalue(testString);
+          spy.should.have.been.calledOnce;
+          spy.should.have.been.calledWith('inputoutputvalue', {
+            connectionHook: undefined,
+            payload: testString,
+            slot: 'inputoutputvalue'
+          });
+        });
+      });
+      describe('trigger cifModelChange event', function () {
+        var testString = 'test for trigger';
+        var spy;
+        var test;
+        beforeEach(function () {
+          test = function (event) {
             // console.log(event.detail);
           };
           spy = sinon.spy(test);
           component.addEventListener('cifModelChange', spy);
         });
-        it('for outputvalue should be called', function () {
+        afterEach(function () {
+          component.removeEventListener('cifModelChange', spy);
+          test = null;
+        });
+        it('event for outputvalue should be triggered', function () {
           component.setOutputvalue(testString);
           expect(spy.calledOnce).to.be.true;
         });
-        it('for inputoutputvalue should be called', function () {
+        it('event for inputoutputvalue should be triggered', function () {
           component.setInputoutputvalue(testString);
+          expect(spy.calledOnce).to.be.true;
+        });
+        it('event for outputvalue should have detail', function () {
+          component.setOutputvalue(testString);
           var event = spy.args[ 0 ][ 0 ];
 
           event.should.have.deep.property('detail');
           event.detail.should.have.property('payload', testString);
         });
-        it('for outputvalue should be called', function () {
-          component.setInputoutputvalue(testString);
-          expect(spy.calledOnce).to.be.true;
-        });
-        it('for inputoutputvalue should be called', function () {
+        it('event for inputoutputvalue should have detail', function () {
           component.setInputoutputvalue(testString);
           var event = spy.args[ 0 ][ 0 ];
           event.should.have.deep.property('detail');
           event.detail.should.have.property('payload', testString);
+        });
+      });
+      describe('#_triggerSlotChangeEvent', function () {
+        var testString = 'test for trigger';
+        var spy;
+        beforeEach(function () {
+          spy = sinon.spy(component, '_triggerSlotChangeEvent');
+        });
+        afterEach(function () {
+          component._triggerSlotChangeEvent.restore();
+        });
+        it('for outputvalue should be called', function () {
+          component.setOutputvalue(testString);
+          spy.should.have.been.calledOnce;
+          spy.should.have.been.calledWith('outputvalue', testString);
+        });
+        it('for inputoutputvalue should be called', function () {
+          component.setInputoutputvalue(testString);
+          spy.should.have.been.calledOnce;
+          spy.should.have.been.calledWith('inputoutputvalue', testString);
+        });
+      });
+      describe('trigger slot change event', function () {
+        var testString = 'test for trigger';
+        var spy;
+        var test;
+        describe('for slot outputvalue', function () {
+          beforeEach(function () {
+            test = function (event) {
+              // console.log(event.detail);
+            };
+            spy = sinon.spy(test);
+            component.addEventListener('slotOutputvalueChanged', spy);
+          });
+          afterEach(function () {
+            component.removeEventListener('slotOutputvalueChanged', spy);
+            test = null;
+          });
+          it('eventlistener for outputvalue should be called', function () {
+            component.setOutputvalue(testString);
+            spy.should.have.been.calledOnce;
+          });
+          it('event for outputvalue should should have detail property with payload', function () {
+            component.setOutputvalue(testString);
+            var event = spy.args[ 0 ][ 0 ];
+            event.should.have.deep.property('detail', testString);
+          });
+        });
+        describe('for slot inputoutputvalue', function () {
+          beforeEach(function () {
+            test = function (event) {
+              // console.log(event.detail);
+            };
+            spy = sinon.spy(test);
+            component.addEventListener('slotInputoutputvalueChanged', spy);
+          });
+          afterEach(function () {
+            component.removeEventListener('slotInputoutputvalueChanged', spy);
+            test = null;
+          });
+          it('for inputoutputvalue should be called', function () {
+            component.setInputoutputvalue(testString);
+            spy.should.have.been.calledOnce;
+          });
+          it('event for inputoutputvalue should have detail property with payload', function () {
+            component.setInputoutputvalue(testString);
+            var event = spy.args[ 0 ][ 0 ];
+            event.should.have.deep.property('detail', testString);
+          });
         });
       });
     });
