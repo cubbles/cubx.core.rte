@@ -453,6 +453,10 @@
       nextCall.newValue = value;
       nextCall.called = true;
     };
+    var connectionObj = {
+      source: payloadObject.source,
+      destination: this
+    };
     try {
       var funcString = payloadObject.connectionHook;
       if (funcString && typeof funcString === 'string') {
@@ -465,12 +469,12 @@
           var func = new Function(funcString.substring(startArgs, endArgs), funcString.substring(
             startBody, endBody));
           /* eslint-enable no-new-func */
-          func(value, next);
+          func.apply(connectionObj, [value, next]);
         } else {
           // funcString(value, next);
           var fn = this._getFunctionFromString(funcString);
           if (typeof fn === 'function') {
-            fn(value, next);
+            fn.apply(connectionObj, [value, next]);
           } else {
             console.error(
               'The defined hookFunction "window.' + funcString + '" is not a global function.');
