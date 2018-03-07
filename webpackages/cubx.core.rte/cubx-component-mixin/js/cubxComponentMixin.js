@@ -1,4 +1,4 @@
-/* globals _,guid */
+/* globals _,guid, CustomEvent */
 'use strict';
 (function () {
   var cubxComponentMixin = {};
@@ -230,6 +230,18 @@
   };
 
   /**
+   * Trigger a slot
+   * @param slotId
+   * @param payload
+   * @private
+   */
+  cubxComponentMixin._triggerSlotChangeEvent = function (slotId, payload) {
+    var eventName = 'slot' + _.capitalize(slotId) + 'Changed';
+    var event = new CustomEvent(eventName, { bubbles: true, detail: payload });
+    this.dispatchEvent(event);
+  };
+
+  /**
    * Initialized the values of configured slots.
    * @private
    * @memberOf cubxComponentMixin
@@ -287,6 +299,7 @@
   cubxComponentMixin._outputHandler = function (slotId, value) {
     var payloadObj = this._getEventFactory().createModelChangePayloadObject(slotId, value);
     this._triggerModelChangeEvent(slotId, payloadObj);
+    this._triggerSlotChangeEvent(slotId, value);
   };
   /* **********************************************************************************/
   /*                      cubx generate methods                                       */

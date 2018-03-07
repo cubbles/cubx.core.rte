@@ -203,14 +203,16 @@ describe('CompoundComponent', function () {
 
     var payloadObject;
     var fireModelChangeEventSpy;
+    var testString;
     beforeEach(function () {
       container = document.querySelector('[cubx-core-crc]');
       var constructor = window.cubx.cif.cif.getCompoundComponentElementConstructor('ciftest-event');
       element = new constructor();
       container.appendChild(element);
+      testString = 'testslot';
       payloadObject = {};
       payloadObject.payload = '{ "foo": 3 }';
-      payloadObject.slot = 'testslot';
+      payloadObject.slot = testString;
 
       fireModelChangeEventSpy = sinon.spy();
       element.addEventListener(window.cubx.EventFactory.types.CIF_MODEL_CHANGE, fireModelChangeEventSpy);
@@ -844,6 +846,181 @@ describe('CompoundComponent', function () {
         });
         it('setSlotF should be not call _outputHandlerForInternalConnections', function () {
           spyOutputHandlerForInternalConnections.should.have.been.not.called;
+        });
+      });
+    });
+    describe('set an outputslot should trigger events', function () {
+      var testString;
+      var spySlotChangedEvent;
+      var spyModelChangeEvent;
+      var stub; // eslint-disable-line no-unused-vars
+      beforeEach(function () {
+        spyModelChangeEvent = sinon.spy();
+        stub = sinon.stub(window.cubx.cif.cif, 'isAllComponentsReady', function () { return true; });
+        component.addEventListener('cifModelChange', spyModelChangeEvent);
+        testString = 'Hallo Test World!';
+      });
+      afterEach(function () {
+        component.removeEventListener('cifModelChange', spyModelChangeEvent);
+        spyModelChangeEvent = null;
+        window.cubx.cif.cif.isAllComponentsReady.restore();
+      });
+      describe('set slotA', function () {
+        beforeEach(function () {
+          spySlotChangedEvent = sinon.spy();
+          component.addEventListener('slotSlotAChanged', spySlotChangedEvent);
+          component.setSlotA(testString);
+        });
+        afterEach(function () {
+          component.removeEventListener('slotSlotAChanged', spySlotChangedEvent);
+          spySlotChangedEvent = null;
+        });
+        it('should be cifModelChange event triggered', function () {
+          spyModelChangeEvent.should.have.been.not.called;
+        });
+
+        it('should be slotSlotAChanged event triggered', function () {
+          spySlotChangedEvent.should.have.been.not.called;
+        });
+      });
+      describe('set slotB', function () {
+        beforeEach(function () {
+          spySlotChangedEvent = sinon.spy();
+          component.addEventListener('slotSlotBChanged', spySlotChangedEvent);
+          component.setSlotB(testString);
+        });
+        afterEach(function () {
+          component.removeEventListener('slotSlotBChanged', spySlotChangedEvent);
+          spySlotChangedEvent = null;
+        });
+        it('should be cifModelChange event triggered', function () {
+          spyModelChangeEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (cifModelChange event)', function () {
+          var event = spyModelChangeEvent.args[ 0 ][ 0 ];
+          console.log(event.detail);
+          event.should.have.deep.property('detail');
+          event.detail.should.be.deep.property('payload', testString);
+          event.detail.should.be.deep.property('slot', 'slotB');
+        });
+        it('should be slotSlotBChanged event triggered', function () {
+          spySlotChangedEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (slotSlotBChanged event)', function () {
+          var event = spySlotChangedEvent.args[ 0 ][ 0 ];
+          event.should.have.deep.property('detail', testString);
+        });
+      });
+      describe('set slotC', function () {
+        beforeEach(function () {
+          spySlotChangedEvent = sinon.spy();
+          component.addEventListener('slotSlotCChanged', spySlotChangedEvent);
+          component.setSlotC(testString);
+        });
+        afterEach(function () {
+          component.removeEventListener('slotSlotCChanged', spySlotChangedEvent);
+          spySlotChangedEvent = null;
+        });
+        it('should be cifModelChange event triggered', function () {
+          spyModelChangeEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (cifModelChange event)', function () {
+          var event = spyModelChangeEvent.args[ 0 ][ 0 ];
+          console.log(event.detail);
+          event.should.have.deep.property('detail');
+          event.detail.should.be.deep.property('payload', testString);
+          event.detail.should.be.deep.property('slot', 'slotC');
+        });
+        it('should be slotSlotCChanged event triggered', function () {
+          spySlotChangedEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (slotSlotCChanged event)', function () {
+          var event = spySlotChangedEvent.args[ 0 ][ 0 ];
+          event.should.have.deep.property('detail', testString);
+        });
+      });
+      describe('set slotD', function () {
+        beforeEach(function () {
+          spySlotChangedEvent = sinon.spy();
+          component.addEventListener('slotSlotDChanged', spySlotChangedEvent);
+          component.setSlotD(testString);
+        });
+        afterEach(function () {
+          component.removeEventListener('slotSlotDChanged', spySlotChangedEvent);
+          spySlotChangedEvent = null;
+        });
+        it('should be cifModelChange event triggered', function () {
+          spyModelChangeEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (cifModelChange event)', function () {
+          var event = spyModelChangeEvent.args[ 0 ][ 0 ];
+          console.log(event.detail);
+          event.should.have.deep.property('detail');
+          event.detail.should.be.deep.property('payload', testString);
+          event.detail.should.be.deep.property('slot', 'slotD');
+        });
+        it('should be slotSlotDChanged event triggered', function () {
+          spySlotChangedEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (slotSlotDChanged event)', function () {
+          var event = spySlotChangedEvent.args[ 0 ][ 0 ];
+          event.should.have.deep.property('detail', testString);
+        });
+      });
+      describe('set slotE', function () {
+        beforeEach(function () {
+          spySlotChangedEvent = sinon.spy();
+          component.addEventListener('slotSlotEChanged', spySlotChangedEvent);
+          component.setSlotE(testString);
+        });
+        afterEach(function () {
+          component.removeEventListener('slotSlotEChanged', spySlotChangedEvent);
+          spySlotChangedEvent = null;
+        });
+        it('should be cifModelChange event triggered', function () {
+          spyModelChangeEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (cifModelChange event)', function () {
+          var event = spyModelChangeEvent.args[ 0 ][ 0 ];
+          console.log(event.detail);
+          event.should.have.deep.property('detail');
+          event.detail.should.be.deep.property('payload', testString);
+          event.detail.should.be.deep.property('slot', 'slotE');
+        });
+        it('should be slotSlotEChanged event triggered', function () {
+          spySlotChangedEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (slotSlotEChanged event)', function () {
+          var event = spySlotChangedEvent.args[ 0 ][ 0 ];
+          event.should.have.deep.property('detail', testString);
+        });
+      });
+      describe('set slotF', function () {
+        beforeEach(function () {
+          spySlotChangedEvent = sinon.spy();
+          component.addEventListener('slotSlotFChanged', spySlotChangedEvent);
+          component.setSlotF(testString);
+        });
+        afterEach(function () {
+          component.removeEventListener('slotSlotFChanged', spySlotChangedEvent);
+          spySlotChangedEvent = null;
+        });
+        it('should be cifModelChange event triggered', function () {
+          spyModelChangeEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (cifModelChange event)', function () {
+          var event = spyModelChangeEvent.args[ 0 ][ 0 ];
+          console.log(event.detail);
+          event.should.have.deep.property('detail');
+          event.detail.should.be.deep.property('payload', testString);
+          event.detail.should.be.deep.property('slot', 'slotF');
+        });
+        it('should be slotSlotFChanged event triggered', function () {
+          spySlotChangedEvent.should.have.been.calledOnce;
+        });
+        it('should have event details (slotSlotFChanged event)', function () {
+          var event = spySlotChangedEvent.args[ 0 ][ 0 ];
+          event.should.have.deep.property('detail', testString);
         });
       });
     });
