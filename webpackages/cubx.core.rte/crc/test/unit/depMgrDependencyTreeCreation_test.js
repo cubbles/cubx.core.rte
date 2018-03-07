@@ -17,9 +17,6 @@
       'text!unit/dependencyResolution/dependencyPackage6.json'],
     function (CRC, DepMgr, DependencyTree, manifestConverter, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
       var depMgr;
-      var Node = DependencyTree.Node;
-      var DepRef = DepMgr.DepReference;
-
       describe('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
           var stub;
@@ -651,103 +648,6 @@
             // depMgr._logDependencyConflicts(depTree);
             expect(spy.calledOnce);
             spy.reset();
-          });
-        });
-        describe('#_determineNodeRelationShip()', function () {
-          var nodeA;
-          var nodeB;
-          var nodeC;
-          var nodeD;
-          var nodeE;
-          var depTree;
-
-          beforeEach(function () {
-            depTree = new DependencyTree();
-            nodeA = new Node();
-            nodeA.data = new DepRef({webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null});
-
-            nodeB = new Node();
-            nodeB.data = new DepRef({webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null});
-
-            nodeC = new Node();
-            nodeC.data = new DepRef({webpackageId: 'packageB@1.0', artifactId: 'artifact_A', referrer: null});
-
-            nodeD = new Node();
-            nodeD.data = new DepRef({webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null});
-
-            nodeE = new Node();
-            nodeE.data = new DepRef({webpackageId: 'packageC@1.0', artifactId: 'artifact_B', referrer: null});
-          });
-
-          it('should identify nodes with relationship "artifact duplicate"', function () {
-            var state = depTree._determineNodeRelationship(nodeA, nodeB);
-            state.should.be.equal(DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE);
-          });
-          it('should identify nodes with relationship "artifact version conflict"', function () {
-            var state = depTree._determineNodeRelationship(nodeA, nodeD);
-            state.should.be.equal(DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT);
-          });
-          it('should identify nodes with relationship "artifact duplicate"', function () {
-            var state = depTree._determineNodeRelationship(nodeC, nodeD);
-            state.should.be.equal(DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT);
-          });
-          it('should identify nodes with no special relationship to each other', function () {
-            var state = depTree._determineNodeRelationship(nodeA, nodeE);
-            state.should.be.equal(DependencyTree.NodeRelationship.DISTINCT_ARTIFACT);
-          });
-        });
-        describe.only('#_getRelatedNodes()', function () {
-          var nodeA;
-          var nodeB;
-          var nodeC;
-          var nodeD;
-          var nodes;
-          var depTree;
-
-          beforeEach(function () {
-            depTree = new DependencyTree();
-            nodeA = new Node();
-            nodeA.data = new DepRef({webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null});
-
-            nodeB = new Node();
-            nodeB.data = new DepRef({webpackageId: 'packageB@1.0', artifactId: 'artifact_B', referrer: null});
-
-            nodeC = new Node();
-            nodeC.data = new DepRef({webpackageId: 'packageC@1.0', artifactId: 'artifact_C', referrer: null});
-
-            nodeD = new Node();
-            nodeD.data = new DepRef({webpackageId: 'packageD@2.0', artifactId: 'artifact_C', referrer: null});
-
-            nodes = [nodeA, nodeB, nodeC, nodeD];
-          });
-
-          it('should filter given nodes array to return only nodes being in "artifact version conflict" relationship with the given node', function () {
-            var node = new Node();
-            node.data = new DepRef({webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null});
-            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT);
-            results.should.be.an('array');
-            results.should.have.members([nodeA]);
-          });
-          it('should filter given nodes array to return only nodes being in "artifact name conflict" relationship with the given node', function () {
-            var node = new Node();
-            node.data = new DepRef({webpackageId: 'packageE@1.0', artifactId: 'artifact_C', referrer: null});
-            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT);
-            results.should.be.an('array');
-            results.should.have.members([nodeC, nodeD]);
-          });
-          it('should filter given nodes array to return only nodes being in "artifact duplicate" relationship with the given node', function () {
-            var node = new Node();
-            node.data = new DepRef({webpackageId: 'packageB@1.0', artifactId: 'artifact_B', referrer: null});
-            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE);
-            results.should.be.an('array');
-            results.should.have.members([nodeB]);
-          });
-          it('should filter given nodes array to return only nodes being in "distinct artifact" relationship with the given node', function () {
-            var node = new Node();
-            node.data = new DepRef({webpackageId: 'packageE@1.0', artifactId: 'artifact_E', referrer: null});
-            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.DISTINCT_ARTIFACT);
-            results.should.be.an('array');
-            results.should.have.members([nodeA, nodeB, nodeC, nodeD]);
           });
         });
       });

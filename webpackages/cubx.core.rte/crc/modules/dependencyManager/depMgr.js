@@ -229,7 +229,6 @@ window.cubx.amd.define(
       if (data.hasOwnProperty('error')) {
         throw new Error('Error when requesting manifest');
       }
-      ;
       var manifest = manifestConverter.convert(data);
       return manifest;
     };

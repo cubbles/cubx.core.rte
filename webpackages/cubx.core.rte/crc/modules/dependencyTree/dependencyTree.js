@@ -32,6 +32,13 @@
        * @type {Array}
        */
       this._rootNodes = [];
+
+      /**
+       * If true the removeDuplicate() method will take care to handle artifact version conflicts and resolves them.
+       * @type {boolean}
+       * @private
+       */
+      this._enableACR = true;
     };
 
     /**
@@ -246,6 +253,22 @@
     };
 
     /**
+     * Disable automatic conflict resolution.
+     * @memberOf DependencyTree
+     */
+    DependencyTree.prototype.disableACR = function () {
+      this._enableACR = false;
+    };
+
+    /**
+     * Enable automatic conflict resolution. Note: This only applies to artifact version conflicts!
+     * @memberOf DependencyTree
+     */
+    DependencyTree.prototype.enableACR = function () {
+      this._enableACR = true;
+    };
+
+    /**
      * Insert a node into dependency tree. If no parent is given, then the node will be added to rootNodes.
      * If before is given then the nodes will be inserted right before this node in parents children. Otherwise it will
      * be appended to the array of child nodes.
@@ -316,31 +339,39 @@
 
     /**
      * Remove all duplicate Dependencies from DependencyTree. Nodes are considered equal if the assigned webpackageId
-     * and artifactId is equal.
+     * and artifactId is equal. If automatic conflict resolution is enabled (per default it is) also artifact version
+     * conflicts will be resolved.
      * Note: applyExcludes() needs to be called before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} The DependencyTree without duplicates
      */
     DependencyTree.prototype.removeDuplicates = function () {
-      var nodesBF = {}; // holds a map of all processed nodes using "[webpackageId]/[artifactId]" as key
+      var nodesBF = []; // holds an array of all processed nodes
 
       this.traverseBF(function (node) {
         // If current node is already removed from depTree skip iteration --> if this.contains(node) is false we don't do anything
         if (this.contains(node)) {
-          if (nodesBF.hasOwnProperty(node.data.getId())) {
-            this._removeDuplicate(nodesBF[node.data.getId()], node);
-            // } else if (//** current node is on conflict state with any node in nodesBF **/) {
-            //   switch (//** determineTypeOfConflict(node, conflictedNode)**/) {
-            //  case 'nameConflict':
-            //     just add this conflict to global conflicts array and create log
-            //     break;
-            //  case 'versionConflict':
-            //     remove node and set usesExisting and usedBy accordingly. And add this conflict to global conflicts and create log
-            //     break;
-            // }
-          } else {
-            // TODO: if current node is NOT marked as excluded AND is still member of current depTree (this.contains(node) == true) push it to nodesBF map
-            nodesBF[node.data.getId()] = node;
+          var relatedNodes = {
+            duplicates: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE),
+            versionConflicts: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT),
+            nameConflicts: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT),
+            distinct: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.DISTINCT_ARTIFACT)
+          };
+
+          if (relatedNodes.duplicates.length === 1) {
+            this._removeDuplicate(relatedNodes.duplicates[0], node);
+          } else if (relatedNodes.versionConflicts.length === 1) {
+            // TODO: add conflict to internal versionConflict property for logging purposes
+            if (this._enableACR) {
+              // TODO: call _removeConflictedNode() if ACR is enabled
+            }
+          } else if (relatedNodes.distinct.length === nodesBF.length) {
+            nodesBF.push(node);
+          }
+
+          // check for naming conflicts. If there are any just keep them on internal nameConflicts array
+          if (relatedNodes.nameConflicts.length > 0) {
+            // TODO: Just add name conflict to internal nameConflicts property for logging purposes
           }
         }
       }.bind(this));

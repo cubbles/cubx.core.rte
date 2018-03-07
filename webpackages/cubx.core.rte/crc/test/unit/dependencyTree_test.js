@@ -452,14 +452,26 @@
       });
       describe('#equalsArtifcat()', function () {
         it('should return true if given node references same artifact (based on artifactId and webpackageId)', function () {
-          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
-          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA@1.0', artifactId: 'artifactA', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgA@1.0', artifactId: 'artifactA', referrer: null});
           expect(childA.equalsArtifact(childB)).to.be.true;
         });
         it('should return false if given node references a different artifact', function () {
-          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA', artifactId: 'artifactA', referrer: null});
-          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgB', artifactId: 'artifactB', referrer: null});
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA@1.0', artifactId: 'artifactA', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgB@1.0', artifactId: 'artifactB', referrer: null});
           expect(childA.equalsArtifact(childB)).to.be.false;
+        });
+      });
+      describe('#equalsArtifactIgnoreVersion()', function () {
+        it('should return true if given node references same artifact (based on artifactId, webpackage name and groupdId, ignoring version)', function () {
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA@1.0', artifactId: 'artifactA', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgA@2.0', artifactId: 'artifactA', referrer: null});
+          expect(childA.equalsArtifactIgnoreVersion(childB)).to.be.true;
+        });
+        it('should return false if given node references a different artifact', function () {
+          childA.data = new DependencyMgr.DepReference({webpackageId: 'pkgA@1.0', artifactId: 'artifactA', referrer: null});
+          childB.data = new DependencyMgr.DepReference({webpackageId: 'pkgB@1.0', artifactId: 'artifactB', referrer: null});
+          expect(childA.equalsArtifactIgnoreVersion(childB)).to.be.false;
         });
       });
       describe('#getPathAsString()', function () {
