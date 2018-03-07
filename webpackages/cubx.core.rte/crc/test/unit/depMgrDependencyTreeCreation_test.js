@@ -747,7 +747,7 @@
             node.data = new DepRef({webpackageId: 'packageE@1.0', artifactId: 'artifact_E', referrer: null});
             var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.DISTINCT_ARTIFACT);
             results.should.be.an('array');
-            results.should.have.members([nodeA, nodeB, nodeC, nodeD])
+            results.should.have.members([nodeA, nodeB, nodeC, nodeD]);
           });
         });
       });
