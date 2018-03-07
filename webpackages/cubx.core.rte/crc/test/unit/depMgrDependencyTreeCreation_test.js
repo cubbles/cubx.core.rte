@@ -696,7 +696,7 @@
             state.should.be.equal(DependencyTree.NodeRelationship.DISTINCT_ARTIFACT);
           });
         });
-        describe('#_getRelatedNodes()', function () {
+        describe.only('#_getRelatedNodes()', function () {
           var nodeA;
           var nodeB;
           var nodeC;
@@ -721,12 +721,33 @@
             nodes = [nodeA, nodeB, nodeC, nodeD];
           });
 
-          it.skip('should get all nodes having the given relationship with the given node', function () {
+          it('should filter given nodes array to return only nodes being in "artifact version conflict" relationship with the given node', function () {
             var node = new Node();
-            node.data = new DepRef({webpackageId: 'packageA@1.0', artifactId: 'artifact_A', referrer: null});
+            node.data = new DepRef({webpackageId: 'packageA@2.0', artifactId: 'artifact_A', referrer: null});
             var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT);
             results.should.be.an('array');
             results.should.have.members([nodeA]);
+          });
+          it('should filter given nodes array to return only nodes being in "artifact name conflict" relationship with the given node', function () {
+            var node = new Node();
+            node.data = new DepRef({webpackageId: 'packageE@1.0', artifactId: 'artifact_C', referrer: null});
+            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT);
+            results.should.be.an('array');
+            results.should.have.members([nodeC, nodeD]);
+          });
+          it('should filter given nodes array to return only nodes being in "artifact duplicate" relationship with the given node', function () {
+            var node = new Node();
+            node.data = new DepRef({webpackageId: 'packageB@1.0', artifactId: 'artifact_B', referrer: null});
+            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE);
+            results.should.be.an('array');
+            results.should.have.members([nodeB]);
+          });
+          it('should filter given nodes array to return only nodes being in "distinct artifact" relationship with the given node', function () {
+            var node = new Node();
+            node.data = new DepRef({webpackageId: 'packageE@1.0', artifactId: 'artifact_E', referrer: null});
+            var results = depTree._getRelatedNodes(node, nodes, DependencyTree.NodeRelationship.DISTINCT_ARTIFACT);
+            results.should.be.an('array');
+            results.should.have.members([nodeA, nodeB, nodeC, nodeD])
           });
         });
       });

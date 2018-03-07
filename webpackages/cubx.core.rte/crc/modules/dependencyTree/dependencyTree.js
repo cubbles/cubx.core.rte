@@ -178,7 +178,7 @@
     };
 
     /**
-     * Get related node(s) to given node out out of give nodes array depending on the given type of relationship.
+     * Get related node(s) to given node out out of given nodes array depending on the given type of relationship.
      * @memberOf DependencyTree
      * @param {object} node The given node to compare to
      * @param {array} nodes A nodes array to compare against
@@ -188,6 +188,10 @@
      */
     DependencyTree.prototype._getRelatedNodes = function (node, nodes, relationship) {
       var relatedNodes = [];
+
+      relatedNodes = nodes.filter(function (currentNode) {
+        return (this._determineNodeRelationship(currentNode, node) === relationship);
+      }.bind(this));
 
       return relatedNodes;
     };
