@@ -314,6 +314,7 @@ describe('ConnectionManager', function () {
         var connectionManager;
         var stubSetInputSlot;
         var spyFireModelChangeEvent;
+        var spyFireSlotChangedEvent;
         var comp2;
         beforeEach(function () {
           var artifactId1 = 'source-comp1-element';
@@ -393,6 +394,7 @@ describe('ConnectionManager', function () {
             slot: 'firsttestoutput'
           };
           spyFireModelChangeEvent = sinon.spy(comp2, 'fireModelChangeEvent');
+          spyFireSlotChangedEvent = sinon.spy(comp2, 'fireSlotChangedEvent');
           //  var context = new window.cubx.cif.Context(comp2);
           connectionManager = comp2.Context._connectionMgr;
           connectionManager._processConnection(connection, payloadObj);
@@ -400,6 +402,7 @@ describe('ConnectionManager', function () {
         afterEach(function () {
           comp2.setInputSlot.restore();
           comp2.fireModelChangeEvent.restore();
+          comp2.fireSlotChangedEvent.restore();
           window.cubx.CRC.getCache().getComponentCacheEntry.restore();
         });
         it('comp2.setInputSlot should be not called', function () {
@@ -414,6 +417,9 @@ describe('ConnectionManager', function () {
               spyFireModelChangeEvent.calledWith(sinon.match.has('slot', 'firsttestoutput'))).to.be.true;
             expect(spyFireModelChangeEvent.calledWith(sinon.match.has('payload', '"string"'))).to.be.true;
           });
+        it('comp2.fireSlotChangedEvent should be called once', function () {
+          expect(spyFireSlotChangedEvent.calledOnce).to.be.true;
+        });
         it('propagated value is saved in connection.lastValue Attribute', function () {
           connection.should.have.property('lastValue', payloadObj.payload);
         });
