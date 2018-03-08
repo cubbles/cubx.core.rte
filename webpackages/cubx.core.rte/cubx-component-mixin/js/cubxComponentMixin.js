@@ -90,6 +90,17 @@
   };
 
   /**
+   * fire an the slot<SlotId>Changed event with payload as details
+   * @param slotId
+   * @param payload
+   */
+  cubxComponentMixin.fireSlotChangedEvent = function (slotId, payload) {
+    var eventName = 'slot' + _.capitalize(slotId) + 'Changed';
+    var event = new CustomEvent(eventName, { bubbles: true, detail: payload });
+    this.dispatchEvent(event);
+  };
+
+  /**
    * Returns the runtimeId of the component.
    * @returns {string|*} runtimeId of the component
    * @memberOf cubxComponentMixin
@@ -236,9 +247,7 @@
    * @private
    */
   cubxComponentMixin._triggerSlotChangeEvent = function (slotId, payload) {
-    var eventName = 'slot' + _.capitalize(slotId) + 'Changed';
-    var event = new CustomEvent(eventName, { bubbles: true, detail: payload });
-    this.dispatchEvent(event);
+    this.fireSlotChangedEvent(slotId, payload);
   };
 
   /**
@@ -298,8 +307,8 @@
    */
   cubxComponentMixin._outputHandler = function (slotId, value) {
     var payloadObj = this._getEventFactory().createModelChangePayloadObject(slotId, value);
-    this._triggerModelChangeEvent(slotId, payloadObj);
     this._triggerSlotChangeEvent(slotId, value);
+    this._triggerModelChangeEvent(slotId, payloadObj);
   };
   /* **********************************************************************************/
   /*                      cubx generate methods                                       */

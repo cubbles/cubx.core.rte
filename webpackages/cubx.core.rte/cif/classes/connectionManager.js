@@ -630,6 +630,7 @@
             return;
           }
           this._context.getRootElement()._setInModel(newPayloadFrame.slot, newPayloadFrame.payload);
+          this._context.getRootElement().fireSlotChangedEvent(newPayloadFrame.slot, newPayloadFrame.payload);
           this._context.getRootElement().fireModelChangeEvent(newPayloadFrame);
         }
       } else {
