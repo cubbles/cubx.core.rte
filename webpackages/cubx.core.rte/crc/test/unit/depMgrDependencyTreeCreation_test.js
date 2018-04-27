@@ -136,30 +136,6 @@
               expect(tree._rootNodes[1].children[0].children[0].children[0].data.getId()).to.equal('package6@1.0.0/util6');
             });
           });
-          // it('should call _checkAndAddExcludesToDepReference() for each Node in raw DependencyTree', function () {
-          //   var stub = sinon.stub(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesToDepReference');
-          //   return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function () {
-          //     expect(stub.callCount).to.be.equal(11);
-          //     // check stub calls in breadth order traversal
-          //     expect(stub.getCall(0).args[0].getId()).to.be.equal('package1@1.0.0/util1');
-          //     expect(stub.getCall(1).args[0].getId()).to.be.equal('package2@1.0.0/util2');
-          //     expect(stub.getCall(2).args[0].getId()).to.be.equal('package3@1.0.0/util3');
-          //     expect(stub.getCall(3).args[0].getId()).to.be.equal('package4@1.0.0/util4');
-          //     expect(stub.getCall(4).args[0].getId()).to.be.equal('package3@1.0.0/util3');
-          //     expect(stub.getCall(5).args[0].getId()).to.be.equal('package5@1.0.0/util5');
-          //     expect(stub.getCall(6).args[0].getId()).to.be.equal('package5@1.0.0/util5');
-          //     expect(stub.getCall(7).args[0].getId()).to.be.equal('package5@1.0.0/util5');
-          //     expect(stub.getCall(8).args[0].getId()).to.be.equal('package6@1.0.0/util6');
-          //     expect(stub.getCall(9).args[0].getId()).to.be.equal('package6@1.0.0/util6');
-          //     expect(stub.getCall(10).args[0].getId()).to.be.equal('package6@1.0.0/util6');
-          //     stub.restore();
-          //   });
-          // });
-          // it('should enrich each Node in DependencyTree with corresponding dependencyExcludes', function () {
-          //   return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function (tree) {
-          //
-          //   });
-          // });
           describe('Error Handling', function () {
             it('should throw an TypeError if \'dependencies\' parameter is not an Array', function () {
               try {
@@ -606,34 +582,37 @@
           var depTree;
           beforeEach(function () {
             /**
-             * Build the following tree:
+             * Build the following tree (including one verison conflict:
              *
-             *               package1@1.0.0/util1
-             *                    /       \
-             *                   /         \
-             *    package3@1.0.0/util3    package5@2.0.0/util5
+             *               package1@1.0.0/util1                                    package2@1.0/util2
+             *                    /       \                                             /        \
+             *                   /         \                                           /          \
+             *    package3@1.0.0/util3    package5@2.0.0/util5         package6@1.0/my-comp       package7@1.0/my-comp
              *            |
              *            |
              *    package5@1.0.0/util5
              */
             depTree = new DependencyTree();
-            var root = new DependencyTree.Node();
-            root.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
-            depTree.insertNode(root);
+            var rootA = new DependencyTree.Node();
+            rootA.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+            depTree.insertNode(rootA);
+
             var childA = new DependencyTree.Node();
             childA.data = new DepMgr.DepReference({
               webpackageId: 'package3@1.0.0',
               artifactId: 'util3',
               referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}
             });
-            depTree.insertNode(childA, root);
+            depTree.insertNode(childA, rootA);
+
             var childB = new DependencyTree.Node();
             childB.data = new DepMgr.DepReference({
               webpackageId: 'package5@2.0.0',
               artifactId: 'util5',
               referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}
             });
-            depTree.insertNode(childB, root);
+            depTree.insertNode(childB, rootA);
+
             var childA1 = new DependencyTree.Node();
             childA1.data = new DepMgr.DepReference({
               webpackageId: 'package5@1.0.0',
@@ -641,13 +620,41 @@
               referrer: {webpackageId: 'package4@1.0.0', artifactId: 'util4'}
             });
             depTree.insertNode(childA1, childA);
+
+            var rootB = new DependencyTree.Node();
+            rootB.data = new DepMgr.DepReference({
+              webpackageId: 'package2@1.0',
+              artifactId: 'util2',
+              referrer: null
+            });
+            depTree.insertNode(rootB);
+
+            var childC = new DependencyTree.Node();
+            childC.data = new DepMgr.DepReference({
+              webpackageId: 'package6@1.0',
+              artifactId: 'my-comp',
+              referrer: {webpackageId: 'package2@1.0', artifactId: 'util2'}
+            });
+            depTree.insertNode(childC, rootB);
+
+            var childD = new DependencyTree.Node();
+            childD.data = new DepMgr.DepReference({
+              webpackageId: 'package7@1.0',
+              artifactId: 'my-comp',
+              referrer: {webpackageId: 'package2@1.0', artifactId: 'util2'}
+            });
+            depTree.insertNode(childD, rootB);
+
+            depTree.removeDuplicates();
           });
-          it('should create an warning log for each conflicted artifact', function () {
+          it('should create a log for each conflicted artifact', function () {
             depMgr = CRC.getDependencyMgr();
-            var spy = sinon.spy(console, 'warn');
-            // depMgr._logDependencyConflicts(depTree);
-            expect(spy.calledOnce);
-            spy.reset();
+            var logSpy = sinon.spy(console, 'log');
+            var warnSpy = sinon.spy(console, 'warn');
+            depMgr._logDependencyConflicts(depTree);
+            expect(logSpy.callCount + warnSpy.callCount).to.equal(2);
+            logSpy.reset();
+            warnSpy.reset();
           });
         });
       });

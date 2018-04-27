@@ -348,15 +348,42 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._logDependencyConflicts = function (depTree) {
-      // var conflicts = depTree.getListOfConflictedNodes();
-      // conflicts.some(function (conflict) {
-      //   var webpackageIds = [];
-      //   conflict.nodes.some(function (conflictedNode) {
-      //     webpackageIds.push(conflictedNode.data.webpackageId);
-      //   });
-      //   console.warn('Artifact', conflict.artifactId, 'is defined in multiple webpackages: [', webpackageIds.join(', '), ']');
-      // });
-      // TODO: adjust method
+      var conflicts = depTree.getConflictedNodes();
+      conflicts.some(function (conflict) {
+        switch (conflict.type) {
+          case DependencyTree.conflictTypes.VERSION:
+            if (conflict.resolved) {
+              console.log(
+                'Artifact',
+                conflict.node.data.artifactId,
+                'is defined in multiple versions of the same webpackage: [',
+                conflict.node.data.webpackageId, ',',
+                conflict.conflictedNode.data.webpackageId, '].',
+                'Using webpackage ',
+                conflict.node.data.webpackageId
+              );
+            } else {
+              console.warn(
+                'Artifact',
+                conflict.node.data.artifactId,
+                'is defined in multiple versions of the same webpackage: [',
+                conflict.node.data.webpackageId, ',',
+                conflict.conflictedNode.data.webpackageId, '].'
+              );
+            }
+            break;
+          case DependencyTree.conflictTypes.NAME:
+            console.warn(
+              'Artifact',
+              conflict.node.data.artifactId,
+              'is defined in multiple webpackages: [',
+              conflict.node.data.webpackageId, ',',
+              conflict.conflictedNode.data.webpackageId, '].',
+              'This could cause unexpeted behaviour!'
+            );
+            break;
+        }
+      });
     };
 
     /**
