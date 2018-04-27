@@ -26,6 +26,13 @@
       this._versionConflicts = [];
 
       /**
+       * Holding all conflicts
+       * @type {Array}
+       * @private
+       */
+      this._conflicts = [];
+
+      /**
        * The nodes Array holds all rootNodes of the dependencyTree. The order of root nodes is important when it comes
        * to dependency conflict resolution.
        * Note: In fact their could be multiple rootNodes. So indeed the dependencyTree is not a "real" tree
@@ -46,9 +53,9 @@
      * @type {{NAME: string, VERSION: string, MIXED: string}}
      */
     DependencyTree.conflictTypes = {
-      NAME: 'nameConflict',
-      VERSION: 'versionConflict',
-      MIXED: 'mixedConflict'
+      NAME: 'NAME_CONFLICT',
+      VERSION: 'VERSION_CONFLICT',
+      MIXED: 'MIXED_CONFLICT'
     };
 
     /**
@@ -145,6 +152,22 @@
     };
 
     /**
+     * Remove node which is in conflict with another node from DependencyTree.
+     * @memberOf DependencyTree
+     * @param {object} node Node which causes the conflict
+     * @param {object} node Node which is on conflict with give node and thus needs to be removed
+     */
+    DependencyTree.prototype._removeConflictedNode = function (node, conflictedNode) {
+      // if conflictedNode is not a root node we need to set usesExisting and usedBy of node which will replace the conflictedNode
+      if (conflictedNode.parent != null) {
+        conflictedNode.parent.usesExisting.push(node);
+        node.usedBy.push(conflictedNode.parent);
+      }
+      node.data.referrer = node.data.referrer.concat(conflictedNode.data.referrer);
+      this.removeNode(conflictedNode);
+    };
+
+    /**
      * Group given list of nodes by their webpackage name.
      * @memberOf DependencyTree
      * @param {array} nodes
@@ -194,13 +217,32 @@
      * @private
      */
     DependencyTree.prototype._getRelatedNodes = function (node, nodes, relationship) {
-      var relatedNodes = [];
+      var relatedNodes;
 
       relatedNodes = nodes.filter(function (currentNode) {
         return (this._determineNodeRelationship(currentNode, node) === relationship);
       }.bind(this));
 
       return relatedNodes;
+    };
+
+    /**
+     * Helper method to create an item representing a conflict between two nodes
+     * @memberOf DependencyTree
+     * @private
+     * @param {DependencyTree.Node} node
+     * @param {DependencyTree.Node} conflictedNode
+     * @param {string} type One of DependencyTree.conflictTypes
+     * @param {boolean} resolved
+     * @returns {object}
+     */
+    DependencyTree.prototype._createConflictItem = function (node, conflictedNode, type, resolved) {
+      return {
+        node: node,
+        conflictedNode: conflictedNode,
+        type: type,
+        resolved: resolved
+      };
     };
 
     /**
@@ -266,6 +308,16 @@
      */
     DependencyTree.prototype.enableACR = function () {
       this._enableACR = true;
+    };
+
+    /**
+     * Get a list of all conflicted nodes including type of conflict. Note: this method only works
+     * when ACR is enabled and removeDuplicates() method was already called.
+     * @memberOf DependencyTree
+     * @returns {array}
+     */
+    DependencyTree.prototype.getConflictedNodes = function () {
+      return this._conflicts;
     };
 
     /**
@@ -346,7 +398,7 @@
      * @returns {object} The DependencyTree without duplicates
      */
     DependencyTree.prototype.removeDuplicates = function () {
-      var nodesBF = []; // holds an array of all processed nodes
+      var nodesBF = []; // holds an array of all processed/visited nodes
 
       this.traverseBF(function (node) {
         // If current node is already removed from depTree skip iteration --> if this.contains(node) is false we don't do anything
@@ -361,17 +413,23 @@
           if (relatedNodes.duplicates.length === 1) {
             this._removeDuplicate(relatedNodes.duplicates[0], node);
           } else if (relatedNodes.versionConflicts.length === 1) {
-            // TODO: add conflict to internal versionConflict property for logging purposes
+            var conflict = this._createConflictItem(relatedNodes.versionConflicts[0], node, DependencyTree.conflictTypes.VERSION, false);
             if (this._enableACR) {
-              // TODO: call _removeConflictedNode() if ACR is enabled
+              // remove conflicted node if ACR is enabled
+              this._removeConflictedNode(relatedNodes.versionConflicts[0], node);
+              conflict.resolved = true;
             }
-          } else if (relatedNodes.distinct.length === nodesBF.length) {
+            // push conflict to internal conflicts array for logging purposes
+            this._conflicts.push(conflict);
+          } else if (relatedNodes.distinct.length + relatedNodes.nameConflicts.length === nodesBF.length) {
             nodesBF.push(node);
           }
 
-          // check for naming conflicts. If there are any just keep them on internal nameConflicts array
+          // check for naming conflicts. If there are any just keep them on internal conflicts array for logging purposes
           if (relatedNodes.nameConflicts.length > 0) {
-            // TODO: Just add name conflict to internal nameConflicts property for logging purposes
+            relatedNodes.nameConflicts.some(function (conflictNode) {
+              this._conflicts.push(this._createConflictItem(conflictNode, node, DependencyTree.conflictTypes.NAME, false));
+            }.bind(this));
           }
         }
       }.bind(this));

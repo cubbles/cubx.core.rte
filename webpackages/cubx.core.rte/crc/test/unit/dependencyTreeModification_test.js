@@ -197,7 +197,7 @@
             childB21.excluded.should.be.false;
           });
         });
-        describe('#removeDuplicates()', function () {
+        describe('#removeDuplicates() without conflicts', function () {
           it('should return the DependencyTree itself', function () {
             expect(depTree.removeDuplicates()).to.be.an.instanceOf(DependencyTree);
           });
@@ -426,10 +426,13 @@
           results.should.have.members([nodeA, nodeB, nodeC, nodeD]);
         });
       });
-      describe('conflict detection and resolution', function () {
+      describe('Dependency Tree conflict detection and resolution', function () {
         var Node = DependencyTree.Node;
         var DepRef = DependencyMgr.DepReference;
         var depTree;
+        var rootA;
+        var rootB;
+        var rootC;
         var childA1;
         var childA2;
         var childA11;
@@ -454,15 +457,15 @@
            *    package5@1.0.0/util5
            */
           depTree = new DependencyTree();
-          var rootA = new Node();
+          rootA = new Node();
           rootA.data = new DepRef({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
           depTree.insertNode(rootA);
 
-          var rootB = new Node();
+          rootB = new Node();
           rootB.data = new DepRef({webpackageId: 'packageA@1.0.0', artifactId: 'artifactA', referrer: null});
           depTree.insertNode(rootB);
 
-          var rootC = new Node();
+          rootC = new Node();
           rootC.data = new DepRef({webpackageId: 'packageB@1.0', artifactId: 'artifact_B', referrer: null});
           depTree.insertNode(rootC);
 
@@ -522,36 +525,44 @@
           });
           depTree.insertNode(childC3, rootC);
         });
-        describe('#determineArtifactConflicts()', function () {
-          // it('should determine naming conflicts and store them on internal property _nameConflicts', function () {
-          //   depTree.determineArtifactConflicts();
-          //   depTree.should.have.property('_nameConflicts');
-          //   depTree._nameConflicts.should.be.an('array');
-          //   depTree._nameConflicts.should.have.lengthOf(1);
-          //   depTree._nameConflicts[0].should.eql({
-          //     artifactId: 'my-comp',
-          //     nodes: [childA1, childB1]
-          //   });
-          // });
-          // it('should determine version conflicts and store them on internal property _versionConflicts', function () {
-          //   depTree.determineArtifactConflicts();
-          //   depTree.should.have.property('_versionConflicts');
-          //   depTree._versionConflicts.should.be.an('array');
-          //   depTree._versionConflicts.should.have.lengthOf(2);
-          //   depTree._versionConflicts.should.have.deep.members([
-          //     {
-          //       artifactId: 'util5',
-          //       nodes: [childA2, childA11]
-          //     },
-          //     {
-          //       artifactId: 'artifact_C',
-          //       nodes: [childC2, childC3]
-          //     }
-          //   ]);
-          // });
-        });
-        describe('#resolveArtifactVersionConflicts()', function () {
 
+        describe('#_removeConflictedNode()', function () {
+          it('should remove conflictedNode and sets usedBy and usesExisting accordnigly', function () {
+            depTree._removeConflictedNode(childA2, childA11);
+            depTree.contains(childA11).should.be.false;
+            childA2.usedBy.should.include.members([childA1]);
+            childA1.usesExisting.should.include.members([childA2]);
+          });
+        });
+
+        describe('#removeDupliates() with automatic conflict resolution', function () {
+          it('should remove all version conflicted nodes', function () {
+            depTree.enableACR();
+            depTree.removeDuplicates();
+            depTree.contains(rootA).should.be.true;
+            depTree.contains(rootB).should.be.true;
+            depTree.contains(rootC).should.be.true;
+            depTree.contains(childA1).should.be.true;
+            depTree.contains(childA2).should.be.true;
+            depTree.contains(childB1).should.be.true;
+            depTree.contains(childC1).should.be.true;
+            depTree.contains(childC2).should.be.true;
+            depTree.contains(childA11).should.be.false;
+            depTree.contains(childC3).should.be.false;
+          });
+          it('should add all determined conflicts to internal _conflicts array', function () {
+            depTree.enableACR();
+            depTree.removeDuplicates();
+            var conflicts = depTree.getConflictedNodes();
+            conflicts.should.have.lengthOf(5);
+            conflicts.should.include.deep.members([
+              {node: childC2, conflictedNode: childC3, type: DependencyTree.conflictTypes.VERSION, resolved: true},
+              {node: childA2, conflictedNode: childA11, type: DependencyTree.conflictTypes.VERSION, resolved: true},
+              {node: childA1, conflictedNode: childB1, type: DependencyTree.conflictTypes.NAME, resolved: false},
+              {node: childC1, conflictedNode: childC2, type: DependencyTree.conflictTypes.NAME, resolved: false},
+              {node: childC1, conflictedNode: childC3, type: DependencyTree.conflictTypes.NAME, resolved: false}
+            ]);
+          });
         });
       });
     });

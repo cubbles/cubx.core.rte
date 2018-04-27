@@ -436,7 +436,7 @@ window.cubx.amd.define(
      * manifest. If so these dependencyExcludes will be added.
      * @memberOf DependencyMgr
      * @param {object} depTree A DependencyTree instance
-     * @param {string baseUrl A url used to request manifest files from
+     * @param {string} baseUrl A url used to request manifest files from
      * @return {object} promise A Promise
      * @private
      */
