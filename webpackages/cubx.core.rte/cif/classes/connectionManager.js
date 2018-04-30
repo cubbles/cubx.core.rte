@@ -323,6 +323,15 @@
       payload: value,
       slot: connection.source.slot
     };
+    // if value is not serialisable copyValue must be set to true and a warn should be logged
+    if (typeof connection.copyValue === 'boolean' && connection.copyValue) {
+      try {
+        JSON.stringify(payloadObject.payload);
+      } catch (e) {
+        connection.copyValue = false;
+        console.warn('\'copyValue\' is set to false since slot value is not serialisable.', payloadObject.payload, connection);
+      }
+    }
     var newPayloadObject = this._handlePayload(payloadObject, connection.copyValue);
     if (this._allowPropagation(connection, newPayloadObject)) {
       //  save paylod as lastValue in Connection;
@@ -610,6 +619,15 @@
 
     // call set method for destination slot on destination component
 
+    // if value is not serialisable copyValue must be set to true and a warn should be logged
+    if (typeof connection.copyValue === 'boolean' && connection.copyValue) {
+      try {
+        JSON.stringify(payloadFrame.payload);
+      } catch (e) {
+        connection.copyValue = false;
+        console.warn('\'copyValue\' is set to false since slot value is not serialisable.', payloadFrame.payload, connection);
+      }
+    }
     var newPayloadFrame = this._handlePayload(payloadFrame, connection.copyValue);
 
     //  is repeteadValue configured as false and the same as last time will be propagetaed?
