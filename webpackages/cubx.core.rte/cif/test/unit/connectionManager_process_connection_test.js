@@ -899,6 +899,60 @@ describe('ConnectionManager', function () {
               expect(connection.lastValue).to.be.deep.equal(payloadObj.payload);
             });
           });
+          describe('copyValue is true (payload not serialisable)', function () {
+            var connection;
+            var payloadObj;
+            var connectionManager;
+            var payload;
+            var spyConsole;
+            var comp2;
+            var handlePayloadSpy;
+            beforeEach(function () {
+              var o1 = {};
+              var o2 = { a: o1 };
+              o1.a = o2;
+              payload = o2;
+              var comp1 = document.createElement('comp1');
+              comp2 = document.createElement('comp2');
+              comp2.setAttribute('runtime-id', 'comp2');
+              comp2.isInputSlot = function (slot) { return true; };
+              comp2.setInputSlot = function (slot, value) {};
+              comp2.fireModelChangeEvent = function (payloadObject) {};
+              connection = {
+                source: {
+                  component: comp1,
+                  memberId: 1,
+                  slot: 'firsttestoutput'
+                },
+                destination: {
+                  component: comp2,
+                  memberId: 2,
+                  slot: 'firsttestinput'
+                },
+                copyValue: true
+
+              };
+              payloadObj = {
+                payload: payload,
+                slot: 'firsttestoutput'
+              };
+              var context = new window.cubx.cif.Context(document.createElement('element'));
+              connectionManager = new window.cubx.cif.ConnectionManager(context);
+              handlePayloadSpy = sinon.spy(connectionManager, '_handlePayload');
+              spyConsole = sinon.spy(console, 'warn');
+            });
+            afterEach(function () {
+              // spyConsole.restore();
+              // handlePayloadSpy.restore();
+            });
+            it('copyValue should be set to false, user should be warned', function () {
+              connectionManager._processConnection(connection, payloadObj);
+              return Promise.all([
+                expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, false),
+                expect(spyConsole).to.be.calledOnce
+              ]);
+            });
+          });
           describe('copyValue is false (typeof payload === string', function () {
             var connection;
             var payloadObj;
