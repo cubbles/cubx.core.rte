@@ -161,6 +161,76 @@ describe('ConnectionManager', function () {
           expect(destinationElem.model.slotB !== value);
         });
       });
+      describe('add a valid connection with directExecution = true, copyValue=true, slotValue not serialisable', function () {
+        var spyExecuteConnection;
+        var spyControlFunc;
+        var spyConsole;
+        var handlePayloadSpy;
+        var o1 = {};
+        var o2 = { a: o1 };
+        o1.a = o2;
+        beforeEach(function () {
+          conConfig = {
+            connectionId: 'dynConX',
+            source: {
+              memberId: 'sourceMember',
+              component: sourceElem,
+              slot: 'slotA'
+            },
+            destination: {
+              memberId: 'destinationMember',
+              component: destinationElem,
+              slot: 'slotB'
+            },
+            repeatedValues: false,
+            copyValue: true,
+            hookFunction: 'myFunc'
+
+          };
+          spyControlFunc = sinon.spy();
+          window.myFunc = function (value, next) {
+            spyControlFunc();
+            next(value);
+          };
+
+          spyExecuteConnection = sinon.spy(connectionMgr, '_executeConnection');
+
+          handlePayloadSpy = sinon.spy(connectionMgr, '_handlePayload');
+          spyConsole = sinon.spy(console, 'warn');
+          sourceElem.setSlotA(o2);
+          connectionMgr.addDynamicConnection(conConfig, true);
+        });
+        afterEach(function () {
+          conConfig = null;
+          connectionMgr._executeConnection.restore();
+          handlePayloadSpy.restore();
+          spyConsole.restore();
+          sourceElem.setSlotA(value);
+        });
+        it('the connection should be added to connectionManager._connections', function () {
+          connectionMgr._connections.should.have.length(1);
+        });
+        it('the added connection should be valid', function () {
+          connectionMgr._connections[ 0 ].should.have.property('connectionId', conConfig.connectionId);
+          connectionMgr._connections[ 0 ].should.instanceOf(window.cubx.cif.ConnectionManager.Connection);
+        });
+        it('the hook function #myFunc should be called once', function () {
+          // myFunc call controlFunc -> controlFunc is clled, if myfunc is called
+          spyControlFunc.should.be.calledOnce;
+        });
+        it('the #_executeConnection should been called', function () {
+          spyExecuteConnection.should.been.calledOnce;
+          spyExecuteConnection.should.been.calledWith(conConfig);
+          destinationElem.model.slotB.should.have.deep.equal(o2);
+          expect(destinationElem.model.slotB !== o2);
+        });
+        it('copyValue should be set to false, user should be warned', function () {
+          return Promise.all([
+            expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, false),
+            expect(spyConsole).to.be.calledWith('\'copyValue\' is set to false since slot value is not serialisable.', sinon.match.any, sinon.match.any)
+          ]);
+        });
+      });
       describe('add a valid connection with directExecution = false', function () {
         var spyExecuteConnection;
         var spyControlFunc;
