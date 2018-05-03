@@ -325,9 +325,7 @@
     };
     // if value is not serialisable copyValue must be set to true and a warn should be logged
     if (typeof connection.copyValue === 'boolean' && connection.copyValue) {
-      try {
-        JSON.stringify(payloadObject.payload);
-      } catch (e) {
+      if (!this._isSerializable(payloadObject.payload)) {
         connection.copyValue = false;
         console.warn('\'copyValue\' is set to false since slot value is not serialisable.', payloadObject.payload, connection);
       }
@@ -359,6 +357,40 @@
           console.error('not valid connection', connection, newPayloadObject);
         }
       }
+    }
+  };
+
+  /**
+   * Determines if an value is serializable. Adapted from https://stackoverflow.com/a/30712764/8082984
+   * @param obj
+   * @returns {boolean}
+   * @private
+   */
+  ConnectionManager.prototype._isSerializable = function (obj) {
+    try {
+      if (_.isUndefined(obj) ||
+        _.isNull(obj) ||
+        _.isBoolean(obj) ||
+        _.isNumber(obj) ||
+        _.isString(obj)) {
+        return true;
+      }
+
+      if (!_.isPlainObject(obj) &&
+        !_.isArray(obj)) {
+        return false;
+      }
+
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key) && !this._isSerializable(obj[key])) {
+          return false;
+        }
+      }
+
+      return true;
+    } catch (e) {
+      console.log('ERROR -------------------------', e);
+      return false; // e.g. circular references
     }
   };
 
@@ -621,9 +653,7 @@
     // call set method for destination slot on destination component
     // if value is not serialisable copyValue must be set to true and a warn should be logged
     if (typeof connection.copyValue === 'boolean' && connection.copyValue) {
-      try {
-        JSON.stringify(payloadFrame.payload);
-      } catch (e) {
+      if (!this._isSerializable(payloadFrame.payload)) {
         connection.copyValue = false;
         console.warn('\'copyValue\' is set to false since slot value is not serialisable.', payloadFrame.payload, connection);
       }
