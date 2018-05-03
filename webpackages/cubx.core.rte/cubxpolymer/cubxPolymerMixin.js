@@ -519,7 +519,7 @@
         if (argsCount === 0) {
           hookMethod.call(this);
         } else {
-          hookMethod.call(this, this._cloneValue(newValue));
+          hookMethod.call(this, newValue);
         }
       }
 
