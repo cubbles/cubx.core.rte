@@ -908,10 +908,7 @@ describe('ConnectionManager', function () {
             var comp2;
             var handlePayloadSpy;
             beforeEach(function () {
-              var o1 = {};
-              var o2 = { a: o1 };
-              o1.a = o2;
-              payload = o2;
+              payload = new XMLHttpRequest();
               var comp1 = document.createElement('comp1');
               comp2 = document.createElement('comp2');
               comp2.setAttribute('runtime-id', 'comp2');

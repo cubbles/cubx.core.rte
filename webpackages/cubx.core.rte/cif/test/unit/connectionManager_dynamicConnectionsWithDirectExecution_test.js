@@ -166,9 +166,7 @@ describe('ConnectionManager', function () {
         var spyControlFunc;
         var spyConsole;
         var handlePayloadSpy;
-        var o1 = {};
-        var o2 = { a: o1 };
-        o1.a = o2;
+        var noSerializableObject = new XMLHttpRequest();
         beforeEach(function () {
           conConfig = {
             connectionId: 'dynConX',
@@ -197,7 +195,7 @@ describe('ConnectionManager', function () {
 
           handlePayloadSpy = sinon.spy(connectionMgr, '_handlePayload');
           spyConsole = sinon.spy(console, 'warn');
-          sourceElem.setSlotA(o2);
+          sourceElem.setSlotA(noSerializableObject);
           connectionMgr.addDynamicConnection(conConfig, true);
         });
         afterEach(function () {
@@ -221,8 +219,8 @@ describe('ConnectionManager', function () {
         it('the #_executeConnection should been called', function () {
           spyExecuteConnection.should.been.calledOnce;
           spyExecuteConnection.should.been.calledWith(conConfig);
-          destinationElem.model.slotB.should.have.deep.equal(o2);
-          expect(destinationElem.model.slotB !== o2);
+          destinationElem.model.slotB.should.have.deep.equal(noSerializableObject);
+          expect(destinationElem.model.slotB !== noSerializableObject);
         });
         it('copyValue should be set to false, user should be warned', function () {
           return Promise.all([
