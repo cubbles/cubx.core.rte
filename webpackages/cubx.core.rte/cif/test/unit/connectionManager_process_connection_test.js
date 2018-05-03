@@ -1,4 +1,4 @@
-/* globals _ */
+/* globals _, XMLHttpRequest */
 'use strict';
 describe('ConnectionManager', function () {
   describe('processConnection', function () {

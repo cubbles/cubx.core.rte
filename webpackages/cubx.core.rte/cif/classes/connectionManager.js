@@ -657,8 +657,6 @@
         console.warn('\'copyValue\' is set to false since slot value is not serialisable.', payloadFrame.payload, connection);
       }
     }
-
-
     var newPayloadFrame = this._handlePayload(payloadFrame, connection.copyValue);
 
     //  is repeteadValue configured as false and the same as last time will be propagetaed?
