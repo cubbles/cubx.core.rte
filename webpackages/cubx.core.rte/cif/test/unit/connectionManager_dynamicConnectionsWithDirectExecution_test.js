@@ -1,3 +1,4 @@
+/* globals XMLHttpRequest */
 'use strict';
 
 describe('ConnectionManager', function () {
