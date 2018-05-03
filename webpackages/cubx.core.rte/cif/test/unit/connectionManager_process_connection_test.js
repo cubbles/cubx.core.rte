@@ -1,4 +1,4 @@
-/* globals _ */
+/* globals _, XMLHttpRequest */
 'use strict';
 describe('ConnectionManager', function () {
   describe('processConnection', function () {
@@ -899,7 +899,7 @@ describe('ConnectionManager', function () {
               expect(connection.lastValue).to.be.deep.equal(payloadObj.payload);
             });
           });
-          describe('copyValue is true (payload not serialisable)', function () {
+          describe('copyValue is true (payload not serializable)', function () {
             var connection;
             var payloadObj;
             var connectionManager;
@@ -908,10 +908,7 @@ describe('ConnectionManager', function () {
             var comp2;
             var handlePayloadSpy;
             beforeEach(function () {
-              var o1 = {};
-              var o2 = { a: o1 };
-              o1.a = o2;
-              payload = o2;
+              payload = new XMLHttpRequest();
               var comp1 = document.createElement('comp1');
               comp2 = document.createElement('comp2');
               comp2.setAttribute('runtime-id', 'comp2');
@@ -942,8 +939,8 @@ describe('ConnectionManager', function () {
               spyConsole = sinon.spy(console, 'warn');
             });
             afterEach(function () {
-              // spyConsole.restore();
-              // handlePayloadSpy.restore();
+              spyConsole.restore();
+              handlePayloadSpy.restore();
             });
             it('copyValue should be set to false, user should be warned', function () {
               connectionManager._processConnection(connection, payloadObj);
