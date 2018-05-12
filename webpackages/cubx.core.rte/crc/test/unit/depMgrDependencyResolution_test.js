@@ -525,7 +525,7 @@ window.cubx.amd.define([ 'CRC',
           errorThrown.should.be.true;
         }
       });
-      it.only('should alert coder if called given data is not a valid JSON adn _runtimeMode === \'dev\'', function () {
+      it('should alert coder if called given data is not a valid JSON adn _runtimeMode === \'dev\'', function () {
         try {
           DepMgr._runtimeMode = 'dev';
           DepMgr._prepareResponseData('{"a": 1 "b": 2}');
