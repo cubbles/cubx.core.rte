@@ -19,12 +19,12 @@ before_install:
  - sudo dpkg -i google-chrome*.deb
 script:
  - grunt eslint
- # - grunt karma:cif
- # - grunt karma:crc
- # - grunt karma:crc-loader
+ - grunt karma:cif
+ - grunt karma:crc
+ - grunt karma:crc-loader
  - grunt karma:cubxcomponent
- # - grunt karma:dynamic-connection-utils
- # - grunt karma:mutation-based-cubx-startevent
+ - grunt karma:dynamic-connection-utils
+ - grunt karma:mutation-based-cubx-startevent
 
 notifications:
   email:
