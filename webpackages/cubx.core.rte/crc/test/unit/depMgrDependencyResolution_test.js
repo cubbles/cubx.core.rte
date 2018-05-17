@@ -296,7 +296,7 @@ window.cubx.amd.define([ 'CRC',
       });
       it('should call axios.request method with given url', function (done) {
         depMgr._fetchManifest('https://www.example.test').then(function () {
-          expect(axiosStub.calledWith({url: 'https://www.example.test', type: 'json'})).to.be.true;
+          expect(axiosStub.calledWith({url: 'https://www.example.test', responseType: 'json'})).to.be.true;
           done();
         });
       });
