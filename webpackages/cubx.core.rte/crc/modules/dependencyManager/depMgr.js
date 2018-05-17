@@ -54,7 +54,7 @@ window.cubx.amd.define(
        * @private
        */
       this._axios = axios.create({
-        transformResponse: [DependencyMgr._prepareResponseData],
+        transformResponse: [DependencyMgr._prepareResponseData.bind(this)],
         responseType: 'json'
       });
     };
@@ -225,11 +225,23 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr._prepareResponseData = function (data) {
+      var manifest;
       // axios sets 'error' property on data object if there is an error.
       if (data.hasOwnProperty('error')) {
         throw new Error('Error when requesting manifest');
       }
-      var manifest = manifestConverter.convert(data);
+      if (typeof data === 'string') {
+        try {
+          manifest = JSON.parse(data);
+        } catch (e) {
+          if (this._runtimeMode === 'dev') {
+            window.alert('A manifest file is not valid. Check console for further details');
+          }
+          console.error('SintaxError: a manifest.webpackage file is not JSON valid. ', e.message, '\n\n' + data);
+          throw new Error('Manifest Sintax Error');
+        }
+      }
+      manifest = manifestConverter.convert(data);
       return manifest;
     };
 
@@ -620,7 +632,7 @@ window.cubx.amd.define(
           processManifest(manifestConverter.convert(depReference.manifest), true);
         } else { // default case: request manifest using ajax
           var url = baseUrl + depReference.webpackageId + '/manifest.webpackage';
-          this._fetchManifest(url).then(
+          this._fetchManifest(url, 'text').then(
             function (response) {
               processManifest(response.data, true);
             },
@@ -905,10 +917,9 @@ window.cubx.amd.define(
      * @private
      * @memberOf DependencyMgr
      */
-    DependencyMgr.prototype._fetchManifest = function (url) {
-      return this._axios.request({
-        url: url
-      });
+    DependencyMgr.prototype._fetchManifest = function (url, responseType) {
+      var config = {url: url, responseType: responseType || 'json'};
+      return this._axios.request(config);
     };
 
     /**
