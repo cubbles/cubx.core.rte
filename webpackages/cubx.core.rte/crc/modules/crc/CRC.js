@@ -2,7 +2,7 @@
 /**
  * Defines the CRC RequireJS Module.
  *
- * @version 2.5.0
+ * @version 2.5.1-SNAPSHOT
  */
 window.cubx.amd.define([
   'storageManager',
@@ -26,7 +26,7 @@ window.cubx.amd.define([
      /* @type {string}
      /* @private
      */
-    this._version = '2.5.0';
+    this._version = '2.5.1-SNAPSHOT';
 
     /**
      * jQuery object containing only one element to which the crc should be appended
