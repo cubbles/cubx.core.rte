@@ -2,7 +2,7 @@
     "name": "my-webpackage",
     "groupId": "org.example",
     "version": "0.2.0",
-    "modelVersion": "8.0.0",
+    "modelVersion": "9.1.1",
     "docType": "webpackage",
     "author": {
         "name": "John Doe",
