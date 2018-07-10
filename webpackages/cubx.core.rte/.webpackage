@@ -14,7 +14,7 @@
     "release": {
       "url": "https://cubbles.world/core",
       "proxy": "",
-      "debug": true
+      "debug": false
     }
   }
 }
