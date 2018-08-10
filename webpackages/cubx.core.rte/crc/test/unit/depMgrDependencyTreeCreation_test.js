@@ -39,17 +39,26 @@
                   case 'package1@1.0.0/util1':
                     requestedPkg = JSON.parse(pkg1);
                     dependencies = depMgr._createDepReferenceListFromArtifactDependencies(
-                      requestedPkg.artifacts.utilities[0].dependencies, {webpackageId: 'package1@1.0.0', artifactId: 'util1'});
+                      requestedPkg.artifacts.utilities[0].dependencies, {
+                        webpackageId: 'package1@1.0.0',
+                        artifactId: 'util1'
+                      });
                     break;
                   case 'package2@1.0.0/util2':
                     requestedPkg = JSON.parse(pkg2);
                     dependencies = depMgr._createDepReferenceListFromArtifactDependencies(
-                      requestedPkg.artifacts.utilities[0].dependencies, {webpackageId: 'package2@1.0.0', artifactId: 'util2'});
+                      requestedPkg.artifacts.utilities[0].dependencies, {
+                        webpackageId: 'package2@1.0.0',
+                        artifactId: 'util2'
+                      });
                     break;
                   case 'package3@1.0.0/util3':
                     requestedPkg = JSON.parse(pkg3);
                     dependencies = depMgr._createDepReferenceListFromArtifactDependencies(
-                      requestedPkg.artifacts.utilities[0].dependencies, {webpackageId: 'package3@1.0.0', artifactId: 'util3'});
+                      requestedPkg.artifacts.utilities[0].dependencies, {
+                        webpackageId: 'package3@1.0.0',
+                        artifactId: 'util3'
+                      });
                     break;
                   case 'package4@1.0.0/util4':
                     requestedPkg = JSON.parse(pkg4);
@@ -57,7 +66,10 @@
                   case 'package5@1.0.0/util5':
                     requestedPkg = JSON.parse(pkg5);
                     dependencies = depMgr._createDepReferenceListFromArtifactDependencies(
-                      requestedPkg.artifacts.utilities[0].dependencies, {webpackageId: 'package5@1.0.0', artifactId: 'util5'});
+                      requestedPkg.artifacts.utilities[0].dependencies, {
+                        webpackageId: 'package5@1.0.0',
+                        artifactId: 'util5'
+                      });
                     break;
                   case 'package6@1.0.0/util6':
                     requestedPkg = JSON.parse(pkg6);
@@ -69,7 +81,9 @@
                 } else if (!(dep instanceof DepMgr.DepReference)) {
                   throw new TypeError();
                 } else {
-                  window.setTimeout(function () { reject({message: 'Error while resolving...'}); }, 100); // eslint-disable-line prefer-promise-reject-errors
+                  window.setTimeout(function () {
+                    reject({message: 'Error while resolving...'}); // eslint-disable-line prefer-promise-reject-errors
+                  }, 100);
                 }
               });
             });
@@ -123,30 +137,6 @@
               expect(tree._rootNodes[1].children[0].children[0].children[0].data.getId()).to.equal('package6@1.0.0/util6');
             });
           });
-          // it('should call _checkAndAddExcludesToDepReference() for each Node in raw DependencyTree', function () {
-          //   var stub = sinon.stub(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesToDepReference');
-          //   return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function () {
-          //     expect(stub.callCount).to.be.equal(11);
-          //     // check stub calls in breadth order traversal
-          //     expect(stub.getCall(0).args[0].getId()).to.be.equal('package1@1.0.0/util1');
-          //     expect(stub.getCall(1).args[0].getId()).to.be.equal('package2@1.0.0/util2');
-          //     expect(stub.getCall(2).args[0].getId()).to.be.equal('package3@1.0.0/util3');
-          //     expect(stub.getCall(3).args[0].getId()).to.be.equal('package4@1.0.0/util4');
-          //     expect(stub.getCall(4).args[0].getId()).to.be.equal('package3@1.0.0/util3');
-          //     expect(stub.getCall(5).args[0].getId()).to.be.equal('package5@1.0.0/util5');
-          //     expect(stub.getCall(6).args[0].getId()).to.be.equal('package5@1.0.0/util5');
-          //     expect(stub.getCall(7).args[0].getId()).to.be.equal('package5@1.0.0/util5');
-          //     expect(stub.getCall(8).args[0].getId()).to.be.equal('package6@1.0.0/util6');
-          //     expect(stub.getCall(9).args[0].getId()).to.be.equal('package6@1.0.0/util6');
-          //     expect(stub.getCall(10).args[0].getId()).to.be.equal('package6@1.0.0/util6');
-          //     stub.restore();
-          //   });
-          // });
-          // it('should enrich each Node in DependencyTree with corresponding dependencyExcludes', function () {
-          //   return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function (tree) {
-          //
-          //   });
-          // });
           describe('Error Handling', function () {
             it('should throw an TypeError if \'dependencies\' parameter is not an Array', function () {
               try {
@@ -180,12 +170,12 @@
             window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
             // add an dependencyExclude to rootDependencies
             window.cubx.CRCInit.rootDependencies[0].dependencyExcludes = [
-              { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }
+              {webpackageId: 'packageToExclude', artifactId: 'artifactToExclude'}
             ];
             depMgr = CRC.getDependencyMgr();
             depMgr.init();
             node = new DependencyTree.Node();
-            node.data = new DepMgr.DepReference({ artifactId: 'util1', webpackageId: 'package1@1.0.0', referrer: null });
+            node.data = new DepMgr.DepReference({artifactId: 'util1', webpackageId: 'package1@1.0.0', referrer: null});
           });
           it('should return given DependencyTree.Node', function () {
             var result = depMgr._checkAndAddExcludesForRootDependencies(node);
@@ -193,7 +183,10 @@
           });
           it('should add dependencyExcludes from corresponding rootDependency to given node', function () {
             depMgr._checkAndAddExcludesForRootDependencies(node);
-            node.data.dependencyExcludes.should.eql([{ webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }]);
+            node.data.dependencyExcludes.should.eql([{
+              webpackageId: 'packageToExclude',
+              artifactId: 'artifactToExclude'
+            }]);
           });
           describe('Error handling', function () {
             it('should throw an TypeError if given parameter is not of type DependencyTree.Node', function () {
@@ -236,8 +229,12 @@
                 ]
               }
             };
-            depRefItem = new DepMgr.DepReference({webpackageId: 'com.test.testPackage@1.0.0', artifactId: 'testArtifact', referrer: null});
-            depRefItem.dependencyExcludes = [ { webpackageId: 'exludedPackage', artifactId: 'excludedArtifact' } ];
+            depRefItem = new DepMgr.DepReference({
+              webpackageId: 'com.test.testPackage@1.0.0',
+              artifactId: 'testArtifact',
+              referrer: null
+            });
+            depRefItem.dependencyExcludes = [{webpackageId: 'exludedPackage', artifactId: 'excludedArtifact'}];
           });
           it('should return the given DepReference instance', function () {
             expect(depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest)).to.eql(depRefItem);
@@ -246,9 +243,9 @@
             depMgr._checkAndAddExcludesToDepReference(depRefItem, manifest);
             depRefItem.should.have.ownProperty('dependencyExcludes');
             depRefItem.dependencyExcludes.should.be.eql([
-              { webpackageId: 'exludedPackage', artifactId: 'excludedArtifact' },
-              { webpackageId: 'exclude@1', artifactId: 'util1' },
-              { webpackageId: 'exclude@2', artifactId: 'util2', endpointId: 'main' }
+              {webpackageId: 'exludedPackage', artifactId: 'excludedArtifact'},
+              {webpackageId: 'exclude@1', artifactId: 'util1'},
+              {webpackageId: 'exclude@2', artifactId: 'util2', endpointId: 'main'}
             ]);
           });
           describe('Error handling', function () {
@@ -288,7 +285,7 @@
             window.cubx.CRCInit.rootDependencies = JSON.parse(rootDeps);
             // add an dependencyExclude to rootDependencies
             window.cubx.CRCInit.rootDependencies[0].dependencyExcludes = [
-              { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' }
+              {webpackageId: 'packageToExclude', artifactId: 'artifactToExclude'}
             ];
             depMgr = CRC.getDependencyMgr();
             depMgr.init();
@@ -308,15 +305,15 @@
                   manifest = JSON.parse(pkg1);
                   // add some excludes
                   manifest.artifacts.utilities[0].dependencyExcludes = [
-                    { webpackageId: 'anotherPackageExclude', artifactId: 'anotherArtifactExclude' }
+                    {webpackageId: 'anotherPackageExclude', artifactId: 'anotherArtifactExclude'}
                   ];
                   break;
                 case 'package3@1.0.0':
                   manifest = JSON.parse(pkg3);
                   // add some excludes
                   manifest.artifacts.utilities[0].dependencyExcludes = [
-                    { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' },
-                    { webpackageId: 'packageToExclude_2', artifactId: 'artifactToExclude_2' }
+                    {webpackageId: 'packageToExclude', artifactId: 'artifactToExclude'},
+                    {webpackageId: 'packageToExclude_2', artifactId: 'artifactToExclude_2'}
                   ];
                   break;
                 case 'package4@1.0.0':
@@ -355,21 +352,21 @@
             childA.data = new DepMgr.DepReference({
               webpackageId: 'package3@1.0.0',
               artifactId: 'util3',
-              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
+              referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}
             });
             depTree.insertNode(childA, root);
             var childB = new DependencyTree.Node();
             childB.data = new DepMgr.DepReference({
               webpackageId: 'package4@1.0.0',
               artifactId: 'util4',
-              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
+              referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}
             });
             depTree.insertNode(childB, root);
             var childA1 = new DependencyTree.Node();
             childA1.data = new DepMgr.DepReference({
               webpackageId: 'package5@1.0.0',
               artifactId: 'util5',
-              referrer: { webpackageId: 'package4@1.0.0', artifactId: 'util4' }
+              referrer: {webpackageId: 'package4@1.0.0', artifactId: 'util4'}
             });
             depTree.insertNode(childA1, childA);
           });
@@ -395,13 +392,13 @@
               expect(spy.getCall(3).args[0].getId()).to.equal('package5@1.0.0/util5');
               depTree._rootNodes[0].data.should.have.ownProperty('dependencyExcludes');
               depTree._rootNodes[0].data.dependencyExcludes.should.eql([
-                { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' },
-                { webpackageId: 'anotherPackageExclude', artifactId: 'anotherArtifactExclude' }
+                {webpackageId: 'packageToExclude', artifactId: 'artifactToExclude'},
+                {webpackageId: 'anotherPackageExclude', artifactId: 'anotherArtifactExclude'}
               ]);
               depTree._rootNodes[0].children[0].data.should.have.ownProperty('dependencyExcludes');
               depTree._rootNodes[0].children[0].data.dependencyExcludes.should.eql([
-                { webpackageId: 'packageToExclude', artifactId: 'artifactToExclude' },
-                { webpackageId: 'packageToExclude_2', artifactId: 'artifactToExclude_2' }
+                {webpackageId: 'packageToExclude', artifactId: 'artifactToExclude'},
+                {webpackageId: 'packageToExclude_2', artifactId: 'artifactToExclude_2'}
               ]);
               // console.log(depTree);
             });
@@ -492,7 +489,7 @@
               result.should.be.an.instanceOf(Object);
               result.should.have.property('resources');
               result.should.have.property('dependencies');
-              result.resources.should.eql([ 'js/pack1.js', 'css/pack1.css' ]);
+              result.resources.should.eql(['js/pack1.js', 'css/pack1.css']);
               result.dependencies.should.have.lengthOf(2);
               result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
               result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
@@ -570,48 +567,79 @@
           var depTree;
           beforeEach(function () {
             /**
-             * Build the following tree:
+             * Build the following tree (including one verison conflict:
              *
-             *               package1@1.0.0/util1
-             *                    /       \
-             *                   /         \
-             *    package3@1.0.0/util3    package5@2.0.0/util5
+             *               package1@1.0.0/util1                                    package2@1.0/util2
+             *                    /       \                                             /        \
+             *                   /         \                                           /          \
+             *    package3@1.0.0/util3    package5@2.0.0/util5         package6@1.0/my-comp       package7@1.0/my-comp
              *            |
              *            |
              *    package5@1.0.0/util5
              */
             depTree = new DependencyTree();
-            var root = new DependencyTree.Node();
-            root.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
-            depTree.insertNode(root);
+            var rootA = new DependencyTree.Node();
+            rootA.data = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
+            depTree.insertNode(rootA);
+
             var childA = new DependencyTree.Node();
             childA.data = new DepMgr.DepReference({
               webpackageId: 'package3@1.0.0',
               artifactId: 'util3',
-              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
+              referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}
             });
-            depTree.insertNode(childA, root);
+            depTree.insertNode(childA, rootA);
+
             var childB = new DependencyTree.Node();
             childB.data = new DepMgr.DepReference({
               webpackageId: 'package5@2.0.0',
               artifactId: 'util5',
-              referrer: { webpackageId: 'package1@1.0.0', artifactId: 'util1' }
+              referrer: {webpackageId: 'package1@1.0.0', artifactId: 'util1'}
             });
-            depTree.insertNode(childB, root);
+            depTree.insertNode(childB, rootA);
+
             var childA1 = new DependencyTree.Node();
             childA1.data = new DepMgr.DepReference({
               webpackageId: 'package5@1.0.0',
               artifactId: 'util5',
-              referrer: { webpackageId: 'package4@1.0.0', artifactId: 'util4' }
+              referrer: {webpackageId: 'package4@1.0.0', artifactId: 'util4'}
             });
             depTree.insertNode(childA1, childA);
+
+            var rootB = new DependencyTree.Node();
+            rootB.data = new DepMgr.DepReference({
+              webpackageId: 'package2@1.0',
+              artifactId: 'util2',
+              referrer: null
+            });
+            depTree.insertNode(rootB);
+
+            var childC = new DependencyTree.Node();
+            childC.data = new DepMgr.DepReference({
+              webpackageId: 'package6@1.0',
+              artifactId: 'my-comp',
+              referrer: {webpackageId: 'package2@1.0', artifactId: 'util2'}
+            });
+            depTree.insertNode(childC, rootB);
+
+            var childD = new DependencyTree.Node();
+            childD.data = new DepMgr.DepReference({
+              webpackageId: 'package7@1.0',
+              artifactId: 'my-comp',
+              referrer: {webpackageId: 'package2@1.0', artifactId: 'util2'}
+            });
+            depTree.insertNode(childD, rootB);
+
+            depTree.removeDuplicates();
           });
-          it('should create an warning log for each conflicted artifact', function () {
+          it('should create a log for each conflicted artifact', function () {
             depMgr = CRC.getDependencyMgr();
-            var spy = sinon.spy(console, 'warn');
+            var logSpy = sinon.spy(console, 'log');
+            var warnSpy = sinon.spy(console, 'warn');
             depMgr._logDependencyConflicts(depTree);
-            expect(spy.calledOnce);
-            spy.reset();
+            expect(logSpy.callCount + warnSpy.callCount).to.equal(2);
+            logSpy.reset();
+            warnSpy.reset();
           });
         });
       });
