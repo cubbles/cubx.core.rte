@@ -21,7 +21,7 @@ This guide makes use of the npm-package <https://www.npmjs.com/package/git-subtr
 
         # change into your projects root-directory
         $ cd ..
-        $ git-subtree init
+        $ gitsbt init
 
 3. Install the dependencies and you are ready to rock:
 
@@ -40,7 +40,7 @@ This guide makes use of the npm-package <https://www.npmjs.com/package/git-subtr
         $ cd ..
 
         # fetch and merge the latest changes
-        $ git-subtree pull devtools
+        $ gitsbt pull devtools
 
 
 Notes:
