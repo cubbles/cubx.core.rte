@@ -144,7 +144,8 @@ window.cubx.amd.define(
         if (manifest.groupId && manifest.groupId.length > 0) {
           webpackageId = manifest.groupId + '.' + webpackageId;
         }
-        this._responseCache.addItem(webpackageId, manifest);
+
+        this._responseCache.addItem(webpackageId, manifestConverter.convert(manifest));
       }.bind(this));
     };
 
@@ -207,7 +208,7 @@ window.cubx.amd.define(
     DependencyMgr._isValidResourceType = function (type) {
       for (var property in DependencyMgr._types) {
         if (DependencyMgr._types.hasOwnProperty(property)) {
-          if (DependencyMgr._types[ property ].name === type) {
+          if (DependencyMgr._types[property].name === type) {
             return true;
           }
         }
@@ -228,7 +229,7 @@ window.cubx.amd.define(
       // axios sets 'error' property on data object if there is an error.
       if (data.hasOwnProperty('error')) {
         throw new Error('Error when requesting manifest');
-      };
+      }
       var manifest = manifestConverter.convert(data);
       return manifest;
     };
@@ -284,13 +285,13 @@ window.cubx.amd.define(
     DependencyMgr.prototype._calculateResourceList = function (depList) {
       var resourceList = [];
       for (var i = 0; i < depList.length; i++) {
-        var currentDepRef = depList[ i ];
+        var currentDepRef = depList[i];
         for (var j = 0; j < currentDepRef.resources.length; j++) {
           // remove endpoint appendix from artifactId if there was one added by the manifestConverter
           var qualifiedArtifactId = currentDepRef.artifactId.indexOf('#') > -1
             ? currentDepRef.webpackageId + '/' + currentDepRef.artifactId.split('#')[0]
             : currentDepRef.webpackageId + '/' + currentDepRef.artifactId;
-          var resource = this._createResourceFromItem(qualifiedArtifactId, currentDepRef.resources[ j ],
+          var resource = this._createResourceFromItem(qualifiedArtifactId, currentDepRef.resources[j],
             this._runtimeMode, currentDepRef.referrer);
           if (resource) {
             resourceList.push(resource);
@@ -308,7 +309,7 @@ window.cubx.amd.define(
     DependencyMgr.prototype._injectDependenciesToDom = function (resourceList) {
       // var element = document.getElementsByTagName('head')[0].firstElementChild;
       for (var i = 0; i < resourceList.length; i++) {
-        var current = resourceList[ i ];
+        var current = resourceList[i];
         var currentReferrer = [];
         current.referrer.some(function (referrer, index) {
           currentReferrer[index] = typeof referrer === 'string'
@@ -348,13 +349,41 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._logDependencyConflicts = function (depTree) {
-      var conflicts = depTree.getListOfConflictedNodes();
+      var conflicts = depTree.getConflictedNodes();
       conflicts.some(function (conflict) {
-        var webpackageIds = [];
-        conflict.nodes.some(function (conflictedNode) {
-          webpackageIds.push(conflictedNode.data.webpackageId);
-        });
-        console.warn('Artifact', conflict.artifactId, 'is defined in multiple webpackages: [', webpackageIds.join(', '), ']');
+        switch (conflict.type) {
+          case DependencyTree.conflictTypes.VERSION:
+            if (conflict.resolved) {
+              console.log(
+                'Artifact',
+                conflict.node.data.artifactId,
+                'is defined in multiple versions of the same webpackage: [',
+                conflict.node.data.webpackageId, ',',
+                conflict.conflictedNode.data.webpackageId, '].',
+                'Using webpackage ',
+                conflict.node.data.webpackageId
+              );
+            } else {
+              console.warn(
+                'Artifact',
+                conflict.node.data.artifactId,
+                'is defined in multiple versions of the same webpackage: [',
+                conflict.node.data.webpackageId, ',',
+                conflict.conflictedNode.data.webpackageId, '].'
+              );
+            }
+            break;
+          case DependencyTree.conflictTypes.NAME:
+            console.warn(
+              'Artifact',
+              conflict.node.data.artifactId,
+              'is defined in multiple webpackages: [',
+              conflict.node.data.webpackageId, ',',
+              conflict.conflictedNode.data.webpackageId, '].',
+              'This could cause unexpeted behaviour!'
+            );
+            break;
+        }
       });
     };
 
@@ -431,11 +460,11 @@ window.cubx.amd.define(
     };
 
     /**
-     * Iterate over a given DependencyTree and check each node if there are dependecyExcludes defined in corresponding
+     * Iterate over a given DependencyTree and check each node if there are dependencyExcludes defined in corresponding
      * manifest. If so these dependencyExcludes will be added.
      * @memberOf DependencyMgr
      * @param {object} depTree A DependencyTree instance
-     * @param {string baseUrl A url used to request manifest files from
+     * @param {string} baseUrl A url used to request manifest files from
      * @return {object} promise A Promise
      * @private
      */
@@ -458,24 +487,28 @@ window.cubx.amd.define(
           // if given node is a rootNode check global rootDependencies for existing excludes.
           if (node.parent == null) {
             this._checkAndAddExcludesForRootDependencies(node);
-          };
+          }
           promises.push(this._getManifestForDepReference(node.data, baseUrl));
         }.bind(this));
 
-        if (promises.length === 0) { resolve(depTree); }
+        if (promises.length === 0) {
+          resolve(depTree);
+        }
 
-        Promise.all(promises).then(function (results) {
-          results.forEach(function (manifest, index) {
-            try {
-              this._checkAndAddExcludesToDepReference(nodes[index].data, manifest);
-            } catch (e) {
-              reject(e);
-            }
-            resolve(depTree); // TODO: Why is the resolve() call inside the forEach loop and NOT after that loop??
-          }.bind(this));
-        }.bind(this), function (error) {
-          reject(error);
-        });
+        Promise.all(promises)
+          .then(function (results) {
+            results.forEach(function (manifest, index) {
+              try {
+                this._checkAndAddExcludesToDepReference(nodes[index].data, manifest);
+              } catch (e) {
+                reject(e);
+              }
+            }.bind(this));
+            resolve(depTree);
+          }.bind(this))
+          .catch(function (error) {
+            reject(error);
+          });
       }.bind(this));
     };
 
@@ -653,8 +686,7 @@ window.cubx.amd.define(
             // dependencyExcludes if available
             if (dependency.hasOwnProperty('dependencyExcludes')) {
               depRef.dependencyExcludes = dependency.dependencyExcludes;
-            };
-
+            }
             depList.push(depRef);
           }
         });

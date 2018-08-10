@@ -12,12 +12,61 @@
      */
     var DependencyTree = function () {
       /**
+       * Holding all conflicts of type DependencyTree.conflictTypes.NAME
+       * @type {Array}
+       * @private
+       */
+      this._nameConflicts = [];
+
+      /**
+       * Holding all conflicts of type DependencyTree.conflictTypes.VERSION
+       * @type {Array}
+       * @private
+       */
+      this._versionConflicts = [];
+
+      /**
+       * Holding all conflicts
+       * @type {Array}
+       * @private
+       */
+      this._conflicts = [];
+
+      /**
        * The nodes Array holds all rootNodes of the dependencyTree. The order of root nodes is important when it comes
        * to dependency conflict resolution.
        * Note: In fact their could be multiple rootNodes. So indeed the dependencyTree is not a "real" tree
        * @type {Array}
        */
       this._rootNodes = [];
+
+      /**
+       * If true the removeDuplicate() method will take care to handle artifact version conflicts and resolves them.
+       * @type {boolean}
+       * @private
+       */
+      this._enableACR = true;
+    };
+
+    /**
+     * Enum for possible conflictTypes
+     * @type {{NAME: string, VERSION: string, MIXED: string}}
+     */
+    DependencyTree.conflictTypes = {
+      NAME: 'NAME_CONFLICT',
+      VERSION: 'VERSION_CONFLICT',
+      MIXED: 'MIXED_CONFLICT'
+    };
+
+    /**
+     * Enum for characterizing different relationships between nodes
+     * @type {{ARTIFACT_VERSION_CONFLICT: number, ARTIFACT_NAME_CONFLICT: number, ARTIFACT_CUPLICATE: number}}
+     */
+    DependencyTree.NodeRelationship = {
+      'DISTINCT_ARTIFACT': 0,
+      'ARTIFACT_VERSION_CONFLICT': 1,
+      'ARTIFACT_NAME_CONFLICT': 2,
+      'ARTIFACT_DUPLICATE': 3
     };
 
     /**
@@ -103,6 +152,100 @@
     };
 
     /**
+     * Remove node which is in conflict with another node from DependencyTree.
+     * @memberOf DependencyTree
+     * @param {object} node Node which causes the conflict
+     * @param {object} node Node which is on conflict with give node and thus needs to be removed
+     */
+    DependencyTree.prototype._removeConflictedNode = function (node, conflictedNode) {
+      // if conflictedNode is not a root node we need to set usesExisting and usedBy of node which will replace the conflictedNode
+      if (conflictedNode.parent != null) {
+        conflictedNode.parent.usesExisting.push(node);
+        node.usedBy.push(conflictedNode.parent);
+      }
+      node.data.referrer = node.data.referrer.concat(conflictedNode.data.referrer);
+      this.removeNode(conflictedNode);
+    };
+
+    /**
+     * Group given list of nodes by their webpackage name.
+     * @memberOf DependencyTree
+     * @param {array} nodes
+     * @return {object} nodes grouped by webpackage name as key
+     * @private
+     */
+    DependencyTree.prototype._groupNodesByWebpackageName = function (nodes) {
+      var webpackageMapByName = {};
+      nodes.forEach(function (node) {
+        var webpackageName = node.data.webpackageId.split('@')[0];
+        if (webpackageMapByName.hasOwnProperty(webpackageName)) {
+          webpackageMapByName[webpackageName].push(node);
+        } else {
+          webpackageMapByName[webpackageName] = [node];
+        }
+      });
+      return webpackageMapByName;
+    };
+
+    /**
+     * Determine the relationship between two given nodes. For possible return values see DependencyTree.NodeRelationship enum.
+     * @param {object} nodeA
+     * @param {object} nodeB
+     * @memberOf DependencyTree
+     * @return {number} Relationship Type
+     * @private
+     */
+    DependencyTree.prototype._determineNodeRelationship = function (nodeA, nodeB) {
+      var type = DependencyTree.NodeRelationship.DISTINCT_ARTIFACT;
+      if (nodeA.equalsArtifact(nodeB)) {
+        type = DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE;
+      } else if (nodeA.equalsArtifactIgnoreVersion(nodeB)) {
+        type = DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT;
+      } else if (nodeA.data.artifactId === nodeB.data.artifactId) {
+        type = DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT;
+      }
+      return type;
+    };
+
+    /**
+     * Get related node(s) to given node out out of given nodes array depending on the given type of relationship.
+     * @memberOf DependencyTree
+     * @param {object} node The given node to compare to
+     * @param {array} nodes A nodes array to compare against
+     * @param {number} relationship One of DependencyTree.NodeRelationship
+     * @returns {array}
+     * @private
+     */
+    DependencyTree.prototype._getRelatedNodes = function (node, nodes, relationship) {
+      var relatedNodes;
+
+      relatedNodes = nodes.filter(function (currentNode) {
+        return (this._determineNodeRelationship(currentNode, node) === relationship);
+      }.bind(this));
+
+      return relatedNodes;
+    };
+
+    /**
+     * Helper method to create an item representing a conflict between two nodes
+     * @memberOf DependencyTree
+     * @private
+     * @param {DependencyTree.Node} node
+     * @param {DependencyTree.Node} conflictedNode
+     * @param {string} type One of DependencyTree.conflictTypes
+     * @param {boolean} resolved
+     * @returns {object}
+     */
+    DependencyTree.prototype._createConflictItem = function (node, conflictedNode, type, resolved) {
+      return {
+        node: node,
+        conflictedNode: conflictedNode,
+        type: type,
+        resolved: resolved
+      };
+    };
+
+    /**
      * Apply all excludes in DependencyTree. Note: this needs to be done before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} DependencyTree itself
@@ -144,7 +287,7 @@
       // if we can reach any of the current rootNodes by using the parent reference given node is a member of DependencyTree
       while (node.parent != null) {
         node = node.parent;
-      };
+      }
 
       return this._rootNodes.some(function (rootNode) {
         return rootNode.equals(node);
@@ -152,69 +295,29 @@
     };
 
     /**
-     * Get a list of all conflicted nodes. Each item is an object containing the artifactId for the certain conflict and
-     * a list of nodes representing all artifacts that share the same artifactId but a different webpackageId.
+     * Disable automatic conflict resolution.
      * @memberOf DependencyTree
-     * @param {object} [node] If node is given it will only be searched for conflicts inside the subtree of given node
-     * @returns {object} conflicts Array of found conflicts
      */
-    DependencyTree.prototype.getListOfConflictedNodes = function (node) {
-      if (node && !(node instanceof DependencyTree.Node)) {
-        console.error('Parameter \'node\' needs to be an instance of DependencyTree.Node');
-        return;
-      }
-      if (node && !this.contains(node)) {
-        console.error('Given node is not member of DependencyTree');
-        return [];
-      }
+    DependencyTree.prototype.disableACR = function () {
+      this._enableACR = false;
+    };
 
-      var artifacts = {};
-      var conflicts = [];
+    /**
+     * Enable automatic conflict resolution. Note: This only applies to artifact version conflicts!
+     * @memberOf DependencyTree
+     */
+    DependencyTree.prototype.enableACR = function () {
+      this._enableACR = true;
+    };
 
-      // search only in subtree of given node for conflicts
-      if (node) {
-        this.traverseSubtreeBF(node, function (currentNode) {
-          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
-            artifacts[currentNode.data.artifactId].push(currentNode);
-          } else {
-            artifacts[currentNode.data.artifactId] = [currentNode];
-          }
-        });
-      } else { // search whole tree for conflicts
-        this.traverseBF(function (currentNode) {
-          if (artifacts.hasOwnProperty(currentNode.data.artifactId)) {
-            artifacts[currentNode.data.artifactId].push(currentNode);
-          } else {
-            artifacts[currentNode.data.artifactId] = [currentNode];
-          }
-        });
-      }
-
-      // identify all conflicts
-      Object.keys(artifacts).forEach(function (artifactId) {
-        var nodes = artifacts[artifactId];
-        var webpackageId = nodes[0].data.webpackageId;
-        var conflictedNodes = [];
-        if (nodes.length > 1) {
-          conflictedNodes.push(nodes[0]);
-
-          nodes.forEach(function (currentNode) {
-            if (webpackageId !== currentNode.data.webpackageId) {
-              conflictedNodes.push(currentNode);
-            }
-          });
-
-          if (conflictedNodes.length > 1) {
-            var conflict = {
-              artifactId: artifactId,
-              nodes: conflictedNodes
-            };
-            conflicts.push(conflict);
-          }
-        }
-      });
-
-      return conflicts;
+    /**
+     * Get a list of all conflicted nodes including type of conflict. Note: this method only works
+     * when ACR is enabled and removeDuplicates() method was already called.
+     * @memberOf DependencyTree
+     * @returns {array}
+     */
+    DependencyTree.prototype.getConflictedNodes = function () {
+      return this._conflicts;
     };
 
     /**
@@ -288,22 +391,45 @@
 
     /**
      * Remove all duplicate Dependencies from DependencyTree. Nodes are considered equal if the assigned webpackageId
-     * and artifactId is equal.
+     * and artifactId is equal. If automatic conflict resolution is enabled (per default it is) also artifact version
+     * conflicts will be resolved.
      * Note: applyExcludes() needs to be called before removeDuplicates() is called!
      * @memberOf DependencyTree
      * @returns {object} The DependencyTree without duplicates
      */
     DependencyTree.prototype.removeDuplicates = function () {
-      var nodesBF = {}; // holds a map of all nodes using "[webpackageId]/[artifactId]" as key
+      var nodesBF = []; // holds an array of all processed/visited nodes
 
       this.traverseBF(function (node) {
         // If current node is already removed from depTree skip iteration --> if this.contains(node) is false we don't do anything
         if (this.contains(node)) {
-          if (nodesBF.hasOwnProperty(node.data.getId())) {
-            this._removeDuplicate(nodesBF[node.data.getId()], node);
-          } else {
-            // TODO: if current node is NOT marked as excluded AND is still member of current depTree (this.contains(node) == true) push it to nodesBF map
-            nodesBF[node.data.getId()] = node;
+          var relatedNodes = {
+            duplicates: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.ARTIFACT_DUPLICATE),
+            versionConflicts: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.ARTIFACT_VERSION_CONFLICT),
+            nameConflicts: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.ARTIFACT_NAME_CONFLICT),
+            distinct: this._getRelatedNodes(node, nodesBF, DependencyTree.NodeRelationship.DISTINCT_ARTIFACT)
+          };
+
+          if (relatedNodes.duplicates.length === 1) {
+            this._removeDuplicate(relatedNodes.duplicates[0], node);
+          } else if (relatedNodes.versionConflicts.length === 1) {
+            var conflict = this._createConflictItem(relatedNodes.versionConflicts[0], node, DependencyTree.conflictTypes.VERSION, false);
+            if (this._enableACR) {
+              // remove conflicted node if ACR is enabled
+              this._removeConflictedNode(relatedNodes.versionConflicts[0], node);
+              conflict.resolved = true;
+            }
+            // push conflict to internal conflicts array for logging purposes
+            this._conflicts.push(conflict);
+          } else if (relatedNodes.distinct.length + relatedNodes.nameConflicts.length === nodesBF.length) {
+            nodesBF.push(node);
+          }
+
+          // check for naming conflicts. If there are any just keep them on internal conflicts array for logging purposes
+          if (relatedNodes.nameConflicts.length > 0) {
+            relatedNodes.nameConflicts.some(function (conflictNode) {
+              this._conflicts.push(this._createConflictItem(conflictNode, node, DependencyTree.conflictTypes.NAME, false));
+            }.bind(this));
           }
         }
       }.bind(this));
@@ -384,7 +510,7 @@
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
-      };
+      }
       this._rootNodes.some(function (node) {
         (function processNode (node) {
           if (callback(node) === false) {
@@ -407,7 +533,7 @@
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
-      };
+      }
       var queue = this._rootNodes.length > 0 ? this._rootNodes.slice() : [];
       while (queue.length > 0) {
         var node = queue.shift();
@@ -418,7 +544,7 @@
         }
         if (callback(node) === false) {
           return;
-        };
+        }
       }
     };
 
@@ -432,11 +558,11 @@
       if (!(rootNode instanceof DependencyTree.Node)) {
         console.error('Parameter \'rootNode\' needs to be an instance of DependencyTree.Node');
         return;
-      };
+      }
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
-      };
+      }
       var queue = [rootNode];
       while (queue.length > 0) {
         var node = queue.shift();
@@ -447,7 +573,7 @@
         }
         if (callback(node) === false) {
           return;
-        };
+        }
       }
     };
 
@@ -576,6 +702,17 @@
      */
     DependencyTree.Node.prototype.equalsArtifact = function (node) {
       return node.data.getId() === this.data.getId();
+    };
+
+    /**
+     * Check if the given node references the same artifact but ignore the version number. This can be used to determine
+     * nodes with artifact version conflicts.
+     * @memberOf DependencyTree.Node
+     * @param {object} node DependencyTree.Node to compare to
+     * @return {boolean} true if artifactId and webpackageName and (optional) groupId are equal. False otherwise
+     */
+    DependencyTree.Node.prototype.equalsArtifactIgnoreVersion = function (node) {
+      return (node.data.webpackageId.split('@')[0] + '/' + node.data.artifactId) === (this.data.webpackageId.split('@')[0] + '/' + this.data.artifactId);
     };
 
     /**
