@@ -2,6 +2,6 @@
   "devtools": {
     "localFolder": "devtools-mappedIn",
     "repository": "https://github.com/cubbles/cubbles-coder-devtools.git",
-    "branch": "develop"
+    "branch": "master"
   }
 }
