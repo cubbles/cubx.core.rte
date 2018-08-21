@@ -21,8 +21,7 @@ module.exports = function (config) {
       'karma-firefox-launcher',
       'karma-coverage',
       'karma-htmlfile-reporter',
-      'karma-mocha-reporter',
-      'karma-junit-reporter'
+      'karma-mocha-reporter'
     ],
     // list of files / patterns to load in the browser
     files: [
@@ -47,18 +46,13 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
+    reporters: [ 'progress', 'html', 'mocha', 'coverage' ],
 
     // web server port
     port: 9876,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
-    junitReporter: {
-      outputDir: 'crc/test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
-    },
 
     htmlReporter: {
       outputFile: 'crc/test-results/html/TEST-karma.html'
@@ -90,7 +84,6 @@ module.exports = function (config) {
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
-
     customLaunchers: {
       Chrome_travis_ci: {
         base: 'Chrome',

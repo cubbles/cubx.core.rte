@@ -42,7 +42,7 @@ describe('CubxPolymer (init)', function () {
         it('should be exists', function (done) {
           setTimeout(function () {
             var component = document.querySelector(elementName);
-            component.should.be.exists;
+            component.should.be.exist;
             expect(component.cubxPolymerName).to.be.equals(elementName);
             component.getAttribute('runtime-id').should.be.not.undefined;
             component.getAttribute('runtime-id').should.be.not.null;
@@ -63,7 +63,7 @@ describe('CubxPolymer (init)', function () {
           window.componentCacheEntry = undefined;
         });
         it('should be exists', function () {
-          component.should.be.exists;
+          component.should.be.exist;
           expect(component.cubxPolymerName).to.be.equals(elementName);
         });
       });

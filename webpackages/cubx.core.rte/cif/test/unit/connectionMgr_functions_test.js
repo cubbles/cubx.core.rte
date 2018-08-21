@@ -428,12 +428,12 @@ describe('ConnectionManager', function () {
     });
     it('the connection should find the existing connection', function () {
       var connection = connectionMgr._findConnectionByConnectionId('con4');
-      expect(connection).to.be.exists;
+      expect(connection).to.be.exist;
       connection.should.be.property('connectionId', 'con4');
     });
     it('the connection should not find the not existing connection element', function () {
       var connection = connectionMgr._findConnectionByConnectionId('con5');
-      expect(connection).to.be.not.exists;
+      expect(connection).to.be.not.exist;
     });
   });
 });

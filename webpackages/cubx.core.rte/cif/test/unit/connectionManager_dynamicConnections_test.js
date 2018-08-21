@@ -405,7 +405,7 @@ describe('ConnectionManager', function () {
           });
           it('should override the existing connection', function () {
             connectionMgr._connections.should.have.length(5);
-            connectionMgr._connections[ 4 ].should.deep.property('source.memberId',
+            connectionMgr._connections[ 4 ].should.nested.property('source.memberId',
               conConfig.source.memberId);
             conConfig.source.memberId = 'otherMember';
             connectionMgr.addDynamicConnection(conConfig);
@@ -413,8 +413,8 @@ describe('ConnectionManager', function () {
             connectionMgr._connections.should.have.length(5);
             connectionMgr._connections[ 4 ].should.have.property('connectionId', conConfig.connectionId);
             connectionMgr._connections[ 4 ].should.instanceOf(window.cubx.cif.ConnectionManager.Connection);
-            connectionMgr._connections[ 4 ].should.deep.property('source.memberId');
-            connectionMgr._connections[ 4 ].should.deep.property('source.memberId',
+            connectionMgr._connections[ 4 ].should.nested.property('source.memberId');
+            connectionMgr._connections[ 4 ].should.nested.property('source.memberId',
               conConfig.source.memberId);
           });
         });
@@ -713,15 +713,15 @@ describe('ConnectionManager', function () {
           it('should override the existing connection', function () {
             var conlist = connectionMgr._connections;
             conlist.should.have.length(5);
-            conlist[ 4 ].should.deep.property('source.memberId', conConfig.source.memberId);
+            conlist[ 4 ].should.nested.property('source.memberId', conConfig.source.memberId);
             conConfig.source.memberId = 'otherMember';
             connectionMgr.addDynamicConnection(conConfig);
             expect(spy.called).to.be.false;
             conlist.should.have.length(5);
             conlist[ 4 ].should.have.property('connectionId', conConfig.connectionId);
             conlist[ 4 ].should.instanceOf(window.cubx.cif.ConnectionManager.Connection);
-            conlist[ 4 ].should.deep.property('source.memberId');
-            conlist[ 4 ].should.deep.property('source.memberId', conConfig.source.memberId);
+            conlist[ 4 ].should.nested.property('source.memberId');
+            conlist[ 4 ].should.nested.property('source.memberId', conConfig.source.memberId);
           });
         });
         describe('add a connection, the connection source/destination exists as a dynamic connection',
@@ -773,15 +773,15 @@ describe('ConnectionManager', function () {
             it('should override the existing connection', function () {
               var conlist = connectionMgr._connections;
               conlist.should.have.length(5);
-              conlist[ 4 ].should.deep.property('source.memberId', conConfig.source.memberId);
+              conlist[ 4 ].should.nested.property('source.memberId', conConfig.source.memberId);
               conConfig.source.memberId = 'otherMember';
               connectionMgr.addDynamicConnection(conConfig);
               expect(spy.called).to.be.false;
               conlist.should.have.length(5);
               conlist[ 4 ].should.have.property('connectionId', conConfig.connectionId);
               conlist[ 4 ].should.instanceOf(window.cubx.cif.ConnectionManager.Connection);
-              conlist[ 4 ].should.deep.property('source.memberId');
-              conlist[ 4 ].should.deep.property('source.memberId', conConfig.source.memberId);
+              conlist[ 4 ].should.nested.property('source.memberId');
+              conlist[ 4 ].should.nested.property('source.memberId', conConfig.source.memberId);
             });
           });
       });
@@ -815,6 +815,7 @@ describe('ConnectionManager', function () {
         };
         connectionList.push(con1);
         con2 = {
+          connectionId: 'con2',
           source: {
             component: source,
             memberId: 'member1',
@@ -828,6 +829,7 @@ describe('ConnectionManager', function () {
         };
         connectionList.push(con2);
         con3 = {
+          connectionId: con3,
           source: {
             component: source,
             memberId: 'member1',
@@ -866,24 +868,24 @@ describe('ConnectionManager', function () {
       });
       it('should find con1', function () {
         var foundCon = connectionManager._findSameConnection(connectionList, con1);
-        expect(foundCon).to.be.exists;
+        expect(foundCon).to.be.exist;
         foundCon.should.be.an('object');
         foundCon.should.be.eql;
       });
       it('should find con2', function () {
         var foundCon = connectionManager._findSameConnection(connectionList, con2);
-        expect(foundCon).to.be.exists;
+        expect(foundCon).to.be.exist;
         foundCon.should.be.an('object');
         foundCon.source.should.eql(con2.source);
         foundCon.destination.should.eql(con2.destination);
       });
       it('should not find con3', function () {
         var foundCon = connectionManager._findSameConnection(connectionList, con3);
-        expect(foundCon).to.be.not.exists;
+        expect(foundCon).to.be.not.exist;
       });
       it('should not find con4', function () {
         var foundCon = connectionManager._findSameConnection(connectionList, con4);
-        expect(foundCon).to.be.not.exists;
+        expect(foundCon).to.be.not.exist;
       });
     });
     describe('#removeDynamicConnection', function () {

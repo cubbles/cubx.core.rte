@@ -51,7 +51,8 @@ describe('MutationBasedCubxStartevent', function () {
         mutCubxStartevent._dispatchEmitEvent.restore();
       });
       describe('process body (as target node) mutation', function () {
-        after(function () {
+        afterEach(function () {
+          mutCubxStartevent.observer.disconnect();
           document.body.removeChild(div);
         });
         it('should observe body and process the mutation correctly', function (done) {

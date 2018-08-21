@@ -29,7 +29,7 @@ describe('ConnectionManager', function () {
           payload: '{}',
           slot: 'firsttestoutput'
         };
-        _processConnectionStub = sinon.stub(connectionMgr, '_processConnection', function () {
+        _processConnectionStub = sinon.stub(connectionMgr, '_processConnection').callsFake(function () {
           //  do nothing
         });
       });
@@ -177,7 +177,7 @@ describe('ConnectionManager', function () {
           payload: '{}',
           slot: 'firsttestoutput'
         };
-        _processConnectionStub = sinon.stub(connectionMgr, '_processConnection', function () {
+        _processConnectionStub = sinon.stub(connectionMgr, '_processConnection').callsFake(function () {
           //  do nothing
         });
       });
@@ -345,7 +345,7 @@ describe('ConnectionManager', function () {
             ]
 
           };
-          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
             var manifest;
             switch (key) {
               case artifactId1:
@@ -369,7 +369,7 @@ describe('ConnectionManager', function () {
           comp2.setAttribute('runtime-id', 'test.' + artifactId2 + '@0.1.0');
           comp2.appendChild(comp1);
           comp1.Context.setParent(comp2.Context);
-          stubSetInputSlot = sinon.stub(comp2, 'setInputSlot', function (slot, payoad) {
+          stubSetInputSlot = sinon.stub(comp2, 'setInputSlot').callsFake(function (slot, payoad) {
             //  do nothing
           });
           comp2.fireModelChangeEvent = function (payloadObject) {
@@ -464,7 +464,7 @@ describe('ConnectionManager', function () {
             ]
 
           };
-          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
             var manifest;
             switch (key) {
               case artifactId1:
@@ -488,7 +488,7 @@ describe('ConnectionManager', function () {
           comp2.appendChild(comp1);
           comp1.Context.setParent(comp2.Context);
 
-          stubSetInputSlot = sinon.stub(comp2, 'setInputSlot', function (slot, pyoad) {
+          stubSetInputSlot = sinon.stub(comp2, 'setInputSlot').callsFake(function (slot, pyoad) {
             //  do nothing
           });
           comp2.fireModelChangeEvent = function (payloadObject) {
@@ -942,10 +942,9 @@ describe('ConnectionManager', function () {
               spyConsole.restore();
               handlePayloadSpy.restore();
             });
-            it('copyValue should be set to false, user should be warned', function () {
+            it('user should be warned', function () {
               connectionManager._processConnection(connection, payloadObj);
               return Promise.all([
-                expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, false),
                 expect(spyConsole).to.be.calledOnce
               ]);
             });
@@ -1378,12 +1377,12 @@ describe('ConnectionManager', function () {
           comp2 = new constructor();
 
           comp2.setAttribute('runtime-id', 'source-comp2-element');
-          stubIsInputSlot = sinon.stub(comp2, 'isInputSlot', function (slot) {
+          stubIsInputSlot = sinon.stub(comp2, 'isInputSlot').callsFake(function (slot) {
             return true;
           });
           comp1.appendChild(comp2);
           comp2.Context.setParent(comp1.Context);
-          stubSetInputSlot = sinon.stub(comp2, 'setInputSlot', function (slot, pyoad) {
+          stubSetInputSlot = sinon.stub(comp2, 'setInputSlot').callsFake(function (slot, pyoad) {
             //  do nothing
           });
           comp2.fireModelChangeEvent = function (payloadObject) {
