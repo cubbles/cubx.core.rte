@@ -654,7 +654,6 @@
     // if value is not serialisable copyValue must be set to true and a warn should be logged
     if (typeof connection.copyValue === 'boolean' && connection.copyValue) {
       if (!this._isSerializable(payloadFrame.payload)) {
-        connection.copyValue = false;
         console.warn('\'copyValue\' is set to false since slot value is not serialisable.', payloadFrame.payload, connection);
       }
     }

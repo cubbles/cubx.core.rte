@@ -1,7 +1,7 @@
 {
   "name": "rte",
   "groupId": "cubx.core",
-  "version": "2.5.0-SNAPSHOT",
+  "version": "2.5.2",
   "modelVersion": "9.1.1",
   "docType": "webpackage",
   "description": "",
@@ -93,14 +93,12 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@1.0.1",
-            "artifactId": "lodash",
-            "endpointId": "html-import"
+            "webpackageId": "lodash-3.10.1@1.1.0",
+            "artifactId": "lodash"
           },
           {
-            "webpackageId": "polymer-1.2.3@1.0.2",
-            "artifactId": "polymer",
-            "endpointId": "main"
+            "webpackageId": "polymer-1.11.0@1.0.0",
+            "artifactId": "polymer"
           },
           {
             "artifactId": "cubx-component-mixin"

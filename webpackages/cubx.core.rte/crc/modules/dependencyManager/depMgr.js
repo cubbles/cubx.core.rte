@@ -144,7 +144,8 @@ window.cubx.amd.define(
         if (manifest.groupId && manifest.groupId.length > 0) {
           webpackageId = manifest.groupId + '.' + webpackageId;
         }
-        this._responseCache.addItem(webpackageId, manifest);
+
+        this._responseCache.addItem(webpackageId, manifestConverter.convert(manifest));
       }.bind(this));
     };
 
