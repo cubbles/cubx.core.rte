@@ -225,7 +225,7 @@ describe('ConnectionManager', function () {
 
         function generateHookFunction (connectionIndex) {
           return function (value, next) {
-            var newValue = value + '(' + connectionIndex + ')';
+            var newValue = value + '(index: ' + connectionIndex + ', from: ' + this.source.tagName + ' to: ' + this.destination.tagName + ')';
             next(newValue);
           };
         }
@@ -266,7 +266,7 @@ describe('ConnectionManager', function () {
         container.Context._components = [];
         window.cubx.CRC.getCache().getComponentCacheEntry.restore();
       });
-      describe('Call hoookFunction for connection 1', function () {
+      describe('Call hookFunction for connection 1', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -285,13 +285,13 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction1 modified value', function () {
-          child2.getMessage().should.equal(payloadObj.payload + '(1)');
+          child2.getMessage().should.equal(payloadObj.payload + '(index: 1, from: ' + child1.tagName + ' to: ' + child2.tagName + ')');
         });
         it('setMessage method of destination component should be called once', function () {
           setMessageSpy.should.be.calledOnce;
         });
       });
-      describe('Call hoookFunction for connection 2', function () {
+      describe('Call hookFunction for connection 2', function () {
         var hookFunctionSpy;
         /* eslint-disable no-unused-vars */
         var setMessageSpy;
@@ -312,10 +312,10 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction2 modified value', function () {
-          child3.getMessage().should.equal(payloadObj.payload + '(2)');
+          child3.getMessage().should.equal(payloadObj.payload + '(index: 2, from: ' + child1.tagName + ' to: ' + child3.tagName + ')');
         });
       });
-      describe('Call hoookFunction for connection 3', function () {
+      describe('Call hookFunction for connection 3', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -333,13 +333,13 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction3 modified value', function () {
-          child3.getMessage().should.equal(payloadObj.payload + '(3)');
+          child3.getMessage().should.equal(payloadObj.payload + '(index: 3, from: ' + child2.tagName + ' to: ' + child3.tagName + ')');
         });
         it('setMessage method of destination component should be called once', function () {
           setMessageSpy.should.be.calledOnce;
         });
       });
-      describe('Call hoookFunction for connection 4', function () {
+      describe('Call hookFunction for connection 4', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -358,13 +358,13 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction4 modified value', function () {
-          childChild1.getMessage().should.equal(payloadObj.payload + '(4)');
+          childChild1.getMessage().should.equal(payloadObj.payload + '(index: 4, from: ' + child1.tagName + ' to: ' + childChild1.tagName + ')');
         });
         it('setMessage method of destination component should be called once', function () {
           setMessageSpy.should.be.calledOnce;
         });
       });
-      describe('Call hoookFunction for connection 5', function () {
+      describe('Call hookFunction for connection 5', function () {
         var hookFunctionSpy;
         var _setSlotValueSpy;
         before(function () {
@@ -383,13 +383,13 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction5 modified value', function () {
-          child1.getMessage().should.equal(payloadObj.payload + '(5)');
+          child1.getMessage().should.equal(payloadObj.payload + '(index: 5, from: ' + childChild1.tagName + ' to: ' + child1.tagName + ')');
         });
         it('_setSlotValueSpy method of destination component should be called once', function () {
           _setSlotValueSpy.should.be.calledOnce;
         });
       });
-      describe('Call hoookFunction for connection 6', function () {
+      describe('Call hookFunction for connection 6', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -408,13 +408,13 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction6 modified value', function () {
-          childChild2.getMessage().should.equal(payloadObj.payload + '(6)');
+          childChild2.getMessage().should.equal(payloadObj.payload + '(index: 6, from: ' + child1.tagName + ' to: ' + childChild2.tagName + ')');
         });
         it('setMessage method of destination component should be called once', function () {
           setMessageSpy.should.be.calledOnce;
         });
       });
-      describe('Call hoookFunction for connection 7', function () {
+      describe('Call hookFunction for connection 7', function () {
         var hookFunctionSpy;
         var _setSlotValueSpy;
         before(function () {
@@ -433,14 +433,14 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction7 modified value', function () {
-          child1.getMessage().should.equal(payloadObj.payload + '(7)');
+          child1.getMessage().should.equal(payloadObj.payload + '(index: 7, from: ' + childChild2.tagName + ' to: ' + child1.tagName + ')');
         });
         it('_setSlotValueSpy method of destination component should be called once', function () {
           _setSlotValueSpy.should.be.calledOnce;
         });
       });
 
-      describe('Call hoookFunction for connection 8', function () {
+      describe('Call hookFunction for connection 8', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -459,7 +459,7 @@ describe('ConnectionManager', function () {
           hookFunctionSpy.should.be.calledOnce;
         });
         it('destination component message slot has the hookFunction8 modified value', function () {
-          childChild2.getMessage().should.equal(payloadObj.payload + '(8)');
+          childChild2.getMessage().should.equal(payloadObj.payload + '(index: 8, from: ' + childChild1.tagName + ' to: ' + childChild2.tagName + ')');
         });
         it('setMessage method of destination component should be called once', function () {
           setMessageSpy.should.be.calledOnce;
@@ -722,7 +722,7 @@ describe('ConnectionManager', function () {
         container.Context._components = [];
         window.cubx.CRC.getCache().getComponentCacheEntry.restore();
       });
-      describe('Call hoookFunction for connection 1', function () {
+      describe('Call hookFunction for connection 1', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -747,7 +747,7 @@ describe('ConnectionManager', function () {
           setMessageSpy.should.not.be.called;
         });
       });
-      describe('Call hoookFunction for connection 2', function () {
+      describe('Call hookFunction for connection 2', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -772,7 +772,7 @@ describe('ConnectionManager', function () {
           setMessageSpy.should.not.be.called;
         });
       });
-      describe('Call hoookFunction for connection 3', function () {
+      describe('Call hookFunction for connection 3', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -797,7 +797,7 @@ describe('ConnectionManager', function () {
           setMessageSpy.should.not.be.called;
         });
       });
-      describe('Call hoookFunction for connection 4', function () {
+      describe('Call hookFunction for connection 4', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -822,7 +822,7 @@ describe('ConnectionManager', function () {
           setMessageSpy.should.not.be.called;
         });
       });
-      describe('Call hoookFunction for connection 5', function () {
+      describe('Call hookFunction for connection 5', function () {
         var hookFunctionSpy;
         /* eslint-disable no-unused-vars */
         var _setSlotValueSpy;
@@ -846,7 +846,7 @@ describe('ConnectionManager', function () {
           expect(child1.getMessage()).to.be.undefined;
         });
       });
-      describe('Call hoookFunction for connection 6', function () {
+      describe('Call hookFunction for connection 6', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
@@ -871,7 +871,7 @@ describe('ConnectionManager', function () {
           setMessageSpy.should.not.be.called;
         });
       });
-      describe('Call hoookFunction for connection 7', function () {
+      describe('Call hookFunction for connection 7', function () {
         var hookFunctionSpy;
         /* eslint-disable no-unused-vars */
         var _setSlotValueSpy;
@@ -896,7 +896,7 @@ describe('ConnectionManager', function () {
         });
       });
 
-      describe('Call hoookFunction for connection 8', function () {
+      describe('Call hookFunction for connection 8', function () {
         var hookFunctionSpy;
         var setMessageSpy;
         before(function () {
