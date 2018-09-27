@@ -46,7 +46,6 @@
     "grunt-jsonlint": "^1.1.0",
     "gruntify-eslint": "^4.0.0",
     "http-proxy-middleware": "0.15.1",
-    "grunt-karma": "^0.12.2",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
     "karma-coverage": "^0.5.5",
