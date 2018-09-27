@@ -3,7 +3,7 @@
   'use strict';
 
   window.cubx.amd.define(
-    ['CRC',
+    [ 'CRC',
       'dependencyManager',
       'dependencyTree',
       'manifestConverter',
@@ -17,6 +17,7 @@
       'text!unit/dependencyResolution/dependencyPackage6.json'],
     function (CRC, DepMgr, DependencyTree, manifestConverter, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
       var depMgr;
+
       describe('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
           var stub;
@@ -450,32 +451,16 @@
             stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
               return new Promise(function (resolve, reject) {
                 var response = {};
-                if (url.indexOf('package1@1.0.0') >= 0) {
-                  response.data = JSON.parse(pkg1);
-                }
-                if (url.indexOf('package2@1.0.0') >= 0) {
-                  response.data = JSON.parse(pkg2);
-                }
-                if (url.indexOf('package3@1.0.0') >= 0) {
-                  response.data = JSON.parse(pkg3);
-                }
-                if (url.indexOf('package4@1.0.0') >= 0) {
-                  response.data = JSON.parse(pkg4);
-                }
-                if (url.indexOf('package5@1.0.0') >= 0) {
-                  response.data = JSON.parse(pkg5);
-                }
-                if (url.indexOf('package6@1.0.0') >= 0) {
-                  response.data = JSON.parse(pkg6);
-                }
+                if (url.indexOf('package1@1.0.0') >= 0) { response.data = JSON.parse(pkg1); }
+                if (url.indexOf('package2@1.0.0') >= 0) { response.data = JSON.parse(pkg2); }
+                if (url.indexOf('package3@1.0.0') >= 0) { response.data = JSON.parse(pkg3); }
+                if (url.indexOf('package4@1.0.0') >= 0) { response.data = JSON.parse(pkg4); }
+                if (url.indexOf('package5@1.0.0') >= 0) { response.data = JSON.parse(pkg5); }
+                if (url.indexOf('package6@1.0.0') >= 0) { response.data = JSON.parse(pkg6); }
                 if (response.hasOwnProperty('data')) {
-                  window.setTimeout(function () {
-                    resolve(response);
-                  }, 200);
+                  window.setTimeout(function () { resolve(response); }, 200);
                 } else {
-                  window.setTimeout(function () {
-                    reject({message: 'Error while requesting ' + url}); // eslint-disable-line prefer-promise-reject-errors
-                  }, 100);
+                  window.setTimeout(function () { reject({message: 'Error while requesting ' + url}); }, 100); // eslint-disable-line prefer-promise-reject-errors
                 }
               });
             });

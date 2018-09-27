@@ -44,6 +44,7 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "grunt-jsonlint": "^1.1.0",
+    "grunt-karma": "^0.12.2",
     "gruntify-eslint": "^4.0.0",
     "http-proxy-middleware": "0.15.1",
     "karma": "^0.13.22",

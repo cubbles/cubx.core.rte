@@ -296,7 +296,7 @@ window.cubx.amd.define([ 'CRC',
       });
       it('should call axios.request method with given url', function (done) {
         depMgr._fetchManifest('https://www.example.test').then(function () {
-          expect(axiosStub.calledWith({url: 'https://www.example.test', responseType: 'json'})).to.be.true;
+          expect(axiosStub.calledWith({url: 'https://www.example.test'})).to.be.true;
           done();
         });
       });
@@ -482,21 +482,16 @@ window.cubx.amd.define([ 'CRC',
     describe('#_prepareResponseData()', function () {
       var stub;
       var convertedManifest;
-      var alertSpy;
       before(function () {
         convertedManifest = {};
         // stub convert method from ManifestConverter
         stub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert', function () { return convertedManifest; });
-
-        alertSpy = sinon.spy(window, 'alert');
       });
       beforeEach(function () {
         stub.reset();
-        alertSpy.reset();
       });
       after(function () {
         stub.restore();
-        alertSpy.restore();
       });
       it('should return the converted manifest using manifestConverter.convert method', function () {
         var result = DepMgr._prepareResponseData({version: '1.2.3', name: 'exampleManifest'});
@@ -512,25 +507,6 @@ window.cubx.amd.define([ 'CRC',
           errorThrown = true;
         } finally {
           errorThrown.should.be.true;
-        }
-      });
-      it('should throw an error if called given data is not a valid JSON', function () {
-        var errorThrown = false;
-        try {
-          DepMgr._prepareResponseData('{"a": 1 "b": 2}');
-        } catch (e) {
-          e.should.be.instanceof(Error);
-          errorThrown = true;
-        } finally {
-          errorThrown.should.be.true;
-        }
-      });
-      it('should alert coder if called given data is not a valid JSON adn _runtimeMode === \'dev\'', function () {
-        try {
-          DepMgr._runtimeMode = 'dev';
-          DepMgr._prepareResponseData('{"a": 1 "b": 2}');
-        } catch (e) {
-          expect(alertSpy).to.be.calledOnce;
         }
       });
     });

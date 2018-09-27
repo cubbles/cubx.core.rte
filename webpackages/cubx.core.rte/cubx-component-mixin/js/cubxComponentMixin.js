@@ -495,11 +495,6 @@
         } else {
           // funcString(value, next);
           var fn = this._getFunctionFromString(funcString);
-          // if (typeof args === 'object' && args && Array.isArray(args) && args.length > 0) {
-          //   this.setReturnValue(fn.apply(this, args));
-          // } else {
-          //   this.setReturnValue(fn.apply(this));
-          // }
           if (typeof fn === 'function') {
             fn.apply(connectionObj, [value, next]);
           } else {
