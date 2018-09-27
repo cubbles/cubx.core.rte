@@ -93,9 +93,8 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@1.0.1",
-            "artifactId": "lodash",
-            "endpointId": "html-import"
+            "webpackageId": "lodash-3.10.1@1.1.0",
+            "artifactId": "lodash"
           },
           {
             "artifactId": "cubx-component-mixin"

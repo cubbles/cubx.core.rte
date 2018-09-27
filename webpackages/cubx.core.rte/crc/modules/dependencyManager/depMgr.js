@@ -54,7 +54,7 @@ window.cubx.amd.define(
        * @private
        */
       this._axios = axios.create({
-        transformResponse: [DependencyMgr._prepareResponseData],
+        transformResponse: [DependencyMgr._prepareResponseData.bind(this)],
         responseType: 'json'
       });
     };
@@ -226,11 +226,23 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr._prepareResponseData = function (data) {
+      var manifest;
       // axios sets 'error' property on data object if there is an error.
       if (data.hasOwnProperty('error')) {
         throw new Error('Error when requesting manifest');
       }
-      var manifest = manifestConverter.convert(data);
+      if (typeof data === 'string') {
+        try {
+          manifest = JSON.parse(data);
+        } catch (e) {
+          if (this._runtimeMode === 'dev') {
+            window.alert('A manifest file is not valid. Check console for further details');
+          }
+          console.error('SintaxError: a manifest.webpackage file is not JSON valid. ', e.message, '\n\n' + data);
+          throw new Error('Manifest Sintax Error');
+        }
+      }
+      manifest = manifestConverter.convert(data);
       return manifest;
     };
 
@@ -621,9 +633,13 @@ window.cubx.amd.define(
           processManifest(manifestConverter.convert(depReference.manifest), true);
         } else { // default case: request manifest using ajax
           var url = baseUrl + depReference.webpackageId + '/manifest.webpackage';
-          this._fetchManifest(url).then(
-            function (response) { processManifest(response.data, true); },
-            function (error) { reject(error); }
+          this._fetchManifest(url, 'text').then(
+            function (response) {
+              processManifest(response.data, true);
+            },
+            function (error) {
+              reject(error);
+            }
           );
         }
       }.bind(this));
@@ -726,20 +742,20 @@ window.cubx.amd.define(
 
       var get = window.cubx.utils.get;
       var allowAbsoluteResourceUrls = get(window, 'cubx.CRCInit.allowAbsoluteResourceUrls');
-      if (item[ runtimeMode ].indexOf('http') === 0 || item[ runtimeMode ].indexOf('blob') === 0) {
+      if (item[runtimeMode].indexOf('http') === 0 || item[runtimeMode].indexOf('blob') === 0) {
         if (allowAbsoluteResourceUrls) {
-          file = item[ runtimeMode ];
+          file = item[runtimeMode];
         } else {
-          console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ' + item[ runtimeMode ]);
+          console.warn('The following resource can not be loaded since the use of absolute urls is not allowed by default: ' + item[runtimeMode]);
           return;
         }
       } else {
-        file = this._baseUrl + qualifiedArtifactId + '/' + item[ runtimeMode ];
+        file = this._baseUrl + qualifiedArtifactId + '/' + item[runtimeMode];
       }
 
       var resMetaObj = this._determineResourceType(file);
       if (!resMetaObj.fileType) {
-        console.warn('The following resource will be ignored, because the type of the resource is unkown. It should be "js", "html" or "css". (' + item[ runtimeMode ] + ')');
+        console.warn('The following resource will be ignored, because the type of the resource is unkown. It should be "js", "html" or "css". (' + item[runtimeMode] + ')');
         return;
       }
       return new DependencyMgr.Resource(resMetaObj.fileName, resMetaObj.fileType.name, referrer);
@@ -760,13 +776,13 @@ window.cubx.amd.define(
         paramType = fileName.substr(paramTypeIndex + 6);
         fileName = fileName.substring(0, paramTypeIndex);
       }
-      var fileEnding = paramType || fileName.split('.')[ fileName.split('.').length - 1 ];
+      var fileEnding = paramType || fileName.split('.')[fileName.split('.').length - 1];
 
       for (var property in DependencyMgr._types) {
         if (DependencyMgr._types.hasOwnProperty(property)) {
-          var type = DependencyMgr._types[ property ];
+          var type = DependencyMgr._types[property];
           for (var i = 0; i < type.fileEndings.length; i++) {
-            if (type.fileEndings[ i ] === fileEnding) {
+            if (type.fileEndings[i] === fileEnding) {
               fileType = type;
               break;
             }
@@ -902,10 +918,9 @@ window.cubx.amd.define(
      * @private
      * @memberOf DependencyMgr
      */
-    DependencyMgr.prototype._fetchManifest = function (url) {
-      return this._axios.request({
-        url: url
-      });
+    DependencyMgr.prototype._fetchManifest = function (url, responseType) {
+      var config = {url: url, responseType: responseType || 'json'};
+      return this._axios.request(config);
     };
 
     /**
@@ -924,7 +939,7 @@ window.cubx.amd.define(
         // for apps, elementaryComponents etc.
         // console.log(JSON.stringify(manifest))
         Object.keys(manifest.artifacts).some(function (artifactType) {
-          manifest.artifacts[ artifactType ].some(function (artifact) {
+          manifest.artifacts[artifactType].some(function (artifact) {
             if (artifact.artifactId === depReference.artifactId) {
               requestedArtifact = artifact;
             }
@@ -948,7 +963,7 @@ window.cubx.amd.define(
         throw TypeError('parameter item needs to be of type "DepReference"');
       }
       for (var i = 0; i < depList.length; i++) {
-        if (item.equals(depList[ i ])) {
+        if (item.equals(depList[i])) {
           index = i;
           break;
         }

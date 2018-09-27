@@ -609,11 +609,12 @@
       this._rootNodes.forEach(function (rootNode) {
         rootNodes.push(rootNode.toJSON(includeResources));
       });
-      return { rootNodes: rootNodes };
+      return {rootNodes: rootNodes};
     };
 
     DependencyTree.prototype.clone = function () {
       var hash = new WeakMap();
+
       function clone (obj) {
         if (!obj || typeof obj !== 'object') {
           return obj;
@@ -635,6 +636,7 @@
         }
         return result;
       }
+
       return clone(this);
     };
 
@@ -771,7 +773,9 @@
       while (parents.length > 0) {
         var current = parents.shift();
         if (current.equals(node)) return true;
-        current.usedBy.forEach(function (item) { parents.push(item); });
+        current.usedBy.forEach(function (item) {
+          parents.push(item);
+        });
         if (current.parent != null) parents.push(current.parent);
       }
       return false;

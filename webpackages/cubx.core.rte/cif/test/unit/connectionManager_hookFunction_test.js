@@ -3,6 +3,7 @@
 describe('ConnectionManager', function () {
   describe('hookFunctions', function () {
     var cif;
+
     before(function () {
       cif = window.cubx.cif.cif;
     });
@@ -439,7 +440,6 @@ describe('ConnectionManager', function () {
           _setSlotValueSpy.should.be.calledOnce;
         });
       });
-
       describe('Call hookFunction for connection 8', function () {
         var hookFunctionSpy;
         var setMessageSpy;

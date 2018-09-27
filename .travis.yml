@@ -26,6 +26,7 @@ script:
  - grunt karma:dynamic-connection-utils
  - grunt karma:mutation-based-cubx-startevent
 
+ 
 notifications:
   email:
     - jtrs@incowia.com
