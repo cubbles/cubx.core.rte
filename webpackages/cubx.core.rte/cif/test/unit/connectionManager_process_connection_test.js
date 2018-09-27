@@ -899,7 +899,7 @@ describe('ConnectionManager', function () {
               expect(connection.lastValue).to.be.deep.equal(payloadObj.payload);
             });
           });
-          describe('copyValue is true (payload not serialisable)', function () {
+          describe('copyValue is true (payload not serializable)', function () {
             var connection;
             var payloadObj;
             var connectionManager;
@@ -939,13 +939,13 @@ describe('ConnectionManager', function () {
               spyConsole = sinon.spy(console, 'warn');
             });
             afterEach(function () {
-              // spyConsole.restore();
-              // handlePayloadSpy.restore();
+              spyConsole.restore();
+              handlePayloadSpy.restore();
             });
-            it('copyValue should be set to false, user should be warned', function () {
+            it('copyValue should should not be changed, user should be warned', function () {
               connectionManager._processConnection(connection, payloadObj);
               return Promise.all([
-                expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, false),
+                expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, true),
                 expect(spyConsole).to.be.calledOnce
               ]);
             });

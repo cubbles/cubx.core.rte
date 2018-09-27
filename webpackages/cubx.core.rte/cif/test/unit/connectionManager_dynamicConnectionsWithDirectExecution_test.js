@@ -162,12 +162,12 @@ describe('ConnectionManager', function () {
           expect(destinationElem.model.slotB !== value);
         });
       });
-      describe('add a valid connection with directExecution = true, copyValue=true, slotValue not serialisable', function () {
+      describe('add a valid connection with directExecution = true, copyValue=true, slotValue not serializable', function () {
         var spyExecuteConnection;
         var spyControlFunc;
         var spyConsole;
         var handlePayloadSpy;
-        var noSerializableObject = new XMLHttpRequest();
+        var noSerializableValue = new XMLHttpRequest();
         beforeEach(function () {
           conConfig = {
             connectionId: 'dynConX',
@@ -196,7 +196,7 @@ describe('ConnectionManager', function () {
 
           handlePayloadSpy = sinon.spy(connectionMgr, '_handlePayload');
           spyConsole = sinon.spy(console, 'warn');
-          sourceElem.setSlotA(noSerializableObject);
+          sourceElem.setSlotA(noSerializableValue);
           connectionMgr.addDynamicConnection(conConfig, true);
         });
         afterEach(function () {
@@ -220,8 +220,8 @@ describe('ConnectionManager', function () {
         it('the #_executeConnection should been called', function () {
           spyExecuteConnection.should.been.calledOnce;
           spyExecuteConnection.should.been.calledWith(conConfig);
-          destinationElem.model.slotB.should.have.deep.equal(noSerializableObject);
-          expect(destinationElem.model.slotB !== noSerializableObject);
+          destinationElem.model.slotB.should.have.deep.equal(noSerializableValue);
+          expect(destinationElem.model.slotB !== noSerializableValue);
         });
         it('copyValue should be set to false, user should be warned', function () {
           return Promise.all([
