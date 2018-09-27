@@ -29,5 +29,5 @@ script:
 notifications:
   email:
     - jtrs@incowia.com
-    - pwr@incowia.com
-    - hrbu@incowia.com
+    - wagner@getrequest.de
+    - boehlau@getrequest.de
