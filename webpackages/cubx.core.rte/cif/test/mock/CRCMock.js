@@ -40,7 +40,7 @@ window.cubx.EventFactory.prototype.createEvent = function (type, detail) {
       evt = new CustomEvent(window.cubx.EventFactory.types.CIF_MODEL_CHANGE, { bubbles: true, detail: detail });
       break;
     case window.cubx.EventFactory.types.COMPONENT_READY:
-      evt = new CustomEvent(window.cubx.EventFactory.types.COMPONENT_READY, { bubbles: true });
+      evt = new CustomEvent(window.cubx.EventFactory.types.COMPONENT_READY, { bubbles: true, detail: detail });
       break;
     case window.cubx.EventFactory.types.CIF_READY:
       evt = new CustomEvent(window.cubx.EventFactory.types.CIF_READY, { bubbles: true });
@@ -76,13 +76,7 @@ cache.getComponentCacheEntry = function (key) {
 window.cubx.CRC.getCache = function () {
   return cache;
 };
-window.cubx.CRC.getStorageManager = function () {
-  var storageManager = {};
-  storageManager.getModel = function (id, model) {
-    return model;
-  };
-  return storageManager;
-};
+
 window.cubx.CRC.getCRCElement = function () {
   return document.querySelector('[cubx-core-crc]');
 };

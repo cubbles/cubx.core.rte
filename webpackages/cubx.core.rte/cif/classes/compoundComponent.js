@@ -54,9 +54,9 @@
    *  @method
    * @memberOf compoundComponent
    */
-  compoundComponent.attachedCallback = function () {
-    if (!this._componentAttached) {
-      this._componentAttached = true;
+  compoundComponent.connectedCallback = function () {
+    if (!this._componentConnected) {
+      this._componentConnected = true;
     }
   };
 
@@ -335,7 +335,7 @@
    * @private
    */
   compoundComponent._cifReadyHandler = function () {
-    this._synchronizeModelWithStorageManager();
+    // do nothing
   };
   /* *******************************************************************/
   /* ******************** generate methods ******************************/
@@ -366,6 +366,7 @@
         // }
         me._generateGetMethod(item.slotId);
         me._generateSetMethod(item.slotId);
+        me._generateGetterAndSetter(item.slotId);
         me._generateRepropagateMethod(item.slotId);
       });
     }
@@ -393,9 +394,9 @@
   };
 
   //  Mix the cubxComponentMixin in compoundComponent
-  _.mixin(compoundComponent, window.cubx.cubxComponentMixin);
+  Object.assign(compoundComponent, window.cubx.cubxComponentMixin);
   //  Mix  the DynamicConnectionUtils in compoundComponent
-  _.mixin(compoundComponent, window.cubx.dynamicConnectionUtil);
+  Object.assign(compoundComponent, window.cubx.dynamicConnectionUtil);
 
   // assign compoundComponent to global cif namespace
   if (!window.cubx.__cifError__) {

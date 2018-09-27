@@ -3,7 +3,7 @@ sudo: true
 # trusty distribution (Ubuntu 14.04.3 LTS - Currently beta version -  If travis make it standard,  delete dist:trusty
 dist: trusty
 node_js:
- - "6"
+ - "8"
 addons:
   firefox: "latest"
 before_install:
@@ -22,7 +22,7 @@ script:
  - grunt karma:cif
  - grunt karma:crc
  - grunt karma:crc-loader
- - grunt karma:cubxpolymer
+ - grunt karma:cubxcomponent
  - grunt karma:dynamic-connection-utils
  - grunt karma:mutation-based-cubx-startevent
 
@@ -30,5 +30,5 @@ script:
 notifications:
   email:
     - jtrs@incowia.com
-    - pwr@incowia.com
-    - hrbu@incowia.com
+    - wagner@gerequest.de
+    - boehlau@getrequest.de

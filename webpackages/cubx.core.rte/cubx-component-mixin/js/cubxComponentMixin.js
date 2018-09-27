@@ -127,11 +127,27 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._setInModel = function (key, value) {
-    var modelName = key;
+    var modelName = '_' + key;
     if (!_.isString(modelName)) {
       modelName = String(modelName);
     }
-    this._setSlotValue(key, value);
+    this._setSlotValue(modelName, value);
+  };
+
+  cubxComponentMixin._generateGetterAndSetter = function (key) {
+    var me = this;
+    Object.defineProperty(this.model, key, {
+      get: function () {
+        return me[ me._getGetMethodName(key) ]();
+      },
+      set: function (value) { me[ me._getSetMethodName(key) ](value); }
+    });
+  };
+
+  cubxComponentMixin._generate$$Method = function () {
+    this.$$ = function (value) {
+      return this.querySelector(value);
+    };
   };
 
   /**
@@ -168,42 +184,25 @@
   };
 
   /**
-   * Synchronize the model with crc.storageManager.
-   *
-   * @memberOf cubxComponentMixin
-   * @private
-   */
-  cubxComponentMixin._synchronizeModelWithStorageManager = function () {
-    var storageManager = window.cubx.CRC.getStorageManager();
-    try {
-      var mergedModel = storageManager.getModel(this.getRuntimeId(), this._getModel());
-      this._setModel(mergedModel);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  /**
    * Wait for event cifReady, and then finish the initialisation.
    * @private
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._cifReady = function () {
     var rootElement = window.cubx.CRC.getCRCElement();
-    var me = this;
 
     rootElement.addEventListener(window.cubx.EventFactory.types.CIF_READY, function (evt) {
-      if (!me._isReadyRegistered) {
-        me._isReadyRegistered = true;
-        me._cifReadyHandler();
+      if (!this._isReadyRegistered) {
+        this._isReadyRegistered = true;
+        this._cifReadyHandler();
       }
-    });
+    }.bind(this));
     rootElement.addEventListener(window.cubx.EventFactory.types.CIF_DOM_UPDATE_READY, function (evt) {
-      if (!me._isReadyRegistered) {
-        me._isReadyRegistered = true;
-        me._cifReadyHandler();
+      if (!this._isReadyRegistered) {
+        this._isReadyRegistered = true;
+        this._cifReadyHandler();
       }
-    });
+    }.bind(this));
   };
 
   /**
@@ -322,8 +321,9 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._generateGetMethod = function (slotId) {
+    var modelName = '_' + slotId;
     this[ this._getGetMethodName(slotId) ] = function () {
-      return this.model[ slotId ];
+      return this.model[ modelName ];
     };
   };
 
@@ -335,7 +335,6 @@
    */
   cubxComponentMixin._generateSlotsMethod = function (slots) {
     this._slots = [];
-    var me = this;
     _.each(slots, function (elem) {
       var slot = { slotId: elem.slotId };
       if (elem.type) {
@@ -349,8 +348,8 @@
       if (elem.description) {
         slot.description = elem.description;
       }
-      me._slots.push(slot);
-    });
+      this._slots.push(slot);
+    }.bind(this));
 
     this.slots = function () {
       return this._slots;

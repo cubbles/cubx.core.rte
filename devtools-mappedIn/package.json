@@ -33,6 +33,9 @@
     "time-grunt": "~1.0.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "cubx-karma-requirejs": "1.1.1",
+    "cubx-requirejs": "^1.1.2",
     "eslint": "^4.17.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-chai-friendly": "^0.4.1",
@@ -43,9 +46,6 @@
     "grunt-jsonlint": "^1.1.0",
     "gruntify-eslint": "^4.0.0",
     "http-proxy-middleware": "0.15.1",
-    "chai": "^3.5.0",
-    "cubx-karma-requirejs": "1.1.1",
-    "cubx-requirejs": "^1.1.2",
     "grunt-karma": "^0.12.2",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
@@ -57,7 +57,7 @@
     "karma-mocha-reporter": "^2.0.1",
     "karma-sinon-chai": "1.2.0",
     "lolex": "^1.5.2",
-    "mocha": "^2.4.5",
+    "mocha": "^2.5.3",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0",
     "standard": "^10.0.3"

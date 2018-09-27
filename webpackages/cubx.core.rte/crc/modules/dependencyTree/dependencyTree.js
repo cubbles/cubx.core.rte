@@ -559,12 +559,10 @@
         console.error('Parameter \'rootNode\' needs to be an instance of DependencyTree.Node');
         return;
       }
-      ;
       if (!callback || typeof callback !== 'function') {
         console.error('Parameter \'callback\' needs to be of type function');
         return;
       }
-      ;
       var queue = [rootNode];
       while (queue.length > 0) {
         var node = queue.shift();
@@ -576,7 +574,6 @@
         if (callback(node) === false) {
           return;
         }
-        ;
       }
     };
 

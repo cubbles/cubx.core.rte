@@ -378,7 +378,7 @@ describe('DynamicConnection', function () {
         var error = dynamicConnection._validateRuntimeId(runtimeId);
         error.should.have.length(1);
         error.should.have.deep.property('[0]');
-        error[0].should.be.contain('Not valid "runtimeId" (' + runtimeId + ').');
+        error[0].should.be.to.include('Not valid "runtimeId" (' + runtimeId + ').');
       });
       it('should be valid if the parameter is undefined', function () {
         var runtimeId;
@@ -662,7 +662,7 @@ describe('DynamicConnection', function () {
           var error = dynamicConnection.validate();
           error.should.have.length(3);
           error.should.have.deep.property('[0]');
-          error[0].should.contain('Not valid "runtimeId" (' + dynamicConnection.source.runtimeId + ')');
+          error[0].should.be.to.include('Not valid "runtimeId" (' + dynamicConnection.source.runtimeId + ').');
           error.should.have.deep.property('[1]', 'The "copyValue" must be a boolean.');
           error.should.have.deep.property('[2]', 'The "hookFunction" must be a string.');
         });

@@ -115,17 +115,23 @@ window.cubx.amd.define([
     });
 
     describe('#_isModelVersionSupported', function () {
-      it('model version 8.0.0 is allowed ', function () {
-        expect(crc._isModelVersionSupported('8.0.0')).to.be.ok;
+      it('model version 8.0.0 is not allowed ', function () {
+        expect(crc._isModelVersionSupported('8.0.0')).to.be.not.ok;
       });
-      it('model version 8.0 is allowed ', function () {
-        expect(crc._isModelVersionSupported('8.0')).to.be.ok;
+      it('model version 9.0 not is allowed ', function () {
+        expect(crc._isModelVersionSupported('8.0')).to.be.not.ok;
       });
       it('model version 3.0  is not allowed ', function () {
         expect(crc._isModelVersionSupported('3.0')).to.be.not.ok;
       });
       it('model version 4.1.0 is not allowed ', function () {
         expect(crc._isModelVersionSupported('4.1.0')).to.be.not.ok;
+      });
+      it('model version 10.0 is allowed ', function () {
+        expect(crc._isModelVersionSupported('10.0')).to.be.ok;
+      });
+      it('model version 10.0.0 is allowed ', function () {
+        expect(crc._isModelVersionSupported('10.0.0')).to.be.ok;
       });
     });
   });

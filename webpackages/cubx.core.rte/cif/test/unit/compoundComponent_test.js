@@ -63,7 +63,7 @@ describe('CompoundComponent', function () {
                 ]
               };
               break;
-            case 'ciftest-inputoutputexplicite':
+            case 'ciftest-input-output-explicite':
               manifest = {
                 artifactType: 'compoundComponent',
                 slots: [
@@ -74,7 +74,7 @@ describe('CompoundComponent', function () {
                 ]
               };
               break;
-            case 'ciftest-inputoutputimplicite':
+            case 'ciftest-input-output-implicite':
               manifest = {
                 artifactType: 'compoundComponent',
                 slots: [
@@ -114,9 +114,9 @@ describe('CompoundComponent', function () {
       expect(el.isInputSlot('firstslot')).to.be.false;
       container.removeChild(el);
     });
-    it('should be false if the sot is a input/outputslot (explicit', function () {
+    it('should be false if the sot is a input/outputslot (explicit)', function () {
       var constructor = window.cubx.cif.cif.getCompoundComponentElementConstructor(
-        'ciftest-inputOutputExplicite');
+        'ciftest-input-output-explicite');
       var el = new constructor();
       container.appendChild(el);
       expect(el.isInputSlot('firstslot')).to.be.true;
@@ -124,7 +124,7 @@ describe('CompoundComponent', function () {
     });
     it('should be false if the sot is a input/outputslot (explicit', function () {
       var constructor = window.cubx.cif.cif.getCompoundComponentElementConstructor(
-        'ciftest-inputOutputImplicite');
+        'ciftest-input-output-implicite');
       var el = new constructor();
       container.appendChild(el);
       expect(el.isInputSlot('firstslot')).to.be.true;

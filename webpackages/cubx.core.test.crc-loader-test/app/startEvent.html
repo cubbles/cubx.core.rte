@@ -5,27 +5,21 @@
     <meta charset="UTF-8">
     <title>CRC-TestWebapp</title>
 
-    <!-- build:css style/app.min.css -->
     <link rel="stylesheet" href="style/app.css">
-    <!-- endbuild -->
 
-    <!-- build:js js/app.min.js -->
-    <!-- endbuild -->
+    <script src="http://localhost:8282/cubx.core.rte/webcomponents/custom-elements-es5-adapter.js"></script>
     <script src="http://localhost:8282/cubx.core.rte/webcomponents/webcomponents-lite.js"></script>
     <script>
         window.cubx = {
             "CRCInit": {
                 "rootDependencies": [
-                    "this/util1/main"
+                  {
+                    artifactId: 'util1'
+                  }
                 ]
             }
         }
     </script>
-    <!-- include crc-loader webresource from base
-        note: the js-file referenced by data-crc-main will be loaded as the last dependency
-
-         data-crc-baseUrl="http://boot2docker.me"
-    -->
 
     <!--
     data-CRCInit.loadCIF=<"true"|"false">
@@ -34,21 +28,19 @@
 
 </head>
 <body>
-<h2>This is a Cubixx-Webapplication</h2>
+<h2>This is a Cubles-Webapplication</h2>
 
-<p>To extend the application, you can use <i>plain-old-html</i> or <i>CubixxComponents</i></p>
+<p>To extend the application, you can use <i>plain-old-html</i> or <i>CubblesComponents</i></p>
 <hr>
-<a href="index.html">index.html</a>
-<a href="index1.html">index1.html</a>
-<a href="index2.html">index2.html</a>
-<a href="index3.html">index3.html</a>
-<a href="index4.html">index4.html</a>
-<a href="index5.html">index5.html</a>
-<a href="index6.html">index6.html</a>
-<a href="index7.html">index7.html</a>
-<a href="index8.html">index8.html</a>
-startEvent.html
-<a href="allowResources.html">allowResources.html</a>
+<a href="index.html">index</a> |
+<a href="minimal.html">minimal</a> |
+<a href="with-data-crc-main.html">with-data-crc-main.html</a> |
+<a href="loadcif-false.html">loadcif-false</a> |
+<a href="included-elementary-with-root-dependency.html">included-elementary-with-root-dependency</a> |
+<a href="included-elementary-with-cubx-webpackage-id.html">included-elementary-with-cubx-webpackage-id</a> |
+<a href="included-elementary-with-init.html">included-elementary-with-init</a> |
+startEvent |
+<a href="allowResources.html">allowResources</a>
 
 <hr>
 <ul>

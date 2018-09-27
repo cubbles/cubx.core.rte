@@ -1,7 +1,7 @@
 {
   "name": "rte",
   "groupId": "cubx.core",
-  "version": "2.5.2",
+  "version": "3.0.0-SNAPSHOT",
   "modelVersion": "9.1.1",
   "docType": "webpackage",
   "description": "",
@@ -87,9 +87,9 @@
         ]
       },
       {
-        "artifactId": "cubxpolymer",
+        "artifactId": "cubxcomponent",
         "resources": [
-          "cubxpolymer.html"
+          "cubxcomponent.html"
         ],
         "dependencies": [
           {
@@ -97,30 +97,20 @@
             "artifactId": "lodash"
           },
           {
-            "webpackageId": "polymer-1.11.0@1.0.0",
-            "artifactId": "polymer"
-          },
-          {
             "artifactId": "cubx-component-mixin"
           },
           {
             "artifactId": "dynamic-connection-utils"
+          },
+          {
+            "artifactId": "template-utils"
           }
         ]
       },
       {
         "artifactId": "webcomponents",
-        "description": "The origin polyfill library version 0.7.18.",
-        "resources": [
-          "webcomponents.min.js"
-        ]
-      },
-      {
-        "artifactId": "webcomponents-lite",
-        "description": "The origin polyfill library version 0.7.18.",
-        "resources": [
-          "webcomponents-lite.min.js"
-        ]
+        "description": "The origin polyfill library version 1.1.0.",
+        "resources": []
       },
       {
         "artifactId": "guid-utility",
@@ -205,6 +195,14 @@
       {
         "artifactId": "mutation-based-cubx-startevent",
         "description": "Utility to enable the configuration of startEvent using mutations ",
+        "resources": [
+          "html-import.html"
+        ],
+        "dependencies": []
+      },
+      {
+        "artifactId": "template-utils",
+        "description": "Utility functions for find, import and integrate templates.",
         "resources": [
           "html-import.html"
         ],

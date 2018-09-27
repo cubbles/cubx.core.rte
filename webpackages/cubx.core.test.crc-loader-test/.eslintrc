@@ -9,6 +9,6 @@
     "semi": [2, "always"]
   },
   "globals": {
-    "CubxPolymer": true
+    "CubxComponent": true
   }
 }

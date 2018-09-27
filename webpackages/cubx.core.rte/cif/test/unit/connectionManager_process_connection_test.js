@@ -942,10 +942,10 @@ describe('ConnectionManager', function () {
               spyConsole.restore();
               handlePayloadSpy.restore();
             });
-            it('copyValue should be set to false, user should be warned', function () {
+            it('copyValue should should not be changed, user should be warned', function () {
               connectionManager._processConnection(connection, payloadObj);
               return Promise.all([
-                expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, false),
+                expect(handlePayloadSpy).to.be.calledWith(sinon.match.any, true),
                 expect(spyConsole).to.be.calledOnce
               ]);
             });

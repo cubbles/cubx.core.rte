@@ -15,11 +15,12 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       'test/testSetup.js',
-      '../cubxpolymer/test/vendor/mocha-config.js',
-      '../cubxpolymer/test/mock/*.js',
+      '../cubxcomponent/test/vendor/mocha-config.js',
+      '../cubxcomponent/test/mock/*.js',
+      '../webcomponents/custom-elements-es5-adapter.js',
       '../webcomponents/webcomponents-lite.js',
-      'https://cubbles.world/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
       'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
+      '../template-utils/js/template-utils.js',
       '../guid-utility/js/guid.js',
       '../dom-tree-utilities/js/domTreeUtils.js',
       'js/dynamicConnectionUtils.js',
@@ -29,9 +30,8 @@ module.exports = function (config) {
       '../cif/classes/context.js',
       '../cif/classes/compoundComponent.js',
       '../cif/classes/dynamicConnection.js',
-      '../cubxpolymer/cubxPolymerMixin.js',
-      '../cubxpolymer/cubxpolymer.js',
-      '../cubxpolymer/test/helpers.js',
+      '../cubxcomponent/CubxComponent.js',
+      '../cubxcomponent/test/helpers.js',
       'test/unit/**/*_test.js'
     ],
 
@@ -41,7 +41,7 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'cubxpolymer.js': [ 'coverage' ]
+      'dynamicConnectionUtils.js': [ 'coverage' ]
     },
 
     // test results reporter to use

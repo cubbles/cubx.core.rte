@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue, customElements */
 (function () {
   'use strict';
 
@@ -171,13 +171,13 @@
    * @return {function} The Constructor
    */
   CIF.prototype.getCompoundComponentElementConstructor = function (name) {
-    if (this._compoundComponentElements.hasOwnProperty(name)) {
-      return this._compoundComponentElements[ name ];
-    } else {
-      var constructor = this._registerCompoundComponentElement(name);
-      this._compoundComponentElements[ name ] = constructor;
-      return constructor;
-    }
+    // if (this._compoundComponentElements.hasOwnProperty(name)) {
+    //   return this._compoundComponentElements[ name ];
+    // } else {
+    var constructor = this._registerCompoundComponentElement(name);
+    // this._compoundComponentElements[ name ] = constructor;
+    return constructor;
+    // }
   };
 
   /**
@@ -788,7 +788,7 @@
    * @private
    */
   CIF.prototype._updateCubxCoreInit = function (element, initOrder) {
-    var cubxCoreInit = this._getNode(element).querySelector('cubx-core-init');
+    var cubxCoreInit = element.querySelector('cubx-core-init');
     if (cubxCoreInit) {
       var cubxCoreSlotinits = cubxCoreInit.querySelectorAll('cubx-core-slot-init');
       var removeList = [];
@@ -887,11 +887,30 @@
       throw new TypeError('parameter name needs to be of type "string" and needs to contain a "-"');
     }
 
-    var CompoundComponentPrototype = Object.create(HTMLElement.prototype);
-    // extend prototype with specific CompoundComponent properties
-    _.merge(CompoundComponentPrototype, window.cubx.cif.compoundComponent);
+    function getConstructor () {
+      var CompoundComponentClass = function () {
+        var htmlEl = HTMLElement.call(this);
+        var me;
+        if (htmlEl) {
+          me = htmlEl;
+        } else {
+          me = this;
+        }
+        Object.assign(me, window.cubx.cif.compoundComponent);
+        me.createdCallback();
+        return htmlEl;
+      };
+      Object.setPrototypeOf(CompoundComponentClass.prototype, HTMLElement.prototype);
+      Object.setPrototypeOf(CompoundComponentClass, HTMLElement);
+      return CompoundComponentClass;
+    }
 
-    var constructor = document.registerElement(name, { prototype: CompoundComponentPrototype });
+    var constructor = customElements.get(name);
+    if (!constructor) {
+      constructor = getConstructor();
+      customElements.define(name, constructor);
+    }
+
     return constructor;
   };
 
@@ -901,57 +920,92 @@
    * @private
    */
   CIF.prototype._registerConnectionElements = function () {
-    var ConnectionPrototype = Object.create(HTMLElement.prototype);
-    ConnectionPrototype.setSource = function (slot) {
-      this.setAttribute('source', slot);
-    };
-    ConnectionPrototype.getSource = function () {
-      return this.getAttribute('source');
-    };
-    ConnectionPrototype.setDestination = function (slot, memberIndex) {
-      var destination = memberIndex != null ? memberIndex + ':' + slot : 'parent:' + slot;
-      this.setAttribute('destination', destination);
-    };
-    ConnectionPrototype.getDestination = function () {
-      return this.getAttribute('destination');
-    };
-    ConnectionPrototype.setType = function (type) {
-      this.setAttribute('type', type);
-    };
-    ConnectionPrototype.getType = function () {
-      return this.getAttribute('type');
-    };
-    ConnectionPrototype.setConnectionId = function (connectionId) {
-      this.setAttribute('connection-id', connectionId);
-    };
-    ConnectionPrototype.getConnectionId = function () {
-      return this.getAttribute('connection-id');
-    };
-    ConnectionPrototype.setCopyValue = function (copyValue) {
-      this.setAttribute('copy-value', copyValue);
-    };
-    ConnectionPrototype.getCopyValue = function () {
-      return this.getAttribute('copy-value');
-    };
-    ConnectionPrototype.setRepeatedValues = function (repeatedValues) {
-      this.setAttribute('repeated-values', repeatedValues);
-    };
-    ConnectionPrototype.getRepeatedValues = function () {
-      return this.getAttribute('repeated-values');
-    };
-    ConnectionPrototype.setHookFunction = function (hook) {
-      this.setAttribute('hook-function', hook);
-    };
-    ConnectionPrototype.getHookFunction = function () {
-      return this.getAttribute('hook-function');
-    };
-    this._connectionElement = document.registerElement('cubx-core-connection', { prototype: ConnectionPrototype });
+    function getConnectionConstructor () {
+      var ConnectionClass = function () {
+        return HTMLElement.call(this);
+      };
 
-    var ConnectionsPrototype = Object.create(HTMLElement.prototype);
-    ConnectionsPrototype.createdCallback = function () {
-      this.style.display = 'none';
-    };
-    this._connectionsElement = document.registerElement('cubx-core-connections', { prototype: ConnectionsPrototype });
+      ConnectionClass.prototype.setSource = function (slot) {
+        this.setAttribute('source', slot);
+      };
+      ConnectionClass.prototype.getSource = function () {
+        return this.getAttribute('source');
+      };
+      ConnectionClass.prototype.setDestination = function (slot, memberIndex) {
+        var destination = memberIndex != null ? memberIndex + ':' + slot : 'parent:' + slot;
+        this.setAttribute('destination', destination);
+      };
+      ConnectionClass.prototype.getDestination = function () {
+        return this.getAttribute('destination');
+      };
+      ConnectionClass.prototype.setType = function (type) {
+        this.setAttribute('type', type);
+      };
+      ConnectionClass.prototype.getType = function () {
+        return this.getAttribute('type');
+      };
+      ConnectionClass.prototype.setConnectionId = function (connectionId) {
+        this.setAttribute('connection-id', connectionId);
+      };
+      ConnectionClass.prototype.getConnectionId = function () {
+        return this.getAttribute('connection-id');
+      };
+      ConnectionClass.prototype.setCopyValue = function (copyValue) {
+        this.setAttribute('copy-value', copyValue);
+      };
+      ConnectionClass.prototype.getCopyValue = function () {
+        return this.getAttribute('copy-value');
+      };
+      ConnectionClass.prototype.setRepeatedValues = function (repeatedValues) {
+        this.setAttribute('repeated-values', repeatedValues);
+      };
+      ConnectionClass.prototype.getRepeatedValues = function () {
+        return this.getAttribute('repeated-values');
+      };
+      ConnectionClass.prototype.setHookFunction = function (hook) {
+        this.setAttribute('hook-function', hook);
+      };
+      ConnectionClass.prototype.getHookFunction = function () {
+        return this.getAttribute('hook-function');
+      };
+      Object.setPrototypeOf(ConnectionClass.prototype, HTMLElement.prototype);
+      Object.setPrototypeOf(ConnectionClass, HTMLElement);
+      return ConnectionClass;
+    }
+
+    var constructorConnection = customElements.get('cubx-core-connection');
+    if (!constructorConnection) {
+      constructorConnection = getConnectionConstructor();
+      customElements.define('cubx-core-connection', constructorConnection);
+      this._connectionElement = constructorConnection;
+    }
+
+    function getConnectionsConstructor () {
+      var ConnectionsClass = function () {
+        var htmlEl = HTMLElement.call(this);
+        var me;
+        if (htmlEl) {
+          me = htmlEl;
+        } else {
+          me = this;
+        }
+        setTimeout(function () {
+          this.style.display = 'none';
+        }.bind(me), 0);
+        return htmlEl;
+      };
+
+      Object.setPrototypeOf(ConnectionsClass.prototype, HTMLElement.prototype);
+      Object.setPrototypeOf(ConnectionsClass, HTMLElement);
+      return ConnectionsClass;
+    }
+
+    var constructorConnections = customElements.get('cubx-core-connections');
+    if (!constructorConnections) {
+      constructorConnections = getConnectionsConstructor();
+      customElements.define('cubx-core-connections', constructorConnections);
+      this._connectionsElement = constructorConnections;
+    }
   };
   /**
    * Register new elements for handling initialization
@@ -959,45 +1013,78 @@
    * @private
    */
   CIF.prototype._registerInitializationElements = function () {
-    var InitPrototype = Object.create(HTMLElement.prototype);
-    InitPrototype.createdCallback = function () {
-      this.style.display = 'none';
-    };
-    this._initSlot = document.registerElement('cubx-core-init', { prototype: InitPrototype });
+    function getInitConstructor () {
+      var InitClass = function () {
+        var htmlEl = HTMLElement.call(this);
+        var me;
+        if (htmlEl) {
+          me = htmlEl;
+        } else {
+          me = this;
+        }
+        setTimeout(function () {
+          this.style.display = 'none';
+        }.bind(me), 0);
 
-    var InitSlotPrototype = Object.create(HTMLElement.prototype);
-    InitSlotPrototype.setSlot = function (slot) {
-      this.setAttribute('slot', slot);
-    };
-    InitSlotPrototype.getSlot = function () {
-      return this.getAttribute('slot');
-    };
-    InitSlotPrototype.setMember = function (member) {
-      this.setAttribute('member', member);
-    };
-    InitSlotPrototype.getMember = function () {
-      return this.getAttribute('member');
-    };
-    InitSlotPrototype.setOrder = function (order) {
-      this.setAttribute('order', order);
-    };
-    InitSlotPrototype.getOrder = function () {
-      return this.getAttribute('order');
-    };
-    InitSlotPrototype.getType = function () {
-      return this.getAttribute('type');
-    };
-    InitSlotPrototype.setType = function (type) {
-      this.setAttribute('type', type);
-    };
-    InitSlotPrototype.getDeepLevel = function () {
-      return this.getAttribute('deeplevel');
-    };
-    InitSlotPrototype.setDeepLevel = function (deeplevel) {
-      this.setAttribute('deeplevel', deeplevel);
-    };
+        return htmlEl;
+      };
 
-    this._slotInitElement = document.registerElement('cubx-core-slot-init', { prototype: InitSlotPrototype });
+      Object.setPrototypeOf(InitClass.prototype, HTMLElement.prototype);
+      Object.setPrototypeOf(InitClass, HTMLElement);
+      return InitClass;
+    }
+    var constructorInit = customElements.get('cubx-core-init');
+    if (!constructorInit) {
+      constructorInit = getInitConstructor();
+      customElements.define('cubx-core-init', constructorInit);
+      this._initSlot = constructorInit;
+    }
+
+    function getSlotInitConstructor () {
+      var SlotInitClass = function () {
+        return HTMLElement.call(this);
+      };
+
+      SlotInitClass.prototype.setSlot = function (slot) {
+        this.setAttribute('slot', slot);
+      };
+      SlotInitClass.prototype.getSlot = function () {
+        return this.getAttribute('slot');
+      };
+      SlotInitClass.prototype.setMember = function (member) {
+        this.setAttribute('member', member);
+      };
+      SlotInitClass.prototype.getMember = function () {
+        return this.getAttribute('member');
+      };
+      SlotInitClass.prototype.setOrder = function (order) {
+        this.setAttribute('order', order);
+      };
+      SlotInitClass.prototype.getOrder = function () {
+        return this.getAttribute('order');
+      };
+      SlotInitClass.prototype.getType = function () {
+        return this.getAttribute('type');
+      };
+      SlotInitClass.prototype.setType = function (type) {
+        this.setAttribute('type', type);
+      };
+      SlotInitClass.prototype.getDeepLevel = function () {
+        return this.getAttribute('deeplevel');
+      };
+      SlotInitClass.prototype.setDeepLevel = function (deeplevel) {
+        this.setAttribute('deeplevel', deeplevel);
+      };
+      Object.setPrototypeOf(SlotInitClass.prototype, HTMLElement.prototype);
+      Object.setPrototypeOf(SlotInitClass, HTMLElement);
+      return SlotInitClass;
+    }
+    var constructorSlotInit = customElements.get('cubx-core-slot-init');
+    if (!constructorSlotInit) {
+      constructorSlotInit = getSlotInitConstructor();
+      customElements.define('cubx-core-slot-init', constructorSlotInit);
+      this._slotInitElement = constructorSlotInit;
+    }
   };
   /**
    * Returns the DOMTree on basis of manifest object representing the complete application including all it's used
@@ -1024,7 +1111,7 @@
       this.getCompoundComponentElementConstructor(root.tagName.toLocaleLowerCase());
       _.merge(root.prototype, window.cubx.cif.compoundComponent);
       root.createdCallback();
-      root.attachedCallback();
+      root.connectedCallback();
     }
 
     // root.setAttribute('runtime-id', runtimeId);
@@ -1059,7 +1146,7 @@
   CIF.prototype._attachMembers = function (root, rootManifest, deeplevel) {
     var rootRuntimeId = root.getAttribute('runtime-id');
     var artifactId = root.tagName.toLowerCase();
-    var promise = this._findTemplate(artifactId);
+    var promise = window.cubx.utils.findTemplate(artifactId);
     var me = this;
     promise.then(
       function (results) {
@@ -1232,59 +1319,6 @@
   };
 
   /**
-   * Search for a template with the id, and get the first template with the id. If not found returns undefined.
-   * @param {string} id - wanted id attribute
-   * @returns {HTMLTemplateElement|undefined}
-   * @memberOf CIF
-   * @private
-   */
-  CIF.prototype._findTemplate = function (id) {
-    var promises = [];
-    var importDocList = document.querySelectorAll('link[rel=import]');
-    var me = this;
-    var importDoc;
-    for (var i = 0; i < importDocList.length; i++) {
-      importDoc = importDocList[ i ];
-
-      promises.push(new Promise(function (resolve, reject) {
-        if (importDoc.import) {
-          me._resolveTemplateContent(importDoc, id, resolve, reject);
-        } else {
-          importDoc.addEventListener('load', function (event) {
-            me._resolveTemplateContent(event.target, id, resolve, reject);
-          });
-        }
-      }));
-    }
-    return Promise.all(promises);
-  };
-
-  /**
-   * Import the template document and call resolve for the template id attribute equals with the parameter id, otherwise resolve with false.
-   * @memberOf CIF
-   * @param {HTMLLinkElement} importDoc - Link import Tag
-   * @param {string} id -
-   * @param resolve
-   * @param reject
-   * @private
-   */
-  CIF.prototype._resolveTemplateContent = function (importDoc, id, resolve, reject) {
-    var content;
-    var template;
-    if (importDoc) {
-      content = importDoc.import;
-    }
-    if (content) {
-      template = content.querySelector('#' + id);
-    }
-    if (template) {
-      resolve(template);
-    } else {
-      resolve(false);
-    }
-  };
-
-  /**
    * Check the template content for custom elements:
    * Cubbles elements,, which are not members of the parent compound, will marked with
    * the attribute not-found-in-members = true and cause a warning message..
@@ -1311,15 +1345,7 @@
       }
     }
   };
-  /**
-   * Return the node or (if Polymer exists) the Polymer wrapper of the node
-   * @param {HTMLElement} node
-   * @return {*}
-   * @private
-   */
-  CIF.prototype._getNode = function (node) {
-    return window.Polymer && typeof node.root === 'object' && this._isElementaryComponent(node) ? window.Polymer.dom(node.root) : node;
-  };
+
   /**
    * Create html connection nodes for representing the connections defined in the manifest
    * @memberOf CIF
@@ -1376,9 +1402,9 @@
       cubxConnectionsEl = new this._connectionsElement();
       cubxConnectionsEl.generatedByCif = true;
       if (sourceEl.childElementCount > 0) {
-        this._getNode(sourceEl).insertBefore(cubxConnectionsEl, this._getNode(sourceEl).firstElementChild);
+        sourceEl.insertBefore(cubxConnectionsEl, sourceEl.firstElementChild);
       } else {
-        this._getNode(sourceEl).appendChild(cubxConnectionsEl);
+        sourceEl.appendChild(cubxConnectionsEl);
       }
     }
     // create cubx-core-connection element and add it to cubx-core-connections element
@@ -1404,7 +1430,7 @@
       cubxConnectionEl.setHookFunction(connection.hookFunction);
     }
 
-    this._getNode(cubxConnectionsEl).appendChild(cubxConnectionEl);
+    cubxConnectionsEl.appendChild(cubxConnectionEl);
   };
   /**
    * Create html init nodes for representing the connections defined in manifest
@@ -1465,9 +1491,9 @@
       cubxInitEl = new this._initSlot();
       cubxInitEl.generatedByCif = true;
       if (el.childElementCount > 0) {
-        this._getNode(el).insertBefore(cubxInitEl, this._getNode(el).firstElementChild);
+        el.insertBefore(cubxInitEl, el.firstElementChild);
       } else {
-        this._getNode(el).appendChild(cubxInitEl);
+        el.appendChild(cubxInitEl);
       }
     }
     // create cubx-core-slot-init element and add it to cubx-core-init element

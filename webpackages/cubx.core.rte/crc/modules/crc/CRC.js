@@ -2,16 +2,15 @@
 /**
  * Defines the CRC RequireJS Module.
  *
- * @version 2.5.2
+ * @version 3.0.0-SNAPSHOT
  */
 window.cubx.amd.define([
-  'storageManager',
   'dependencyManager',
   'cache',
   'componentResolver',
   'utils',
   'eventFactory'
-], function (storageMgr, DepMgr, Cache, ComponentResolver, utils, EventFactory) {
+], function (DepMgr, Cache, ComponentResolver, utils, EventFactory) {
   'use strict';
 
   /**
@@ -26,7 +25,7 @@ window.cubx.amd.define([
      /* @type {string}
      /* @private
      */
-    this._version = '2.5.2';
+    this._version = '3.0.0-SNAPSHOT';
 
     /**
      * jQuery object containing only one element to which the crc should be appended
@@ -85,13 +84,6 @@ window.cubx.amd.define([
     window.cubx.EventFactory = EventFactory;
 
     /**
-     * The StorageManager instance of this CRC instance
-     * @type {object}
-     * @private
-     */
-    this._storageManager = storageMgr;
-
-    /**
      * The ready flag set to true, after crc has loaded all dependencies and is ready
      * @type {boolean}
      * @private
@@ -118,7 +110,7 @@ window.cubx.amd.define([
      * @type {string[]}
      * @private
      */
-    this._supportedModelVersionList = [ '8.0', '8.1', '8.2', '8.3', '9.0', '9.1' ];
+    this._supportedModelVersionList = [ '10.0' ];
   };
 
   // --------------------------------------------------------------------------------------------------------------
@@ -162,15 +154,6 @@ window.cubx.amd.define([
    */
   CRC.prototype.getEventFactory = function () {
     return this._eventFactory;
-  };
-
-  /**
-   * Get the Sotarage Manager instance
-   * @return {Object}
-   * @memberOf CRC
-   */
-  CRC.prototype.getStorageManager = function () {
-    return this._storageManager;
   };
 
   /**

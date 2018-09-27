@@ -107,7 +107,7 @@ describe('ConnectionManager', function () {
 
     afterEach(function () {
       connectionMgr._connections = [];
-      destinationElem.model = {};
+      // destinationElem.model = {};
     });
     describe('#addDynamicConnection', function () {
       describe('add a valid connection with directExecution = true, copyValue=true', function () {
@@ -277,8 +277,6 @@ describe('ConnectionManager', function () {
         });
         it('the #_executeConnection should been not called', function () {
           spyExecuteConnection.should.been.not.called;
-          // slotB property would create setting on first time
-          destinationElem.model.should.not.have.property('slotB');
         });
       });
       describe('add a valid connection with directExecution = true, copyValue = false', function () {

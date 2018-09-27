@@ -6,7 +6,7 @@ This webpackage contains certain artifacts representing the [Cubbles Runtime Env
 * [cif (component interaction framework)](#cif)
   * [Cubbles TAG API](#the-cubbles-tag-api)
 * [cubx-component-mixin](#cubx-component-mixin)
-* [cubxpolymer](#cubxpolymer)
+* [cubxcomponent](#cubxcomponent)
 * [dom-tree-utils](#dom-tree-utils)
 * [dynamic-connection-utils](#dynamic-connection-utils)
 * [es6-promise](#es6-promise)
@@ -271,9 +271,8 @@ To make sure a dependency is always excluded you can add it to the global `windo
 ## cubx-component-mixin
 A collection of instance methods which each Cubble provides no matter if it is a compound Cubble or an elementary Cubble.
 
-## cubxpolymer
-Provides the global `CubxPolymer()` function used for registering a new Cubble component. This basically extends the gobal `Polymer()` function that comes with Polymer we use for implement elementary Cubbles components. 
-For more details see [Polymer Project](https://www.polymer-project.org/1.0/).
+## cubxcomponent
+Provides the global `CubxComponent()` function used for registering a new Cubble component. This is nessecary for implement elementary Cubbles components. 
 
 ## dom-tree-utils
 Some helpers for DOM tree manipulation.

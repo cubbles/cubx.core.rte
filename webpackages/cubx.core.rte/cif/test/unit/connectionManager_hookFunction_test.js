@@ -3,6 +3,7 @@
 describe('ConnectionManager', function () {
   describe('hookFunctions', function () {
     var cif;
+
     before(function () {
       cif = window.cubx.cif.cif;
     });

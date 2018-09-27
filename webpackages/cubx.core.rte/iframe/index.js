@@ -213,11 +213,17 @@
       rteWebpackageId = rteWebpackageId.substring(0, rteWebpackageId.indexOf('/'));
     }
     //
+
     var scriptElement = _createScriptElement(
       {
-        'src': '../../' + rteWebpackageId + '/webcomponents-lite/webcomponents-lite.js'
-      },
-      _dispatchComponentAppendEvent
+        'src': '../../' + rteWebpackageId + '/webcomponents/custom-elements-es5-adapter.js'
+      }
+    );
+    document.head.appendChild(scriptElement);
+    scriptElement = _createScriptElement(
+      {
+        'src': '../../' + rteWebpackageId + '/webcomponents/webcomponents-lite.js'
+      }
     );
 
     document.head.appendChild(scriptElement);

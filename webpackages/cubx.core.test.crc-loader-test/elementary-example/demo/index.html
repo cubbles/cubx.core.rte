@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>app</title>
 
-    <script src="../../../cubx.core.rte@1.5.0/webcomponents/webcomponents-lite.js"></script>
+    <script src="../../../cubx.core.rte/webcomponents/custom-elements-es5-adapter.js"></script>
+    <script src="../../../cubx.core.rte@3.0.0-SNAPSHOT/webcomponents/webcomponents-lite.js"></script>
 
     <!--
         Declare a CRCInit-Object used to initialize the CRC (Client-Runtime-Container):
@@ -16,7 +17,9 @@
         window.cubx = {
             CRCInit: {
                 rootDependencies: [
-                    "this/elementary-example/main"
+                  {
+                    artifactId: 'elementary-example'
+                  }
                 ]
             }
         }
@@ -29,7 +32,7 @@
         Want to add a 'main' -script to be executed after the dependencies have been loaded?
         If yes, add the following attribute: data-crc-main="js/my-script.js"
     -->
-    <script src="../../../cubx.core.rte@1.5.0/crc-loader/js/main.js" data-CRCInit.loadCIF="true"></script>
+    <script src="../../../cubx.core.rte@3.0.0-SNAPSHOT/crc-loader/js/main.js" data-CRCInit.loadCIF="true"></script>
 
 </head>
 <body>

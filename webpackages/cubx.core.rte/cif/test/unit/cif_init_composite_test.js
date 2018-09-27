@@ -192,6 +192,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -393,6 +396,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -595,6 +601,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -839,6 +848,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -1119,6 +1131,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -1170,8 +1185,10 @@ describe('CIF', function () {
         console.log(compoundEl);
         cif._initConnections();
         cif._initSlots();
-        compoundEl.model.should.have.property('testslotA', 'Hello World!');
-        compoundEl2.model.should.have.property('testslotA', 'Hello World!');
+        compoundEl.model.should.have.property('_testslotA', 'Hello World!');
+        compoundEl.model.testslotA.should.be.equal('Hello World!');
+        compoundEl2.model.should.have.property('_testslotA', 'Hello World!');
+        compoundEl2.model.testslotA.should.be.equal('Hello World!');
       });
       it('resetIniList should be called once', function () {
         cif._initCubxElements(container);
@@ -1365,6 +1382,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
@@ -1569,6 +1589,9 @@ describe('CIF', function () {
         while (elList[ 0 ]) {
           var el = elList[ 0 ];
           container.removeChild(el);
+          if (elList[ 0 ] === el) {
+            elList = container.children;
+          }
         }
         crc.getResolvedComponent.restore();
         crc.getCache().getComponentCacheEntry.restore();
