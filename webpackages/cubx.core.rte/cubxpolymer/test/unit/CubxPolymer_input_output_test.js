@@ -407,7 +407,7 @@ describe('CubxPolymer (input/output)', function () {
     });
     describe('"repropagate" Method exists für output slots', function () {
       it('repropagateInputvar method should be not exists', function () {
-        expect(component.repropageteInputvar).to.be.unefined;
+        expect(component.repropageteInputvar).to.be.an('undefined');
       });
       it('repropagateOutputvar method should be exists, and  is a function', function () {
         component.repropagateOutputvar.should.be.exist;

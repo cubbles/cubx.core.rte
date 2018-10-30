@@ -69,12 +69,12 @@ describe('CubxPolymer (dynamicConnection', function () {
           connection.should.have.property('repeatedValues', false);
           connection.should.have.property('hookFunction', null);
           connection.should.have.property('connectionId', dynamicConnection.connectionId);
-          connection.should.have.deep.property('source.memberId', 'member1');
-          connection.should.have.deep.property('source.component', elem1);
-          connection.should.have.deep.property('source.slot', dynamicConnection.source.slot);
-          connection.should.have.deep.property('destination.memberId', 'member2');
-          connection.should.have.deep.property('destination.component', elem2);
-          connection.should.have.deep.property('destination.slot', dynamicConnection.destination.slot);
+          connection.should.have.deep.nested.property('source.memberId', 'member1');
+          connection.should.have.deep.nested.property('source.component', elem1);
+          connection.should.have.deep.nested.property('source.slot', dynamicConnection.source.slot);
+          connection.should.have.deep.nested.property('destination.memberId', 'member2');
+          connection.should.have.deep.nested.property('destination.component', elem2);
+          connection.should.have.deep.nested.property('destination.slot', dynamicConnection.destination.slot);
         });
     });
     describe('add connection with all possible attributes to a empty connection list', function () {
@@ -111,12 +111,12 @@ describe('CubxPolymer (dynamicConnection', function () {
           connection.should.have.property('repeatedValues', dynamicConnection.repeatedValues);
           connection.should.have.property('hookFunction', dynamicConnection.hookFunction);
           connection.should.have.property('connectionId', dynamicConnection.connectionId);
-          connection.should.have.deep.property('source.memberId', 'member1');
-          connection.should.have.deep.property('source.component', elem1);
-          connection.should.have.deep.property('source.slot', dynamicConnection.source.slot);
-          connection.should.have.deep.property('destination.memberId', 'member2');
-          connection.should.have.deep.property('destination.component', elem2);
-          connection.should.have.deep.property('destination.slot', dynamicConnection.destination.slot);
+          connection.should.have.deep.nested.property('source.memberId', 'member1');
+          connection.should.have.deep.nested.property('source.component', elem1);
+          connection.should.have.deep.nested.property('source.slot', dynamicConnection.source.slot);
+          connection.should.have.deep.nested.property('destination.memberId', 'member2');
+          connection.should.have.deep.nested.property('destination.component', elem2);
+          connection.should.have.deep.nested.property('destination.slot', dynamicConnection.destination.slot);
         });
     });
     describe('add connection to a not empty connection list', function () {
@@ -186,12 +186,12 @@ describe('CubxPolymer (dynamicConnection', function () {
         connection.should.have.property('repeatedValues', false);
         connection.should.have.property('hookFunction', null);
         connection.should.have.property('connectionId', dynamicConnection.connectionId);
-        connection.should.have.deep.property('source.memberId', 'member1');
-        connection.should.have.deep.property('source.component', elem1);
-        connection.should.have.deep.property('source.slot', dynamicConnection.source.slot);
-        connection.should.have.deep.property('destination.memberId', 'member2');
-        connection.should.have.deep.property('destination.component', elem2);
-        connection.should.have.deep.property('destination.slot', dynamicConnection.destination.slot);
+        connection.should.have.deep.nested.property('source.memberId', 'member1');
+        connection.should.have.deep.nested.property('source.component', elem1);
+        connection.should.have.deep.nested.property('source.slot', dynamicConnection.source.slot);
+        connection.should.have.deep.nested.property('destination.memberId', 'member2');
+        connection.should.have.deep.nested.property('destination.component', elem2);
+        connection.should.have.deep.nested.property('destination.slot', dynamicConnection.destination.slot);
       });
     });
     describe('add connection failed, if the connectionId exist for a static connection', function () {
@@ -361,12 +361,12 @@ describe('CubxPolymer (dynamicConnection', function () {
         connection.should.have.property('hookFunction', 'myFunc');
         connection.should.have.property('connectionId',
           window.cubx.dynamicConnectionUtil.generateConnectionId(dynamicConnection));
-        connection.should.have.deep.property('source.memberId', 'member3');
-        connection.should.have.deep.property('source.component', dummyElem1);
-        connection.should.have.deep.property('source.slot', dynamicConnection.source.slot);
-        connection.should.have.deep.property('destination.memberId', 'member4');
-        connection.should.have.deep.property('destination.component', dummyElem2);
-        connection.should.have.deep.property('destination.slot', dynamicConnection.destination.slot);
+        connection.should.have.deep.nested.property('source.memberId', 'member3');
+        connection.should.have.deep.nested.property('source.component', dummyElem1);
+        connection.should.have.deep.nested.property('source.slot', dynamicConnection.source.slot);
+        connection.should.have.deep.nested.property('destination.memberId', 'member4');
+        connection.should.have.deep.nested.property('destination.component', dummyElem2);
+        connection.should.have.deep.nested.property('destination.slot', dynamicConnection.destination.slot);
       });
     });
   });
