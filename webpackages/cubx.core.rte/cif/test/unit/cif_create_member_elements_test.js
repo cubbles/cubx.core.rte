@@ -102,7 +102,7 @@ describe('CIF', function () {
         it('should initialize the components', function (done) {
           cif._initCubxElements(container);
           window.setTimeout(function () {
-            var ciftestA = container.C;
+            var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
             ciftestA.getAttribute('member-id').should.be.exists;
             ciftestA.getAttribute('member-id').should.have.length(36);
