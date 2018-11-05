@@ -102,7 +102,7 @@ describe('CIF', function () {
         it('should initialize the components', function (done) {
           cif._initCubxElements(container);
           window.setTimeout(function () {
-            var ciftestA = container.firstElementChild;
+            var ciftestA = container.C;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
             ciftestA.getAttribute('member-id').should.be.exists;
             ciftestA.getAttribute('member-id').should.have.length(36);
@@ -113,7 +113,7 @@ describe('CIF', function () {
             ciftestB.should.have.property('tagName', 'CIFTEST-B');
             ciftestB.should.have.property('processed', true);
             done();
-          }, 100);
+          }, 200);
         });
       });
       describe('whith id, without member-id, runtime-id attributes', function () {
