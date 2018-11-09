@@ -7,12 +7,12 @@
   'use strict';
 
   /**
-   * Make karma.start a empty function to prevent that karma starts before 
-   * requirejs is ready. In our case karma.start is equivalent to mocha.run, 
+   * Make karma.start a empty function to prevent that karma starts before
+   * requirejs is ready. In our case karma.start is equivalent to mocha.run,
    * which is called in the callback at the end of this script
    */
-  window.__karma__.start = function(){};
-  
+  window.__karma__.start = function () {};
+
   // define all tests that should be performed (relative to test/index.html)
   var tests = [
     'unit/CRCLoader_test',
