@@ -6,6 +6,8 @@
 (function () {
   'use strict';
 
+  window.__karma__.start = function(){};
+  
   // define all tests that should be performed (relative to test/index.html)
   var tests = [
     'unit/CRCLoader_test',
