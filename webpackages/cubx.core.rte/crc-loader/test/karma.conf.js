@@ -94,7 +94,7 @@ module.exports = function (config) {
   };
 
   if (process.env.TRAVIS) {
-    configuration.browsers = [ 'Chrome_travis_ci', 'FireFox' ];
+    configuration.browsers = [ 'Chrome_travis_ci', 'Firefox' ];
   }
 
   config.set(configuration);
