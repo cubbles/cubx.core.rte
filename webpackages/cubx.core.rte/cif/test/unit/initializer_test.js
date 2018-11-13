@@ -88,7 +88,7 @@ describe('Initializer', function () {
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child2');
         child2 = new constructor();
         child2.Context.setParent(element.Context);
-        stubIsInputSlot = sinon.stub(element, 'isInputSlot', function () {
+        stubIsInputSlot = sinon.stub(element, 'isInputSlot').callsFake(function () {
           return true;
         });
 
@@ -146,7 +146,7 @@ describe('Initializer', function () {
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child2');
         child2 = new constructor();
         child2.Context.setParent(element.Context);
-        stubIsInputSlot = sinon.stub(element, 'isInputSlot', function () {
+        stubIsInputSlot = sinon.stub(element, 'isInputSlot').callsFake(function () {
           return true;
         });
 
@@ -197,7 +197,7 @@ describe('Initializer', function () {
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child2');
         child2 = new constructor();
         child2.Context.setParent(element.Context);
-        stubIsInputSlot = sinon.stub(element, 'isInputSlot', function () {
+        stubIsInputSlot = sinon.stub(element, 'isInputSlot').callsFake(function () {
           return true;
         });
 
@@ -235,7 +235,7 @@ describe('Initializer', function () {
       /* eslint-enable no-unused-vars */
       beforeEach(function () {
         stubgetComponentCacheEntry =
-          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
             return { id: key };
           });
         var constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-parent');
@@ -265,13 +265,13 @@ describe('Initializer', function () {
         child2.appendChild(initEl);
         initSlot(initEl, 'slotE', 'e', 0);
         initSlot(initEl, 'slotF', 'f', 1);
-        stubIsInputSlotElement = sinon.stub(element, 'isInputSlot', function () {
+        stubIsInputSlotElement = sinon.stub(element, 'isInputSlot').callsFake(function () {
           return true;
         });
-        stubIsInputSlotChild = sinon.stub(child, 'isInputSlot', function () {
+        stubIsInputSlotChild = sinon.stub(child, 'isInputSlot').callsFake(function () {
           return true;
         });
-        stubIsInputSlotChild2 = sinon.stub(child2, 'isInputSlot', function () {
+        stubIsInputSlotChild2 = sinon.stub(child2, 'isInputSlot').callsFake(function () {
           return true;
         });
         initializer._parseInitSlotsForElement(element, element.Context);
@@ -340,12 +340,12 @@ describe('Initializer', function () {
         initSlot(initEl, 'slotE', 'e');
         initSlot(initEl, 'slotF', 'f');
 
-        stubIsInputSlotElement = sinon.stub(element, 'isInputSlot', function () {
+        stubIsInputSlotElement = sinon.stub(element, 'isInputSlot').callsFake(function () {
           return true;
         });
 
         stubGetComponentCacheEntry =
-          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+          sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
             var obj;
 
             switch (key) {
@@ -440,7 +440,7 @@ describe('Initializer', function () {
         constructor = cif.getCompoundComponentElementConstructor('ciftest-initializer-child2');
         child2 = new constructor();
         child2.Context.setParent(element.Context);
-        stubIsInputSlot = sinon.stub(element, 'isInputSlot', function () {
+        stubIsInputSlot = sinon.stub(element, 'isInputSlot').callsFake(function () {
           return false;
         });
         initializer._initList = [];
@@ -473,7 +473,7 @@ describe('Initializer', function () {
       initSlotElements.push(initSlot('slotB', 'b', 1));
       initializer._initList = [];
       stubAddSlotInitializierungToInitList =
-        sinon.stub(initializer, '_addInitSlotEntryToInitList', function (element, context, initElement) {
+        sinon.stub(initializer, '_addInitSlotEntryToInitList').callsFake(function (element, context, initElement) {
           // do nothing
         });
       element = document.createElement('test');
@@ -538,7 +538,7 @@ describe('Initializer', function () {
     });
     describe('the manifest.component the attribute type: \'elementary\' contains', function () {
       beforeEach(function () {
-        manifestStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function () {
+        manifestStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {
             artifactType: 'elementaryComponent'
           };
@@ -553,7 +553,7 @@ describe('Initializer', function () {
     });
     describe('the manifest.component a type !=\'elementary\' contains', function () {
       beforeEach(function () {
-        manifestStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function () {
+        manifestStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {
             type: '_afterCreatedElementsReady'
           };
@@ -568,7 +568,7 @@ describe('Initializer', function () {
     });
     describe('the manifest.component not exists', function () {
       beforeEach(function () {
-        manifestStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function () {
+        manifestStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return null;
         });
       });
@@ -630,7 +630,7 @@ describe('Initializer', function () {
       initElement.innerHTML = '"' + value + '"';
       var init = new window.cubx.cif.Initializer.SlotInit(element, element.Context, initElement);
 
-      componentSetInputSlotStub = sinon.stub(element, 'setInputSlot', function (slot, payloadObject) {
+      componentSetInputSlotStub = sinon.stub(element, 'setInputSlot').callsFake(function (slot, payloadObject) {
         // do nothing
       });
       initializer._initSlot(init);
@@ -686,7 +686,7 @@ describe('Initializer', function () {
       init = new window.cubx.cif.Initializer.SlotInit(element, element.Context, initElement);
       initializer._initList.push(init);
 
-      _initSlotStub = sinon.stub(initializer, '_initSlot', function () {
+      _initSlotStub = sinon.stub(initializer, '_initSlot').callsFake(function () {
         // do nothing
       });
       initializer.initSlots();

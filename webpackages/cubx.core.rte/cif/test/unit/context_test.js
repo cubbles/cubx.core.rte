@@ -25,7 +25,7 @@ describe('Context', function () {
       var context = element.Context;
       expect(context._parent).to.be.null;
       context._children.should.be.empty;
-      context._rootElement.should.be.deep.equals(element);
+      context._rootElement.should.be.nested.equals(element);
       context._components.should.be.empty;
       context._connectionMgr.should.be.not.empty;
       context._connectionMgr.should.be.an('object');
@@ -57,9 +57,9 @@ describe('Context', function () {
       expect(childContext._parent).to.be.null;
       parentContext._children.should.have.length(0);
       childContext.setParent(parentContext);
-      childContext._parent.should.be.deep.equals(parentContext);
+      childContext._parent.should.be.nested.equals(parentContext);
       parentContext._children.should.have.length(1);
-      parentContext.should.have.deep.property('_children[0]', childContext);
+      parentContext.should.have.nested.property('_children[0]', childContext);
     });
   });
   describe('#getRootElement', function () {
@@ -76,7 +76,7 @@ describe('Context', function () {
     });
     it('getRootElement get the content of _rootElement', function () {
       var context = element.Context;
-      context.getRootElement().should.be.deep.equals(context._rootElement);
+      context.getRootElement().should.be.nested.equals(context._rootElement);
     });
   });
   describe('#getComponents', function () {
@@ -145,7 +145,7 @@ describe('Context', function () {
       context._components.should.be.empty;
       context.addComponent(childElement);
       context._components.should.have.length(1);
-      context.should.have.deep.property('_components[0]', childElement);
+      context.should.have.nested.property('_components[0]', childElement);
     });
   });
   describe('#setReady', function () {
@@ -256,13 +256,13 @@ describe('Context', function () {
       subelement.appendChild(subsubelement);
       subSubContext = subsubelement.Context;
       subSubContext.setParent(subContext);
-      stubParentContext = sinon.stub(parentContext, '_initConnections', function () {
+      stubParentContext = sinon.stub(parentContext, '_initConnections').callsFake(function () {
         // do nothing
       });
-      stubSubContext = sinon.stub(subContext, '_initConnections', function () {
+      stubSubContext = sinon.stub(subContext, '_initConnections').callsFake(function () {
         // do nothing
       });
-      stubSubSubContext = sinon.stub(subSubContext, '_initConnections', function () {
+      stubSubSubContext = sinon.stub(subSubContext, '_initConnections').callsFake(function () {
         // do nothing
       });
     });
@@ -365,12 +365,12 @@ describe('Context', function () {
       beforeEach(function (done) {
         var innerFunction = context._handleModelChangeEvent;
 
-        _handleModelChangeEventStub = sinon.stub(context, '_handleModelChangeEvent', function (event) {
+        _handleModelChangeEventStub = sinon.stub(context, '_handleModelChangeEvent').callsFake(function (event) {
           innerFunction.apply(context, [ event ]);
           done();
         });
         processConnectionsStub =
-          sinon.stub(context._connectionMgr, 'processConnections', function (element, detail) {
+          sinon.stub(context._connectionMgr, 'processConnections').callsFake(function (element, detail) {
           });
         detail = {
           payload: '{}',
@@ -412,12 +412,12 @@ describe('Context', function () {
         subContext = subElement.Context;
         subContext.setParent(context);
         var innerFunction = context._handleModelChangeEvent;
-        _handleModelChangeEventStub = sinon.stub(context, '_handleModelChangeEvent', function (event) {
+        _handleModelChangeEventStub = sinon.stub(context, '_handleModelChangeEvent').callsFake(function (event) {
           innerFunction.apply(context, [ event ]);
           done();
         });
         processConnectionsStub =
-          sinon.stub(context._connectionMgr, 'processConnections', function (element, detail) {
+          sinon.stub(context._connectionMgr, 'processConnections').callsFake(function (element, detail) {
           });
 
         detail = {
@@ -460,7 +460,7 @@ describe('Context', function () {
       element = new constructor();
       container.appendChild(element);
       context = element.Context;
-      stub = sinon.stub(context._connectionMgr, 'parseConnectionsFromComponentList', function () {
+      stub = sinon.stub(context._connectionMgr, 'parseConnectionsFromComponentList').callsFake(function () {
         // do nothing
       });
       context._initConnections();

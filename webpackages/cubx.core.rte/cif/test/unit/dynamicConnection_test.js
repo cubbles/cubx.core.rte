@@ -60,8 +60,8 @@ describe('DynamicConnection', function () {
       });
       it('should have a valid structure', function () {
         dynamicConnection.should.have.property('connectionId', config.connectionId);
-        dynamicConnection.should.have.deep.property('source', config.source);
-        dynamicConnection.should.have.deep.property('destination', config.destination);
+        dynamicConnection.should.have.nested.property('source', config.source);
+        dynamicConnection.should.have.nested.property('destination', config.destination);
         dynamicConnection.should.have.property('copyValue', config.copyValue);
         dynamicConnection.should.have.property('repeatedValues', config.repeatedValues);
         dynamicConnection.should.have.property('hookFunction', config.hookFunction);
@@ -97,8 +97,8 @@ describe('DynamicConnection', function () {
       });
       it('should have a valid structure', function () {
         dynamicConnection.should.have.property('connectionId', config.connectionId);
-        dynamicConnection.should.have.deep.property('source', config.source);
-        dynamicConnection.should.have.deep.property('destination', config.destination);
+        dynamicConnection.should.have.nested.property('source', config.source);
+        dynamicConnection.should.have.nested.property('destination', config.destination);
       });
     });
     describe('constructor with not valid config parameter', function () {
@@ -174,8 +174,8 @@ describe('DynamicConnection', function () {
       });
       it('should have a valid structure', function () {
         dynamicConnection.should.have.property('connectionId', config.connectionId);
-        dynamicConnection.should.have.deep.property('source', config.source);
-        dynamicConnection.should.have.deep.property('destination', config.destination);
+        dynamicConnection.should.have.nested.property('source', config.source);
+        dynamicConnection.should.have.nested.property('destination', config.destination);
         dynamicConnection.should.have.property('copyValue', config.copyValue);
         dynamicConnection.should.have.property('repeatedValues', config.repeatedValues);
         dynamicConnection.should.have.property('hookFunction', config.hookFunction);
@@ -209,8 +209,8 @@ describe('DynamicConnection', function () {
       });
       it('should have a valid structure', function () {
         dynamicConnection.should.have.property('connectionId', config.connectionId);
-        dynamicConnection.should.have.deep.property('source', config.source);
-        dynamicConnection.should.have.deep.property('destination', config.destination);
+        dynamicConnection.should.have.nested.property('source', config.source);
+        dynamicConnection.should.have.nested.property('destination', config.destination);
         dynamicConnection.should.not.have.property('copyValue');
         dynamicConnection.should.not.have.property('repeatedValues');
         dynamicConnection.should.not.have.property('hookFunction');
@@ -278,13 +278,13 @@ describe('DynamicConnection', function () {
         var source;
         var error = dynamicConnection._validateSource(source);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "source" is missed.');
+        error.should.have.nested.property('[0]', 'The "source" is missed.');
       });
       it('should be get an error with source = null', function () {
         var source = null;
         var error = dynamicConnection._validateSource(source);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "source" is missed.');
+        error.should.have.nested.property('[0]', 'The "source" is missed.');
       });
       it('should get an error, if "runtimeId" missed.', function () {
         var source = {
@@ -292,8 +292,8 @@ describe('DynamicConnection', function () {
         };
         var error = dynamicConnection._validateSource(source);
         error.should.have.length(2);
-        error.should.have.deep.property('[0]', 'The "source.runtimeId" is missed.');
-        error.should.have.deep.property('[1]', 'Not valid "runtimeId" (undefined). It must be a string.');
+        error.should.have.nested.property('[0]', 'The "source.runtimeId" is missed.');
+        error.should.have.nested.property('[1]', 'Not valid "runtimeId" (undefined). It must be a string.');
       });
       it('should  get an error, if "slot" missed.', function () {
         var source = {
@@ -301,14 +301,14 @@ describe('DynamicConnection', function () {
         };
         var error = dynamicConnection._validateSource(source);
         error.should.have.length(2);
-        error.should.have.deep.property('[0]', 'The "source.slot" is missed.');
-        error.should.have.deep.property('[1]', 'Not valid "slot" (undefined). It must be a string.');
+        error.should.have.nested.property('[0]', 'The "source.slot" is missed.');
+        error.should.have.nested.property('[1]', 'Not valid "slot" (undefined). It must be a string.');
       });
       it('should  get an error, if "source" is a string.', function () {
         var source = 'string';
         var error = dynamicConnection._validateSource(source);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid source (' + JSON.stringify(source) + '). The "source" must be an object.');
       });
     });
@@ -325,13 +325,13 @@ describe('DynamicConnection', function () {
         var destination;
         var error = dynamicConnection._validateDestination(destination);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "destination" is missed.');
+        error.should.have.nested.property('[0]', 'The "destination" is missed.');
       });
       it('should be get an error with destination = null', function () {
         var destination = null;
         var error = dynamicConnection._validateDestination(destination);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "destination" is missed.');
+        error.should.have.nested.property('[0]', 'The "destination" is missed.');
       });
       it('should get an error, if "runtimeId" missed.', function () {
         var destination = {
@@ -339,8 +339,8 @@ describe('DynamicConnection', function () {
         };
         var error = dynamicConnection._validateDestination(destination);
         error.should.have.length(2);
-        error.should.have.deep.property('[0]', 'The "destination.runtimeId" is missed.');
-        error.should.have.deep.property('[1]', 'Not valid "runtimeId" (undefined). It must be a string.');
+        error.should.have.nested.property('[0]', 'The "destination.runtimeId" is missed.');
+        error.should.have.nested.property('[1]', 'Not valid "runtimeId" (undefined). It must be a string.');
       });
       it('should  get an error, if "slot" missed.', function () {
         var destination = {
@@ -348,14 +348,14 @@ describe('DynamicConnection', function () {
         };
         var error = dynamicConnection._validateDestination(destination);
         error.should.have.length(2);
-        error.should.have.deep.property('[0]', 'The "destination.slot" is missed.');
-        error.should.have.deep.property('[1]', 'Not valid "slot" (undefined). It must be a string.');
+        error.should.have.nested.property('[0]', 'The "destination.slot" is missed.');
+        error.should.have.nested.property('[1]', 'Not valid "slot" (undefined). It must be a string.');
       });
       it('should  get an error, if "destination" is a string.', function () {
         var destination = 'string';
         var error = dynamicConnection._validateDestination(destination);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid destination (' + JSON.stringify(destination) +
           '). The "destination" must be an object.');
       });
@@ -370,28 +370,28 @@ describe('DynamicConnection', function () {
         var runtimeId = {};
         var error = dynamicConnection._validateRuntimeId(runtimeId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "runtimeId" (' + JSON.stringify(runtimeId) + '). It must be a string.');
       });
       it('should be get an error if the runtimeId has not a correct format', function () {
         var runtimeId = 'abc_def';
         var error = dynamicConnection._validateRuntimeId(runtimeId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]');
+        error.should.have.nested.property('[0]');
         error[0].should.be.to.include('Not valid "runtimeId" (' + runtimeId + ').');
       });
       it('should be valid if the parameter is undefined', function () {
         var runtimeId;
         var error = dynamicConnection._validateRuntimeId(runtimeId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "runtimeId" (' + JSON.stringify(runtimeId) + '). It must be a string.');
       });
       it('should be valid if the parameter is null', function () {
         var runtimeId = null;
         var error = dynamicConnection._validateRuntimeId(runtimeId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "runtimeId" (' + JSON.stringify(runtimeId) + '). It must be a string.');
       });
     });
@@ -405,21 +405,21 @@ describe('DynamicConnection', function () {
         var slot = {};
         var error = dynamicConnection._validateSlot(slot);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "slot" (' + JSON.stringify(slot) + '). It must be a string.');
       });
       it('should be valid if the parameter is undefined', function () {
         var slot;
         var error = dynamicConnection._validateSlot(slot);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "slot" (' + JSON.stringify(slot) + '). It must be a string.');
       });
       it('should be valid if the parameter is null', function () {
         var slot = null;
         var error = dynamicConnection._validateSlot(slot);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "slot" (' + JSON.stringify(slot) + '). It must be a string.');
       });
     });
@@ -433,7 +433,7 @@ describe('DynamicConnection', function () {
         var connectionId = {};
         var error = dynamicConnection._validateConnectionId(connectionId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "connectionId" (' + JSON.stringify(connectionId) + '). It must be a string.');
       });
 
@@ -441,14 +441,14 @@ describe('DynamicConnection', function () {
         var connectionId;
         var error = dynamicConnection._validateConnectionId(connectionId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "connectionId" (' + JSON.stringify(connectionId) + '). It must be a string.');
       });
       it('should be valid if the parameter is null', function () {
         var connectionId = null;
         var error = dynamicConnection._validateConnectionId(connectionId);
         error.should.have.length(1);
-        error.should.have.deep.property('[0]',
+        error.should.have.nested.property('[0]',
           'Not valid "connectionId" (' + JSON.stringify(connectionId) + '). It must be a string.');
       });
     });
@@ -460,7 +460,7 @@ describe('DynamicConnection', function () {
       it('should be get an error if the parameter is an object', function () {
         var error = dynamicConnection._validateHookFunction({});
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "hookFunction" must be a string.');
+        error.should.have.nested.property('[0]', 'The "hookFunction" must be a string.');
       });
       it('should be valid if the parameter is undefined', function () {
         var error = dynamicConnection._validateHookFunction(undefined);
@@ -483,7 +483,7 @@ describe('DynamicConnection', function () {
       it('should be get an error if the parameter is "true"', function () {
         var error = dynamicConnection._validateRepeatedValues('true');
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "repeatedValues" must be a boolean.');
+        error.should.have.nested.property('[0]', 'The "repeatedValues" must be a boolean.');
       });
       it('should be valid if the parameter is undefined', function () {
         var error = dynamicConnection._validateRepeatedValues(undefined);
@@ -506,7 +506,7 @@ describe('DynamicConnection', function () {
       it('should be get an error if the parameter is "true"', function () {
         var error = dynamicConnection._validateCopyValue('true');
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "copyValue" must be a boolean.');
+        error.should.have.nested.property('[0]', 'The "copyValue" must be a boolean.');
       });
       it('should be valid if the parameter is undefined', function () {
         var error = dynamicConnection._validateCopyValue(undefined);
@@ -529,7 +529,7 @@ describe('DynamicConnection', function () {
       it('should be get an error if the parameter is "true"', function () {
         var error = dynamicConnection._validateDirectExecution('true');
         error.should.have.length(1);
-        error.should.have.deep.property('[0]', 'The "directExecution" must be a boolean.');
+        error.should.have.nested.property('[0]', 'The "directExecution" must be a boolean.');
       });
       it('should be valid if the parameter is undefined', function () {
         var error = dynamicConnection._validateDirectExecution(undefined);
@@ -591,8 +591,8 @@ describe('DynamicConnection', function () {
         });
         it('should have a valid structure', function () {
           dynamicConnection.should.have.property('connectionId', config.connectionId);
-          dynamicConnection.should.have.deep.property('source', config.source);
-          dynamicConnection.should.have.deep.property('destination', config.destination);
+          dynamicConnection.should.have.nested.property('source', config.source);
+          dynamicConnection.should.have.nested.property('destination', config.destination);
           dynamicConnection.should.have.property('copyValue', config.copyValue);
           dynamicConnection.should.have.property('repeatedValues', config.repeatedValues);
           dynamicConnection.should.have.property('hookFunction', config.hookFunction);
@@ -629,8 +629,8 @@ describe('DynamicConnection', function () {
         });
         it('should have a valid structure', function () {
           dynamicConnection.should.have.property('connectionId', config.connectionId);
-          dynamicConnection.should.have.deep.property('source', config.source);
-          dynamicConnection.should.have.deep.property('destination', config.destination);
+          dynamicConnection.should.have.nested.property('source', config.source);
+          dynamicConnection.should.have.nested.property('destination', config.destination);
         });
       });
       describe('validate a not valid dynamicConnection', function () {
@@ -661,10 +661,10 @@ describe('DynamicConnection', function () {
         it('should have get Errors', function () {
           var error = dynamicConnection.validate();
           error.should.have.length(3);
-          error.should.have.deep.property('[0]');
+          error.should.have.nested.property('[0]');
           error[0].should.be.to.include('Not valid "runtimeId" (' + dynamicConnection.source.runtimeId + ').');
-          error.should.have.deep.property('[1]', 'The "copyValue" must be a boolean.');
-          error.should.have.deep.property('[2]', 'The "hookFunction" must be a string.');
+          error.should.have.nested.property('[1]', 'The "copyValue" must be a boolean.');
+          error.should.have.nested.property('[2]', 'The "hookFunction" must be a string.');
         });
       });
     });
@@ -688,7 +688,7 @@ describe('DynamicConnection', function () {
         };
         dynamicConection.setSource(source);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('source', source);
+        dynamicConection.should.have.nested.property('source', source);
       });
       it('should be not set a not valid source', function () {
         var source = {
@@ -699,7 +699,7 @@ describe('DynamicConnection', function () {
           dynamicConection.setSource(source);
         }).to.throw(SyntaxError);
         expect(spy.calledOnce).to.be.true;
-        dynamicConection.should.not.have.deep.property('source');
+        dynamicConection.should.not.have.nested.property('source');
       });
     });
     describe('#setDestination', function () {
@@ -710,7 +710,7 @@ describe('DynamicConnection', function () {
         };
         dynamicConection.setDestination(destination);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('destination', destination);
+        dynamicConection.should.have.nested.property('destination', destination);
       });
       it('should be not set a not valid destination', function () {
         var destination = {
@@ -721,7 +721,7 @@ describe('DynamicConnection', function () {
           dynamicConection.setDestination(destination);
         }).to.throw(SyntaxError);
         expect(spy.calledOnce).to.be.true;
-        dynamicConection.should.not.have.deep.property('destination');
+        dynamicConection.should.not.have.nested.property('destination');
       });
     });
     describe('#setDestinationRuntimeId', function () {
@@ -729,7 +729,7 @@ describe('DynamicConnection', function () {
         var destinationRuntimeId = 'abc:dce.member1';
         dynamicConection.setDestinationRuntimeId(destinationRuntimeId);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('destination.runtimeId', destinationRuntimeId);
+        dynamicConection.should.have.nested.property('destination.runtimeId', destinationRuntimeId);
       });
       it('should be not set a not valid destinationRuntimeId', function () {
         var destinationRuntimeId = '_abc:dce.member1';
@@ -744,7 +744,7 @@ describe('DynamicConnection', function () {
         var destinationSlot = 'abc';
         dynamicConection.setDestinationSlot(destinationSlot);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('destination.slot', destinationSlot);
+        dynamicConection.should.have.nested.property('destination.slot', destinationSlot);
       });
       it('should be not set a not valid destinationSlot', function () {
         var destinationSlot = true;
@@ -759,7 +759,7 @@ describe('DynamicConnection', function () {
         var sourceRuntimeId = 'abc:dce.member1';
         dynamicConection.setSourceRuntimeId(sourceRuntimeId);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('source.runtimeId', sourceRuntimeId);
+        dynamicConection.should.have.nested.property('source.runtimeId', sourceRuntimeId);
       });
       it('should be not set a not valid sourceRuntimeId', function () {
         var sourceRuntimeId = '_abc:dce.member1';
@@ -774,7 +774,7 @@ describe('DynamicConnection', function () {
         var sourceSlot = 'abc';
         dynamicConection.setSourceSlot(sourceSlot);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('source.slot', sourceSlot);
+        dynamicConection.should.have.nested.property('source.slot', sourceSlot);
       });
       it('should be not set a not valid sourceSlot', function () {
         var sourceSlot = true;
@@ -789,7 +789,7 @@ describe('DynamicConnection', function () {
         var connectionId = 'abc';
         dynamicConection.setConnectionId(connectionId);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('connectionId', connectionId);
+        dynamicConection.should.have.nested.property('connectionId', connectionId);
       });
     });
     describe('#setCopyValue', function () {
@@ -797,7 +797,7 @@ describe('DynamicConnection', function () {
         var copyValue = false;
         dynamicConection.setCopyValue(copyValue);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('copyValue', copyValue);
+        dynamicConection.should.have.nested.property('copyValue', copyValue);
       });
       it('should be not set a not valid copyValue', function () {
         var copyValue = 'true';
@@ -812,7 +812,7 @@ describe('DynamicConnection', function () {
         var repeatedValues = false;
         dynamicConection.setRepeatedValues(repeatedValues);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('repeatedValues', repeatedValues);
+        dynamicConection.should.have.nested.property('repeatedValues', repeatedValues);
       });
       it('should be not set a not valid repeatedValues', function () {
         var repeatedValues = 'true';
@@ -827,7 +827,7 @@ describe('DynamicConnection', function () {
         var hookFunction = 'global.func.name';
         dynamicConection.setHookFunction(hookFunction);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('hookFunction', hookFunction);
+        dynamicConection.should.have.nested.property('hookFunction', hookFunction);
       });
       it('should be not set a not valid hookFunction', function () {
         var hookFunction = {};
@@ -842,7 +842,7 @@ describe('DynamicConnection', function () {
         var directExecution = false;
         dynamicConection.setDirectExecution(directExecution);
         expect(spy.called).to.be.false;
-        dynamicConection.should.have.deep.property('directExecution', directExecution);
+        dynamicConection.should.have.nested.property('directExecution', directExecution);
       });
       it('should be not set a not valid copyValue', function () {
         var directExecution = 'true';

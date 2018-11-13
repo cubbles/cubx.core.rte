@@ -64,7 +64,7 @@ describe('ConnectionManager', function () {
         memberId: 'member2',
         componentId: destinationElemManifest.webpackageId + '/' + destinationElemArtifactId
       });
-      sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+      sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
         var manifest;
         switch (key) {
           case parentElemArtifactId:
@@ -220,7 +220,7 @@ describe('ConnectionManager', function () {
         it('the #_executeConnection should been called', function () {
           spyExecuteConnection.should.been.calledOnce;
           spyExecuteConnection.should.been.calledWith(conConfig);
-          destinationElem.model.slotB.should.have.deep.equal(noSerializableValue);
+          destinationElem.model.slotB.should.have.nested.equal(noSerializableValue);
           expect(destinationElem.model.slotB !== noSerializableValue);
         });
         it('copyValue should be set to false, user should be warned', function () {

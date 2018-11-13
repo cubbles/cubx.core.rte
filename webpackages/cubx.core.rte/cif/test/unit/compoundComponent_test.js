@@ -36,7 +36,7 @@ describe('CompoundComponent', function () {
     var container;
     before(function () {
       container = document.querySelector('[cubx-core-crc]');
-      getCacheStub = sinon.stub(window.cubx.CRC, 'getCache', function () {
+      getCacheStub = sinon.stub(window.cubx.CRC, 'getCache').callsFake(function () {
         var cache = {};
         cache.getComponentCacheEntry = function (key) {
           var manifest;
@@ -140,7 +140,7 @@ describe('CompoundComponent', function () {
     /* eslint-enable no-unused-vars */
     before(function () {
       container = document.querySelector('[cubx-core-crc]');
-      getCacheStub = sinon.stub(window.cubx.CRC, 'getCache', function () {
+      getCacheStub = sinon.stub(window.cubx.CRC, 'getCache').callsFake(function () {
         var cache = {};
         cache.getComponentCacheEntry = function (key) {
           var manifest;
@@ -169,7 +169,7 @@ describe('CompoundComponent', function () {
       container.appendChild(element);
       // container.Context = new window.cubx.cif.Context(container);
       element.Context = new window.cubx.cif.Context(element, container.Context);
-      stub = sinon.stub(element, 'setAaa', function (value) {
+      stub = sinon.stub(element, 'setAaa').callsFake(function (value) {
         // do nothing
       });
     });
@@ -305,7 +305,7 @@ describe('CompoundComponent', function () {
 
       };
 
-      sinon.stub(cache, 'getComponentCacheEntry', function (key) {
+      sinon.stub(cache, 'getComponentCacheEntry').callsFake(function (key) {
         if (key) {
           return this._componentCache[ key ];
         }
@@ -428,7 +428,7 @@ describe('CompoundComponent', function () {
 
       };
 
-      sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+      sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
         return manifest;
       });
       var constructor = cif.getCompoundComponentElementConstructor(artifactId);
@@ -856,7 +856,7 @@ describe('CompoundComponent', function () {
       var stub; // eslint-disable-line no-unused-vars
       beforeEach(function () {
         spyModelChangeEvent = sinon.spy();
-        stub = sinon.stub(window.cubx.cif.cif, 'isAllComponentsReady', function () { return true; });
+        stub = sinon.stub(window.cubx.cif.cif, 'isAllComponentsReady').callsFake(function () { return true; });
         component.addEventListener('cifModelChange', spyModelChangeEvent);
         testString = 'Hallo Test World!';
       });
