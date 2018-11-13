@@ -36,7 +36,7 @@ describe('CubxPolymer (input/output)', function () {
 
     describe('set method', function () {
       it('should be exists: "setInputvalue()"', function () {
-        component.setInputvalue.should.be.exists;
+        component.setInputvalue.should.be.exist;
         component.setInputvalue.should.be.a('function');
       });
 
@@ -45,7 +45,7 @@ describe('CubxPolymer (input/output)', function () {
         component.model.should.have.property('inputvalue', testString);
       });
       it('should be exists: "setOutputvalue()"', function () {
-        component.setOutputvalue.should.be.exists;
+        component.setOutputvalue.should.be.exist;
         component.setOutputvalue.should.be.a('function');
       });
 
@@ -54,7 +54,7 @@ describe('CubxPolymer (input/output)', function () {
         component.model.should.have.property('outputvalue', testString);
       });
       it('should be exists: "setInputoutputvalue()"', function () {
-        component.setInputoutputvalue.should.be.exists;
+        component.setInputoutputvalue.should.be.exist;
         component.setInputoutputvalue.should.be.a('function');
       });
       it('should set the value of attribute model.inputoutputvalue', function () {
@@ -65,7 +65,7 @@ describe('CubxPolymer (input/output)', function () {
 
     describe('get method', function () {
       it('should be exists: "getInputvalue()"', function () {
-        component2.getInputvalue.should.be.exists;
+        component2.getInputvalue.should.be.exist;
         component2.getInputvalue.should.be.a('function');
       });
 
@@ -75,7 +75,7 @@ describe('CubxPolymer (input/output)', function () {
       });
 
       it('should be exists: "getOutputvalue()"', function () {
-        component2.getOutputvalue.should.be.exists;
+        component2.getOutputvalue.should.be.exist;
         component2.getOutputvalue.should.be.a('function');
       });
 
@@ -84,7 +84,7 @@ describe('CubxPolymer (input/output)', function () {
         expect(component2.getOutputvalue()).to.be.equal(component2.model.outputvalue);
       });
       it('should be exists: "getInputoutputvalue()"', function () {
-        component2.getInputoutputvalue.should.be.exists;
+        component2.getInputoutputvalue.should.be.exist;
         component2.getInputoutputvalue.should.be.a('function');
       });
       it('should get the value of attribute model.inputoutputvalue', function () {
@@ -407,7 +407,7 @@ describe('CubxPolymer (input/output)', function () {
     });
     describe('"repropagate" Method exists für output slots', function () {
       it('repropagateInputvar method should be not exists', function () {
-        expect(component.repropageteInputvar).to.be.unefined;
+        expect(component.repropageteInputvar).to.be.an('undefined');
       });
       it('repropagateOutputvar method should be exists, and  is a function', function () {
         component.repropagateOutputvar.should.be.exist;
@@ -424,7 +424,7 @@ describe('CubxPolymer (input/output)', function () {
     });
     describe('"repropagate" Method cause a call of _outputHandler method for the slot', function () {
       before(function () {
-        sinon.stub(component, '_triggerModelChangeEvent', function (slotname, modelEventPayload) {
+        sinon.stub(component, '_triggerModelChangeEvent').callsFake(function (slotname, modelEventPayload) {
         });
       });
       it('repropagateOutputvar cause a call of _outputHandler method', function () {

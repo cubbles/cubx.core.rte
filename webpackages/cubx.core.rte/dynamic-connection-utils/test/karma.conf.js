@@ -47,12 +47,8 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
+    reporters: [ 'progress', 'html', 'mocha', 'coverage' ],
     // reporters: ['progress'],
-    junitReporter: {
-      outputDir: 'test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
-    },
 
     htmlReporter: {
       outputFile: 'test-results/html/TEST-karma.html'
@@ -89,6 +85,8 @@ module.exports = function (config) {
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
+
+    concurrency: Infinity,
 
     customLaunchers: {
       Chrome_travis_ci: {

@@ -42,7 +42,7 @@ describe('CubxPolymer (init)', function () {
         it('should be exists', function (done) {
           setTimeout(function () {
             var component = document.querySelector(elementName);
-            component.should.be.exists;
+            component.should.be.exist;
             expect(component.cubxPolymerName).to.be.equals(elementName);
             component.getAttribute('runtime-id').should.be.not.undefined;
             component.getAttribute('runtime-id').should.be.not.null;
@@ -63,7 +63,7 @@ describe('CubxPolymer (init)', function () {
           window.componentCacheEntry = undefined;
         });
         it('should be exists', function () {
-          component.should.be.exists;
+          component.should.be.exist;
           expect(component.cubxPolymerName).to.be.equals(elementName);
         });
       });
@@ -140,7 +140,7 @@ describe('CubxPolymer (init)', function () {
         });
         it('should have input model attribute of slot', function () {
           var component = document.querySelector(elementName);
-          component.model.should.have.not.deep.property('input.value');
+          component.model.should.have.not.nested.property('input.value');
         });
       });
       describe('default value should be  initialized with configured value ', function () {
@@ -233,21 +233,21 @@ describe('CubxPolymer (init)', function () {
       describe('_generateObserveForProperty generate observer for input slots', function () {
         it('observer "model.inputvar" should be exists in observers', function () {
           var observerFunc = _.find(component.observers, function (item) {
-            return item.indexOf('model.inputvar') === 0;
+            return item.indexOf('model.inputvar') > 0;
           });
-          expect(observerFunc).be.exists;
+          expect(observerFunc).to.exist;
         });
-        it('observer "model.outputvar" should be exists in _observers', function () {
-          var observerFunc = _.find(component._observers, function (item) {
-            return item.indexOf('model.outputvar') === 0;
+        it('observer "model.outputvar" should be exists in observers', function () {
+          var observerFunc = _.find(component.observers, function (item) {
+            return item.indexOf('model.outputvar') > 0;
           });
-          expect(observerFunc).be.exists;
+          expect(observerFunc).to.exist;
         });
-        it('observer "model.inputoutputvar" should be exists in _observers', function () {
-          var observerFunc = _.find(component._observers, function (item) {
-            return item.indexOf('model.inputoutputvar') === 0;
+        it('observer "model.inputoutputvar" should be exists in observers', function () {
+          var observerFunc = _.find(component.observers, function (item) {
+            return item.indexOf('model.inputoutputvar') > 0;
           });
-          expect(observerFunc).be.exists;
+          expect(observerFunc).to.exist;
         });
       });
 
@@ -292,60 +292,60 @@ describe('CubxPolymer (init)', function () {
         slots[ 0 ].should.have.property('slotId', 'inputvalue');
         slots[ 0 ].should.have.property('description', 'This is the inputvalue slot');
         slots[ 0 ].should.have.property('type', 'string');
-        slots[ 0 ].should.have.deep.property('direction[0]', 'input');
+        slots[ 0 ].should.have.nested.property('direction[0]', 'input');
 
         slots[ 1 ].should.have.property('slotId', 'outputvalue');
         slots[ 1 ].should.have.property('description', 'This is the outputvalue slot');
         slots[ 1 ].should.have.property('type', 'string');
-        slots[ 1 ].should.have.deep.property('direction[0]', 'output');
+        slots[ 1 ].should.have.nested.property('direction[0]', 'output');
 
         slots[ 2 ].should.have.property('slotId', 'inputoutputvalue');
         slots[ 2 ].should.have.property('description', 'This is the inputoutputvalue slot');
         slots[ 2 ].should.have.property('type', 'string');
-        slots[ 2 ].should.have.deep.property('direction[0]', 'input');
-        slots[ 2 ].should.have.deep.property('direction[1]', 'output');
+        slots[ 2 ].should.have.nested.property('direction[0]', 'input');
+        slots[ 2 ].should.have.nested.property('direction[1]', 'output');
 
         slots[ 3 ].should.have.property('slotId', 'inputvalueWithoutType');
         slots[ 3 ].should.have.property('description', 'This is the inputvalueWithoutType slot');
         slots[ 3 ].should.not.have.property('type');
-        slots[ 3 ].should.have.deep.property('direction[0]', 'input');
+        slots[ 3 ].should.have.nested.property('direction[0]', 'input');
 
         slots[ 4 ].should.have.property('slotId', 'outputvalueWithoutType');
         slots[ 4 ].should.have.property('description', 'This is the outputvalueWithoutType slot');
         slots[ 4 ].should.not.have.property('type');
-        slots[ 4 ].should.have.deep.property('direction[0]', 'output');
+        slots[ 4 ].should.have.nested.property('direction[0]', 'output');
 
         slots[ 5 ].should.have.property('slotId', 'inputoutputvalueWithoutType');
         slots[ 5 ].should.have.property('description', 'This is the inputoutputvalueWithoutType slot');
         slots[ 5 ].should.not.have.property('type');
-        slots[ 5 ].should.have.deep.property('direction[0]', 'input');
-        slots[ 5 ].should.have.deep.property('direction[1]', 'output');
+        slots[ 5 ].should.have.nested.property('direction[0]', 'input');
+        slots[ 5 ].should.have.nested.property('direction[1]', 'output');
 
         slots[ 6 ].should.have.property('slotId', 'inputoutputvaluePerDefault');
         slots[ 6 ].should.have.property('description', 'This is the inputoutputvaluePerDefault slot');
         slots[ 6 ].should.have.property('type', 'string');
-        slots[ 6 ].should.have.deep.property('direction[0]', 'input');
-        slots[ 6 ].should.have.deep.property('direction[1]', 'output');
+        slots[ 6 ].should.have.nested.property('direction[0]', 'input');
+        slots[ 6 ].should.have.nested.property('direction[1]', 'output');
 
         slots[ 7 ].should.have.property('slotId', 'outputobject');
         slots[ 7 ].should.have.property('description', 'This is the outputobject slot');
         slots[ 7 ].should.have.property('type', 'object');
-        slots[ 7 ].should.have.deep.property('direction[0]', 'output');
+        slots[ 7 ].should.have.nested.property('direction[0]', 'output');
 
         slots[ 8 ].should.have.property('slotId', 'outputobjectarray');
         slots[ 8 ].should.have.property('description', 'This is the outputobjectarray slot');
-        slots[ 8 ].should.have.deep.property('type', 'array');
-        slots[ 8 ].should.have.deep.property('direction[0]', 'output');
+        slots[ 8 ].should.have.property('type', 'array');
+        slots[ 8 ].should.have.nested.property('direction[0]', 'output');
 
         slots[ 9 ].should.have.property('slotId', 'inputobject');
         slots[ 9 ].should.have.property('description', 'This is the inputobject slot');
         slots[ 9 ].should.have.property('type', 'object');
-        slots[ 9 ].should.have.deep.property('direction[0]', 'input');
+        slots[ 9 ].should.have.nested.property('direction[0]', 'input');
 
         slots[ 10 ].should.have.property('slotId', 'inputobjectarray');
         slots[ 10 ].should.have.property('description', 'This is the inputobjectarray slot');
-        slots[ 10 ].should.have.deep.property('type', 'array');
-        slots[ 10 ].should.have.deep.property('direction[0]', 'input');
+        slots[ 10 ].should.have.property('type', 'array');
+        slots[ 10 ].should.have.nested.property('direction[0]', 'input');
       });
     });
   });

@@ -61,12 +61,12 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(6);
-        erg.should.have.deep.property('[0]', 'The property "source.slot" must exist.');
-        erg.should.have.deep.property('[1]', 'The property "source.component" must exist.');
-        erg.should.have.deep.property('[2]', 'The property "destination.slot" must exist.');
-        erg.should.have.deep.property('[3]', 'The property "destination.component" must exist.');
-        erg.should.have.deep.property('[4]', 'The property "repeatedValues" must be boolean.');
-        erg.should.have.deep.property('[5]', 'The property "copyValue" must be boolean.');
+        erg.should.have.nested.property('[0]', 'The property "source.slot" must exist.');
+        erg.should.have.nested.property('[1]', 'The property "source.component" must exist.');
+        erg.should.have.nested.property('[2]', 'The property "destination.slot" must exist.');
+        erg.should.have.nested.property('[3]', 'The property "destination.component" must exist.');
+        erg.should.have.nested.property('[4]', 'The property "repeatedValues" must be boolean.');
+        erg.should.have.nested.property('[5]', 'The property "copyValue" must be boolean.');
       });
     });
   });
@@ -97,7 +97,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source" is missed.');
+        erg.should.have.nested.property('[0]', 'The property "source" is missed.');
       });
 
       it('should be not valid, if source without component ', function () {
@@ -107,7 +107,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.component" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.component" must exist.');
       });
       it('should be not valid, if source without slot ', function () {
         connection.source.memberId = 'testMember';
@@ -116,15 +116,15 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.slot" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.slot" must exist.');
       });
       it('should be not valid, if source without memberId, slot and component', function () {
         var erg = connection._validateSource();
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(2);
-        erg.should.have.deep.property('[0]', 'The property "source.slot" must exist.');
-        erg.should.have.deep.property('[1]', 'The property "source.component" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.slot" must exist.');
+        erg.should.have.nested.property('[1]', 'The property "source.component" must exist.');
       });
     });
   });
@@ -154,7 +154,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "destination" is missed.');
+        erg.should.have.nested.property('[0]', 'The property "destination" is missed.');
       });
 
       it('should be not valid, if destination without component ', function () {
@@ -164,7 +164,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "destination.component" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "destination.component" must exist.');
       });
       it('should be not valid, if destination without slot ', function () {
         connection.destination.memberId = 'testMember';
@@ -173,15 +173,15 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "destination.slot" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "destination.slot" must exist.');
       });
       it('should be not valid, if destination without memberId, slot and component', function () {
         var erg = connection._validateDestination();
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(2);
-        erg.should.have.deep.property('[0]', 'The property "destination.slot" must exist.');
-        erg.should.have.deep.property('[1]', 'The property "destination.component" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "destination.slot" must exist.');
+        erg.should.have.nested.property('[1]', 'The property "destination.component" must exist.');
       });
     });
   });
@@ -221,7 +221,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.memberId" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.memberId" must exist.');
       });
       it('should be not valid, if the memberId parameter not a sting.', function () {
         var memberId = {};
@@ -229,7 +229,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]',
+        erg.should.have.nested.property('[0]',
           'Not valid source.memberId (' + JSON.stringify(memberId) +
           '). The property "source.memberId" must be a string.');
       });
@@ -240,7 +240,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]',
+        erg.should.have.nested.property('[0]',
           'Not valid source.memberId (' + JSON.stringify(memberId) +
           '). The property "source.memberId" must match to /^[a-z][a-zA-Z0-9-]*$/');
       });
@@ -251,7 +251,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]',
+        erg.should.have.nested.property('[0]',
           'Not valid source.memberId (' + JSON.stringify(memberId) +
           '). The property "source.memberId" must match to /^[a-z][a-zA-Z0-9-]*$/');
       });
@@ -281,14 +281,14 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.slot" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.slot" must exist.');
       });
       it('should be not valid, if the slot parameter not exists.', function () {
         var erg = connection._validateSlot('source');
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.slot" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.slot" must exist.');
       });
       it('should be not valid, if the slot parameter not a sting.', function () {
         var slot = {};
@@ -296,7 +296,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]',
+        erg.should.have.nested.property('[0]',
           'Not valid "source.slot" (' + JSON.stringify(slot) +
           '). The property "source.slot" must be a string.');
       });
@@ -326,14 +326,14 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.component" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.component" must exist.');
       });
       it('should be not valid, if the component parameter not exists.', function () {
         var erg = connection._validateComponent('source');
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]', 'The property "source.component" must exist.');
+        erg.should.have.nested.property('[0]', 'The property "source.component" must exist.');
       });
       it('should be not valid, if the slot parameter not a htmlElement.', function () {
         var component = 'string';
@@ -341,7 +341,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]',
+        erg.should.have.nested.property('[0]',
           'Not valid "source.component" (' + JSON.stringify(component) +
           '). The property "source.component" must be a HTMLElement.');
       });
@@ -385,7 +385,7 @@ describe('Connection', function () {
         expect(erg).to.be.exist;
         expect(erg).to.be.an('array');
         erg.should.have.length(1);
-        erg.should.have.deep.property('[0]',
+        erg.should.have.nested.property('[0]',
           'The property "connectionId" is missed.');
       });
     });
@@ -454,10 +454,10 @@ describe('Connection', function () {
       });
       it('should be create a correct dynamicConnection', function () {
         dynamicConnection.should.not.have.property('connectionId');
-        dynamicConnection.should.have.deep.property('source.runtimeId', sourceRuntimeId);
-        dynamicConnection.should.have.deep.property('source.slot', connection.source.slot);
-        dynamicConnection.should.have.deep.property('destination.runtimeId', destRuntimeId);
-        dynamicConnection.should.have.deep.property('destination.slot', connection.destination.slot);
+        dynamicConnection.should.have.nested.property('source.runtimeId', sourceRuntimeId);
+        dynamicConnection.should.have.nested.property('source.slot', connection.source.slot);
+        dynamicConnection.should.have.nested.property('destination.runtimeId', destRuntimeId);
+        dynamicConnection.should.have.nested.property('destination.slot', connection.destination.slot);
         dynamicConnection.should.have.property('copyValue', connection.copyValue);
         dynamicConnection.should.have.property('repeatedValues', connection.repeatedValues);
         dynamicConnection.should.have.property('hookFunction', connection.hookFunction);
@@ -493,10 +493,10 @@ describe('Connection', function () {
       });
       it('should be create a correct dynamicConnection', function () {
         dynamicConnection.should.not.have.property('connectionId');
-        dynamicConnection.should.have.deep.property('source.runtimeId', sourceRuntimeId);
-        dynamicConnection.should.have.deep.property('source.slot', connection.source.slot);
-        dynamicConnection.should.have.deep.property('destination.runtimeId', destRuntimeId);
-        dynamicConnection.should.have.deep.property('destination.slot', connection.destination.slot);
+        dynamicConnection.should.have.nested.property('source.runtimeId', sourceRuntimeId);
+        dynamicConnection.should.have.nested.property('source.slot', connection.source.slot);
+        dynamicConnection.should.have.nested.property('destination.runtimeId', destRuntimeId);
+        dynamicConnection.should.have.nested.property('destination.slot', connection.destination.slot);
         dynamicConnection.should.have.property('copyValue', true);
         dynamicConnection.should.have.property('repeatedValues', false);
         dynamicConnection.should.have.not.property('hookFunction');

@@ -259,7 +259,7 @@ window.cubx.amd.define(
           });
           it('should return a new object representing a the cleaned artifact. All \'#[endpointId]\' appendices should be removed', function () {
             var result = manifestConverter.cleanArtifact(artifact);
-            result.should.have.ownProperty('artifactId', artifact.artifactId);
+            result.should.have.ownProperty('artifactId', cleanArtifact.artifactId);
             result.dependencies.should.eql([
               {webpackageId: 'my-webpackage', artifactId: 'comp-a'},
               {webpackageId: 'my-webpackage', artifactId: 'comp-b'}

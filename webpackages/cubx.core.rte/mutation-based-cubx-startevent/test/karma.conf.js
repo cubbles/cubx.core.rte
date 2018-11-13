@@ -10,26 +10,12 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: [ 'cubxrequirejs', 'mocha', 'sinon-chai' ],
+    frameworks: [ 'mocha', 'sinon-chai' ],
 
-    plugins: [
-      // these plugins will be require() by Karma
-      'cubx-karma-requirejs',
-      'karma-mocha',
-      'karma-sinon-chai',
-      'karma-chrome-launcher',
-      'karma-firefox-launcher',
-      'karma-coverage',
-      'karma-htmlfile-reporter',
-      'karma-mocha-reporter',
-      'karma-junit-reporter'
-    ],
     // list of files / patterns to load in the browser
     files: [
-      'mutation-based-cubx-startevent/test/vendor/mocha-config.js',
-      'mutation-based-cubx-startevent/js/mutationBasedCubxStartevent.js',
-      'mutation-based-cubx-startevent/test/unit/**/*_test.js',
-      'mutation-based-cubx-startevent/test/testMain.js'
+      {pattern: 'mutation-based-cubx-startevent/js/mutationBasedCubxStartevent.js', incuded: false, watched: false, served: true},
+      {pattern: 'mutation-based-cubx-startevent/test/unit/**/*_test.js', incuded: false, watched: false, served: true}
     ],
 
     // list of files to exclude
@@ -44,18 +30,13 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
+    reporters: [ 'progress', 'html', 'mocha', 'coverage' ],
 
     // web server port
     port: 9876,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
-    junitReporter: {
-      outputDir: 'mutation-based-cubx-startevent/test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
-    },
 
     htmlReporter: {
       outputFile: 'mutation-based-cubx-startevent/test-results/html/TEST-karma.html'
@@ -82,6 +63,7 @@ module.exports = function (config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: [ 'Chrome', 'Firefox' ], //, 'PhantomJS', 'Firefox', 'Chrome'
     // browsers: [ 'Chrome' ],
+    // browsers: [ 'Firefox' ],
     captureTimeout: 50000,
 
     // Continuous Integration mode
@@ -99,6 +81,5 @@ module.exports = function (config) {
   if (process.env.TRAVIS) {
     configuration.browsers = [ 'Chrome_travis_ci', 'Firefox' ];
   }
-
   config.set(configuration);
 };

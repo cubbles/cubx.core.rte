@@ -202,7 +202,7 @@ describe('ConnectionManager', function () {
         }
       ];
       connectionMgr._connections = connections;
-      _processConnectionStub = sinon.stub(connectionMgr, '_processConnection', function () {
+      _processConnectionStub = sinon.stub(connectionMgr, '_processConnection').callsFake(function () {
         // do nothind
       });
       connectionMgr.reactivateConnectionIfExists(elem1);

@@ -64,7 +64,7 @@ describe('ConnectionManager', function () {
         memberId: 'member2',
         componentId: destinationElemManifest.webpackageId + '/' + destinationElemArtifactId
       });
-      sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+      sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
         var manifest;
         switch (key) {
           case parentElemArtifactId:

@@ -44,7 +44,7 @@ describe('CubxPolymer origin content', function () {
     });
 
     it('cubx-core-connections should be exists', function () {
-      element.querySelector('cubx-core-connections').should.be.exists;
+      element.querySelector('cubx-core-connections').should.be.exist;
     });
   });
   describe('<cubx-core-init> keeped in element context', function () {
@@ -85,7 +85,7 @@ describe('CubxPolymer origin content', function () {
     });
 
     it('cubx-core-init should be exists', function () {
-      element.querySelector('cubx-core-init').should.be.exists;
+      element.querySelector('cubx-core-init').should.be.exist;
     });
   });
 });

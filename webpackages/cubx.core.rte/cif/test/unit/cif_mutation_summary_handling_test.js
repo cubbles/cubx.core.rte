@@ -185,16 +185,30 @@ describe('CIF', function () {
     var container;
     var _detectMutationSpy;
     var cache;
+    var crc;
+    var getResolvedComponentStub; // eslint-disable-line no-unused-vars
     beforeEach(function () {
+      crc = window.cubx.CRC;
       container = cif.getCRCRootNode();
       cache = window.cubx.CRC.getCache();
-      getAllComponentsStub = sinon.stub(cache, 'getAllComponents', function (artifactId) {
+      getAllComponentsStub = sinon.stub(cache, 'getAllComponents').callsFake(function (artifactId) {
         return {
           'cif-test-a': {},
           'cif-test-b': {}
         };
       });
       _detectMutationSpy = sinon.spy(cif, '_detectMutation');
+      getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (artifactId) {
+        var elem = {
+          webpackageId: 'test.' + artifactId + '@0.1', artifactId: artifactId
+        };
+        if (artifactId === 'cif-test-a') {
+          elem.artifactType = 'compoundComponent';
+        } else if (artifactId === 'cif-test-b') {
+          elem.artifactType = 'elementaryComponentt';
+        }
+        return elem;
+      });
     });
     afterEach(function () {
       cif._detectMutation.restore();
@@ -202,6 +216,7 @@ describe('CIF', function () {
         container.removeChild(container.children[ 0 ]);
       }
       cache.getAllComponents.restore();
+      crc.getResolvedComponent.restore();
     });
     describe('add new cubble', function () {
       beforeEach(function () {
@@ -212,10 +227,13 @@ describe('CIF', function () {
         delete cif._observer;
       });
 
-      it('the observer should register, if add a new cubble', function () {
+      it('the observer should register, if add a new cubble', function (done) {
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
         container.appendChild(new constructor());
-        _detectMutationSpy.should.been.calleOnce;
+        setTimeout(function () {
+          _detectMutationSpy.should.been.calledOnce;
+          done();
+        });
       });
     });
     describe('remove a cubble', function () {
@@ -228,10 +246,13 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the observer should register, if remove a cubble', function () {
+      it('the observer should register, if remove a cubble', function (done) {
         var element = container.querySelector('cif-test-a');
         container.removeChild(element);
-        _detectMutationSpy.should.been.calleOnce;
+        setTimeout(function () {
+          _detectMutationSpy.should.been.calledOnce;
+          done();
+        });
       });
     });
     describe('add <cubx-core-connections>', function () {
@@ -249,8 +270,11 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the observer should register, if add a cubx-core-connections element', function () {
-        _detectMutationSpy.should.been.calleOnce;
+      it('the observer should register, if add a cubx-core-connections element', function (done) {
+        setTimeout(function () {
+          _detectMutationSpy.should.been.calledOnce;
+          done();
+        });
       });
     });
     describe('add cubx-core-connection', function () {
@@ -269,8 +293,11 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the observer should register, if add a cubx-core-connection element', function () {
-        _detectMutationSpy.should.been.calleOnce;
+      it('the observer should register, if add a cubx-core-connection element', function (done) {
+        setTimeout(function () {
+          _detectMutationSpy.should.been.calledOnce;
+          done();
+        });
       });
     });
     describe('remove <cubx-core-connections>;', function () {
@@ -288,8 +315,11 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the observer should register, if remove a cubx-core-connections element', function () {
-        _detectMutationSpy.should.been.calleOnce;
+      it('the observer should register, if remove a cubx-core-connections element', function (done) {
+        setTimeout(function () {
+          _detectMutationSpy.should.been.calledOnce;
+          done();
+        });
       });
     });
     describe('remove <cubx-core-connection>', function () {
@@ -309,8 +339,11 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the observer should register, if remove a cubx-core-connection element', function () {
-        _detectMutationSpy.should.been.calleOnce;
+      it('the observer should register, if remove a cubx-core-connection element', function (done) {
+        setTimeout(function () {
+          _detectMutationSpy.should.been.calledOnce;
+          done();
+        });
       });
     });
   });
@@ -318,34 +351,38 @@ describe('CIF', function () {
     // eslint-disable-next-line no-unused-vars
     var getAllComponentsStub;
     var container;
-    var _addPossibleElementToQueueSpy;
+    var _addPossibleElementToQueueStub;
     var _processElementFromQueueSpy;
-    var _handleRemovedCubbleSpy;
+    var _handleRemovedCubbleStub;
     var _handleAddedConnectionStub;
     var _handleRemovedConnectionsSpy;
     var _handleRemovedConnectionStub;
     beforeEach(function () {
       container = cif.getCRCRootNode();
-      getAllComponentsStub = sinon.stub(window.cubx.CRC.getCache(), 'getAllComponents', function (artifactId) {
+      getAllComponentsStub = sinon.stub(window.cubx.CRC.getCache(), 'getAllComponents').callsFake(function (artifactId) {
         return {
           'cif-test-a': {},
           'cif-test-b': {},
           'cif-test-c': {}
         };
       });
-      _addPossibleElementToQueueSpy = sinon.spy(cif, '_addPossibleElementToQueue');
-      _processElementFromQueueSpy = sinon.stub(cif, '_processElementFromQueue', function () {
-        // do nothing
+      _addPossibleElementToQueueStub = sinon.stub(cif, '_addPossibleElementToQueue').callsFake(function (element) {
+        console.log('_addPossibleElementToQueue argument: element', element);
       });
-      _handleRemovedCubbleSpy = sinon.stub(cif, '_handleRemovedCubble', function () {
-        // do nothing
+      _processElementFromQueueSpy = sinon.stub(cif, '_processElementFromQueue').callsFake(function () {
+        console.log('_processElementFromQueue no args');
       });
-      _handleAddedConnectionStub = sinon.stub(cif, '_handleAddedConnection', function () {
-        // do nothing
+      _handleRemovedCubbleStub = sinon.stub(cif, '_handleRemovedCubble').callsFake(function (element, oldParentNode) {
+        console.log('_handleRemovedCubble arg: element', element);
+        console.log('_handleRemovedCubble arg: oldParentNode', oldParentNode);
+      });
+      _handleAddedConnectionStub = sinon.stub(cif, '_handleAddedConnection').callsFake(function (connectionElement) {
+        console.log('_handleAddedConnection arg: element', connectionElement);
       });
       _handleRemovedConnectionsSpy = sinon.spy(cif, '_handleRemovedConnections');
-      _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection', function () {
-        // do nothing
+      _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection').callsFake(function (element, oldParentNode) {
+        console.log('element', element);
+        console.log('oldParentNode', oldParentNode);
       });
     });
     afterEach(function () {
@@ -358,13 +395,31 @@ describe('CIF', function () {
       cif._handleRemovedConnection.restore();
     });
     describe('add a cubble', function () {
+      var getResolvedComponentStub; // eslint-disable-line no-unused-vars
+      var crc;
       beforeEach(function () {
+        crc = window.cubx.CRC;
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (artifactId) {
+          var elem = {
+            webpackageId: 'test.' + artifactId + '@0.1', artifactId: artifactId
+          };
+          if (artifactId === 'cif-test-a') {
+            elem.artifactType = 'compoundComponent';
+          } else if (artifactId === 'cif-test-b') {
+            elem.artifactType = 'compoundComponent';
+          } else if (artifactId === 'cif-test-c') {
+            elem.artifactType = 'elementaryComponentt';
+          }
+          return elem;
+        });
+
         cif._createObserverObject();
         var constructor = cif.getCompoundComponentElementConstructor('cif-test-a');
         var element = new constructor();
         container.appendChild(element);
       });
       afterEach(function () {
+        crc.getResolvedComponent.restore();
         cif._elementQueue = new Queue();
         cif._observer.disconnect();
         delete cif._observer;
@@ -374,7 +429,7 @@ describe('CIF', function () {
       });
       it('The method #_addPossibleElementToQueue should be called once', function (done) {
         window.setTimeout(function () {
-          _addPossibleElementToQueueSpy.should.been.calledOnce;
+          _addPossibleElementToQueueStub.should.been.calledOnce;
           done();
         });
       });
@@ -402,11 +457,11 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the method _handleRemovedCubbleSpy should be called once with arguments: deleted element and crcRoot', function (done) {
+      it('the method _handleRemovedCubbleStub should be called once with arguments: deleted element and crcRoot', function (done) {
         container.removeChild(elementA);
         window.setTimeout(function () {
-          _handleRemovedCubbleSpy.should.be.calledOnce;
-          _handleRemovedCubbleSpy.should.be.calledWith(elementA, container);
+          _handleRemovedCubbleStub.should.be.calledOnce;
+          _handleRemovedCubbleStub.should.be.calledWith(elementA, container);
           done();
         });
       });
@@ -432,28 +487,30 @@ describe('CIF', function () {
         cif._observer.disconnect();
         delete cif._observer;
       });
-      it('the method _handleRemovedCubbleSpy should be called once with arguments: deleted element elementA and crcRoot', function (done) {
+      it('the method _handleRemovedCubbleStub should be called once with arguments: deleted element elementA and crcRoot', function (done) {
         container.removeChild(elementA);
         window.setTimeout(function () {
-          _handleRemovedCubbleSpy.should.be.calledOnce;
-          _handleRemovedCubbleSpy.should.be.calledWith(elementA, container);
+          _handleRemovedCubbleStub.should.be.calledOnce;
+          _handleRemovedCubbleStub.should.be.calledWith(elementA, container);
           done();
         });
       });
-      it('the method _handleRemovedCubbleSpy should be called once with arguments: deleted element elementB and crcRoot', function (done) {
+      it('the method _handleRemovedCubbleStub should be called twice', function (done) {
         container.removeChild(elementB);
         window.setTimeout(function () {
-          _handleRemovedCubbleSpy.should.be.calledTwice;
-          _handleRemovedCubbleSpy.should.be.calledWith(elementB, container);
-          _handleRemovedCubbleSpy.should.be.calledWith(elementC, elementB);
+          _handleRemovedCubbleStub.should.be.calledTwice;
+          _handleRemovedCubbleStub.args[0].should.eql([elementB, container]);
+          _handleRemovedCubbleStub.args[1].should.eql([elementC, elementB]);
+          // _handleRemovedCubbleStub.should.be.calledWith(elementB, container);
+          // _handleRemovedCubbleStub.should.be.calledWith(elementC, elementB);
           done();
         });
       });
-      it('the method _handleRemovedCubbleSpy should be not called for removed element elementC', function (done) {
+      it('the method _handleRemovedCubbleStub should be not called for removed element elementC', function (done) {
         elementB.removeChild(elementC);
         window.setTimeout(function () {
-          _handleRemovedCubbleSpy.should.be.calledOnce;
-          _handleRemovedCubbleSpy.should.be.calledWith(elementC, elementB);
+          _handleRemovedCubbleStub.should.be.calledOnce;
+          _handleRemovedCubbleStub.should.be.calledWith(elementC, elementB);
           done();
         });
       });
@@ -520,7 +577,6 @@ describe('CIF', function () {
           _handleRemovedConnectionsSpy.should.be.calledWith(connections, element);
           done();
         });
-        // });
       });
       it('the method _handleRemovedConnection should be called twice', function (done) {
         element.removeChild(connections);
@@ -530,7 +586,6 @@ describe('CIF', function () {
           _handleRemovedConnectionStub.should.be.calledWith(connection2, element);
           done();
         });
-        // });
       });
     });
     describe('remove a "cubx-core-connection" element', function () {
@@ -645,18 +700,18 @@ describe('CIF', function () {
     var _reacivateConnectionIfExistsStub;
     beforeEach(function () {
       cif._resetProcessMode();
-      _updateCubxCoreConnectionsStub = sinon.stub(cif, '_updateCubxCoreConnections', function () {
+      _updateCubxCoreConnectionsStub = sinon.stub(cif, '_updateCubxCoreConnections').callsFake(function () {
         // do nothing;
       });
-      _updateCubxCoreInitStub = sinon.stub(cif, '_updateCubxCoreInit', function () {
+      _updateCubxCoreInitStub = sinon.stub(cif, '_updateCubxCoreInit').callsFake(function () {
         // do nothing;
       });
-      _initCubxElementsInRootStub = sinon.stub(cif, '_initCubxElementsInRoot', function () {
+      _initCubxElementsInRootStub = sinon.stub(cif, '_initCubxElementsInRoot').callsFake(function () {
         // do nothing;
       });
       _processObserverTriggeredSpy = sinon.spy(cif, '_processObserverTriggered');
 
-      _reacivateConnectionIfExistsStub = sinon.stub(cif, '_reactivateConnectionIfExists', function () {
+      _reacivateConnectionIfExistsStub = sinon.stub(cif, '_reactivateConnectionIfExists').callsFake(function () {
         // do nothing
       });
     });
@@ -778,7 +833,7 @@ describe('CIF', function () {
         container.Context.getComponents().push(elementB);
         container.Context.getComponents().push(elementA);
         connectionMgr = container.Context._connectionMgr;
-        tidyConnectionsWithCubbleStub = sinon.stub(connectionMgr, 'tidyConnectionsWithCubble', function () {
+        tidyConnectionsWithCubbleStub = sinon.stub(connectionMgr, 'tidyConnectionsWithCubble').callsFake(function () {
           // do nothing
         });
         container.Context.getComponents().should.be.include(elementA);
@@ -813,7 +868,7 @@ describe('CIF', function () {
         container.Context.getComponents().push(elementB);
         container.Context.getComponents().push(elementA);
         connectionMgr = container.Context._connectionMgr;
-        tidyConnectionsWithCubbleStub = sinon.stub(connectionMgr, 'tidyConnectionsWithCubble', function () {
+        tidyConnectionsWithCubbleStub = sinon.stub(connectionMgr, 'tidyConnectionsWithCubble').callsFake(function () {
           // do nothing
         });
         container.Context.getComponents().should.be.include(elementA);
@@ -852,7 +907,7 @@ describe('CIF', function () {
         elementA = new constructor();
         container.appendChild(elementA);
         connectionMgr = container.Context._connectionMgr;
-        connectionMgrReactivateConnectionIfExistsStub = sinon.stub(connectionMgr, 'reactivateConnectionIfExists', function () {
+        connectionMgrReactivateConnectionIfExistsStub = sinon.stub(connectionMgr, 'reactivateConnectionIfExists').callsFake(function () {
           // do nothing
         });
         cif._reactivateConnectionIfExists(elementA);
@@ -890,10 +945,10 @@ describe('CIF', function () {
         elementA.appendChild(elementB);
         connectionMgr1 = container.Context._connectionMgr;
         connectionMgr2 = elementA.Context._connectionMgr;
-        connectionMgr1ReactivateConnectionIfExistsStub = sinon.stub(connectionMgr1, 'reactivateConnectionIfExists', function () {
+        connectionMgr1ReactivateConnectionIfExistsStub = sinon.stub(connectionMgr1, 'reactivateConnectionIfExists').callsFake(function () {
           // do nothing
         });
-        connectionMgr2ReactivateConnectionIfExistsStub = sinon.stub(connectionMgr2, 'reactivateConnectionIfExists', function () {
+        connectionMgr2ReactivateConnectionIfExistsStub = sinon.stub(connectionMgr2, 'reactivateConnectionIfExists').callsFake(function () {
           // do nothing
         });
         cif._reactivateConnectionIfExists(elementB);
@@ -990,7 +1045,7 @@ describe('CIF', function () {
       container.appendChild(element);
       connections = document.createElement('cubx-core-connections');
       connection = document.createElement('cubx-core-connection');
-      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
+      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (tagName) {
         if (tagName !== 'not-cubble') {
           return {
             artifactId: tagName
@@ -999,7 +1054,7 @@ describe('CIF', function () {
       });
       containerConnectionMgr = container.Context.getConnectionMgr();
       consoleWarnSpy = sinon.spy(console, 'warn');
-      connectionMgrCreateConnectionFromComponentStub = sinon.stub(containerConnectionMgr, 'createConnectionFromComponent', function () {
+      connectionMgrCreateConnectionFromComponentStub = sinon.stub(containerConnectionMgr, 'createConnectionFromComponent').callsFake(function () {
         // do nothing
       });
     });
@@ -1125,14 +1180,14 @@ describe('CIF', function () {
       connections = document.createElement('cubx-core-connections');
       connection1 = document.createElement('cubx-core-connection');
       connection2 = document.createElement('cubx-core-connection');
-      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
+      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (tagName) {
         if (tagName !== 'not-cubble') {
           return {
             artifactId: tagName
           };
         }
       });
-      _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection', function () {
+      _handleRemovedConnectionStub = sinon.stub(cif, '_handleRemovedConnection').callsFake(function () {
         // do nothing
       });
     });
@@ -1203,7 +1258,7 @@ describe('CIF', function () {
       destElem = new constructor();
       container.appendChild(element);
       connection = document.createElement('cubx-core-connection');
-      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (tagName) {
+      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (tagName) {
         if (tagName !== 'not-cubble') {
           return {
             artifactId: tagName

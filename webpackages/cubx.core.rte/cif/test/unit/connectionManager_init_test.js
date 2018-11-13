@@ -44,7 +44,7 @@ describe('ConnectionManager', function () {
         container.appendChild(element);
         var context = element.Context;
         connectionMgr = context._connectionMgr;
-        stub = sinon.stub(context._connectionMgr, '_createConnectionsFromComponent', function (component) {
+        stub = sinon.stub(context._connectionMgr, '_createConnectionsFromComponent').callsFake(function (component) {
           // dot nothing
         });
         components = [
@@ -132,7 +132,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -198,7 +198,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -258,7 +258,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -317,7 +317,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -378,7 +378,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = element.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -438,7 +438,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = element.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -454,7 +454,7 @@ describe('ConnectionManager', function () {
         container = cif.getCRCRootNode();
         context = new window.cubx.cif.Context(container);
         connectionMgr = new window.cubx.cif.ConnectionManager(context);
-        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection', function (component, element) {
+        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection').callsFake(function (component, element) {
           // just get an object
           return {
             connectionId: element.getAttribute('connection-id')
