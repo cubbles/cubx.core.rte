@@ -110,9 +110,9 @@ window.cubx.amd.define(
         before(function () {
           depMgr = new DepMgr();
           injectedResources = [];
-          appendStylesheetStub = sinon.stub(utils.DOM, 'appendStylesheetToHead', function (file) { injectedResources.push(file); });
-          appendHtmlImportStub = sinon.stub(utils.DOM, 'appendHtmlImportToHead', function (file) { injectedResources.push(file); });
-          appendScriptStub = sinon.stub(utils.DOM, 'appendScriptTagToHead', function (file) { injectedResources.push(file); });
+          appendStylesheetStub = sinon.stub(utils.DOM, 'appendStylesheetToHead').callsFake(function (file) { injectedResources.push(file); });
+          appendHtmlImportStub = sinon.stub(utils.DOM, 'appendHtmlImportToHead').callsFake(function (file) { injectedResources.push(file); });
+          appendScriptStub = sinon.stub(utils.DOM, 'appendScriptTagToHead').callsFake(function (file) { injectedResources.push(file); });
           resourceList = [
             new DepMgr.Resource('test.html', 'htmlImport', [{webpackageId: 'referrer1', artifactId: 'artifact1'}, 'referrer2/artifact2']),
             new DepMgr.Resource('test.css', 'stylesheet', [{webpackageId: 'referrer3', artifactId: 'artifact3'}]),
@@ -120,9 +120,9 @@ window.cubx.amd.define(
           ];
         });
         beforeEach(function () {
-          appendStylesheetStub.reset();
-          appendHtmlImportStub.reset();
-          appendScriptStub.reset();
+          appendStylesheetStub.resetHistory();
+          appendHtmlImportStub.resetHistory();
+          appendScriptStub.resetHistory();
           injectedResources = [];
         });
         after(function () {

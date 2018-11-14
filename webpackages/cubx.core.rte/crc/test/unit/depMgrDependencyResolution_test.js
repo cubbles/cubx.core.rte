@@ -286,7 +286,7 @@ window.cubx.amd.define([ 'CRC',
       var axiosStub;
       before(function () {
         depMgr = CRC.getDependencyMgr();
-        axiosStub = sinon.stub(Object.getPrototypeOf(depMgr._axios), 'request', function (url) {
+        axiosStub = sinon.stub(Object.getPrototypeOf(depMgr._axios), 'request').callsFake(function (url) {
           return new Promise(function (resolve, reject) {
             setTimeout(function () {
               resolve();
@@ -400,7 +400,7 @@ window.cubx.amd.define([ 'CRC',
         depMgr.init();
         baseUrl = 'http://www.example.de/';
         depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
-        fetchManifestStub = sinon.stub(Object.getPrototypeOf(depMgr), '_fetchManifest', function (url) {
+        fetchManifestStub = sinon.stub(Object.getPrototypeOf(depMgr), '_fetchManifest').callsFake(function (url) {
           return new Promise(function (resolve, reject) {
             window.setTimeout(function () {
               if (url.indexOf('package1@1.0.0') >= 0) {
@@ -482,16 +482,19 @@ window.cubx.amd.define([ 'CRC',
     describe('#_prepareResponseData()', function () {
       var stub;
       var convertedManifest;
+      var alertSpy;
       before(function () {
         convertedManifest = {};
-        // stub convert method from ManifestConverter
-        stub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert', function () { return convertedManifest; });
+        stub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert').callsFake(function () { return convertedManifest; });
+        alertSpy = sinon.spy(window, 'alert');
       });
       beforeEach(function () {
-        stub.reset();
+        stub.resetHistory();
+        alertSpy.resetHistory();
       });
       after(function () {
         stub.restore();
+        alertSpy.restore();
       });
       it('should return the converted manifest using manifestConverter.convert method', function () {
         var result = DepMgr._prepareResponseData({version: '1.2.3', name: 'exampleManifest'});
