@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue, customElements */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue, customElements, Element, Node */
 (function () {
   'use strict';
 
@@ -1112,9 +1112,9 @@
       Object.defineProperty(SlotInitClass.prototype, 'connectedCallback', {
         value: function () {
           // build a <template> element to inject
-          const script = document.createElement('script')
+          const script = document.createElement('script');
           script.innerHTML += JSON.stringify(this.innerHTML);
-          this.innerText = '' // Remove none needed markup from DOM
+          this.innerText = ''; // Remove none needed markup from DOM
           this.appendChild(script);
         }
       });
