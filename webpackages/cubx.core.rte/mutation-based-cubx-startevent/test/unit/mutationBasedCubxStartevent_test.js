@@ -7,7 +7,7 @@ describe('MutationBasedCubxStartevent', function () {
   });
   describe('#dispatchEvent', function () {
     var spyWarn;
-    before(function(){
+    before(function () {
       spyWarn = sinon.spy(console, 'warn');
     });
     beforeEach(function () {
