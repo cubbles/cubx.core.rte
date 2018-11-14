@@ -4,7 +4,6 @@
 /**
  * Created by pwr on 09.02.2015.
  */
-
 window.cubx = window.cubx || {};
 window.cubx.amd = window.cubx.amd || {};
 window.cubx.amd.define([ 'crcLoader' ],
@@ -416,16 +415,16 @@ window.cubx.amd.define([ 'crcLoader' ],
             }
           };
 
-          _checkRootDependenciesStub = sinon.stub(crcLoader, '_checkRootDependencies', function () {
+          _checkRootDependenciesStub = sinon.stub(crcLoader, '_checkRootDependencies').callsFake(function () {
             // do nothing;
           });
-          _addComponentDependenciesToRootDependenciesStub = sinon.stub(crcLoader, '_addComponentDependenciesToRootDependencies', function () {
+          _addComponentDependenciesToRootDependenciesStub = sinon.stub(crcLoader, '_addComponentDependenciesToRootDependencies').callsFake(function () {
             // do nothing;
           });
-          _addDependenciesAndExcludesToRootDependenciesStub = sinon.stub(crcLoader, '_addDependenciesAndExcludesToRootDependencies', function () {
+          _addDependenciesAndExcludesToRootDependenciesStub = sinon.stub(crcLoader, '_addDependenciesAndExcludesToRootDependencies').callsFake(function () {
             // do nothing;
           });
-          _bootstrapCRCStub = sinon.stub(crcLoader, '_bootstrapCRC', function () {
+          _bootstrapCRCStub = sinon.stub(crcLoader, '_bootstrapCRC').callsFake(function () {
             // do nothing;
           });
 

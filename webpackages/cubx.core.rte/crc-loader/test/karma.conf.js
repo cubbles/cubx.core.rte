@@ -21,8 +21,7 @@ module.exports = function (config) {
       'karma-firefox-launcher',
       'karma-coverage',
       'karma-htmlfile-reporter',
-      'karma-mocha-reporter',
-      'karma-junit-reporter'
+      'karma-mocha-reporter'
     ],
     // list of files / patterns to load in the browser
     files: [
@@ -49,12 +48,7 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
-
-    junitReporter: {
-      outputDir: 'test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
-    },
+    reporters: [ 'progress', 'html', 'mocha', 'coverage' ],
 
     htmlReporter: {
       outputFile: 'test-results/html/TEST-karma.html'
@@ -100,7 +94,7 @@ module.exports = function (config) {
   };
 
   if (process.env.TRAVIS) {
-    configuration.browsers = [ 'Chrome_travis_ci', 'FireFox' ];
+    configuration.browsers = [ 'Chrome_travis_ci', 'Firefox' ];
   }
 
   config.set(configuration);

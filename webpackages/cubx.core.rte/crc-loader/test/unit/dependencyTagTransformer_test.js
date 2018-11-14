@@ -503,22 +503,22 @@ window.cubx.amd.define([ 'crcLoader', 'dependencyTagTransformer' ], function (cr
           });
           describe('<cubx-dependency> element has no attribute artifactId', function () {
             var element2;
-            var spyWarn;
+            var spyError;
             beforeEach(function () {
               element2 = document.createElement(elementName);
-              spyWarn = sinon.spy(console, 'warn');
+              spyError = sinon.spy(console, 'error');
               dependencyTagTransformer._addToCubxCRCInit({dependencies: [ element2 ], excludes: []}, artifactElement, 0);
             });
             afterEach(function () {
               element2 = null;
-              console.warn.restore();
+              spyError.restore();
             });
             it('the length of rootDependencies should be 1', function () {
               window.cubx.CRCInit.rootDependencies.should.have.length(1);
             });
 
             it('it should be log a warning', function () {
-              spyWarn.should.be.calledOne;
+              spyError.should.be.calledOnce;
             });
           });
         });
