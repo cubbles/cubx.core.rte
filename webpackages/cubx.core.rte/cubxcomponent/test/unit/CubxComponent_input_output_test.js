@@ -35,7 +35,7 @@ describe('CubxComponent (Input/Output)', function () {
     });
     describe('set methods', function () {
       it('should be exists: "setInputvalue()"', function () {
-        component.setInputvalue.should.be.exists;
+        component.setInputvalue.should.be.exist;
         component.setInputvalue.should.be.a('function');
       });
 
@@ -47,7 +47,7 @@ describe('CubxComponent (Input/Output)', function () {
         component.model['inputvalue'].should.be.equal(testString);
       });
       it('should be exists: "setOutputvalue()"', function () {
-        component.setOutputvalue.should.be.exists;
+        component.setOutputvalue.should.be.exist;
         component.setOutputvalue.should.be.a('function');
       });
 
@@ -59,7 +59,7 @@ describe('CubxComponent (Input/Output)', function () {
         component.model['outputvalue'].should.be.equal(testString);
       });
       it('should be exists: "setInputoutputvalue()"', function () {
-        component.setInputoutputvalue.should.be.exists;
+        component.setInputoutputvalue.should.be.exist;
         component.setInputoutputvalue.should.be.a('function');
       });
       it('should set the value of attribute model.inputoutputvalue', function () {
@@ -72,7 +72,7 @@ describe('CubxComponent (Input/Output)', function () {
     });
     describe('get method', function () {
       it('should be exists: "getInputvalue()"', function () {
-        component2.getInputvalue.should.be.exists;
+        component2.getInputvalue.should.be.exist;
         component2.getInputvalue.should.be.a('function');
       });
 
@@ -82,7 +82,7 @@ describe('CubxComponent (Input/Output)', function () {
       });
 
       it('should be exists: "getOutputvalue()"', function () {
-        component2.getOutputvalue.should.be.exists;
+        component2.getOutputvalue.should.be.exist;
         component2.getOutputvalue.should.be.a('function');
       });
 
@@ -91,7 +91,7 @@ describe('CubxComponent (Input/Output)', function () {
         expect(component2.getOutputvalue()).to.be.equal(component2.model.outputvalue);
       });
       it('should be exists: "getInputoutputvalue()"', function () {
-        component2.getInputoutputvalue.should.be.exists;
+        component2.getInputoutputvalue.should.be.exist;
         component2.getInputoutputvalue.should.be.a('function');
       });
       it('should get the value of attribute model.inputoutputvalue', function () {
