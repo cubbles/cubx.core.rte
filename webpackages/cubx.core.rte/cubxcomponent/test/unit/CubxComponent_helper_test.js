@@ -284,7 +284,7 @@ describe('CubxComponent (helper)', function () {
           el.id.should.be.equal('a');
           el.innerHTML.should.be.equal('a');
           done();
-        }, 50);
+        }, 150);
       });
       it('should find the element with id=b', function (done) {
         setTimeout(function () {
@@ -293,7 +293,7 @@ describe('CubxComponent (helper)', function () {
           el.id.should.be.equal('b');
           el.firstChild.innerHTML.should.be.equal('b');
           done();
-        }, 50);
+        }, 150);
       });
       it('should find the element with id=c', function (done) {
         setTimeout(function () {
@@ -302,7 +302,7 @@ describe('CubxComponent (helper)', function () {
           el.id.should.be.equal('c');
           el.innerHTML.should.be.equal('c');
           done();
-        }, 50);
+        }, 150);
       });
       it('should find the element with class=d', function (done) {
         setTimeout(function () {
@@ -311,7 +311,7 @@ describe('CubxComponent (helper)', function () {
           el.className.should.be.equal('d');
           el.innerHTML.should.be.equal('d');
           done();
-        }, 50);
+        }, 150);
       });
     });
     describe('.<id>', function () {
@@ -322,7 +322,7 @@ describe('CubxComponent (helper)', function () {
           el.id.should.be.equal('a');
           el.innerHTML.should.be.equal('a');
           done();
-        }, 50);
+        }, 150);
       });
       it('should find the element with id=b', function (done) {
         setTimeout(function () {
@@ -331,7 +331,7 @@ describe('CubxComponent (helper)', function () {
           el.id.should.be.equal('b');
           el.firstChild.innerHTML.should.be.equal('b');
           done();
-        }, 50);
+        }, 150);
       });
       it('should find the element with id=c', function (done) {
         setTimeout(function () {
@@ -340,7 +340,7 @@ describe('CubxComponent (helper)', function () {
           el.id.should.be.equal('c');
           el.innerHTML.should.be.equal('c');
           done();
-        }, 50);
+        }, 150);
       });
     });
   });
