@@ -1,4 +1,4 @@
-window.cubx.amd.define(['manifestConverter'], function (manifestConverter) {
+window.cubx.amd.define([], function () {
   'use strict';
 
   /**
@@ -185,7 +185,7 @@ window.cubx.amd.define(['manifestConverter'], function (manifestConverter) {
         if (document.artifacts.compoundComponents[ i ].artifactId === artifactId) {
           document.artifacts.compoundComponents[ i ].artifactType = ArtifactTypes.COMPOUND_COMPONENT;
           document.artifacts.compoundComponents[ i ].modelVersion = document.modelVersion;
-          return manifestConverter.cleanArtifact(document.artifacts.compoundComponents[ i ]);
+          return document.artifacts.compoundComponents[ i ];
         }
       }
     }
@@ -194,7 +194,7 @@ window.cubx.amd.define(['manifestConverter'], function (manifestConverter) {
         if (document.artifacts.elementaryComponents[ i ].artifactId === artifactId) {
           document.artifacts.elementaryComponents[ i ].artifactType = ArtifactTypes.ELEMENTARY_COMPONENT;
           document.artifacts.elementaryComponents[ i ].modelVersion = document.modelVersion;
-          return manifestConverter.cleanArtifact(document.artifacts.elementaryComponents[ i ]);
+          return document.artifacts.elementaryComponents[ i ];
         }
       }
     }

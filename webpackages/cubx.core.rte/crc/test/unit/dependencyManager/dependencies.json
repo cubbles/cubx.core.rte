@@ -1,8 +1,7 @@
 [
     {
         "artifactId": "util1",
-        "webpackageId": "cubx.core.test.crc-loader-test",
-        "endpointId": "main"
+        "webpackageId": "cubx.core.test.crc-loader-test"
     },
     {
         "artifactId": "util2",
@@ -18,8 +17,7 @@
             },
             {
                 "webpackageId": "anotherExcludedPackage",
-                "artifactId": "anotherExcludedArtifact",
-                "endpointId": "excludedEndpoint"
+                "artifactId": "anotherExcludedArtifact"
             }
         ]
     }

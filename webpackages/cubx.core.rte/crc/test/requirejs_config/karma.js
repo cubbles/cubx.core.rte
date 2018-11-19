@@ -13,7 +13,6 @@
       'eventFactory': 'crc/modules/eventFactory/eventFactory',
       'componentResolver': 'crc/modules/componentResolver/componentResolver',
       'responseCache': 'crc/modules/responseCache/responseCache',
-      'manifestConverter': 'crc/modules/manifestConverter/manifestConverter',
       'axios': 'crc/modules/axios/axios.min',
       'dependencyTree': 'crc/modules/dependencyTree/dependencyTree',
       // unit tests
