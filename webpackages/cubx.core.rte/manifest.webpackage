@@ -2,7 +2,7 @@
   "name": "rte",
   "groupId": "cubx.core",
   "version": "3.0.0-SNAPSHOT",
-  "modelVersion": "9.1.1",
+  "modelVersion": "10.0.0",
   "docType": "webpackage",
   "description": "",
   "license": "MIT",
@@ -65,9 +65,8 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@1.0.1",
-            "artifactId": "lodash",
-            "endpointId": "html-import"
+            "webpackageId": "lodash-3.10.1@2.0.0",
+            "artifactId": "lodash"
           },
           {
             "artifactId": "guid-utility"
@@ -93,9 +92,8 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@1.0.1",
-            "artifactId": "lodash",
-            "endpointId": "html-import"
+            "webpackageId": "lodash-3.10.1@2.0.0",
+            "artifactId": "lodash"
           },
           {
             "artifactId": "cubx-component-mixin"
@@ -149,9 +147,8 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@1.0.1",
-            "artifactId": "lodash",
-            "endpointId": "html-import"
+            "webpackageId": "lodash-3.10.1@2.0.0",
+            "artifactId": "lodash"
           }
         ]
       },
