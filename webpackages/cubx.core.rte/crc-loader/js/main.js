@@ -217,7 +217,6 @@ Q.test(a[l]) && (a[l] = a[l].replace(Q,""));"." === a[0].charAt(0) && k && (l = 
       'utils': crcLoaderBaseUrl + '/../crc/modules/utils/utils',
       'eventFactory': crcLoaderBaseUrl + '/../crc/modules/eventFactory/eventFactory',
       'responseCache': crcLoaderBaseUrl + '/../crc/modules/responseCache/responseCache',
-      'manifestConverter': crcLoaderBaseUrl + '/../crc/modules/manifestConverter/manifestConverter',
       'axios': crcLoaderBaseUrl + '/../crc/modules/axios/axios.min',
       'dependencyTree': crcLoaderBaseUrl + '/../crc/modules/dependencyTree/dependencyTree'
     }

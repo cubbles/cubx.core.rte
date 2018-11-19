@@ -58,57 +58,17 @@ window.cubx.amd.define([ 'CRC',
       it('should fill local _responseCache using globalResponseCache', function () {
         Object.keys(crcDepMgr._responseCache._cache).should.have.length(globalResponseCache.length);
       });
-      it('should be equal the cache-entry with the initialised manifest for org.example.my-webpackage@0.2.0', function () {
+      it('should be equal the cache-entry with the initialised manifest for each webpackage', function () {
         crcDepMgr._responseCache._cache['org.example.my-webpackage@0.2.0'].should.deep.equal(expectedLocalResponseCache['org.example.my-webpackage@0.2.0']);
-      });
-      it('should be equal the cache-entry with the initialised manifest for org.example.package-1@1.0.0', function () {
         crcDepMgr._responseCache._cache['org.example.package-1@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-1@1.0.0']);
-      });
-      it('should be equal the cache-entry with the initialised manifest for org.example.package-2@1.0.0', function () {
         crcDepMgr._responseCache._cache['org.example.package-2@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-2@1.0.0']);
-      });
-      it('should be the medel version updated in cache-entry for org.example.package-3@1.0.0', function () {
-        crcDepMgr._responseCache._cache['org.example.package-3@1.0.0'].should.not.deep.equal(expectedLocalResponseCache['org.example.package-3@1.0.0']);
-        var expectedManifest = cloneObject(expectedLocalResponseCache['org.example.package-3@1.0.0']);
-        expectedManifest.modelVersion = '9.1.1';
-        var manifestInCache = crcDepMgr._responseCache._cache['org.example.package-3@1.0.0'];
-        manifestInCache.should.be.deep.equal(expectedManifest);
-      });
-      it('should be equal the cache-entry with the initialised manifest for org.example.package-4@1.0.0', function () {
+        crcDepMgr._responseCache._cache['org.example.package-3@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-3@1.0.0']);
         crcDepMgr._responseCache._cache['org.example.package-4@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-4@1.0.0']);
-      });
-      it('should be equal the cache-entry with the initialised manifest for org.example.package-5@1.0.0', function () {
         crcDepMgr._responseCache._cache['org.example.package-5@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-5@1.0.0']);
-      });
-      it('should be equal the cache-entry with the initialised manifest for org.example.package-6@1.0.0', function () {
         crcDepMgr._responseCache._cache['org.example.package-6@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-6@1.0.0']);
-      });
-      it('should be equal the cache-entry with the initialised manifest for org.example.package-7@1.0.0', function () {
         crcDepMgr._responseCache._cache['org.example.package-7@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-7@1.0.0']);
-      });
-      it('should be converted in cache-entry for org.example.package-8@1.0.0', function () {
-        crcDepMgr._responseCache._cache['org.example.package-8@1.0.0'].should.not.deep.equal(expectedLocalResponseCache['org.example.package-8@1.0.0']);
-        var manifestInCache = crcDepMgr._responseCache._cache['org.example.package-8@1.0.0'];
-        var origDependency = expectedLocalResponseCache[ 'org.example.package-8@1.0.0' ].artifacts.compoundComponents[0].dependencies[1];
-        var expectedArtifactId = origDependency.artifactId + '#' + origDependency.endpointId;
-        manifestInCache.artifacts.compoundComponents[0].dependencies[1].artifactId.should.equal(expectedArtifactId);
-        manifestInCache.modelVersion.should.be.equal('9.1.1');
-      });
-      it('should be converted in cache-entry for org.example.package-9@1.0.0', function () {
-        crcDepMgr._responseCache._cache['package-9@1.0.0'].should.not.deep.equal(expectedLocalResponseCache['package-9@1.0.0']);
-        var manifestInCache = crcDepMgr._responseCache._cache['package-9@1.0.0'];
-        var expectedArtifactIds = [];
-        expectedLocalResponseCache['package-9@1.0.0'].artifacts.utilities.forEach(function (artifact) {
-          var artifactId = artifact.artifactId;
-          artifact.endpoints.forEach(function (endpoint) {
-            expectedArtifactIds.push(artifactId + '#' + endpoint.endpointId);
-          });
-        });
-
-        manifestInCache.artifacts.utilities.should.be.length(expectedArtifactIds.length);
-        manifestInCache.artifacts.utilities.forEach(function (artifact) {
-          expectedArtifactIds.should.include(artifact.artifactId);
-        });
+        crcDepMgr._responseCache._cache['org.example.package-8@1.0.0'].should.deep.equal(expectedLocalResponseCache['org.example.package-8@1.0.0']);
+        crcDepMgr._responseCache._cache['package-9@1.0.0'].should.deep.equal(expectedLocalResponseCache['package-9@1.0.0']);
       });
     });
   });

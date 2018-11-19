@@ -2,7 +2,6 @@
 window.cubx.amd.define([ 'CRC',
   'dependencyManager',
   'dependencyTree',
-  'manifestConverter',
   'text!unit/dependencyResolution/rootDependencies.json',
   'text!unit/dependencyResolution/dependencyPackage1.json',
   'text!unit/dependencyResolution/dependencyPackage2.json',
@@ -11,7 +10,7 @@ window.cubx.amd.define([ 'CRC',
   'text!unit/dependencyResolution/dependencyPackage5.json',
   'text!unit/dependencyResolution/dependencyPackage6.json',
   'unit/utils/CubxNamespaceManager'
-], function (CRC, DepMgr, DependencyTree, manifestConverter, rootDependencies, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, CubxNamespaceManager) {
+], function (CRC, DepMgr, DependencyTree, rootDependencies, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, CubxNamespaceManager) {
   'use strict';
 
   var depMgr;
@@ -42,7 +41,7 @@ window.cubx.amd.define([ 'CRC',
         var items = depMgr._createDepReferenceListFromArtifactDependencies([
           {webpackageId: 'package1@1.0.0', artifactId: 'generic1'},
           {webpackageId: 'package2@1.0.0', artifactId: 'generic2'},
-          {webpackageId: 'package3@1.0.0', artifactId: 'util#main'}
+          {webpackageId: 'package3@1.0.0', artifactId: 'util'}
         ], testReferrer);
 
         item1 = items[ 0 ];
@@ -92,12 +91,6 @@ window.cubx.amd.define([ 'CRC',
           resourceList[ 5 ].should.have.property('path',
             depMgr._baseUrl + item2.webpackageId + '/' + item2.artifactId + '/' + item2.resources[ 2 ]);
         });
-      it('should ignore endpointId appendix on artifacts that where converted by the manifestConverter', function () {
-        depMgr._runtimeMode.should.be.eql('prod');
-        var resourceList = depMgr._calculateResourceList(internalDepList);
-        resourceList[ 6 ].should.have.property('path',
-          depMgr._baseUrl + item3.webpackageId + '/util/' + item3.resources[ 0 ]);
-      });
       afterEach(function () {
         internalDepList = [];
       });
@@ -480,26 +473,15 @@ window.cubx.amd.define([ 'CRC',
       });
     });
     describe('#_prepareResponseData()', function () {
-      var stub;
-      var convertedManifest;
       var alertSpy;
       before(function () {
-        convertedManifest = {};
-        stub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert').callsFake(function () { return convertedManifest; });
         alertSpy = sinon.spy(window, 'alert');
       });
       beforeEach(function () {
-        stub.resetHistory();
         alertSpy.resetHistory();
       });
       after(function () {
-        stub.restore();
         alertSpy.restore();
-      });
-      it('should return the converted manifest using manifestConverter.convert method', function () {
-        var result = DepMgr._prepareResponseData({version: '1.2.3', name: 'exampleManifest'});
-        result.should.be.equal(convertedManifest);
-        expect(stub.callCount).to.equal(1);
       });
       it('should throw an error if called given data is not a valid manifest object/string', function () {
         var errorThrown = false;

@@ -6,7 +6,6 @@
     ['CRC',
       'dependencyManager',
       'dependencyTree',
-      'manifestConverter',
       'unit/utils/CubxNamespaceManager',
       'text!unit/dependencyResolution/rootDependencies.json',
       'text!unit/dependencyResolution/dependencyPackage1.json',
@@ -15,7 +14,7 @@
       'text!unit/dependencyResolution/dependencyPackage4.json',
       'text!unit/dependencyResolution/dependencyPackage5.json',
       'text!unit/dependencyResolution/dependencyPackage6.json'],
-    function (CRC, DepMgr, DependencyTree, manifestConverter, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
+    function (CRC, DepMgr, DependencyTree, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
       var depMgr;
       describe('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
@@ -436,7 +435,6 @@
         });
         describe('#_resolveDepReferenceDependencies()', function () {
           var _fetchManifestStub;
-          var convertManifestStub;
           var depRefItem;
           var baseUrl;
 
@@ -480,21 +478,14 @@
                 }
               });
             });
-
-            // mock ManifestConverter's convert method to return just a copy of given data
-            convertManifestStub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert').callsFake(function (data) {
-              return JSON.parse(JSON.stringify(data));
-            });
           });
           beforeEach(function () {
             depMgr._responseCache.invalidate();
             depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
             _fetchManifestStub.resetHistory();
-            convertManifestStub.resetHistory();
           });
           after(function () {
             _fetchManifestStub.restore();
-            convertManifestStub.restore();
             CubxNamespaceManager.resetNamespace(CRC);
           });
           it('should return a promise', function () {
@@ -517,8 +508,6 @@
             depRefItem.manifest = JSON.parse(pkg1);
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
               expect(_fetchManifestStub.callCount).to.equal(0);
-              expect(convertManifestStub.callCount).to.equal(1);
-              expect(convertManifestStub.calledWith(depRefItem.manifest)).to.be.true;
               result.dependencies.should.have.lengthOf(2);
               result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
               result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);

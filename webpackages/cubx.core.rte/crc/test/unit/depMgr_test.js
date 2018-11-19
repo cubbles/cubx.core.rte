@@ -23,7 +23,7 @@ window.cubx.amd.define(
           window.cubx.CRCInit.rootDependencies = depListObj;
           window.cubx.CRCInit.rootDependencyExcludes = [
             {webpackageId: 'exclude1@1.2.3', artifactId: 'artifact1'},
-            {webpackageId: 'exclude2@1.2.3', artifactId: 'artifact2', endpointId: 'main'}
+            {webpackageId: 'exclude2@1.2.3', artifactId: 'artifact2'}
           ];
           window.cubx.CRCInit.webpackageBaseUrl = 'http://test.org';
           depMgr = CRC.getDependencyMgr();
@@ -35,29 +35,6 @@ window.cubx.amd.define(
         });
         it('should have the expected baseUrl', function () {
           expect(depMgr._baseUrl).to.eql('http://test.org');
-        });
-        it('should remove property \'endpointId\' from each rootDependency if available and append it to artifactId', function () {
-          var item = depMgr._depList[0];
-          item.artifactId.should.equal('util1#main');
-          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
-          item.should.not.have.ownProperty('endpointId');
-        });
-        it('should remove property \'endpointId\' from each dependencyExclude in rootDependencies and append it to artifactId', function () {
-          var item = depMgr._depList[2];
-          item.artifactId.should.equal('util3');
-          item.webpackageId.should.equal('cubx.core.test.crc-loader-test');
-          item.should.have.ownProperty('dependencyExcludes');
-          item.dependencyExcludes.should.eql([
-            { webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' },
-            { webpackageId: 'anotherExcludedPackage', artifactId: 'anotherExcludedArtifact#excludedEndpoint' }
-          ]);
-        });
-        it('should remove property \'endpointId\' from each rootDependencyExclude if available and append it to artifactId', function () {
-          var rootDependencyExcludes = window.cubx.CRCInit.rootDependencyExcludes;
-          rootDependencyExcludes.should.eql([
-            {webpackageId: 'exclude1@1.2.3', artifactId: 'artifact1'},
-            {webpackageId: 'exclude2@1.2.3', artifactId: 'artifact2#main'}
-          ]);
         });
       });
       describe('#_createDepReferenceListFromArtifactDependencies()', function () {
@@ -92,7 +69,7 @@ window.cubx.amd.define(
           item.referrer[0].should.eql(referrer);
           item.dependencyExcludes.should.eql([
             { webpackageId: 'excludedPackage', artifactId: 'excludedArtifact' },
-            { webpackageId: 'anotherExcludedPackage', artifactId: 'anotherExcludedArtifact', endpointId: 'excludedEndpoint' }
+            { webpackageId: 'anotherExcludedPackage', artifactId: 'anotherExcludedArtifact' }
           ]);
         });
         it('should set referrer to "root" if param referrer is set to null', function () {
