@@ -151,6 +151,25 @@ window.cubx.amd.define(
           injectedResources[ 1 ].should.be.equal('test.css');
           injectedResources[ 2 ].should.be.equal('test.js');
         });
+        describe('cubx.CRCInit.disableResourceInjection is true', function () {
+          var originCubx;
+          before(function () {
+            originCubx = window.cubx;
+            if (!window.cubx.CRCInit) {
+              window.cubx.CRCInit = {};
+            }
+            window.cubx.CRCInit.disableResourceInjection = true;
+          });
+          after(function () {
+            window.cubx = originCubx;
+          });
+          it('should not append any resources to the dom', function () {
+            depMgr._injectDependenciesToDom(resourceList);
+            expect(appendScriptStub.callCount).to.equal(0);
+            expect(appendStylesheetStub.callCount).to.equal(0);
+            expect(appendHtmlImportStub.callCount).to.equal(1); // One call in #_fireDepMgrReadyEvent
+          });
+        });
       });
       describe('#_isValidResourceType()', function () {
         it('should return true for resource type "htmlImport"', function () {
