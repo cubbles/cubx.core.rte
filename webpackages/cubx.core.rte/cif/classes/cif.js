@@ -75,7 +75,7 @@
      * @type {string[]}
      * @private
      */
-    this._supportedModelVersionList = [ '8.0', '8.1', '8.2', '8.3', '9.1' ];
+    this._supportedModelVersionList = [ '10.0' ];
 
     /**
      * list of elements waiting for componentReady Event

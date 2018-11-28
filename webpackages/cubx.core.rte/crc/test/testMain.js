@@ -26,7 +26,6 @@
     'unit/eventFactory_test',
     'unit/utils_array_test',
     'unit/responseCache_test',
-    'unit/manifestConverter_test',
     'unit/dependencyTree_test',
     'unit/depMgrDependencyTreeCreation_test',
     'unit/dependencyTreeModification_test',
