@@ -320,6 +320,7 @@ window.cubx.amd.define(
      */
     DependencyMgr.prototype._injectDependenciesToDom = function (resourceList) {
       var disableResourceInjection = window.cubx.utils.get(window, 'cubx.CRCInit.disableResourceInjection');
+      this._createScriptForFireEvent('fireBeforeResourceInjectionEvent');
       if (typeof disableResourceInjection === 'undefined' || disableResourceInjection === false) {
         // var element = document.getElementsByTagName('head')[0].firstElementChild;
         for (var i = 0; i < resourceList.length; i++) {
@@ -341,8 +342,8 @@ window.cubx.amd.define(
               utils.DOM.appendScriptTagToHead(current.path, currentReferrer);
           }
         }
+        this._createScriptForFireEvent('fireDepMgrReadyEvent');
       }
-      this._fireDepMgrReadyEvent();
     };
 
     /**
@@ -350,9 +351,21 @@ window.cubx.amd.define(
      * @memberOf DependencyMgr
      * @private
      */
-    DependencyMgr.prototype._fireDepMgrReadyEvent = function () {
+    DependencyMgr.prototype._createScriptForFireEvent = function (fireEventMethodeName) {
       // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
-      var blob = new Blob(['<script>window.cubx.CRC.fireDepMgrReadyEvent();</script>'], {type: 'text/html'});
+      var blob = new Blob(['<script>window.cubx.CRC["' + fireEventMethodeName + '"]();</script>'], {type: 'text/html'});
+      var url = URL.createObjectURL(blob);
+      utils.DOM.appendHtmlImportToHead(url);
+    };
+
+    /**
+     * Fires the 'crcDepMgrReady' Event indicating that all Dependencies have been resolved an injected into <head>.
+     * @memberOf DependencyMgr
+     * @private
+     */
+    DependencyMgr.prototype._fireBeforeResourceInjectionEvent = function () {
+      // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
+      var blob = new Blob(['<script>window.cubx.CRC.fireBeforeResourceInjectionEvent();</script>'], {type: 'text/html'});
       var url = URL.createObjectURL(blob);
       utils.DOM.appendHtmlImportToHead(url);
     };
