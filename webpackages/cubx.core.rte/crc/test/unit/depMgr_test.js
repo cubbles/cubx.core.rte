@@ -107,12 +107,18 @@ window.cubx.amd.define(
         var appendScriptStub;
         var resourceList;
         var injectedResources;
+        var createScriptForFireEventSpy;
         before(function () {
           depMgr = new DepMgr();
           injectedResources = [];
           appendStylesheetStub = sinon.stub(utils.DOM, 'appendStylesheetToHead', function (file) { injectedResources.push(file); });
-          appendHtmlImportStub = sinon.stub(utils.DOM, 'appendHtmlImportToHead', function (file) { injectedResources.push(file); });
+          appendHtmlImportStub = sinon.stub(utils.DOM, 'appendHtmlImportToHead', function (file) {
+            if (!file.startsWith('blob')) {
+              injectedResources.push(file);
+            }
+          });
           appendScriptStub = sinon.stub(utils.DOM, 'appendScriptTagToHead', function (file) { injectedResources.push(file); });
+          createScriptForFireEventSpy = sinon.spy(depMgr, '_createScriptForFireEvent');
           resourceList = [
             new DepMgr.Resource('test.html', 'htmlImport', [{webpackageId: 'referrer1', artifactId: 'artifact1'}, 'referrer2/artifact2']),
             new DepMgr.Resource('test.css', 'stylesheet', [{webpackageId: 'referrer3', artifactId: 'artifact3'}]),
@@ -123,17 +129,23 @@ window.cubx.amd.define(
           appendStylesheetStub.reset();
           appendHtmlImportStub.reset();
           appendScriptStub.reset();
+          createScriptForFireEventSpy.reset();
           injectedResources = [];
         });
         after(function () {
           appendStylesheetStub.restore();
           appendHtmlImportStub.restore();
           appendScriptStub.restore();
+          createScriptForFireEventSpy.restore();
         });
         it('should append all html import resources of given resource list into DOM using utils.DOM api including all referrers of each resource', function () {
           depMgr._injectDependenciesToDom(resourceList);
-          expect(appendHtmlImportStub.callCount).to.equal(2);
-          expect(appendHtmlImportStub.firstCall.calledWith('test.html', [ 'referrer1/artifact1', 'referrer2/artifact2' ])).to.be.true;
+          appendHtmlImportStub.callCount.should.equal(3);
+          var secondCall = appendHtmlImportStub.getCall(1);
+          secondCall.args[0].should.be.equal('test.html');
+          secondCall.args[1].should.be.eql([ 'referrer1/artifact1', 'referrer2/artifact2' ]);
+          // expect(appendHtmlImportStub.calledOnceWith('test.html', [ 'referrer1/artifact1', 'referrer2/artifact2' ])).to.be.true;
+          createScriptForFireEventSpy.should.calledTwice;
         });
         it('should append all css resources of given resource list into DOM using utils.DOM api including all referrers of each resource', function () {
           depMgr._injectDependenciesToDom(resourceList);
@@ -167,7 +179,7 @@ window.cubx.amd.define(
             depMgr._injectDependenciesToDom(resourceList);
             expect(appendScriptStub.callCount).to.equal(0);
             expect(appendStylesheetStub.callCount).to.equal(0);
-            expect(appendHtmlImportStub.callCount).to.equal(1); // One call in #_fireDepMgrReadyEvent
+            expect(appendHtmlImportStub.callCount).to.equal(1); // One call in #_createScriptForFireEvent
           });
         });
       });
