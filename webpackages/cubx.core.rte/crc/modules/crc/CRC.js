@@ -2,7 +2,7 @@
 /**
  * Defines the CRC RequireJS Module.
  *
- * @version 2.5.2
+ * @version 2.6.0-SNAPSHOT
  */
 window.cubx.amd.define([
   'storageManager',
@@ -26,7 +26,7 @@ window.cubx.amd.define([
      /* @type {string}
      /* @private
      */
-    this._version = '2.5.2';
+    this._version = '2.6.0-SNAPSHOT';
 
     /**
      * jQuery object containing only one element to which the crc should be appended
@@ -105,6 +105,14 @@ window.cubx.amd.define([
      * @private
      */
     this._depMgrReadyEventName = 'crcDepMgrReady';
+
+    /**
+     * The name of the crc.before resource injection event that is fired after crc-DependencyManager is ready with calculation of dependencies
+     * and before has injected all resources into the dom.
+     * @type {string}
+     * @private
+     */
+    this._beforeResourceInjectionEventName = 'crcBeforeResourceInjection';
 
     /**
      * The ready flag set to true, after the Event "this._depMgrReadyEventName" has been fired.
@@ -276,6 +284,20 @@ window.cubx.amd.define([
    */
   CRC.prototype.fireDepMgrReadyEvent = function () {
     var event = new CustomEvent(this._depMgrReadyEventName, { bubbles: true });
+    if (this.getCRCElement()) {
+      this.getCRCElement().dispatchEvent(event);
+    } else {
+      document.querySelector('body').dispatchEvent(event);
+    }
+    this._depMgrReady = true;
+  };
+
+  /**
+   * Fire the crcBeforeResourceInjection event
+   * @memberOf CRC
+   */
+  CRC.prototype.fireBeforeResourceInjectionEvent = function () {
+    var event = new CustomEvent(this._beforeResourceInjectionEventName, { bubbles: true });
     if (this.getCRCElement()) {
       this.getCRCElement().dispatchEvent(event);
     } else {
