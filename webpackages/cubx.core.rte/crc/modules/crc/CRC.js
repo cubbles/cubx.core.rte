@@ -99,6 +99,14 @@ window.cubx.amd.define([
     this._depMgrReadyEventName = 'crcDepMgrReady';
 
     /**
+     * The name of the crc.before resource injection event that is fired after crc-DependencyManager is ready with calculation of dependencies
+     * and before has injected all resources into the dom.
+     * @type {string}
+     * @private
+     */
+    this._beforeResourceInjectionEventName = 'crcBeforeResourceInjection';
+
+    /**
      * The ready flag set to true, after the Event "this._depMgrReadyEventName" has been fired.
      * @type {boolean}
      * @private
@@ -259,6 +267,20 @@ window.cubx.amd.define([
    */
   CRC.prototype.fireDepMgrReadyEvent = function () {
     var event = new CustomEvent(this._depMgrReadyEventName, { bubbles: true });
+    if (this.getCRCElement()) {
+      this.getCRCElement().dispatchEvent(event);
+    } else {
+      document.querySelector('body').dispatchEvent(event);
+    }
+    this._depMgrReady = true;
+  };
+
+  /**
+   * Fire the crcBeforeResourceInjection event
+   * @memberOf CRC
+   */
+  CRC.prototype.fireBeforeResourceInjectionEvent = function () {
+    var event = new CustomEvent(this._beforeResourceInjectionEventName, { bubbles: true });
     if (this.getCRCElement()) {
       this.getCRCElement().dispatchEvent(event);
     } else {
