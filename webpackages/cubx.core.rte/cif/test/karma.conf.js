@@ -83,7 +83,7 @@ module.exports = function (config) {
     browsers: [ 'Chrome', 'Firefox' ], //, 'Firefox', 'Chrome'
     // use just Chrome for debugging in Webstorm
     // browsers: [ 'Chrome' ],
-    captureTimeout: 6000,
+    captureTimeout: 60000,
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
