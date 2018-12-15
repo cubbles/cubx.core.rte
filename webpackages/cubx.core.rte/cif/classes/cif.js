@@ -965,39 +965,94 @@
     };
     this._initSlot = document.registerElement('cubx-core-init', { prototype: InitPrototype });
 
-    var InitSlotPrototype = Object.create(HTMLElement.prototype);
-    InitSlotPrototype.setSlot = function (slot) {
+    var InitSlotClass = function () {
+      return HTMLElement.call(this);
+    };
+    InitSlotClass.prototype.setSlot = function (slot) {
       this.setAttribute('slot', slot);
     };
-    InitSlotPrototype.getSlot = function () {
+    InitSlotClass.prototype.getSlot = function () {
       return this.getAttribute('slot');
     };
-    InitSlotPrototype.setMember = function (member) {
+    InitSlotClass.prototype.setMember = function (member) {
       this.setAttribute('member', member);
     };
-    InitSlotPrototype.getMember = function () {
+    InitSlotClass.prototype.getMember = function () {
       return this.getAttribute('member');
     };
-    InitSlotPrototype.setOrder = function (order) {
+    InitSlotClass.prototype.setOrder = function (order) {
       this.setAttribute('order', order);
     };
-    InitSlotPrototype.getOrder = function () {
+    InitSlotClass.prototype.getOrder = function () {
       return this.getAttribute('order');
     };
-    InitSlotPrototype.getType = function () {
+    InitSlotClass.prototype.getType = function () {
       return this.getAttribute('type');
     };
-    InitSlotPrototype.setType = function (type) {
+    InitSlotClass.prototype.setType = function (type) {
       this.setAttribute('type', type);
     };
-    InitSlotPrototype.getDeepLevel = function () {
+    InitSlotClass.prototype.getDeepLevel = function () {
       return this.getAttribute('deeplevel');
     };
-    InitSlotPrototype.setDeepLevel = function (deeplevel) {
+    InitSlotClass.prototype.setDeepLevel = function (deeplevel) {
       this.setAttribute('deeplevel', deeplevel);
     };
+    InitSlotClass.prototype.createdCallback = function () {
+      const script = document.createElement('script')
+      script.innerHTML += JSON.stringify(this.innerHTML);
+      this.innerText = '' // Remove none needed markup from DOM
+      this.appendChild(script);
+    };
 
-    this._slotInitElement = document.registerElement('cubx-core-slot-init', { prototype: InitSlotPrototype });
+    Object.setPrototypeOf(InitSlotClass.prototype, HTMLElement.prototype);
+    Object.setPrototypeOf(InitSlotClass, HTMLElement);
+    Object.defineProperty(InitSlotClass.prototype, 'textContent', {
+      get: function () {
+        var script = this.querySelector('script');
+        if (script) {
+          return JSON.parse(script.textContent);
+        }
+        return Object.getOwnPropertyDescriptor(Node.prototype, 'textContent').get.call(this);
+      },
+      set: function (newValue) {
+        var script = this.querySelector('script');
+        if (script) {
+          script.textContent = JSON.stringify(newValue);
+        } else {
+          return Object.getOwnPropertyDescriptor(Element.prototype, 'textContent').set.call(this, newValue);
+        }
+      }
+    });
+    Object.defineProperty(InitSlotClass.prototype, 'innerHTML', {
+      get: function () {
+        var script = this.querySelector('script');
+        if (script) {
+          return JSON.parse(script.innerHTML);
+        }
+        return Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').get.call(this);
+      },
+      set: function (newValue) {
+        var script = this.querySelector('script');
+        if (script) {
+          script.innerHTML = JSON.stringify(newValue);
+        } else {
+          return Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').set.call(this, newValue);
+        }
+      }
+    });
+   /* Object.defineProperty(InitSlotClass.prototype, 'attachedCallback', {
+      value: function () {
+        // build a <template> element to inject
+        const script = document.createElement('script')
+        script.innerHTML += JSON.stringify(this.innerHTML);
+        this.innerText = '' // Remove none needed markup from DOM
+        this.appendChild(script);
+        console.log('element...', this.outerHTML)
+      }
+    }); */
+    
+    this._slotInitElement = document.registerElement('cubx-core-slot-init', { prototype: InitSlotClass.prototype });
   };
   /**
    * Returns the DOMTree on basis of manifest object representing the complete application including all it's used
