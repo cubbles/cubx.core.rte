@@ -332,20 +332,8 @@ window.cubx.amd.define(
      * @private
      */
     DependencyMgr.prototype._createScriptForFireEvent = function (fireEventMethodeName) {
-      // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
+      // create a blob used as html import. Inside this import call the fireEventMethodeName referenced method from CRC
       var blob = new Blob(['<script>window.cubx.CRC["' + fireEventMethodeName + '"]();</script>'], {type: 'text/html'});
-      var url = URL.createObjectURL(blob);
-      utils.DOM.appendHtmlImportToHead(url);
-    };
-
-    /**
-     * Fires the 'crcDepMgrReady' Event indicating that all Dependencies have been resolved an injected into <head>.
-     * @memberOf DependencyMgr
-     * @private
-     */
-    DependencyMgr.prototype._fireBeforeResourceInjectionEvent = function () {
-      // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
-      var blob = new Blob(['<script>window.cubx.CRC.fireBeforeResourceInjectionEvent();</script>'], {type: 'text/html'});
       var url = URL.createObjectURL(blob);
       utils.DOM.appendHtmlImportToHead(url);
     };
