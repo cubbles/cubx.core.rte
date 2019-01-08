@@ -4,12 +4,14 @@
 describe('DynamicConnectionUtils', function () {
   var dynamicConnectionUtil;
   var Context;
-  this.timeout(3000);
+  this.timeout(6000);
   before(function (done) {
     dynamicConnectionUtil = window.cubx.dynamicConnectionUtil;
     Context = window.cubx.cif.Context;
     HTMLImports.whenReady(function () {
-      done();
+      window.setTimeout(function () {
+        done();
+      }, 3000);
     });
   });
   describe('helper methoden', function () {
