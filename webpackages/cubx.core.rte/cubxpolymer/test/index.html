@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <title>cubypolymer Test</title>
-    <link rel="stylesheet" href="vendor/mocha/mocha.css"/>
+    <link rel="stylesheet" href="../../../../devtools-mappedIn/node_modules/mocha/mocha.css"/>
     <style type="text/css" media="all">
         iframe {
             border: none;
@@ -15,9 +15,9 @@
 <body>
 <div id="mocha"></div>
 
-<script src="vendor/mocha/mocha.js"></script>
-<script src="vendor/chai/chai.js"></script>
-<script src="vendor/sinonjs/sinon.js"></script>
+<script src="../../../../devtools-mappedIn/node_modules/mocha/mocha.js"></script>
+<script src="../../../../devtools-mappedIn/node_modules/chai/chai.js"></script>
+<script src="../../../../devtools-mappedIn/node_modules/sinon/pkg/sinon.js"></script>
 
 <!-- coverage test, need start server first -->
 <!--<script src="vendor/blanket/blanket.min.js" data-cover-adapter="vendor/blanket/mocha-blanket.js" data-cover-only="js/" data-cover-never="test/"></script>-->
@@ -25,10 +25,20 @@
 <script src="vendor/mocha-config.js"></script>
 <script src="mock/CRCMock.js"></script>
 <script src="mock/CIFMock.js"></script>
-<script src="https://webblebase.net/org.webcomponents.webcomponents-0.7.12-1.0/resources/vendor/webcomponentsjs/webcomponents-lite.js"></script>
-<link rel="import" href="https://webblebase.net/org.polymer-project.polymer-1.1.2-1.0/resources/vendor/polymer/polymer.html"/>
-<script src="https://webblebase.net/com.lodash.lodash-3.10.1-1.0/resources/lodash.js"></script>
+<script src="https://cubbles.world/core/cubx.core.rte@2.5.2/webcomponents/webcomponents-lite.js"></script>
+<!--<link rel="import" href="https://cubbles.world/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html"/>-->
+<script src="https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js"></script>
 <!-- Sources, add 'data-cover' attr if you want jscoverage -->
+
+<script src="../../cubx-component-mixin/js/cubxComponentMixin.js"></script>
+<script src="../../guid-utility/js/guid.js"></script>
+<script src="../../cif/classes/dynamicConnection.js"></script>
+<script src="../../cif/classes/initializer.js"></script>
+<script src="../../cif/classes/connectionManager.js"></script>
+<script src="../../cif/classes/compoundComponent.js"></script>
+<script src="../../cif/classes/context.js"></script>
+<script src="../../dom-tree-utilities/js/domTreeUtils.js"></script>
+<script src="../../dynamic-connection-utils/js/dynamicConnectionUtils.js"></script>
 <script src="../cubxPolymerMixin.js"></script>
 <script src="../cubxpolymer.js"></script>
 <script src="helpers.js"></script>
@@ -36,12 +46,17 @@
 
 <!-- test cases -->
 
-<script src="unit/Cubxpolymer_init_test.js"></script>
+<script src="unit/CubxPolymer_connectionHook_test.js"></script>
+<script src="unit/CubxPolymer_content_test.js"></script>
+<script src="unit/CubxPolymer_dynamicConnection_test.js"></script>
+<script src="unit/CubxPolymer_init_test.js"></script>
 <script src="unit/CubxPolymer_helper_test.js"></script>
 <script src="unit/CubxPolymer_input_output_test.js"></script>
 
 
 <!-- resources -->
+<script src='resource/dummy-connection-hook-manifest.js'></script>
+<script src='resource/dummy-cubxready-lifecycle-manifest.js'></script>
 <script src='resource/dummy-default-value-manifest.js'></script>
 <script src='resource/dummy-get-method-manifest.js'></script>
 <script src='resource/dummy-handler-observer.js'></script>
@@ -54,21 +69,15 @@
 <script src='resource/dummy-output-manifest.js'></script>
 <script src='resource/dummy-repropagate-method.js'></script>
 <script src='resource/dummy-set-method-manifest.js'></script>
+<script src='resource/dummy-slots-manifest.js'></script>
 <!-- run mocha -->
 <script type="text/javascript" charset="utf-8">
         console.log('testing...');
-        mocha.checkLeaks();
-
-        if (window.mochaPhantomJS) {
-            mochaPhantomJS.run();
-        } else {
-            mocha.run();
-        }
-
+        // smocha.checkLeaks();
+        mocha.run();
         console.log('done');
-
 </script>
-<div cubx-core-crc></div>
+
 </body>
 </html>
 

@@ -1,6 +1,7 @@
 /* globals _,initNewElement,getTestComponentCacheEntry,HTMLImports */
 'use strict';
 describe('CubxPolymer (helper)', function () {
+  this.timeout(6000);
   before(function (done) {
     HTMLImports.whenReady(function () {
       done();

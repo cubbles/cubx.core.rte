@@ -1,6 +1,7 @@
 /* globals HTMLImports,initNewElement, getTestComponentCacheEntry, getContainer */
 'use strict';
 describe('CubxPolymer call connection-hook', function () {
+  this.timeout(6000);
   before(function (done) {
     HTMLImports.whenReady(function () {
       done();

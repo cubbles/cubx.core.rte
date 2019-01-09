@@ -9,9 +9,7 @@ describe('DynamicConnectionUtils', function () {
     dynamicConnectionUtil = window.cubx.dynamicConnectionUtil;
     Context = window.cubx.cif.Context;
     HTMLImports.whenReady(function () {
-      window.setTimeout(function () {
-        done();
-      }, 3000);
+      done();
     });
   });
   describe('helper methoden', function () {
@@ -532,7 +530,7 @@ describe('DynamicConnectionUtils', function () {
       it('should be get the parent context, if connectionId generated from sibling elements connection ' +
         '(first-compound to secod compound)', function () {
         var combString = firstCompoundChildRuntimeId + '#' + 'slotX' + '>' + secondCompoundChildRuntimeId +
-            '#' + 'slotY';
+          '#' + 'slotY';
         var connectionId = window.btoa(combString);
         var context = firstCompoundChild._findContextByConnectionId(connectionId);
         context.getRootElement().getAttribute('runtime-id').should.be.equal(frameComponentRuntimeId);
@@ -540,7 +538,7 @@ describe('DynamicConnectionUtils', function () {
       it('should be get the parent context, if connectionId generated from sibling elements connection' +
         '(second-compound to first-compound)', function () {
         var combString = firstCompoundChildRuntimeId + '#' + 'slotX' + '>' + secondCompoundChildRuntimeId +
-            '#' + 'slotY';
+          '#' + 'slotY';
         var connectionId = window.btoa(combString);
         var context = secondCompoundChild._findContextByConnectionId(connectionId);
         context.getRootElement().getAttribute('runtime-id').should.be.equal(frameComponentRuntimeId);
@@ -548,7 +546,7 @@ describe('DynamicConnectionUtils', function () {
       it('should be get the parent context, if connectionId generated from child element connection' +
         '(first-compound to frame-compound)', function () {
         var combString = firstCompoundChildRuntimeId + '#' + 'slotX' + '>' + frameComponent +
-            '#' + 'slotY';
+          '#' + 'slotY';
         var connectionId = window.btoa(combString);
         var context = firstCompoundChild._findContextByConnectionId(connectionId);
         context.getRootElement().getAttribute('runtime-id').should.be.equal(frameComponentRuntimeId);
@@ -556,7 +554,7 @@ describe('DynamicConnectionUtils', function () {
       it('should be get the parent context, if connectionId generated from parent element connection ' +
         '(frame-compound to first-compound)', function () {
         var combString = frameComponentRuntimeId + '#' + 'slotX' + '>' + firstCompoundChildRuntimeId +
-            '#' + 'slotY';
+          '#' + 'slotY';
         var connectionId = window.btoa(combString);
         var context = frameComponent._findContextByConnectionId(connectionId);
         context.getRootElement().getAttribute('runtime-id').should.be.equal(frameComponentRuntimeId);

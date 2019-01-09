@@ -1,6 +1,7 @@
 /* globals HTMLImports */
 'use strict';
 describe('CubxPolymer origin content', function () {
+  this.timeout(6000);
   before(function (done) {
     HTMLImports.whenReady(function () {
       done();

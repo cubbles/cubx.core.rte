@@ -14,11 +14,10 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/vendor/mocha-config.js',
       'test/mock/*.js',
       '../webcomponents/webcomponents-lite.js',
+      'https://cubbles.world/core/polymer-1.11.0@1.0.0/polymer/vendor/polymer/polymer.html',
       'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
-      'https://cubbles.world/core/polymer-1.2.3@1.0.2/polymer/vendor/polymer/polymer.html',
       '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../guid-utility/js/guid.js',
       '../cif/classes/dynamicConnection.js',
@@ -84,6 +83,8 @@ module.exports = function (config) {
     browsers: [ 'Chrome', 'Firefox' ],
     // use just Chrome for debugging in Webstorm
     // browsers: [ 'Chrome' ],
+    // use just Firefox for debugging in Webstorm
+    // browsers: [ 'Firefox' ],
     captureTimeout: 10000,
 
     // Continuous Integration mode

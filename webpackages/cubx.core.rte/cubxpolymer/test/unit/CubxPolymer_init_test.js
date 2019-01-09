@@ -2,6 +2,7 @@
 'use strict';
 describe('CubxPolymer (init)', function () {
   before(function (done) {
+    this.timeout(6000);
     HTMLImports.whenReady(function () {
       done();
     });
@@ -467,10 +468,10 @@ describe('CubxPolymer (init)', function () {
       basedBaseUrl = 'dummy/url/';
       var artifactId = 'base-uri-element';
       var webpackageId = 'dummy-pack@1.0.0';
-      window.componentCacheEntry = getTestComponentCacheEntry()[artifactId];
+      window.componentCacheEntry = getTestComponentCacheEntry()[ artifactId ];
       initNewElement(artifactId);
       component = document.querySelector(artifactId);
-      component.___cubxManifest___ = {artifactId: artifactId, webpackageId: webpackageId};
+      component.___cubxManifest___ = { artifactId: artifactId, webpackageId: webpackageId };
       expectedBaseUri = basedBaseUrl + webpackageId + '/' + artifactId;
     });
     after(function () {
