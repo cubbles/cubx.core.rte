@@ -415,9 +415,13 @@
           } else if (relatedNodes.versionConflicts.length === 1) {
             var conflict = this._createConflictItem(relatedNodes.versionConflicts[0], node, DependencyTree.conflictTypes.VERSION, false);
             if (this._enableACR) {
+              const conflictSource = relatedNodes.versionConflicts[0];
               // remove conflicted node if ACR is enabled
               this._removeConflictedNode(relatedNodes.versionConflicts[0], node);
-              conflict.resolved = true;
+              // we only need to resolve conflict if both nodes are NOT marked as excluded
+              if (conflictSource.excluded === false && node.excluded === false) {
+                this._removeConflictedNode(conflictSource, node);
+              }conflict.resolved = true;
             }
             // push conflict to internal conflicts array for logging purposes
             this._conflicts.push(conflict);
