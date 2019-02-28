@@ -327,6 +327,13 @@
           it('should return the DependencyTree itself', function () {
             expect(depTree.removeExcludes()).to.equal(depTree);
           });
+          it('should remove excluded node from DepenendencyTree`s conflicts array if it manually resolves an already detected conflict', () => {
+            // just simulate a conflict between artifacts [package4@1.0.0/util4] and [package5@1.0.0/util5] by adding a manually created conflict
+            const conflict = depTree._createConflictItem(childA2, childB2, DependencyTree.conflictTypes.VERSION, false);
+            depTree._conflicts.push(conflict);
+            depTree.removeExcludes();
+            depTree._conflicts.should.have.lengthOf(0);
+          });
         });
       });
       describe('#_determineNodeRelationShip()', function () {
@@ -536,7 +543,7 @@
         });
 
         describe('#removeDupliates() with automatic conflict resolution', function () {
-          it('should remove all version conflicted nodes', function () {
+          it('should remove all version conflicted nodes', function () { // currently fails...
             depTree.enableACR();
             depTree.removeDuplicates();
             depTree.contains(rootA).should.be.true;
