@@ -543,7 +543,7 @@
         });
 
         describe('#removeDupliates() with automatic conflict resolution', function () {
-          it('should remove all version conflicted nodes', function () {
+          it('should remove all version conflicted nodes', function () { // currently fails...
             depTree.enableACR();
             depTree.removeDuplicates();
             depTree.contains(rootA).should.be.true;
