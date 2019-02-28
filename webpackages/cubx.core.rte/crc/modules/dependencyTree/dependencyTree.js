@@ -155,7 +155,7 @@
      * Remove node which is in conflict with another node from DependencyTree.
      * @memberOf DependencyTree
      * @param {object} node Node which causes the conflict
-     * @param {object} node Node which is on conflict with give node and thus needs to be removed
+     * @param {object} conflictedNode Node which is on conflict with give node and thus needs to be removed
      */
     DependencyTree.prototype._removeConflictedNode = function (node, conflictedNode) {
       // if conflictedNode is not a root node we need to set usesExisting and usedBy of node which will replace the conflictedNode
@@ -446,7 +446,16 @@
      */
     DependencyTree.prototype.removeExcludes = function () {
       this.traverseBF(function (node) {
-        if (node.excluded) this.removeNode(node);
+        if (node.excluded) {
+          this.removeNode(node);
+          // Check if removed node is conflictedNode in depTree.conflicts array. If so remove this conflict from this.conflicts array to
+          // suppress logging of this conflict (It was resolved manually in that case)
+          this._conflicts.forEach(function (conflict, idx) {
+            if (conflict.node === node || conflict.conflictedNode === node) {
+              this._conflicts.splice(idx, 1);
+            }
+          }.bind(this));
+        }
       }.bind(this));
       return this;
     };
