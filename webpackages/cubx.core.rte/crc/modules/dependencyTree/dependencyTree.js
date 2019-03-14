@@ -133,13 +133,19 @@
 
       // calculate the intersection of all excluded nodes. Only nodes that are excluded in both subtrees are removed
       descendantsOfDuplicated.forEach(function (node, idx) {
-        var duplicate = descendantsOfDuplicate[idx];
-
-        // the exclude on duplicate node is invalid because the same node is not marked as excluded in duplicated subtree
-        if (!node.excluded && duplicate.excluded) duplicate.excluded = false;
-
-        // the exclude on duplicated node is invalid because the same node is not marked as excluded in duplicate subtree
-        if (node.excluded && !duplicate.excluded) node.excluded = false;
+        // collect all nodes in subtree of duplicate node
+        descendantsOfDuplicate.forEach(function (descOfDuplicate) {
+          if (node.equalsArtifact(descOfDuplicate)) {
+            // the exclude on duplicate node is invalid because the same node is not marked as excluded in duplicated subtree
+            if (!node.excluded && descOfDuplicate.excluded) {
+              descOfDuplicate.excluded = false;
+            }
+            // the exclude on duplicated node is invalid because the same node is not marked as excluded in duplicate subtree
+            if (node.excluded && !descOfDuplicate.excluded) {
+              node.excluded = false;
+            }
+          }
+        });
       });
 
       // if duplicate is not a root node we need to set usesExisting and usedBy of the duplicates parent
