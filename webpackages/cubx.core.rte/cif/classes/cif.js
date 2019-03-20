@@ -1,4 +1,4 @@
-/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue, customElements */
+/* globals _,CustomEvent,HTMLElement,NodeFilter,Promise,guid,MutationSummary, Queue, customElements, Element, Node */
 (function () {
   'use strict';
 
@@ -75,7 +75,7 @@
      * @type {string[]}
      * @private
      */
-    this._supportedModelVersionList = [ '8.0', '8.1', '8.2', '8.3', '9.1' ];
+    this._supportedModelVersionList = [ '10.0' ];
 
     /**
      * list of elements waiting for componentReady Event
@@ -1077,6 +1077,47 @@
       };
       Object.setPrototypeOf(SlotInitClass.prototype, HTMLElement.prototype);
       Object.setPrototypeOf(SlotInitClass, HTMLElement);
+      Object.defineProperty(SlotInitClass.prototype, 'textContent', {
+        get: function () {
+          var script = this.querySelector('script');
+          if (script) {
+            return JSON.parse(script.textContent);
+          }
+          return Object.getOwnPropertyDescriptor(Node.prototype, 'textContent').get.call(this);
+        },
+        set: function (newValue) {
+          var script = this.querySelector('script');
+          if (script) {
+            script.textContent = newValue;
+          }
+          return Object.getOwnPropertyDescriptor(Element.prototype, 'textContent').set.call(this, newValue);
+        }
+      });
+      Object.defineProperty(SlotInitClass.prototype, 'innerHTML', {
+        get: function () {
+          var script = this.querySelector('script');
+          if (script) {
+            return JSON.parse(script.innerHTML);
+          }
+          return Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').get.call(this);
+        },
+        set: function (newValue) {
+          var script = this.querySelector('script');
+          if (script) {
+            script.innerHTML = newValue;
+          }
+          return Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').set.call(this, newValue);
+        }
+      });
+      Object.defineProperty(SlotInitClass.prototype, 'connectedCallback', {
+        value: function () {
+          // build a <template> element to inject
+          const script = document.createElement('script');
+          script.innerHTML += JSON.stringify(this.innerHTML);
+          this.innerText = ''; // Remove none needed markup from DOM
+          this.appendChild(script);
+        }
+      });
       return SlotInitClass;
     }
     var constructorSlotInit = customElements.get('cubx-core-slot-init');

@@ -11,7 +11,7 @@ describe('CIF', function () {
     });
     it('the in windows stored cif object has all important attributes', function () {
       // Could not test, becose constructor in a closure defined.
-      expect(cif._initializer).to.be.exists;
+      expect(cif._initializer).to.be.exist;
       expect(cif._initializer).to.be.an('object');
       expect(cif._initializer).to.be.instanceOf(window.cubx.cif.Initializer);
     });
@@ -50,7 +50,7 @@ describe('CIF', function () {
     describe('compound component is not registered yet', function () {
       var stubRegisterFunction;
       beforeEach(function () {
-        stubRegisterFunction = sinon.stub(cif, '_registerCompoundComponentElement', function () {
+        stubRegisterFunction = sinon.stub(cif, '_registerCompoundComponentElement').callsFake(function () {
           return constructor;
         });
       });
@@ -59,7 +59,7 @@ describe('CIF', function () {
       });
       it('shoud.be.a function', function () {
         var erg = cif.getCompoundComponentElementConstructor(compoundComponentName);
-        erg.should.be.exists;
+        erg.should.be.exist;
         erg.should.be.a('function');
         expect(stubRegisterFunction.calledOnce).to.be.true;
       });
@@ -150,7 +150,7 @@ describe('CIF', function () {
     });
 
     it(' should be ok', function () {
-      cacheStub = sinon.stub(window.cubx.CRC, 'getCache', function () {
+      cacheStub = sinon.stub(window.cubx.CRC, 'getCache').callsFake(function () {
         var cache = {};
         cache.getAllComponents = function () {
           return [ artifactOk, artifactOk2, artifactOk3 ];
@@ -162,7 +162,7 @@ describe('CIF', function () {
       expect(consoleWarnSpy.called).to.be.false;
     });
     it(' should be not ok', function () {
-      cacheStub = sinon.stub(window.cubx.CRC, 'getCache', function () {
+      cacheStub = sinon.stub(window.cubx.CRC, 'getCache').callsFake(function () {
         var cache = {};
         cache.getAllComponents = function () {
           return [ artifactOk, artifactOk2, artifactNotOk, artifactOk3 ];
@@ -201,7 +201,7 @@ describe('CIF', function () {
       elementaryCompName = 'cubixx-test-elementary';
       compoundCompName = 'cubixx-test-compound';
 
-      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (artifactId) {
+      getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (artifactId) {
         var elem = {
           webpackageId: 'test.' + artifactId + '@0.1',
           artifactId: artifactId
@@ -234,7 +234,7 @@ describe('CIF', function () {
       elementaryCompName = 'cubixx-test-elementary';
       compoundCompName = 'cubixx-test-compound';
 
-      getResolvedComponentStub = sinon.stub(window.cubx.CRC, 'getResolvedComponent', function (artifactId) {
+      getResolvedComponentStub = sinon.stub(window.cubx.CRC, 'getResolvedComponent').callsFake(function (artifactId) {
         var elem = {
           webpackageId: 'test.' + artifactId + '@0.1', artifactId: artifactId
         };

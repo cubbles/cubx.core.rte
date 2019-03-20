@@ -13,7 +13,7 @@ describe('CIF', function () {
     });
     it('the in windows stored cif object has all important attributes', function () {
       // Could not test, becose constructor in a closure defined.
-      expect(cif._initializer).to.be.exists;
+      expect(cif._initializer).to.be.exist;
       expect(cif._initializer).to.be.an('object');
       expect(cif._initializer).to.be.instanceOf(window.cubx.cif.Initializer);
     });
@@ -87,7 +87,7 @@ describe('CIF', function () {
             }
           } ]
         };
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function () {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function () {
           return manifest;
         });
       });
@@ -104,9 +104,9 @@ describe('CIF', function () {
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
+            ciftestA.getAttribute('member-id').should.be.exist;
             ciftestA.getAttribute('member-id').should.have.length(36);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
+            ciftestA.getAttribute('runtime-id').should.be.exist;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
             ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
@@ -128,9 +128,9 @@ describe('CIF', function () {
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
+            ciftestA.getAttribute('member-id').should.be.exist;
             ciftestA.getAttribute('member-id').should.be.equals(memberId);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
+            ciftestA.getAttribute('runtime-id').should.be.exist;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + memberId);
             ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
@@ -155,9 +155,9 @@ describe('CIF', function () {
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
+            ciftestA.getAttribute('member-id').should.be.exist;
             ciftestA.getAttribute('member-id').should.be.equals(memberId);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
+            ciftestA.getAttribute('runtime-id').should.be.exist;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + memberId);
             ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
@@ -182,9 +182,9 @@ describe('CIF', function () {
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
+            ciftestA.getAttribute('member-id').should.be.exist;
             ciftestA.getAttribute('member-id').should.be.equals(id);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
+            ciftestA.getAttribute('runtime-id').should.be.exist;
             ciftestA.getAttribute('runtime-id').should.be.equals(runtimeId);
             ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
@@ -211,9 +211,9 @@ describe('CIF', function () {
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.be.exists;
+            ciftestA.getAttribute('member-id').should.be.exist;
             ciftestA.getAttribute('member-id').should.have.length(36);
-            ciftestA.getAttribute('runtime-id').should.be.exists;
+            ciftestA.getAttribute('runtime-id').should.be.exist;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifest.webpackageId + '/' + manifest.artifactId + '.' + ciftestA.getAttribute('member-id'));
             ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
@@ -296,7 +296,7 @@ describe('CIF', function () {
             }
           } ]
         };
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function () {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function () {
           return manifest;
         });
       });
@@ -485,7 +485,7 @@ describe('CIF', function () {
             }
           ]
         };
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -518,7 +518,7 @@ describe('CIF', function () {
         window.setTimeout(function () {
           var ciftestA = container.firstElementChild;
           ciftestA.should.have.property('tagName', 'CIFTEST-A');
-          ciftestA.getAttribute('member-id').should.have.exists;
+          ciftestA.getAttribute('member-id').should.have.exist;
           ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
           ciftestA.should.have.property('processed', true);
           var ciftestB = ciftestA.firstElementChild;
@@ -526,7 +526,7 @@ describe('CIF', function () {
           ciftestB.should.have.property('processed', true);
           var ciftestE = ciftestA.nextElementSibling;
           ciftestE.should.have.property('tagName', 'CIFTEST-E');
-          ciftestE.getAttribute('member-id').should.have.exists;
+          ciftestE.getAttribute('member-id').should.have.exist;
           ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
           ciftestE.should.have.property('processed', true);
           var ciftestB2 = ciftestE.firstElementChild;
@@ -611,7 +611,7 @@ describe('CIF', function () {
             }
           } ]
         };
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function () {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function () {
           return manifest;
         });
       });
@@ -778,7 +778,7 @@ describe('CIF', function () {
             }
           } ]
         };
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -812,7 +812,7 @@ describe('CIF', function () {
           window.setTimeout(function () {
             var ciftestA = container.firstElementChild;
             ciftestA.should.have.property('tagName', 'CIFTEST-A');
-            ciftestA.getAttribute('member-id').should.have.exists;
+            ciftestA.getAttribute('member-id').should.have.exist;
             ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
             ciftestA.should.have.property('processed', true);
             var ciftestB = ciftestA.firstElementChild;
@@ -820,7 +820,7 @@ describe('CIF', function () {
             ciftestB.should.have.property('processed', true);
             var ciftestE = ciftestA.nextElementSibling;
             ciftestE.should.have.property('tagName', 'CIFTEST-E');
-            ciftestE.getAttribute('member-id').should.have.exists;
+            ciftestE.getAttribute('member-id').should.have.exist;
             ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
             ciftestE.should.have.property('processed', true);
             var ciftestB2 = ciftestE.firstElementChild;
@@ -831,7 +831,7 @@ describe('CIF', function () {
             ciftestA2.should.have.property('processed', true);
             var ciftestE2 = ciftestE.nextElementSibling;
             ciftestE2.should.have.property('tagName', 'CIFTEST-E');
-            ciftestE2.getAttribute('member-id').should.have.exists;
+            ciftestE2.getAttribute('member-id').should.have.exist;
             ciftestE2.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE2.getAttribute('member-id'));
             ciftestE2.should.have.property('processed', true);
             done();
@@ -1021,11 +1021,11 @@ describe('CIF', function () {
       it('members should be attached to dom.', function (done) {
         cif._attachMembers(compoundEl, rootManifest);
         window.setTimeout(function () {
-          compoundEl.firstElementChild.should.have.exists;
+          compoundEl.firstElementChild.should.have.exist;
           compoundEl.firstElementChild.should.have.property('tagName', rootManifest.members[ 0 ].artifactId.toUpperCase());
-          compoundEl.firstElementChild.nextElementSibling.should.have.exists;
+          compoundEl.firstElementChild.nextElementSibling.should.have.exist;
           compoundEl.firstElementChild.nextElementSibling.should.have.property('tagName', rootManifest.members[ 1 ].artifactId.toUpperCase());
-          compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exists;
+          compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exist;
           compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
           done();
         }, 100);
@@ -1050,7 +1050,7 @@ describe('CIF', function () {
           compoundEl.setAttribute('cubx-component-id', 'test-pacakge@0.1.0/ciftest-template-a');
           compoundEl.setAttribute('runtime-id', 'test-pacakge@0.1.0/ciftest-template-a');
           container.appendChild(compoundEl);
-          getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (artifactId) {
+          getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (artifactId) {
             var manifest;
             switch (artifactId) {
               case 'ciftest-b' :
@@ -1129,15 +1129,15 @@ describe('CIF', function () {
         it('members should be attached as part of a template to dom.', function (done) {
           cif._attachMembers(compoundEl, rootManifest);
           window.setTimeout(function () {
-            compoundEl.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.should.have.property('tagName', 'DIV');
-            compoundEl.firstElementChild.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.firstElementChild.should.have.property('tagName', rootManifest.members[ 0 ].artifactId.toUpperCase());
-            compoundEl.firstElementChild.nextElementSibling.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.should.have.exist;
             compoundEl.firstElementChild.nextElementSibling.should.have.property('tagName', 'DIV');
-            compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].artifactId.toUpperCase());
-            compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
             done();
           }, 100);
@@ -1155,7 +1155,7 @@ describe('CIF', function () {
           compoundEl.setAttribute('cubx-component-id', 'test-pacakge@0.1.0/ciftest-template-a-2');
           compoundEl.setAttribute('runtime-id', 'test-pacakge@0.1.0/ciftest-template-a-2');
           container.appendChild(compoundEl);
-          getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (artifactId) {
+          getComponentCacheEntryStub = sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (artifactId) {
             var manifest;
             switch (artifactId) {
               case 'ciftest-b' :
@@ -1234,19 +1234,19 @@ describe('CIF', function () {
         it('members should be attached as part of a template to dom.', function (done) {
           cif._attachMembers(compoundEl, rootManifest);
           window.setTimeout(function () {
-            compoundEl.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.should.have.property('tagName', 'DIV');
-            compoundEl.firstElementChild.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.firstElementChild.should.have.property('tagName', rootManifest.members[ 0 ].artifactId.toUpperCase());
-            compoundEl.firstElementChild.nextElementSibling.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.should.have.exist;
             compoundEl.firstElementChild.nextElementSibling.should.have.property('tagName', 'DIV');
-            compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.exist;
 
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].artifactId.toUpperCase());
 
-            compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.exist;
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.should.have.property('tagName', 'DIV');
-            compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.firstElementChild.should.have.exists;
+            compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.firstElementChild.should.have.exist;
 
             compoundEl.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.firstElementChild.should.have.property('tagName', rootManifest.members[ 1 ].members[ 0 ].artifactId.toUpperCase());
             done();
@@ -1265,19 +1265,19 @@ describe('CIF', function () {
     var cifDomUpdateReadyEmmiterSpy;
     var _resetProcessModeSpy;
     beforeEach(function () {
-      _createConnectionElementsStub = sinon.stub(cif, '_createConnectionElements', function () {
+      _createConnectionElementsStub = sinon.stub(cif, '_createConnectionElements').callsFake(function () {
         // do nothing
       });
-      _initConnectionsStub = sinon.stub(cif, '_initConnections', function () {
+      _initConnectionsStub = sinon.stub(cif, '_initConnections').callsFake(function () {
         // do nothing
       });
-      _createInitElementsStub = sinon.stub(cif, '_createInitElements', function () {
+      _createInitElementsStub = sinon.stub(cif, '_createInitElements').callsFake(function () {
         // do nothing
       });
-      _createObserverObjectStub = sinon.stub(cif, '_createObserverObject', function () {
+      _createObserverObjectStub = sinon.stub(cif, '_createObserverObject').callsFake(function () {
         // do nothing
       });
-      _processElementFromQueueStub = sinon.stub(cif, '_processElementFromQueue', function () {
+      _processElementFromQueueStub = sinon.stub(cif, '_processElementFromQueue').callsFake(function () {
         // do nothing
       });
       _resetProcessModeSpy = sinon.spy(cif, '_resetProcessMode');

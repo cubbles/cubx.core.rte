@@ -51,8 +51,7 @@
   function _postIframeHeight () {
     var component = document.querySelector(artifactId);
     if (component) {
-      var boundingRect = component.getBoundingClientRect();
-      var newHeight = boundingRect.bottom + boundingRect.top;
+      var newHeight = document.body.getBoundingClientRect().height;
       if (newHeight !== lastHeight) {
         window.parent.postMessage(
           {

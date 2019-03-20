@@ -17,8 +17,8 @@ module.exports = function (config) {
       '../webcomponents/custom-elements-es5-adapter.js',
       '../webcomponents/webcomponents-lite.js',
       'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
-      'test/testSetup.js',
-      'test/mock/CRCMock.js',
+      {pattern: 'test/testSetup.js', watched: false, served: true},
+      {pattern: 'test/mock/CRCMock.js', watched: false, served: true},
       '../guid-utility/js/guid.js',
       '../template-utils/js/template-utils.js',
       '../mutation-summary/vendor/mutation-summary.js',
@@ -32,10 +32,10 @@ module.exports = function (config) {
       'classes/compoundComponent.js',
       'classes/cif.js',
       'classes/dynamicConnection.js',
-      'test/helper.js',
-      'test/beforeTest.js',
-      'test/resources/*',
-      'test/**/*_test.js'
+      {pattern: 'test/helper.js', watched: false, served: true},
+      {pattern: 'test/beforeTest.js', watched: false, served: true},
+      {pattern: 'test/resources/*', watched: false, served: true},
+      {pattern: 'test/**/*_test.js', watched: false, served: true}
     ],
 
     // list of files to exclude
@@ -43,20 +43,16 @@ module.exports = function (config) {
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      'classes/**/*.js': 'coverage',
-      '*.js': 'coverage'
-    },
+    // preprocessors: {
+    //   'classes/**/*.js': 'coverage',
+    //   '*.js': 'coverage'
+    // },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
-    // reporters: ['progress', 'junit', 'html', 'mocha'],
-    junitReporter: {
-      outputDir: 'test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
-    },
+    // reporters: [ 'progress', 'html', 'mocha', 'coverage' ],
+    reporters: ['progress', 'html', 'mocha'],
 
     htmlReporter: {
       outputFile: 'test-results/html/TEST-karma.html'
@@ -66,10 +62,10 @@ module.exports = function (config) {
       output: 'autowatch'
     },
 
-    coverageReporter: {
-      type: 'html',
-      dir: 'test-results/coverage/'
-    },
+    // coverageReporter: {
+    //   type: 'html',
+    //   dir: 'test-results/coverage/'
+    // },
     // web server port
     port: 9876,
 
@@ -82,7 +78,7 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: false,
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
@@ -90,11 +86,11 @@ module.exports = function (config) {
     // use just Chrome for debugging in Webstorm
     // browsers: [ 'Chrome' ],
     // browsers: [ 'Firefox' ],
-    captureTimeout: 6000,
+    captureTimeout: 50000,
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
+    singleRun: true,
 
     customLaunchers: {
       Chrome_travis_ci: {

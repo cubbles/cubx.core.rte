@@ -10,19 +10,17 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: [ 'cubxrequirejs', 'mocha', 'sinon-chai' ],
+    frameworks: [ 'mocha', 'sinon-chai' ],
 
     plugins: [
       // these plugins will be require() by Karma
-      'cubx-karma-requirejs',
       'karma-mocha',
       'karma-sinon-chai',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
       'karma-coverage',
       'karma-htmlfile-reporter',
-      'karma-mocha-reporter',
-      'karma-junit-reporter'
+      'karma-mocha-reporter'
     ],
     // list of files / patterns to load in the browser
     files: [
@@ -44,18 +42,13 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'junit', 'html', 'mocha', 'coverage' ],
+    reporters: [ 'progress', 'html', 'mocha', 'coverage' ],
 
     // web server port
     port: 9876,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
-    junitReporter: {
-      outputDir: 'mutation-based-cubx-startevent/test-results/surefire-reports',
-      outputFile: 'TEST-karma.xml'
-    },
 
     htmlReporter: {
       outputFile: 'mutation-based-cubx-startevent/test-results/html/TEST-karma.html'

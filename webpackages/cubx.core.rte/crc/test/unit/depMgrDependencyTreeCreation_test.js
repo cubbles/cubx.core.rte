@@ -3,10 +3,9 @@
   'use strict';
 
   window.cubx.amd.define(
-    [ 'CRC',
+    ['CRC',
       'dependencyManager',
       'dependencyTree',
-      'manifestConverter',
       'unit/utils/CubxNamespaceManager',
       'text!unit/dependencyResolution/rootDependencies.json',
       'text!unit/dependencyResolution/dependencyPackage1.json',
@@ -15,9 +14,8 @@
       'text!unit/dependencyResolution/dependencyPackage4.json',
       'text!unit/dependencyResolution/dependencyPackage5.json',
       'text!unit/dependencyResolution/dependencyPackage6.json'],
-    function (CRC, DepMgr, DependencyTree, manifestConverter, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
+    function (CRC, DepMgr, DependencyTree, CubxNamespaceManager, rootDeps, pkg1, pkg2, pkg3, pkg4, pkg5, pkg6) {
       var depMgr;
-
       describe('DependencyMgr DependencyTree creation', function () {
         describe('#_buildRawDependencyTree()', function () {
           var stub;
@@ -31,7 +29,7 @@
             depMgr.init();
             baseUrl = depMgr._baseUrl;
 
-            stub = sinon.stub(depMgr, '_resolveDepReferenceDependencies', function (dep) {
+            stub = sinon.stub(depMgr, '_resolveDepReferenceDependencies').callsFake(function (dep) {
               return new Promise(function (resolve, reject) {
                 var requestedPkg;
                 var dependencies = [];
@@ -148,15 +146,16 @@
             it('should reject returned promise if there is an TypeError resolving single dependencies', function () {
               rootDepList.push({webpackageId: 'typeError', artifactId: 'util'});
               return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function (result) {
-                throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
+                throw new Error('Promise was unexpectedly fulfilled. Result: ', JSON.stringify(result));
               }, function (error) {
                 error.should.be.an.instanceOf(TypeError);
+                rootDepList.pop();
               });
             });
-            it('should reject returned promise if there is an error resolving single depenencies', function () {
-              rootDepList.push({webpackageId: 'error', artifactId: 'util'});
+            it('should reject returned promise if there is an error resolving single dependencies', function () {
+              rootDepList.push(new DepMgr.DepReference({webpackageId: 'error', artifactId: 'util', referrer: null}));
               return depMgr._buildRawDependencyTree(rootDepList, baseUrl).then(function (result) {
-                throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
+                throw new Error('Promise was unexpectedly fulfilled. Result: ', result);
               }, function (error) {
                 error.should.have.ownProperty('message', 'Error while resolving...');
               });
@@ -298,7 +297,7 @@
             spy2 = sinon.spy(Object.getPrototypeOf(depMgr), '_checkAndAddExcludesForRootDependencies');
 
             // stub _getManifestForDepReference()
-            stub = sinon.stub(Object.getPrototypeOf(depMgr), '_getManifestForDepReference', function (depRefItem, baseUrl) {
+            stub = sinon.stub(Object.getPrototypeOf(depMgr), '_getManifestForDepReference').callsFake(function (depRefItem, baseUrl) {
               var manifest;
               switch (depRefItem.webpackageId) {
                 case 'package1@1.0.0':
@@ -435,8 +434,7 @@
           });
         });
         describe('#_resolveDepReferenceDependencies()', function () {
-          var stub;
-          var convertManifestStub;
+          var _fetchManifestStub;
           var depRefItem;
           var baseUrl;
 
@@ -448,37 +446,46 @@
             baseUrl = depMgr._baseUrl;
 
             // mock _fetchManifest method
-            stub = sinon.stub(depMgr, '_fetchManifest', function (url) {
+            _fetchManifestStub = sinon.stub(depMgr, '_fetchManifest').callsFake(function (url) {
               return new Promise(function (resolve, reject) {
                 var response = {};
-                if (url.indexOf('package1@1.0.0') >= 0) { response.data = JSON.parse(pkg1); }
-                if (url.indexOf('package2@1.0.0') >= 0) { response.data = JSON.parse(pkg2); }
-                if (url.indexOf('package3@1.0.0') >= 0) { response.data = JSON.parse(pkg3); }
-                if (url.indexOf('package4@1.0.0') >= 0) { response.data = JSON.parse(pkg4); }
-                if (url.indexOf('package5@1.0.0') >= 0) { response.data = JSON.parse(pkg5); }
-                if (url.indexOf('package6@1.0.0') >= 0) { response.data = JSON.parse(pkg6); }
+                if (url.indexOf('package1@1.0.0') >= 0) {
+                  response.data = JSON.parse(pkg1);
+                }
+                if (url.indexOf('package2@1.0.0') >= 0) {
+                  response.data = JSON.parse(pkg2);
+                }
+                if (url.indexOf('package3@1.0.0') >= 0) {
+                  response.data = JSON.parse(pkg3);
+                }
+                if (url.indexOf('package4@1.0.0') >= 0) {
+                  response.data = JSON.parse(pkg4);
+                }
+                if (url.indexOf('package5@1.0.0') >= 0) {
+                  response.data = JSON.parse(pkg5);
+                }
+                if (url.indexOf('package6@1.0.0') >= 0) {
+                  response.data = JSON.parse(pkg6);
+                }
                 if (response.hasOwnProperty('data')) {
-                  window.setTimeout(function () { resolve(response); }, 200);
+                  window.setTimeout(function () {
+                    resolve(response);
+                  }, 200);
                 } else {
-                  window.setTimeout(function () { reject({message: 'Error while requesting ' + url}); }, 100); // eslint-disable-line prefer-promise-reject-errors
+                  window.setTimeout(function () {
+                    reject({message: 'Error while requesting ' + url}); // eslint-disable-line prefer-promise-reject-errors
+                  }, 100);
                 }
               });
-            });
-
-            // mock ManifestConverter's convert method to return just a copy of given data
-            convertManifestStub = sinon.stub(Object.getPrototypeOf(manifestConverter), 'convert', function (data) {
-              return JSON.parse(JSON.stringify(data));
             });
           });
           beforeEach(function () {
             depMgr._responseCache.invalidate();
             depRefItem = new DepMgr.DepReference({webpackageId: 'package1@1.0.0', artifactId: 'util1', referrer: null});
-            stub.reset();
-            convertManifestStub.reset();
+            _fetchManifestStub.resetHistory();
           });
           after(function () {
-            stub.restore();
-            convertManifestStub.restore();
+            _fetchManifestStub.restore();
             CubxNamespaceManager.resetNamespace(CRC);
           });
           it('should return a promise', function () {
@@ -500,9 +507,7 @@
           it('should use inline manifest from given dependency if there is any', function () {
             depRefItem.manifest = JSON.parse(pkg1);
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.callCount).to.equal(0);
-              expect(convertManifestStub.callCount).to.equal(1);
-              expect(convertManifestStub.calledWith(depRefItem.manifest)).to.be.true;
+              expect(_fetchManifestStub.callCount).to.equal(0);
               result.dependencies.should.have.lengthOf(2);
               result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
               result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
@@ -513,7 +518,7 @@
           it('should use manifest from responseCache if there is already one for given webpackageId', function () {
             depMgr._responseCache.addItem(depRefItem.webpackageId, JSON.parse(pkg1));
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.callCount).to.equal(0);
+              expect(_fetchManifestStub.callCount).to.equal(0);
               result.dependencies.should.have.lengthOf(2);
               result.dependencies[0].should.be.an.instanceOf(DepMgr.DepReference);
               result.dependencies[1].should.be.an.instanceOf(DepMgr.DepReference);
@@ -529,13 +534,13 @@
           it('should request manifest files from given baseUrl', function () {
             var baseUrl = 'https://www.example.test/';
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.calledWith(baseUrl + depRefItem.webpackageId + '/manifest.webpackage'));
+              expect(_fetchManifestStub.calledWith(baseUrl + depRefItem.webpackageId + '/manifest.webpackage'));
             });
           });
           it('should append \'/\' to baseUrl if not present', function () {
             var baseUrl = 'https://www.example.test';
             return depMgr._resolveDepReferenceDependencies(depRefItem, baseUrl).then(function (result) {
-              expect(stub.calledWith(baseUrl + '/' + depRefItem.webpackageId + '/manifest.webpackage'));
+              expect(_fetchManifestStub.calledWith(baseUrl + '/' + depRefItem.webpackageId + '/manifest.webpackage'));
             });
           });
           describe('Error handling', function () {
@@ -638,8 +643,8 @@
             var warnSpy = sinon.spy(console, 'warn');
             depMgr._logDependencyConflicts(depTree);
             expect(logSpy.callCount + warnSpy.callCount).to.equal(2);
-            logSpy.reset();
-            warnSpy.reset();
+            logSpy.restore();
+            warnSpy.restore();
           });
         });
       });

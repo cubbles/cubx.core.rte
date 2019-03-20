@@ -121,7 +121,7 @@ describe('ConnectionManager', function () {
           ]
 
         };
-        sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+        sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
           var manifest;
           switch (key) {
             case artifactIdChild1:
@@ -580,7 +580,7 @@ describe('ConnectionManager', function () {
           ]
 
         };
-        sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry', function (key) {
+        sinon.stub(window.cubx.CRC.getCache(), 'getComponentCacheEntry').callsFake(function (key) {
           var manifest;
           switch (key) {
             case artifactIdChild1:

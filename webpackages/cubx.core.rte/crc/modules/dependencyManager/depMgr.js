@@ -3,8 +3,8 @@
  */
 /* globals URL, Blob */
 window.cubx.amd.define(
-  ['utils', 'responseCache', 'manifestConverter', 'axios', 'dependencyTree'],
-  function (utils, responseCache, manifestConverter, axios, DependencyTree) {
+  ['utils', 'responseCache', 'axios', 'dependencyTree'],
+  function (utils, responseCache, axios, DependencyTree) {
     'use strict';
 
     /**
@@ -121,10 +121,6 @@ window.cubx.amd.define(
         });
       }
 
-      // remove endpointId properties from rootDependencies and rootDependencyExcludes and append endpointId to artifactId using separator '#'
-      // needed for backwards compatibility to modelVersion 8.x
-      this._removeEndpointIdFromDependencyItems(rootDependencies);
-      this._removeEndpointIdFromDependencyItems(rootDependencyExcludes);
       if (rootDependencyExcludes.length > 0) window.cubx.CRCInit.rootDependencyExcludes = rootDependencyExcludes;
 
       // we need to ensure that each rootDependency has a valid webpackageId as this will be used to build path for
@@ -145,7 +141,7 @@ window.cubx.amd.define(
           webpackageId = manifest.groupId + '.' + webpackageId;
         }
 
-        this._responseCache.addItem(webpackageId, manifestConverter.convert(manifest));
+        this._responseCache.addItem(webpackageId, manifest);
       }.bind(this));
     };
 
@@ -230,8 +226,7 @@ window.cubx.amd.define(
       if (data.hasOwnProperty('error')) {
         throw new Error('Error when requesting manifest');
       }
-      var manifest = manifestConverter.convert(data);
-      return manifest;
+      return data;
     };
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -287,10 +282,7 @@ window.cubx.amd.define(
       for (var i = 0; i < depList.length; i++) {
         var currentDepRef = depList[i];
         for (var j = 0; j < currentDepRef.resources.length; j++) {
-          // remove endpoint appendix from artifactId if there was one added by the manifestConverter
-          var qualifiedArtifactId = currentDepRef.artifactId.indexOf('#') > -1
-            ? currentDepRef.webpackageId + '/' + currentDepRef.artifactId.split('#')[0]
-            : currentDepRef.webpackageId + '/' + currentDepRef.artifactId;
+          var qualifiedArtifactId = currentDepRef.webpackageId + '/' + currentDepRef.artifactId;
           var resource = this._createResourceFromItem(qualifiedArtifactId, currentDepRef.resources[j],
             this._runtimeMode, currentDepRef.referrer);
           if (resource) {
@@ -307,27 +299,31 @@ window.cubx.amd.define(
      * @param {array} resourceList Array containing references to all needed resources
      */
     DependencyMgr.prototype._injectDependenciesToDom = function (resourceList) {
-      // var element = document.getElementsByTagName('head')[0].firstElementChild;
-      for (var i = 0; i < resourceList.length; i++) {
-        var current = resourceList[i];
-        var currentReferrer = [];
-        current.referrer.some(function (referrer, index) {
-          currentReferrer[index] = typeof referrer === 'string'
-            ? referrer
-            : referrer.webpackageId + '/' + referrer.artifactId;
-        });
-        switch (current.type) {
-          case DependencyMgr._types.stylesheet.name :
-            utils.DOM.appendStylesheetToHead(current.path, currentReferrer);
-            break;
-          case DependencyMgr._types.htmlImport.name :
-            utils.DOM.appendHtmlImportToHead(current.path, currentReferrer);
-            break;
-          case DependencyMgr._types.javascript.name :
-            utils.DOM.appendScriptTagToHead(current.path, currentReferrer);
+      var disableResourceInjection = window.cubx.utils.get(window, 'cubx.CRCInit.disableResourceInjection');
+      this._createScriptForFireEvent('fireBeforeResourceInjectionEvent');
+      if (typeof disableResourceInjection === 'undefined' || disableResourceInjection === false) {
+        // var element = document.getElementsByTagName('head')[0].firstElementChild;
+        for (var i = 0; i < resourceList.length; i++) {
+          var current = resourceList[ i ];
+          var currentReferrer = [];
+          current.referrer.some(function (referrer, index) {
+            currentReferrer[ index ] = typeof referrer === 'string'
+              ? referrer
+              : referrer.webpackageId + '/' + referrer.artifactId;
+          });
+          switch (current.type) {
+            case DependencyMgr._types.stylesheet.name :
+              utils.DOM.appendStylesheetToHead(current.path, currentReferrer);
+              break;
+            case DependencyMgr._types.htmlImport.name :
+              utils.DOM.appendHtmlImportToHead(current.path, currentReferrer);
+              break;
+            case DependencyMgr._types.javascript.name :
+              utils.DOM.appendScriptTagToHead(current.path, currentReferrer);
+          }
         }
+        this._createScriptForFireEvent('fireDepMgrReadyEvent');
       }
-      this._fireDepMgrReadyEvent();
     };
 
     /**
@@ -335,9 +331,9 @@ window.cubx.amd.define(
      * @memberOf DependencyMgr
      * @private
      */
-    DependencyMgr.prototype._fireDepMgrReadyEvent = function () {
-      // create a blob used as html import. Inside this import call the fireDepMgrReadyEvent() method from CRC
-      var blob = new Blob(['<script>window.cubx.CRC.fireDepMgrReadyEvent();</script>'], {type: 'text/html'});
+    DependencyMgr.prototype._createScriptForFireEvent = function (fireEventMethodeName) {
+      // create a blob used as html import. Inside this import call the fireEventMethodeName referenced method from CRC
+      var blob = new Blob(['<script>window.cubx.CRC["' + fireEventMethodeName + '"]();</script>'], {type: 'text/html'});
       var url = URL.createObjectURL(blob);
       utils.DOM.appendHtmlImportToHead(url);
     };
@@ -617,8 +613,7 @@ window.cubx.amd.define(
         if (depReference.webpackageId && this._responseCache.get(depReference.webpackageId) != null) { // use manifest from responseCache if available
           processManifest(this._responseCache.get(depReference.webpackageId), false);
         } else if (typeof depReference.manifest === 'object') { // use inline manifest from depReference if set
-          // TODO: transform manifest to ensure backwards compatibility with modelVersion > < 9
-          processManifest(manifestConverter.convert(depReference.manifest), true);
+          processManifest(depReference.manifest, true);
         } else { // default case: request manifest using ajax
           var url = baseUrl + depReference.webpackageId + '/manifest.webpackage';
           this._fetchManifest(url).then(
@@ -678,7 +673,7 @@ window.cubx.amd.define(
 
             // add manifest if available
             if (dependency.manifest) {
-              depReferenceInitObject.manifest = manifestConverter.convert(dependency.manifest);
+              depReferenceInitObject.manifest = dependency.manifest;
             }
 
             var depRef = new DependencyMgr.DepReference(depReferenceInitObject);
@@ -869,30 +864,6 @@ window.cubx.amd.define(
           reject(new TypeError('parameter \'baseUrl\' needs to be a valid url'));
         }
       }.bind(this));
-    };
-
-    /**
-     * Internal helper method for removing endpointId property from all dependencies having this property. The
-     * value of the endpointId property is appended to the artifactId used endpointSeparator from ManifestConverter.
-     * @memberOf DependencyMgr
-     * @param {object} dependencies
-     * @private
-     */
-    DependencyMgr.prototype._removeEndpointIdFromDependencyItems = function (dependencies) {
-      dependencies.forEach(function (dependency) {
-        if (dependency.hasOwnProperty('endpointId') && typeof dependency.endpointId === 'string') {
-          dependency.artifactId = dependency.artifactId + manifestConverter.endpointSeparator + dependency.endpointId;
-          delete dependency.endpointId;
-        }
-        if (dependency.hasOwnProperty('dependencyExcludes') && dependency.dependencyExcludes.length > 0) {
-          dependency.dependencyExcludes.forEach(function (exclude) {
-            if (exclude.hasOwnProperty('endpointId') && typeof exclude.endpointId === 'string') {
-              exclude.artifactId = exclude.artifactId + manifestConverter.endpointSeparator + exclude.endpointId;
-              delete exclude.endpointId;
-            }
-          });
-        }
-      });
     };
 
     /**

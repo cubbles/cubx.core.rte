@@ -11,7 +11,7 @@ describe('CIF', function () {
     });
     it('the in windows stored cif object has all important attributes', function () {
       // Could not test, becose constructor in a closure defined.
-      expect(cif._initializer).to.be.exists;
+      expect(cif._initializer).to.be.exist;
       expect(cif._initializer).to.be.an('object');
       expect(cif._initializer).to.be.instanceOf(window.cubx.cif.Initializer);
     });
@@ -22,7 +22,7 @@ describe('CIF', function () {
     var rootContext;
     beforeEach(function () {
       rootContext = window.cubx.cif.cif._rootContext;
-      rootContextInitConnectionsStub = sinon.stub(rootContext, 'initConnections', function () {
+      rootContextInitConnectionsStub = sinon.stub(rootContext, 'initConnections').callsFake(function () {
         // do nothing
       });
     });

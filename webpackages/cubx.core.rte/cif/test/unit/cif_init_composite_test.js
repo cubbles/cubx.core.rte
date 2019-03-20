@@ -169,7 +169,7 @@ describe('CIF', function () {
         container.appendChild(compoundEl2);
         connectionId = 'testCon1';
         createConnection(compoundEl, manifestCiftestA.slots[ 0 ].slotId, 'two', manifestCiftestE.slots[ 0 ].slotId, connectionId);
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -183,7 +183,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function () {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {};
         });
       });
@@ -208,11 +208,11 @@ describe('CIF', function () {
 
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
-        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('member-id').should.have.exist;
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
-        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('member-id').should.have.exist;
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -222,7 +222,7 @@ describe('CIF', function () {
         var conMgr = container.Context.getConnectionMgr();
         conMgr._connections.should.have.length(1);
         var con = conMgr._connections[ 0 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl);
         con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));
@@ -373,7 +373,7 @@ describe('CIF', function () {
         connectionId = 'testCon1';
         hookFunction = 'function(value, next) { next(value);}';
         createConnection(compoundEl, manifestCiftestA.slots[ 0 ].slotId, 'two', manifestCiftestE.slots[ 0 ].slotId, connectionId, false, true, hookFunction);
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -387,7 +387,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function () {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {};
         });
       });
@@ -412,11 +412,11 @@ describe('CIF', function () {
 
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
-        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('member-id').should.have.exist;
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
-        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('member-id').should.have.exist;
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -426,7 +426,7 @@ describe('CIF', function () {
         var conMgr = container.Context.getConnectionMgr();
         conMgr._connections.should.have.length(1);
         var con = conMgr._connections[ 0 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl);
         con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));
@@ -577,7 +577,7 @@ describe('CIF', function () {
         connectionId = 'testCon1';
         var con = createConnection(compoundEl, manifestCiftestA.slots[ 0 ].slotId, 'two', manifestCiftestE.slots[ 0 ].slotId, connectionId);
         con.setAttribute('type', 'internal');
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -591,7 +591,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function () {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {};
         });
         spy = sinon.spy(console, 'error');
@@ -822,7 +822,7 @@ describe('CIF', function () {
         createConnection(compoundEl2, manifestCiftestE.slots[ 0 ].slotId, 'three', manifestCiftestF.slots[ 0 ].slotId, connectionId2);
         connectionId3 = 'testCon3';
         createConnection(compoundEl3, manifestCiftestF.slots[ 0 ].slotId, 'one', manifestCiftestA.slots[ 0 ].slotId, connectionId3);
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -839,7 +839,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function () {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {};
         });
       });
@@ -864,15 +864,15 @@ describe('CIF', function () {
 
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
-        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('member-id').should.have.exist;
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
-        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('member-id').should.have.exist;
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
         var ciftestF = ciftestE.nextElementSibling;
         ciftestF.should.have.property('tagName', 'CIFTEST-F');
-        ciftestF.getAttribute('member-id').should.have.exists;
+        ciftestF.getAttribute('member-id').should.have.exist;
         ciftestF.getAttribute('runtime-id').should.be.equals(manifestCiftestF.webpackageId + '/' + manifestCiftestF.artifactId + '.' + ciftestF.getAttribute('member-id'));
       });
       it('should initialize the connections', function () {
@@ -882,7 +882,7 @@ describe('CIF', function () {
         var conMgr = container.Context.getConnectionMgr();
         conMgr._connections.should.have.length(3);
         var con = conMgr._connections[ 0 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl);
         con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));
@@ -897,7 +897,7 @@ describe('CIF', function () {
         con.should.have.property('hookFunction', null);
 
         con = conMgr._connections[ 1 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl2);
         con.source.should.have.property('memberId', compoundEl2.getAttribute('member-id'));
@@ -912,7 +912,7 @@ describe('CIF', function () {
         con.should.have.property('hookFunction', null);
 
         con = conMgr._connections[ 2 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl3);
         con.source.should.have.property('memberId', compoundEl3.getAttribute('member-id'));
@@ -1080,7 +1080,7 @@ describe('CIF', function () {
           ]
         };
         crc = window.cubx.CRC;
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -1094,7 +1094,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function (artifactId) {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function (artifactId) {
           var ergManifest;
           switch (artifactId) {
             case 'ciftest-a' :
@@ -1150,11 +1150,11 @@ describe('CIF', function () {
 
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
-        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('member-id').should.have.exist;
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
-        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('member-id').should.have.exist;
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -1165,7 +1165,7 @@ describe('CIF', function () {
         var conMgr = container.Context.getConnectionMgr();
         conMgr._connections.should.have.length(1);
         var con = conMgr._connections[ 0 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl);
         con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));
@@ -1332,7 +1332,7 @@ describe('CIF', function () {
           ]
         };
         crc = window.cubx.CRC;
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -1346,7 +1346,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function (artifactId) {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function (artifactId) {
           var ergManifest;
           switch (artifactId) {
             case 'ciftest-a' :
@@ -1400,11 +1400,11 @@ describe('CIF', function () {
 
         var ciftestA = container.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
-        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('member-id').should.have.exist;
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
-        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('member-id').should.have.exist;
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -1415,7 +1415,7 @@ describe('CIF', function () {
         var conMgr = container.Context.getConnectionMgr();
         conMgr._connections.should.have.length(1);
         var con = conMgr._connections[ 0 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl);
         con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));
@@ -1566,7 +1566,7 @@ describe('CIF', function () {
         divEl.appendChild(compoundEl2);
         connectionId = 'testCon1';
         createConnection(compoundEl, manifestCiftestA.slots[ 0 ].slotId, 'two', manifestCiftestE.slots[ 0 ].slotId, connectionId);
-        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent', function (componentId) {
+        getResolvedComponentStub = sinon.stub(crc, 'getResolvedComponent').callsFake(function (componentId) {
           var ergManifest;
           switch (componentId) {
             case 'ciftest-a' :
@@ -1580,7 +1580,7 @@ describe('CIF', function () {
           }
           return ergManifest;
         });
-        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry', function () {
+        getComponentCacheEntryStub = sinon.stub(crc.getCache(), 'getComponentCacheEntry').callsFake(function () {
           return {};
         });
       });
@@ -1605,11 +1605,11 @@ describe('CIF', function () {
 
         var ciftestA = divEl.firstElementChild;
         ciftestA.should.have.property('tagName', 'CIFTEST-A');
-        ciftestA.getAttribute('member-id').should.have.exists;
+        ciftestA.getAttribute('member-id').should.have.exist;
         ciftestA.getAttribute('runtime-id').should.be.equals(manifestCiftestA.webpackageId + '/' + manifestCiftestA.artifactId + '.' + ciftestA.getAttribute('member-id'));
         var ciftestE = ciftestA.nextElementSibling;
         ciftestE.should.have.property('tagName', 'CIFTEST-E');
-        ciftestE.getAttribute('member-id').should.have.exists;
+        ciftestE.getAttribute('member-id').should.have.exist;
         ciftestE.getAttribute('runtime-id').should.be.equals(manifestCiftestE.webpackageId + '/' + manifestCiftestE.artifactId + '.' + ciftestE.getAttribute('member-id'));
       });
       it('should have a connection in the connectionManager', function () {
@@ -1619,7 +1619,7 @@ describe('CIF', function () {
         var conMgr = container.Context.getConnectionMgr();
         conMgr._connections.should.have.length(1);
         var con = conMgr._connections[ 0 ];
-        expect(con).to.be.exists;
+        expect(con).to.be.exist;
         con.should.have.property('source');
         con.source.should.have.property('component', compoundEl);
         con.source.should.have.property('memberId', compoundEl.getAttribute('member-id'));

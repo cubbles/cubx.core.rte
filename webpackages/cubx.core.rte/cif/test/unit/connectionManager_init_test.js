@@ -27,7 +27,7 @@ describe('ConnectionManager', function () {
       });
       it('ConnectionManager initialized', function () {
         context._connectionMgr._connections.should.be.empty;
-        context._connectionMgr._context.should.be.deep.equal(context);
+        context._connectionMgr._context.should.be.nested.equal(context);
       });
     });
     describe('#parseConnectionsFromComponentList', function () {
@@ -44,7 +44,7 @@ describe('ConnectionManager', function () {
         container.appendChild(element);
         var context = element.Context;
         connectionMgr = context._connectionMgr;
-        stub = sinon.stub(context._connectionMgr, '_createConnectionsFromComponent', function (component) {
+        stub = sinon.stub(context._connectionMgr, '_createConnectionsFromComponent').callsFake(function (component) {
           // dot nothing
         });
         components = [
@@ -122,17 +122,17 @@ describe('ConnectionManager', function () {
         });
         it('should be the correct connection created', function () {
           var connection = connections[ 0 ];
-          connection.source.should.have.deep.property('component', child);
+          connection.source.should.have.nested.property('component', child);
           connection.source.should.have.property('memberId', '1');
           connection.source.should.have.property('slot', 'firstSlotOutput');
-          connection.destination.should.have.deep.property('component', child2);
+          connection.destination.should.have.nested.property('component', child2);
           connection.destination.should.have.property('memberId', '2');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', '1:firstSlotoutput-2:firstSlotInput');
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -188,17 +188,17 @@ describe('ConnectionManager', function () {
         });
         it('should be the correct connection created', function () {
           var connection = connections[ 0 ];
-          connection.source.should.have.deep.property('component', child);
+          connection.source.should.have.nested.property('component', child);
           connection.source.should.have.property('memberId', '1');
           connection.source.should.have.property('slot', 'firstSlotOutput');
-          connection.destination.should.have.deep.property('component', child2);
+          connection.destination.should.have.nested.property('component', child2);
           connection.destination.should.have.property('memberId', '2');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', null);
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -248,17 +248,17 @@ describe('ConnectionManager', function () {
         });
         it('should be the correct connection created', function () {
           var connection = connections[ 0 ];
-          connection.source.should.have.deep.property('component', child);
+          connection.source.should.have.nested.property('component', child);
           connection.source.should.have.property('memberId', '1');
           connection.source.should.have.property('slot', 'firstSlotOutput');
-          connection.destination.should.have.deep.property('component', element);
+          connection.destination.should.have.nested.property('component', element);
           connection.destination.should.have.property('memberId', 'parent');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', '1:firstSlotoutput-firstSlotInput');
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -307,17 +307,17 @@ describe('ConnectionManager', function () {
         });
         it('should be the correct connection created', function () {
           var connection = connections[ 0 ];
-          connection.source.should.have.deep.property('component', child);
+          connection.source.should.have.nested.property('component', child);
           connection.source.should.have.property('memberId', '1');
           connection.source.should.have.property('slot', 'firstSlotOutput');
-          connection.destination.should.have.deep.property('component', element);
+          connection.destination.should.have.nested.property('component', element);
           connection.destination.should.have.property('memberId', 'parent');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('connectionId', null);
         });
         it('should the dom-element marked as processed', function () {
           var conElem = child.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -368,9 +368,9 @@ describe('ConnectionManager', function () {
         });
         it('should be the correct connection created', function () {
           var connection = connections[ 0 ];
-          connection.source.should.have.deep.property('component', element);
+          connection.source.should.have.nested.property('component', element);
           connection.source.should.have.property('slot', 'firstSlotOutput');
-          connection.destination.should.have.deep.property('component', child);
+          connection.destination.should.have.nested.property('component', child);
           connection.destination.should.have.property('memberId', '1');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('internal', true);
@@ -378,7 +378,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = element.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -428,9 +428,9 @@ describe('ConnectionManager', function () {
         });
         it('should be the correct connection created', function () {
           var connection = connections[ 0 ];
-          connection.source.should.have.deep.property('component', element);
+          connection.source.should.have.nested.property('component', element);
           connection.source.should.have.property('slot', 'firstSlotOutput');
-          connection.destination.should.have.deep.property('component', child);
+          connection.destination.should.have.nested.property('component', child);
           connection.destination.should.have.property('memberId', '1');
           connection.destination.should.have.property('slot', 'firstSlotInput');
           connection.should.have.property('internal', true);
@@ -438,7 +438,7 @@ describe('ConnectionManager', function () {
         });
         it('should the dom-element marked as processed', function () {
           var conElem = element.querySelector('cubx-core-connection');
-          expect(conElem).to.be.exists;
+          expect(conElem).to.be.exist;
           conElem.should.have.property('processed', true);
         });
       });
@@ -454,7 +454,7 @@ describe('ConnectionManager', function () {
         container = cif.getCRCRootNode();
         context = new window.cubx.cif.Context(container);
         connectionMgr = new window.cubx.cif.ConnectionManager(context);
-        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection', function (component, element) {
+        _createConnectionStub = sinon.stub(connectionMgr, '_createConnection').callsFake(function (component, element) {
           // just get an object
           return {
             connectionId: element.getAttribute('connection-id')
@@ -633,10 +633,10 @@ describe('ConnectionManager', function () {
 
           it('the created connection should be the right connection object', function () {
             expect(connection).to.be.not.null;
-            connection.source.should.have.deep.property('component', child);
+            connection.source.should.have.nested.property('component', child);
             connection.source.should.have.property('memberId', '1');
             connection.source.should.have.property('slot', 'firstSlotOutput');
-            connection.destination.should.have.deep.property('component', child2);
+            connection.destination.should.have.nested.property('component', child2);
             connection.destination.should.have.property('memberId', '2');
             connection.destination.should.have.property('slot', 'firstSlotInput');
             connection.should.have.property('copyValue', true);
@@ -805,10 +805,10 @@ describe('ConnectionManager', function () {
 
           it('the created connection should be the right connection object', function () {
             expect(connection).to.be.not.null;
-            connection.source.should.have.deep.property('component', child);
+            connection.source.should.have.nested.property('component', child);
             connection.source.should.have.property('memberId', '1');
             connection.source.should.have.property('slot', 'firstSlotOutput');
-            connection.destination.should.have.deep.property('component', child2);
+            connection.destination.should.have.nested.property('component', child2);
             connection.destination.should.have.property('memberId', '2');
             connection.destination.should.have.property('slot', 'firstSlotInput');
             connection.should.have.property('copyValue', true);
@@ -976,10 +976,10 @@ describe('ConnectionManager', function () {
 
           it('the created connection should be the right connection object', function () {
             expect(connection).to.be.not.null;
-            connection.source.should.have.deep.property('component', child);
+            connection.source.should.have.nested.property('component', child);
             connection.source.should.have.property('memberId', '1');
             connection.source.should.have.property('slot', 'firstSlotOutput');
-            connection.destination.should.have.deep.property('component', child2);
+            connection.destination.should.have.nested.property('component', child2);
             connection.destination.should.have.property('memberId', '2');
             connection.destination.should.have.property('slot', 'firstSlotInput');
             connection.should.have.property('copyValue', false);
@@ -1091,10 +1091,10 @@ describe('ConnectionManager', function () {
 
           it('the created connection should be the right connection object', function () {
             expect(connection).to.be.not.null;
-            connection.source.should.have.deep.property('component', child);
+            connection.source.should.have.nested.property('component', child);
             connection.source.should.have.property('memberId', '1');
             connection.source.should.have.property('slot', 'firstSlotOutput');
-            connection.destination.should.have.deep.property('component', child2);
+            connection.destination.should.have.nested.property('component', child2);
             connection.destination.should.have.property('memberId', '2');
             connection.destination.should.have.property('slot', 'firstSlotInput');
             connection.should.have.property('copyValue', true);
@@ -1262,10 +1262,10 @@ describe('ConnectionManager', function () {
 
           it('the created connection should be the right connection object', function () {
             expect(connection).to.be.not.null;
-            connection.source.should.have.deep.property('component', child);
+            connection.source.should.have.nested.property('component', child);
             connection.source.should.have.property('memberId', '1');
             connection.source.should.have.property('slot', 'firstSlotOutput');
-            connection.destination.should.have.deep.property('component', child2);
+            connection.destination.should.have.nested.property('component', child2);
             connection.destination.should.have.property('memberId', '2');
             connection.destination.should.have.property('slot', 'firstSlotInput');
             connection.should.have.property('copyValue', true);

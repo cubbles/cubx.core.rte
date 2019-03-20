@@ -7,13 +7,15 @@ describe('MutationBasedCubxStartevent', function () {
   });
   describe('#dispatchEvent', function () {
     var spyWarn;
+    before(function () {
+      spyWarn = sinon.spy(console, 'warn');
+    });
     beforeEach(function () {
       mutCubxStartevent.scriptElement = document.createElement('script');
-      spyWarn = sinon.spy(console, 'warn');
     });
     afterEach(function () {
       mutCubxStartevent.scriptElement = null;
-      console.warn.restore();
+      spyWarn.resetHistory();
     });
     it('should dispatch event \'' + eventName + '\'', function () {
       mutCubxStartevent.scriptElement.setAttribute(mutCubxStartevent.cubxEmitEventAttr, eventName);
@@ -44,14 +46,15 @@ describe('MutationBasedCubxStartevent', function () {
     describe('target node is in DOM', function () {
       var div = document.createElement('div');
       var spyFunction;
-      beforeEach(function () {
+      before(function () {
         spyFunction = sinon.spy(mutCubxStartevent, '_dispatchEmitEvent');
       });
       afterEach(function () {
-        mutCubxStartevent._dispatchEmitEvent.restore();
+        spyFunction.resetHistory();
       });
       describe('process body (as target node) mutation', function () {
-        after(function () {
+        afterEach(function () {
+          mutCubxStartevent.observer.disconnect();
           document.body.removeChild(div);
         });
         it('should observe body and process the mutation correctly', function (done) {

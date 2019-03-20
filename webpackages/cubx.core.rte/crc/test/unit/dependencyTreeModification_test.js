@@ -130,6 +130,47 @@
             childA11.excluded.should.be.false;
             childA111.excluded.should.be.true;
           });
+          it('should only mark nodes as excluded if they are excluded in subtree of duplicated node as well as in ' +
+            'subtree of duplicate node, even if children are in a different order', function () {
+            // Add subtree, to achieve the following subtree, so that other tests are not broken
+            /**
+             * build dependency tree that has the following structure:
+             *
+             *                              package1@1.0.0/util1                                         package2@1.0.0/util2
+             *                           /            |           \                                            /        \
+             *                          /             |            \                                          /          \
+             *      package3@1.0.0/util3    package4@1.0.0/util4    package3@1.0.0/util3     package3@1.0.0/util3    package5@1.0.0/util5
+             *              |                                                  |                     |                       |
+             *              |                                                  |                     |                       |
+             *      package5@1.0.0/util5                            package6@1.0.0/util6     package5@1.0.0/util5    package6@1.0.0/util6
+             *              |                                                  |                     |
+             *              |                                                  |                     |
+             *      package6@1.0.0/util6                            package5@1.0.0/util5     package6@1.0.0/util6
+             */
+            var childA3;
+            var childA31;
+            var childA311;
+            childA3 = new DependencyTree.Node();
+            childA3.data = new DependencyMgr.DepReference({webpackageId: packages.pkg3.webpackageId, artifactId: packages.pkg3.artifactId, referrer: packages.pkg1});
+            childA31 = new DependencyTree.Node();
+            childA31.data = new DependencyMgr.DepReference({webpackageId: packages.pkg6.webpackageId, artifactId: packages.pkg6.artifactId, referrer: packages.pkg3});
+            childA311 = new DependencyTree.Node();
+            childA311.data = new DependencyMgr.DepReference({webpackageId: packages.pkg5.webpackageId, artifactId: packages.pkg5.artifactId, referrer: packages.pkg6});
+
+            depTree.insertNode(childA3, nodeA);
+            depTree.insertNode(childA31, childA3);
+            depTree.insertNode(childA311, childA31);
+
+            // Actual test
+            childA31.excluded = true;
+            childA311.excluded = true;
+            childB11.excluded = false;
+            childB111.excluded = true;
+
+            depTree._removeDuplicate(childA3, childB1);
+            childA31.excluded.should.be.true;
+            childA311.excluded.should.be.false;
+          });
           it('should append referrer of removed duplicate node to referrer of duplicated nodes', function () {
             depTree._removeDuplicate(childA1, childB1);
             childA1.data.referrer.should.eql([ packages.pkg1, packages.pkg2 ]);
@@ -326,6 +367,13 @@
           });
           it('should return the DependencyTree itself', function () {
             expect(depTree.removeExcludes()).to.equal(depTree);
+          });
+          it('should remove excluded node from DepenendencyTree`s conflicts array if it manually resolves an already detected conflict', () => {
+            // just simulate a conflict between artifacts [package4@1.0.0/util4] and [package5@1.0.0/util5] by adding a manually created conflict
+            const conflict = depTree._createConflictItem(childA2, childB2, DependencyTree.conflictTypes.VERSION, false);
+            depTree._conflicts.push(conflict);
+            depTree.removeExcludes();
+            depTree._conflicts.should.have.lengthOf(0);
           });
         });
       });

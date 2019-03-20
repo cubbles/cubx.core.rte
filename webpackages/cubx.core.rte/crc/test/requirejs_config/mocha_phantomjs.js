@@ -13,7 +13,6 @@
       'componentResolver': 'modules/componentResolver/componentResolver',
       'eventFactory': 'modules/eventFactory/eventFactory',
       'responseCache': 'modules/responseCache/responseCache',
-      'manifestConverter': 'modules/manifestConverter/manifestConverter',
       'axios': 'modules/axios/axios.min',
       'dependencyTree': 'modules/dependencyTree/dependencyTree',
       // unit tests
