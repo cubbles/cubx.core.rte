@@ -90,7 +90,7 @@
    * @memberOf Initializer
    */
   Initializer.prototype._sortInitList = function (initList) {
-    var sortedList = _.sortByOrder(initList, [ '_deepLevel', '_internal', '_order' ], [ 'desc', 'asc', 'asc' ]);
+    var sortedList = _.orderBy(initList, [ '_deepLevel', '_internal', '_order' ], [ 'desc', 'asc', 'asc' ]);
     return sortedList;
   };
 

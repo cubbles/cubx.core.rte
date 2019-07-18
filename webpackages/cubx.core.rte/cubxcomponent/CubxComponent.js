@@ -123,7 +123,7 @@
       };
 
       CubxComponentClass.prototype._getChangeHandlerMethodName = function (slotId) {
-        return '_handleChange4' + _.capitalize(slotId);
+        return '_handleChange4' + _.upperFirst(slotId);
       };
 
       CubxComponentClass.prototype._generateSetMethod = function (slotId) {
@@ -144,7 +144,7 @@
       };
 
       CubxComponentClass.prototype._getChangeHandlerMethodName = function (slotId) {
-        return '_handleChange4' + _.capitalize(slotId);
+        return '_handleChange4' + _.upperFirst(slotId);
       };
 
       CubxComponentClass.prototype._triggerModelChangeEvent = function (slotId, modelEventPayload) {
@@ -296,7 +296,7 @@
       };
 
       CubxComponentClass.prototype._getMethodNameModelChanged = function (slotId) {
-        return 'model' + _.capitalize(slotId) + 'Changed';
+        return 'model' + _.upperFirst(slotId) + 'Changed';
       };
 
       CubxComponentClass.prototype.addDynamicConnection = function (dynamicConnection) {

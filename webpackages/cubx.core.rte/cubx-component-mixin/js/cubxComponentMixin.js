@@ -95,7 +95,7 @@
    * @param payload
    */
   cubxComponentMixin.fireSlotChangedEvent = function (slotId, payload) {
-    var eventName = 'slot' + _.capitalize(slotId) + 'Changed';
+    var eventName = 'slot' + _.upperFirst(slotId) + 'Changed';
     var event = new CustomEvent(eventName, { bubbles: true, detail: payload });
     this.dispatchEvent(event);
   };
@@ -386,7 +386,7 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._getGetMethodName = function (slotId) {
-    return 'get' + _.capitalize(slotId);
+    return 'get' + _.upperFirst(slotId);
   };
 
   /**
@@ -398,7 +398,7 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._getSetMethodName = function (slotId) {
-    return 'set' + _.capitalize(slotId);
+    return 'set' + _.upperFirst(slotId);
   };
 
   /**
@@ -410,7 +410,7 @@
    * @memberOf cubxComponentMixin
    */
   cubxComponentMixin._getRepropagateMethodName = function (slotId) {
-    return 'repropagate' + _.capitalize(slotId);
+    return 'repropagate' + _.upperFirst(slotId);
   };
   /* **********************************************************************************/
   /*                      util functions                                              */
