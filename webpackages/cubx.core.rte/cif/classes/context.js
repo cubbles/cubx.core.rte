@@ -188,9 +188,9 @@
     } else {
       readyValue = value;
     }
-    _.forEach(this._children, function (child) {
+    _.forEach(this._children, _.bind(function (child) {
       child.setReady(readyValue);
-    }, this);
+    }, this));
     this._ready = readyValue;
   };
 

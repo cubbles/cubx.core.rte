@@ -53,11 +53,11 @@
    * @memberOf Initializer
    */
   Initializer.prototype.initSlots = function () {
-    _.forEach(this._initList, function (init) {
+    _.forEach(this._initList, _.bind(function (init) {
       // console.log('init slot (runtime-id, slot, value)', init._component.getAttribute('runtime-id'), init._slot,
       //     init._value);
       this._initSlot(init);
-    }, this);
+    }, this));
   };
 
   /**
@@ -105,7 +105,7 @@
     // console.log('_parseInitSlotsForElement for ', component, ' context', context);
 
     var initElements = component.querySelectorAll('CUBX-CORE-INIT');
-    _.forEach(initElements, function (initElement) {
+    _.forEach(initElements, _.bind(function (initElement) {
       var parent = initElement.parentNode;
       // The parent is the coponent self (internal init, or an elementary component
       // For compound in the subtree of component will this Method called separate
@@ -121,7 +121,7 @@
         }
         this._addAllInitSlotEntriesToInitList(parent, context, initSlotElements);
       }
-    }, this);
+    }, this));
   };
 
   /**
@@ -133,9 +133,9 @@
    * @memberOf Initializer
    */
   Initializer.prototype._addAllInitSlotEntriesToInitList = function (element, context, initSlotElements) {
-    _.forEach(initSlotElements, function (initElement) {
+    _.forEach(initSlotElements, _.bind(function (initElement) {
       this._addInitSlotEntryToInitList(element, context, initElement);
-    }, this);
+    }, this));
   };
 
   /**

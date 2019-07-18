@@ -65,7 +65,7 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@2.0.0",
+            "webpackageId": "lodash-4.17.14@1.0.0-SNAPSHOT",
             "artifactId": "lodash"
           },
           {
@@ -92,7 +92,7 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@2.0.0",
+            "webpackageId": "lodash-4.17.14@1.0.0-SNAPSHOT",
             "artifactId": "lodash"
           },
           {
@@ -147,7 +147,7 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-3.10.1@2.0.0",
+            "webpackageId": "lodash-4.17.14@1.0.0-SNAPSHOT",
             "artifactId": "lodash"
           }
         ]

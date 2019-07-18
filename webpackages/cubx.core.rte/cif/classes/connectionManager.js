@@ -30,10 +30,10 @@
    * @param {object} components Array of components
    */
   ConnectionManager.prototype.parseConnectionsFromComponentList = function (components) {
-    _.forEach(components, function (component) {
+    _.forEach(components, _.bind(function (component) {
       // console.log(component);
       this._createConnectionsFromComponent(component);
-    }, this);
+    }, this));
   };
 
   /**
@@ -45,7 +45,7 @@
    */
   ConnectionManager.prototype.processConnections = function (sourceComp, payloadObject) {
     // console.log('ConnectionManager.processConnections', sourceComp, payloadObject);
-    _.forEach(this._connections, function (connection) {
+    _.forEach(this._connections, _.bind(function (connection) {
       // not process deactivated connections
       if (connection.deactivated) {
         return;
@@ -58,7 +58,7 @@
       if (correctComponent && correctSlot) {
         this._processConnection(connection, payloadObject);
       }
-    }, this);
+    }, this));
   };
 
   /**
@@ -76,7 +76,7 @@
       return item.internal;
     });
     // console.log('internal connections', internalConnections);
-    _.forEach(internalConnections, function (connection) {
+    _.forEach(internalConnections, _.bind(function (connection) {
       // not process deactivated connections
       if (connection.deactivated) {
         return;
@@ -86,7 +86,7 @@
         // console.log('process internal connection', connection, payloadObject);
         this._processConnection(connection, payloadObject);
       }
-    }, this);
+    }, this));
   };
 
   /**
@@ -97,13 +97,13 @@
    * @return {array} list of filtered connections
    */
   ConnectionManager.prototype.getConnectionsTo = function (element, slot) {
-    var connectionsTo = _.filter(this._connections, function (connection) {
+    var connectionsTo = _.filter(this._connections, _.bind(function (connection) {
       if (connection.destination.component === element && connection.destination.slot === slot) {
         return true;
       } else {
         return false;
       }
-    }, this);
+    }, this));
     return connectionsTo;
   };
 
@@ -489,9 +489,9 @@
     var cubxConnections = component.querySelector('cubx-core-connections');
     if (cubxConnections && cubxConnections.parentNode === component) {
       // console.log(cubxConnections.children);
-      _.forEach(cubxConnections.children, function (cubxConnection) {
+      _.forEach(cubxConnections.children, _.bind(function (cubxConnection) {
         this.createConnectionFromComponent(component, cubxConnection);
-      }, this);
+      }, this));
     }
   };
   /**
