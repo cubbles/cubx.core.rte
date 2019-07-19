@@ -349,7 +349,7 @@
         slot.description = elem.description;
       }
       this._slots.push(slot);
-    },this));
+    }, this));
 
     this.slots = function () {
       return this._slots;
