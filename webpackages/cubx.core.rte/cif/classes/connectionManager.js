@@ -461,7 +461,9 @@
    * @memberOf ConnectionManager
    */
   ConnectionManager.prototype._findConnectionIndex = function (connectionList, connectionId) {
-    return _.findIndex(connectionList, 'connectionId', connectionId);
+    return _.findIndex(connectionList, function (connection) {
+      return connection['connectionId'] === connectionId;
+    });
   };
 
   /**
