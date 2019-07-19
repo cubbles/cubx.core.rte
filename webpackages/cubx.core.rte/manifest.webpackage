@@ -1,7 +1,7 @@
 {
   "name": "rte",
   "groupId": "cubx.core",
-  "version": "3.0.0",
+  "version": "3.1.0-SNAPSHOT",
   "modelVersion": "10.0.0",
   "docType": "webpackage",
   "description": "",
@@ -65,7 +65,7 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-4.17.14@1.0.0-SNAPSHOT",
+            "webpackageId": "lodash-4.17.14@1.0.0",
             "artifactId": "lodash"
           },
           {
@@ -92,7 +92,7 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-4.17.14@1.0.0-SNAPSHOT",
+            "webpackageId": "lodash-4.17.14@1.0.0",
             "artifactId": "lodash"
           },
           {
@@ -147,7 +147,7 @@
         ],
         "dependencies": [
           {
-            "webpackageId": "lodash-4.17.14@1.0.0-SNAPSHOT",
+            "webpackageId": "lodash-4.17.14@1.0.0",
             "artifactId": "lodash"
           }
         ]
