@@ -18,7 +18,7 @@ module.exports = function (config) {
       'test/mock/*.js',
       '../webcomponents/custom-elements-es5-adapter.js',
       '../webcomponents/webcomponents-lite.js',
-      'https://cubbles.world/core/lodash-3.10.1@1.0.0/lodash/vendor/lodash.js',
+      'https://cubbles.world/core/lodash-4.17.14@1.0.0-SNAPSHOT/lodash/js/lodash.js',
       '../template-utils/js/template-utils.js',
       '../cubx-component-mixin/js/cubxComponentMixin.js',
       '../guid-utility/js/guid.js',
