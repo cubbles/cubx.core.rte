@@ -28,7 +28,7 @@
     "grunt-jsdoc": "~0.6.7",
     "load-grunt-configs": "^0.4.1",
     "load-grunt-tasks": "^2.0.0",
-    "lodash": "^3.10",
+    "lodash": "^4.17",
     "shelljs": "^0.5.3",
     "time-grunt": "~1.0.0"
   },
